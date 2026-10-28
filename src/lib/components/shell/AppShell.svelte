@@ -10,6 +10,7 @@
 	import NavBadge from './NavBadge.svelte';
 	import { sidebarIcon, tabIcon } from './nav-icons.js';
 	import { shell } from './shell-state.svelte.js';
+	import { pageMotion } from '#lib/motion.js';
 
 	// Port of shell.templ AppShell: mobile top bar, collapsible sidebar, main
 	// column (trial banner + mobile section sub-nav + page), mobile bottom tabs.
@@ -195,7 +196,7 @@
 				</div>
 			</aside>
 
-			<main id="main-content" class="app-main">
+			<main id="main-content" class="app-main" {@attach pageMotion()}>
 				{#if trialExpired}
 					<div class="trial-ended-banner trial-banner glass-card mx-4 mt-4 flex flex-wrap items-center gap-3 p-4" role="status">
 						<span class="pro-badge">Trial ended</span>
