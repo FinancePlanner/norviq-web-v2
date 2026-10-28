@@ -1,0 +1,845 @@
+{
+ "parse": [
+  {
+   "in": "1100",
+   "out": 1100,
+   "err": ""
+  },
+  {
+   "in": "1,100",
+   "out": 1100,
+   "err": ""
+  },
+  {
+   "in": "1,25",
+   "out": 1.25,
+   "err": ""
+  },
+  {
+   "in": "0,500",
+   "out": 0.5,
+   "err": ""
+  },
+  {
+   "in": "1.234,56",
+   "out": 1234.56,
+   "err": ""
+  },
+  {
+   "in": "1,234.56",
+   "out": 1234.56,
+   "err": ""
+  },
+  {
+   "in": "1.234.567",
+   "out": 1234567,
+   "err": ""
+  },
+  {
+   "in": "1.100",
+   "out": 1.1,
+   "err": ""
+  },
+  {
+   "in": "10T",
+   "out": 10000000000000,
+   "err": ""
+  },
+  {
+   "in": "1.25b",
+   "out": 1250000000,
+   "err": ""
+  },
+  {
+   "in": "$1,000,000",
+   "out": 1000000,
+   "err": ""
+  },
+  {
+   "in": " 750 ",
+   "out": 750,
+   "err": ""
+  },
+  {
+   "in": "€ 2,5K",
+   "out": 2500,
+   "err": ""
+  },
+  {
+   "in": "-5",
+   "out": -5,
+   "err": ""
+  },
+  {
+   "in": "",
+   "out": 0,
+   "err": "format: empty amount"
+  },
+  {
+   "in": "  ",
+   "out": 0,
+   "err": "format: empty amount"
+  },
+  {
+   "in": "abc",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "1,2,3",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "NaN",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "Inf",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "T",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "$",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "1e300T",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "1e3",
+   "out": 1000,
+   "err": ""
+  },
+  {
+   "in": "+5",
+   "out": 5,
+   "err": ""
+  },
+  {
+   "in": ".5",
+   "out": 0.5,
+   "err": ""
+  },
+  {
+   "in": "5.",
+   "out": 5,
+   "err": ""
+  },
+  {
+   "in": "0x10",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "1_000",
+   "out": 1000,
+   "err": ""
+  },
+  {
+   "in": "--5",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "1,234,56",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "12,3456",
+   "out": 12.3456,
+   "err": ""
+  },
+  {
+   "in": "-1,234",
+   "out": -1234,
+   "err": ""
+  },
+  {
+   "in": "1.2.3",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "1k",
+   "out": 1000,
+   "err": ""
+  },
+  {
+   "in": "£3m",
+   "out": 3000000,
+   "err": ""
+  },
+  {
+   "in": "¥100",
+   "out": 100,
+   "err": ""
+  },
+  {
+   "in": "1 000",
+   "out": 1000,
+   "err": ""
+  },
+  {
+   "in": "1 000",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "Infinity",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "1e400",
+   "out": 0,
+   "err": "format: not a number"
+  },
+  {
+   "in": "0,000",
+   "out": 0,
+   "err": ""
+  },
+  {
+   "in": "01,100",
+   "out": 1.1,
+   "err": ""
+  }
+ ],
+ "rows": [
+  {
+   "in": 0,
+   "Compact": "0",
+   "CompactCurrency": "$0",
+   "CompactEUR": "€0",
+   "Number2": "0",
+   "Number0": "0",
+   "Currency": "$0",
+   "CurrencyNone": "0",
+   "Percent": "0%",
+   "Input": "0"
+  },
+  {
+   "in": 0.004,
+   "Compact": "0",
+   "CompactCurrency": "$0",
+   "CompactEUR": "€0",
+   "Number2": "0",
+   "Number0": "0",
+   "Currency": "$0",
+   "CurrencyNone": "0",
+   "Percent": "0.4%",
+   "Input": "0.004"
+  },
+  {
+   "in": -0.004,
+   "Compact": "0",
+   "CompactCurrency": "$0",
+   "CompactEUR": "€0",
+   "Number2": "0",
+   "Number0": "0",
+   "Currency": "$0",
+   "CurrencyNone": "0",
+   "Percent": "-0.4%",
+   "Input": "-0.004"
+  },
+  {
+   "in": 0.005,
+   "Compact": "0.01",
+   "CompactCurrency": "$0.01",
+   "CompactEUR": "€0.01",
+   "Number2": "0.01",
+   "Number0": "0",
+   "Currency": "$0.01",
+   "CurrencyNone": "0.01",
+   "Percent": "0.5%",
+   "Input": "0.005"
+  },
+  {
+   "in": 0.015,
+   "Compact": "0.02",
+   "CompactCurrency": "$0.02",
+   "CompactEUR": "€0.02",
+   "Number2": "0.01",
+   "Number0": "0",
+   "Currency": "$0.01",
+   "CurrencyNone": "0.01",
+   "Percent": "1.5%",
+   "Input": "0.015"
+  },
+  {
+   "in": 0.125,
+   "Compact": "0.13",
+   "CompactCurrency": "$0.13",
+   "CompactEUR": "€0.13",
+   "Number2": "0.12",
+   "Number0": "0",
+   "Currency": "$0.12",
+   "CurrencyNone": "0.12",
+   "Percent": "12.5%",
+   "Input": "0.125"
+  },
+  {
+   "in": 0.135,
+   "Compact": "0.14",
+   "CompactCurrency": "$0.14",
+   "CompactEUR": "€0.14",
+   "Number2": "0.14",
+   "Number0": "0",
+   "Currency": "$0.14",
+   "CurrencyNone": "0.14",
+   "Percent": "13.5%",
+   "Input": "0.135"
+  },
+  {
+   "in": 1.005,
+   "Compact": "1",
+   "CompactCurrency": "$1",
+   "CompactEUR": "€1",
+   "Number2": "1",
+   "Number0": "1",
+   "Currency": "$1",
+   "CurrencyNone": "1",
+   "Percent": "100.5%",
+   "Input": "1.005"
+  },
+  {
+   "in": 2.675,
+   "Compact": "2.68",
+   "CompactCurrency": "$2.68",
+   "CompactEUR": "€2.68",
+   "Number2": "2.67",
+   "Number0": "3",
+   "Currency": "$2.67",
+   "CurrencyNone": "2.67",
+   "Percent": "267.5%",
+   "Input": "2.675"
+  },
+  {
+   "in": 1.125,
+   "Compact": "1.13",
+   "CompactCurrency": "$1.13",
+   "CompactEUR": "€1.13",
+   "Number2": "1.12",
+   "Number0": "1",
+   "Currency": "$1.12",
+   "CurrencyNone": "1.12",
+   "Percent": "112.5%",
+   "Input": "1.125"
+  },
+  {
+   "in": 2.5,
+   "Compact": "2.5",
+   "CompactCurrency": "$2.5",
+   "CompactEUR": "€2.5",
+   "Number2": "2.5",
+   "Number0": "2",
+   "Currency": "$2.50",
+   "CurrencyNone": "2.50",
+   "Percent": "250%",
+   "Input": "2.5"
+  },
+  {
+   "in": 3.5,
+   "Compact": "3.5",
+   "CompactCurrency": "$3.5",
+   "CompactEUR": "€3.5",
+   "Number2": "3.5",
+   "Number0": "4",
+   "Currency": "$3.50",
+   "CurrencyNone": "3.50",
+   "Percent": "350%",
+   "Input": "3.5"
+  },
+  {
+   "in": -2.5,
+   "Compact": "-2.5",
+   "CompactCurrency": "-$2.5",
+   "CompactEUR": "-€2.5",
+   "Number2": "-2.5",
+   "Number0": "-2",
+   "Currency": "-$2.50",
+   "CurrencyNone": "-2.50",
+   "Percent": "-250%",
+   "Input": "-2.5"
+  },
+  {
+   "in": 999.995,
+   "Compact": "1K",
+   "CompactCurrency": "$1K",
+   "CompactEUR": "€1K",
+   "Number2": "1,000",
+   "Number0": "1,000",
+   "Currency": "$1,000",
+   "CurrencyNone": "1,000",
+   "Percent": "99,999.5%",
+   "Input": "999.995"
+  },
+  {
+   "in": 1000,
+   "Compact": "1K",
+   "CompactCurrency": "$1K",
+   "CompactEUR": "€1K",
+   "Number2": "1,000",
+   "Number0": "1,000",
+   "Currency": "$1,000",
+   "CurrencyNone": "1,000",
+   "Percent": "100,000%",
+   "Input": "1000"
+  },
+  {
+   "in": 1500,
+   "Compact": "1.5K",
+   "CompactCurrency": "$1.5K",
+   "CompactEUR": "€1.5K",
+   "Number2": "1,500",
+   "Number0": "1,500",
+   "Currency": "$1,500",
+   "CurrencyNone": "1,500",
+   "Percent": "150,000%",
+   "Input": "1500"
+  },
+  {
+   "in": 999999,
+   "Compact": "1M",
+   "CompactCurrency": "$1M",
+   "CompactEUR": "€1M",
+   "Number2": "999,999",
+   "Number0": "999,999",
+   "Currency": "$999,999",
+   "CurrencyNone": "999,999",
+   "Percent": "99,999,900%",
+   "Input": "999999"
+  },
+  {
+   "in": 999995,
+   "Compact": "1M",
+   "CompactCurrency": "$1M",
+   "CompactEUR": "€1M",
+   "Number2": "999,995",
+   "Number0": "999,995",
+   "Currency": "$999,995",
+   "CurrencyNone": "999,995",
+   "Percent": "99,999,500%",
+   "Input": "999995"
+  },
+  {
+   "in": 999994.9,
+   "Compact": "999.99K",
+   "CompactCurrency": "$999.99K",
+   "CompactEUR": "€999.99K",
+   "Number2": "999,994.9",
+   "Number0": "999,995",
+   "Currency": "$999,994.90",
+   "CurrencyNone": "999,994.90",
+   "Percent": "99,999,490%",
+   "Input": "999994.9"
+  },
+  {
+   "in": 1000000,
+   "Compact": "1M",
+   "CompactCurrency": "$1M",
+   "CompactEUR": "€1M",
+   "Number2": "1,000,000",
+   "Number0": "1,000,000",
+   "Currency": "$1,000,000",
+   "CurrencyNone": "1,000,000",
+   "Percent": "100,000,000%",
+   "Input": "1000000"
+  },
+  {
+   "in": 1234567.891,
+   "Compact": "1.23M",
+   "CompactCurrency": "$1.23M",
+   "CompactEUR": "€1.23M",
+   "Number2": "1,234,567.89",
+   "Number0": "1,234,568",
+   "Currency": "$1,234,567.89",
+   "CurrencyNone": "1,234,567.89",
+   "Percent": "123,456,789.1%",
+   "Input": "1234567.891"
+  },
+  {
+   "in": 12345678.125,
+   "Compact": "12.35M",
+   "CompactCurrency": "$12.35M",
+   "CompactEUR": "€12.35M",
+   "Number2": "12,345,678.12",
+   "Number0": "12,345,678",
+   "Currency": "$12,345,678.12",
+   "CurrencyNone": "12,345,678.12",
+   "Percent": "1,234,567,812.5%",
+   "Input": "12345678.125"
+  },
+  {
+   "in": 1000000000,
+   "Compact": "1B",
+   "CompactCurrency": "$1B",
+   "CompactEUR": "€1B",
+   "Number2": "1,000,000,000",
+   "Number0": "1,000,000,000",
+   "Currency": "$1,000,000,000",
+   "CurrencyNone": "1,000,000,000",
+   "Percent": "100,000,000,000%",
+   "Input": "1000000000"
+  },
+  {
+   "in": 1005000000,
+   "Compact": "1B",
+   "CompactCurrency": "$1B",
+   "CompactEUR": "€1B",
+   "Number2": "1,005,000,000",
+   "Number0": "1,005,000,000",
+   "Currency": "$1,005,000,000",
+   "CurrencyNone": "1,005,000,000",
+   "Percent": "100,500,000,000%",
+   "Input": "1005000000"
+  },
+  {
+   "in": 999999000000,
+   "Compact": "1T",
+   "CompactCurrency": "$1T",
+   "CompactEUR": "€1T",
+   "Number2": "999,999,000,000",
+   "Number0": "999,999,000,000",
+   "Currency": "$999,999,000,000",
+   "CurrencyNone": "999,999,000,000",
+   "Percent": "99,999,900,000,000%",
+   "Input": "999999000000"
+  },
+  {
+   "in": 1000000000000,
+   "Compact": "1T",
+   "CompactCurrency": "$1T",
+   "CompactEUR": "€1T",
+   "Number2": "1,000,000,000,000",
+   "Number0": "1,000,000,000,000",
+   "Currency": "$1,000,000,000,000",
+   "CurrencyNone": "1,000,000,000,000",
+   "Percent": "100,000,000,000,000%",
+   "Input": "1000000000000"
+  },
+  {
+   "in": 1000000000000000,
+   "Compact": "1000T",
+   "CompactCurrency": "$1000T",
+   "CompactEUR": "€1000T",
+   "Number2": "1,000,000,000,000,000",
+   "Number0": "1,000,000,000,000,000",
+   "Currency": "$1,000,000,000,000,000",
+   "CurrencyNone": "1,000,000,000,000,000",
+   "Percent": "100,000,000,000,000,000%",
+   "Input": "1000000000000000"
+  },
+  {
+   "in": 1e+21,
+   "Compact": "1000000000T",
+   "CompactCurrency": "$1000000000T",
+   "CompactEUR": "€1000000000T",
+   "Number2": "1,000,000,000,000,000,000,000",
+   "Number0": "1,000,000,000,000,000,000,000",
+   "Currency": "$1,000,000,000,000,000,000,000",
+   "CurrencyNone": "1,000,000,000,000,000,000,000",
+   "Percent": "99,999,999,999,999,991,611,392%",
+   "Input": "1000000000000000000000"
+  },
+  {
+   "in": 1.5e+22,
+   "Compact": "15000000000T",
+   "CompactCurrency": "$15000000000T",
+   "CompactEUR": "€15000000000T",
+   "Number2": "15,000,000,000,000,000,000,000",
+   "Number0": "15,000,000,000,000,000,000,000",
+   "Currency": "$15,000,000,000,000,000,000,000",
+   "CurrencyNone": "15,000,000,000,000,000,000,000",
+   "Percent": "1,499,999,999,999,999,974,834,176%",
+   "Input": "15000000000000000000000"
+  },
+  {
+   "in": 1e-7,
+   "Compact": "0",
+   "CompactCurrency": "$0",
+   "CompactEUR": "€0",
+   "Number2": "0",
+   "Number0": "0",
+   "Currency": "$0",
+   "CurrencyNone": "0",
+   "Percent": "0%",
+   "Input": "0.0000001"
+  },
+  {
+   "in": 123.456,
+   "Compact": "123.46",
+   "CompactCurrency": "$123.46",
+   "CompactEUR": "€123.46",
+   "Number2": "123.46",
+   "Number0": "123",
+   "Currency": "$123.46",
+   "CurrencyNone": "123.46",
+   "Percent": "12,345.6%",
+   "Input": "123.456"
+  },
+  {
+   "in": -123.456,
+   "Compact": "-123.46",
+   "CompactCurrency": "-$123.46",
+   "CompactEUR": "-€123.46",
+   "Number2": "-123.46",
+   "Number0": "-123",
+   "Currency": "-$123.46",
+   "CurrencyNone": "-123.46",
+   "Percent": "-12,345.6%",
+   "Input": "-123.456"
+  },
+  {
+   "in": -0.001,
+   "Compact": "0",
+   "CompactCurrency": "$0",
+   "CompactEUR": "€0",
+   "Number2": "0",
+   "Number0": "0",
+   "Currency": "$0",
+   "CurrencyNone": "0",
+   "Percent": "-0.1%",
+   "Input": "-0.001"
+  },
+  {
+   "in": 0.0049999,
+   "Compact": "0",
+   "CompactCurrency": "$0",
+   "CompactEUR": "€0",
+   "Number2": "0",
+   "Number0": "0",
+   "Currency": "$0",
+   "CurrencyNone": "0",
+   "Percent": "0.5%",
+   "Input": "0.0049999"
+  },
+  {
+   "in": 909.0909,
+   "Compact": "909.09",
+   "CompactCurrency": "$909.09",
+   "CompactEUR": "€909.09",
+   "Number2": "909.09",
+   "Number0": "909",
+   "Currency": "$909.09",
+   "CurrencyNone": "909.09",
+   "Percent": "90,909.09%",
+   "Input": "909.0909"
+  },
+  {
+   "in": 2916.666,
+   "Compact": "2.92K",
+   "CompactCurrency": "$2.92K",
+   "CompactEUR": "€2.92K",
+   "Number2": "2,916.67",
+   "Number0": "2,917",
+   "Currency": "$2,916.67",
+   "CurrencyNone": "2,916.67",
+   "Percent": "291,666.6%",
+   "Input": "2916.666"
+  },
+  {
+   "in": 318181.8181818182,
+   "Compact": "318.18K",
+   "CompactCurrency": "$318.18K",
+   "CompactEUR": "€318.18K",
+   "Number2": "318,181.82",
+   "Number0": "318,182",
+   "Currency": "$318,181.82",
+   "CurrencyNone": "318,181.82",
+   "Percent": "31,818,181.82%",
+   "Input": "318181.8181818182"
+  },
+  {
+   "in": 0.6818181818181818,
+   "Compact": "0.68",
+   "CompactCurrency": "$0.68",
+   "CompactEUR": "€0.68",
+   "Number2": "0.68",
+   "Number0": "1",
+   "Currency": "$0.68",
+   "CurrencyNone": "0.68",
+   "Percent": "68.18%",
+   "Input": "0.6818181818181818"
+  },
+  {
+   "in": 1.2,
+   "Compact": "1.2",
+   "CompactCurrency": "$1.2",
+   "CompactEUR": "€1.2",
+   "Number2": "1.2",
+   "Number0": "1",
+   "Currency": "$1.20",
+   "CurrencyNone": "1.20",
+   "Percent": "120%",
+   "Input": "1.2"
+  },
+  {
+   "in": -1500,
+   "Compact": "-1.5K",
+   "CompactCurrency": "-$1.5K",
+   "CompactEUR": "-€1.5K",
+   "Number2": "-1,500",
+   "Number0": "-1,500",
+   "Currency": "-$1,500",
+   "CurrencyNone": "-1,500",
+   "Percent": "-150,000%",
+   "Input": "-1500"
+  },
+  {
+   "in": 10600000000,
+   "Compact": "10.6B",
+   "CompactCurrency": "$10.6B",
+   "CompactEUR": "€10.6B",
+   "Number2": "10,600,000,000",
+   "Number0": "10,600,000,000",
+   "Currency": "$10,600,000,000",
+   "CurrencyNone": "10,600,000,000",
+   "Percent": "1,060,000,000,000%",
+   "Input": "10600000000"
+  },
+  {
+   "in": 2916670,
+   "Compact": "2.92M",
+   "CompactCurrency": "$2.92M",
+   "CompactEUR": "€2.92M",
+   "Number2": "2,916,670",
+   "Number0": "2,916,670",
+   "Currency": "$2,916,670",
+   "CurrencyNone": "2,916,670",
+   "Percent": "291,667,000%",
+   "Input": "2916670"
+  },
+  {
+   "in": 7.995,
+   "Compact": "8",
+   "CompactCurrency": "$8",
+   "CompactEUR": "€8",
+   "Number2": "8",
+   "Number0": "8",
+   "Currency": "$8",
+   "CurrencyNone": "8",
+   "Percent": "799.5%",
+   "Input": "7.995"
+  },
+  {
+   "in": 0.045,
+   "Compact": "0.05",
+   "CompactCurrency": "$0.05",
+   "CompactEUR": "€0.05",
+   "Number2": "0.04",
+   "Number0": "0",
+   "Currency": "$0.04",
+   "CurrencyNone": "0.04",
+   "Percent": "4.5%",
+   "Input": "0.045"
+  },
+  {
+   "in": 0.055,
+   "Compact": "0.06",
+   "CompactCurrency": "$0.06",
+   "CompactEUR": "€0.06",
+   "Number2": "0.06",
+   "Number0": "0",
+   "Currency": "$0.06",
+   "CurrencyNone": "0.06",
+   "Percent": "5.5%",
+   "Input": "0.055"
+  },
+  {
+   "in": 100.5,
+   "Compact": "100.5",
+   "CompactCurrency": "$100.5",
+   "CompactEUR": "€100.5",
+   "Number2": "100.5",
+   "Number0": "100",
+   "Currency": "$100.50",
+   "CurrencyNone": "100.50",
+   "Percent": "10,050%",
+   "Input": "100.5"
+  },
+  {
+   "in": 4.35,
+   "Compact": "4.35",
+   "CompactCurrency": "$4.35",
+   "CompactEUR": "€4.35",
+   "Number2": "4.35",
+   "Number0": "4",
+   "Currency": "$4.35",
+   "CurrencyNone": "4.35",
+   "Percent": "435%",
+   "Input": "4.35"
+  },
+  {
+   "in": 12.345,
+   "Compact": "12.35",
+   "CompactCurrency": "$12.35",
+   "CompactEUR": "€12.35",
+   "Number2": "12.35",
+   "Number0": "12",
+   "Currency": "$12.35",
+   "CurrencyNone": "12.35",
+   "Percent": "1,234.5%",
+   "Input": "12.345"
+  },
+  {
+   "in": 999.5,
+   "Compact": "999.5",
+   "CompactCurrency": "$999.5",
+   "CompactEUR": "€999.5",
+   "Number2": "999.5",
+   "Number0": "1,000",
+   "Currency": "$999.50",
+   "CurrencyNone": "999.50",
+   "Percent": "99,950%",
+   "Input": "999.5"
+  },
+  {
+   "in": 0.5,
+   "Compact": "0.5",
+   "CompactCurrency": "$0.5",
+   "CompactEUR": "€0.5",
+   "Number2": "0.5",
+   "Number0": "0",
+   "Currency": "$0.50",
+   "CurrencyNone": "0.50",
+   "Percent": "50%",
+   "Input": "0.5"
+  },
+  {
+   "in": 1.5,
+   "Compact": "1.5",
+   "CompactCurrency": "$1.5",
+   "CompactEUR": "€1.5",
+   "Number2": "1.5",
+   "Number0": "2",
+   "Currency": "$1.50",
+   "CurrencyNone": "1.50",
+   "Percent": "150%",
+   "Input": "1.5"
+  },
+  {
+   "in": 2.25,
+   "Compact": "2.25",
+   "CompactCurrency": "$2.25",
+   "CompactEUR": "€2.25",
+   "Number2": "2.25",
+   "Number0": "2",
+   "Currency": "$2.25",
+   "CurrencyNone": "2.25",
+   "Percent": "225%",
+   "Input": "2.25"
+  }
+ ]
+}

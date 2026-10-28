@@ -1,5 +1,6 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON, isAPIError } from './api.js';
+import { setPostHogCaptureOnce } from '../analytics/runtime.server.js';
 
 // Port of norviq-web internal/onboarding/gate.go + internal/session/onboarding.go.
 // Flag names match the Go session keys.
@@ -70,10 +71,7 @@ export async function resumeStep(event: RequestEvent): Promise<{ step: string; n
 	const step = progress.funnelStep ?? '';
 	if (!s.get<boolean>(OnboardingKey.FunnelResumedSent)) {
 		if (step && !s.get(OnboardingKey.PostHogCaptureEvent)) {
-			await s.set(OnboardingKey.PostHogCaptureEvent, {
-				event: 'onboarding_funnel_resumed',
-				properties: { step }
-			});
+			await setPostHogCaptureOnce(event.locals, 'onboarding_funnel_resumed', { step });
 		}
 		await s.set(OnboardingKey.FunnelResumedSent, true);
 	}
