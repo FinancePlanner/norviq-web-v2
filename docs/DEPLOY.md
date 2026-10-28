@@ -34,7 +34,26 @@ public API hostname instead. Nothing in the API contract changes.
 | `SESSION_SECRET` | web | A **new** random value (≥32 bytes). Sessions are not shared with the Go web (scs store vs sealed cookie), so cutover signs everyone out once. |
 | `PUBLIC_API_TOKEN`, `REVENUECAT_WEB_API_KEY` | web | Same values as the cluster's `secrets/norviq/production/web-env.yaml`. |
 | `WEBAUTHN_ORIGINS`, OAuth redirect URIs | backend (infra values) | Already `https://www.norviq.org` / `https://norviq.org`; a preview host (`*.workers.dev`) needs adding temporarily for passkey / Google / Apple sign-in to work there. |
-| Staging preview | user decision | Staging API has no public ingress (`values-staging.yaml`: `ingress.enabled: false`). A hosted staging preview needs a protected staging API host (e.g. Cloudflare Access). Until then staging = local `vite dev` + port-forward. |
+| Staging preview | approved 2026-10-28 | See "Hosted staging preview" below. |
+
+## Hosted staging preview
+
+```
+browser ──basic auth──▶ Worker "norviq-web-staging" (*.workers.dev, wrangler --env staging)
+                           │  X-Norviq-Edge-Key
+                           ▼
+        api-staging.norviq.org ── Traefik forwardAuth (preview-gate) ──▶ svc/api (norviq-staging)
+```
+
+- Infra: LuminaVault/LuminaVaultInfra#483 adds the gate, ingress and the
+  `edge-client-ip-key` SealedSecret in `norviq-staging` (shared with
+  norviq-backend-v2 staging). Requires DNS A record
+  `api-staging.norviq.org → 178.105.244.185` (Namecheap, manual).
+- Worker secrets (`--env staging`): `SESSION_SECRET` (new random),
+  `EDGE_CLIENT_IP_KEY` (the value sealed in #483), `PUBLIC_API_TOKEN` (staging
+  web-env value), `PREVIEW_BASIC_AUTH` (`user:pass`, keeps strangers off the
+  workers.dev URL).
+- Deploy: `bun run build && bunx wrangler deploy --env staging`.
 
 ## Commands
 
