@@ -1,15 +1,34 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
-	"name": "norviq-web-v2",
+	// Norviq web (SvelteKit) on Cloudflare Workers. See docs/DEPLOY.md.
+	"name": "norviq-web",
 	"compatibility_date": "2026-10-28",
-	"compatibility_flags": [
-		"nodejs_als"
-	],
+	"compatibility_flags": ["nodejs_als"],
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
+	"observability": { "enabled": true },
 	"workers_dev": true,
-	"preview_urls": true
+	"preview_urls": true,
+	// Plain-text settings (same names as norviq-web's env in
+	// platform/infra apps/norviq/web/values-production.yaml).
+	// Secrets — set with `wrangler secret put <NAME>`, never here:
+	//   SESSION_SECRET, PUBLIC_API_TOKEN, REVENUECAT_WEB_API_KEY, EDGE_CLIENT_IP_KEY,
+	//   SENTRY_DSN (optional)
+	"vars": {
+		"GO_ENV": "production",
+		"BACKEND_URL": "https://api.norviq.org",
+		"PUBLIC_BASE_URL": "https://www.norviq.org",
+		"COOKIE_SECURE": "true",
+		"SENTRY_ENVIRONMENT": "production",
+		"POSTHOG_PROJECT_TOKEN": "phc_qHfAXXGQairNucPjrppE2i9i3bf2Hqvyi3UcG9z7jCNN",
+		"POSTHOG_HOST": "https://eu.i.posthog.com"
+	}
+	// Cutover (step 3 in docs/DEPLOY.md) adds:
+	// "routes": [
+	//   { "pattern": "www.norviq.org", "custom_domain": true },
+	//   { "pattern": "norviq.org", "custom_domain": true }
+	// ]
 }
