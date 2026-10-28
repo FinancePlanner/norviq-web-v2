@@ -3,6 +3,8 @@ import { LANG_COOKIE, resolveRequestLanguage, translator } from '#lib/i18n/index
 import { Session } from '#lib/server/session.js';
 import { config } from '#lib/server/env.js';
 import { apiJSON } from '#lib/server/api.js';
+import { resume, postAuthRedirect } from '#lib/server/onboarding.js';
+import { redirect } from '@sveltejs/kit';
 
 type AuthResponse = {
 	token: string;
@@ -48,6 +50,24 @@ export const handle: Handle = async ({ event, resolve }) => {
 		idleMinutes: cfg.sessionIdleMinutes
 	});
 	await refreshIfNeeded(event);
+
+	// Route-group guards, mirroring the chi groups in norviq-web server.go:
+	//   (guest)      RedirectIfAuthenticated
+	//   (onboarding) RequireAuth
+	//   (app)        RequireAuth + RequireOnboardingComplete
+	// Done here rather than in layout loads so form actions and +server
+	// endpoints inside a group are guarded too.
+	const group = event.route.id ?? '';
+	const authed = event.locals.session.isAuthenticated;
+	if (group.startsWith('/(app)') || group.startsWith('/(onboarding)')) {
+		if (!authed) redirect(303, '/login?next=' + encodeURIComponent(event.url.pathname + event.url.search));
+		if (group.startsWith('/(app)')) {
+			const path = await resume(event);
+			if (path) redirect(303, path);
+		}
+	} else if (group.startsWith('/(guest)') && authed && event.request.method === 'GET') {
+		redirect(303, await postAuthRedirect(event));
+	}
 
 	const response = await resolve(event, {
 		transformPageChunk: ({ html }) => html.replace('%lang%', locale)

@@ -1,0 +1,99 @@
+import type { Component } from 'svelte';
+import {
+	Activity,
+	BadgeDollarSign,
+	Bitcoin,
+	BookOpenText,
+	CalendarDays,
+	ChartCandlestick,
+	ChartColumn,
+	ChartNoAxesCombined,
+	ChartPie,
+	Circle,
+	CircleGauge,
+	Compass,
+	Folder,
+	Globe,
+	Grid2x2,
+	House,
+	LayoutDashboard,
+	LayoutGrid,
+	ListFilter,
+	MessageCircle,
+	MessagesSquare,
+	Newspaper,
+	Percent,
+	Plus,
+	Receipt,
+	ReceiptText,
+	Scale,
+	Search,
+	Sparkles,
+	Star,
+	Target,
+	TrendingUp,
+	Trophy,
+	UserPlus,
+	UserRound,
+	Users,
+	Wallet
+} from '@lucide/svelte';
+import type { Tab } from '#lib/nav.js';
+
+// shell.templ sidebarItemIcon / bottomTabIcon.
+
+const byPath: Record<string, Component> = {
+	'/dashboard': House,
+	'/dashboard/activity': Activity,
+	'/dashboard/insights': CircleGauge,
+	'/assistant': CircleGauge,
+	'/markets': Grid2x2,
+	'/boards': MessagesSquare,
+	'/articles': Newspaper,
+	'/portfolio': LayoutGrid,
+	'/scenarios': CircleGauge,
+	'/forecast': ChartNoAxesCombined,
+	'/portfolio/screens': ListFilter,
+	'/portfolio/rebalancing': Scale,
+	'/portfolio/allocation': ChartPie,
+	'/portfolio/sector-gains': TrendingUp,
+	'/portfolio/watchlist': Star,
+	'/portfolio/targets': Target,
+	'/portfolio/earnings': BadgeDollarSign,
+	'/portfolio/news': Newspaper,
+	'/crypto': Bitcoin,
+	'/research': BookOpenText,
+	'/expenses': ReceiptText,
+	'/expenses/year': CalendarDays,
+	'/reports': ChartColumn,
+	'/reports/portfolio': Folder,
+	'/reports/spending': Wallet,
+	'/reports/trends': TrendingUp,
+	'/reports/deep-dive': Search,
+	'/settings': UserRound,
+	'/friends': Users,
+	'/groups': MessageCircle,
+	'/groups/discover': Compass,
+	'/groups/new': Plus,
+	'/friends/leaderboard': Trophy,
+	'/xp': Sparkles,
+	'/friends/invite': UserPlus
+};
+
+export const sidebarIcon = (path: string): Component => byPath[path] ?? Circle;
+
+const byTab: Record<Tab, Component> = {
+	dashboard: LayoutDashboard,
+	portfolio: ChartCandlestick,
+	expenses: Receipt,
+	reports: TrendingUp,
+	markets: Grid2x2,
+	economy: Globe,
+	tax: Percent,
+	friends: Users,
+	groups: MessageCircle,
+	community: MessagesSquare,
+	settings: UserRound
+};
+
+export const tabIcon = (tab: Tab): Component => byTab[tab] ?? Circle;

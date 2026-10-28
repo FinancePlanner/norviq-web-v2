@@ -17,7 +17,11 @@ declare global {
 			t: T;
 		}
 
-		// interface Error {}
+		interface Error {
+			message: string;
+			/** Set by requireFeature: render the Pro gate for this feature name. */
+			proGate?: string;
+		}
 		// interface PageData {}
 		// interface PageState {}
 	}
