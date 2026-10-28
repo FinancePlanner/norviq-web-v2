@@ -1,0 +1,219 @@
+/* iOS-native primitives: Hero, InsetList/ListRow, PanelHeader.
+ *
+ * Templ: internal/components/vigil/{hero,list,panel}.templ. Reference: the
+ * iOS app's DashboardHeroCard, UnifiedActivityFeed and VigilPageHeader.
+ *
+ * Imported right after surface.css, before Tailwind. Every class here is
+ * new (nq-*), so the position is not cascade-sensitive; it only has to be
+ * unlayered like the rest of the hand-written CSS. Values come from the token
+ * plane in theme.css — never a raw colour or radius. */
+
+/* ---------- Card padding ----------
+ * Every Panel gets the iOS card inset. Declared here, early in the cascade,
+ * so a page's own later rule still wins; the p-* utilities in legacy markup
+ * do not (unlayered beats @layer utilities), which is intended. */
+
+.glass-card,
+.dash-panel {
+  padding: var(--card-pad);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --card-pad: 1.25rem;
+  }
+}
+
+/* ---------- Hero ---------- */
+
+.nq-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-2) 0 var(--space-4);
+}
+
+.nq-hero-label {
+  margin: 0;
+  font-size: var(--label-size);
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.nq-hero-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+/* 40px semibold tabular, the iOS displayNumber role. */
+.nq-hero-value {
+  margin: 0;
+  font-size: 2.5rem;
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+}
+
+.nq-hero-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: var(--label-size-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--muted-foreground) 12%, transparent);
+  color: var(--muted-foreground);
+}
+
+.nq-hero-delta.is-positive {
+  background: color-mix(in srgb, var(--color-success) 14%, transparent);
+  color: var(--color-success);
+}
+
+.nq-hero-delta.is-negative {
+  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
+  color: var(--color-danger);
+}
+
+/* ---------- Inset list ---------- */
+
+.nq-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.nq-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 3.75rem;
+  padding: var(--space-3) 0;
+}
+
+/* Divider: full width by default, inset past the icon column when the previous
+ * row has one — the iOS Divider().padding(.leading, 60). */
+.nq-row + .nq-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+.nq-row:has(> .nq-row-icon) + .nq-row::before {
+  left: 3.75rem;
+}
+
+.nq-row-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-tint) 14%, transparent);
+  color: var(--color-tint);
+}
+
+.nq-row-icon.is-positive {
+  background: color-mix(in srgb, var(--color-success) 16%, transparent);
+  color: var(--color-success);
+}
+
+.nq-row-icon.is-negative {
+  background: color-mix(in srgb, var(--color-danger) 16%, transparent);
+  color: var(--color-danger);
+}
+
+.nq-row-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.nq-row-title {
+  margin: 0;
+  font-size: var(--label-size);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+
+.nq-row-subtitle {
+  margin: 0.125rem 0 0;
+  font-size: var(--label-size-sm);
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+.nq-row-trailing {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.nq-row-value {
+  margin: 0;
+  font-size: var(--label-size);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+}
+
+.nq-row-value.is-positive {
+  color: var(--color-success);
+}
+
+.nq-row-value.is-negative {
+  color: var(--color-danger);
+}
+
+.nq-row-caption {
+  margin: 0.125rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* ---------- Panel header ---------- */
+
+.nq-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.nq-panel-title {
+  margin: 0;
+  font-size: var(--label-size-lg);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+
+.nq-panel-desc {
+  margin: 0.125rem 0 0;
+  font-size: var(--label-size-sm);
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.nq-panel-trailing {
+  flex-shrink: 0;
+  font-size: var(--label-size-sm);
+  font-weight: 600;
+  color: var(--color-tint);
+}

@@ -1,0 +1,240 @@
+/* Controls: buttons, fields and the legacy .form-* aliases.
+ * Extracted verbatim from styles.css in original order. */
+
+.btn-primary {
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition;
+  background: var(--color-tint);
+  /* Not text-white. --primary-foreground already inverts per scope because the
+   * dark tint (#00F2FF) is far too bright to carry white: that combination
+   * measures 1.39:1, below even the 3:1 large-text floor. */
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* The button half of the same bridge. Deliberately NOT folded into the
+   .btn-primary rule above, because that rule forces width:100% and the wrapper
+   must never inherit layout — components.ButtonProps has an explicit FullWidth
+   for that. Colour, radius, padding and weight only. */
+[data-nq-btn='primary'] {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition;
+  background: var(--color-tint);
+  /* Same reason as .btn-primary above: white on the dark-mode tint (#00F2FF) is
+   * 1.39:1. --primary-foreground already inverts per scope. */
+  color: var(--primary-foreground);
+}
+
+[data-nq-btn='primary']:hover {
+  filter: brightness(1.05);
+}
+
+[data-nq-btn='secondary'] {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition;
+  background: var(--color-card-bg);
+  border: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+  color: var(--foreground);
+}
+
+[data-nq-btn='secondary']:hover {
+  background: color-mix(in srgb, currentColor 6%, var(--color-card-bg));
+}
+
+[data-nq-btn]:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* .btn-primary/.btn-social force w-full and are emitted after Tailwind's
+   utilities, so a plain `w-auto` on the element loses the cascade. This
+   double-class rule restores the utility's intent. */
+.btn-primary.w-auto,
+.btn-social.w-auto {
+  width: auto;
+}
+
+@media (width >= 40rem) {
+  .btn-primary.sm\:w-auto,
+  .btn-social.sm\:w-auto {
+    width: auto;
+  }
+}
+
+.btn-social {
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.btn-social:hover {
+  filter: brightness(1.03);
+}
+
+.btn-social:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-social-apple {
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white transition;
+  background: #000000;
+  border: 1px solid color-mix(in srgb, white 8%, transparent);
+}
+
+.btn-social-google {
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition;
+  background: var(--color-card-bg);
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.btn-social-x {
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white transition;
+  background: #000000;
+  border: 1px solid color-mix(in srgb, white 14%, transparent);
+}
+
+.btn-social-x svg {
+  @apply h-5 w-5;
+  fill: #ffffff;
+}
+
+.btn-social-passkey {
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition;
+  background: color-mix(in srgb, var(--color-tint-soft) 70%, transparent);
+  color: var(--color-tint);
+  border: 1px solid color-mix(in srgb, var(--color-tint) 25%, transparent);
+}
+
+.btn-social-apple:hover,
+.btn-social-google:hover,
+.btn-social-x:hover,
+.btn-social-passkey:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.btn-social-apple:active,
+.btn-social-google:active,
+.btn-social-x:active,
+.btn-social-passkey:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+.btn-social-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, #ffffff 55%, transparent);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.btn-social-apple:disabled,
+.btn-social-google:disabled,
+.btn-social-x:disabled,
+.btn-social-passkey:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+/* [data-nq-*] is emitted by the wrappers in internal/pages/components. It is
+   listed alongside the hand-rolled class names throughout this block because
+   templUI emits neither .field-input nor .field-label, and its own defaults are
+   a different shape: rounded-md/h-9/px-3 on a transparent background, against
+   this file's rounded-lg/px-3.5/py-2.5 on --color-card-bg.
+
+   Without these, a converted control sits next to an unconverted one and
+   visibly does not match. surface.css already bridges the same hooks, but
+   only under html[data-brand='vigil'] — so Classic had no bridge at all and
+   every migrated control fell back to the bare templUI look.
+
+   This file is unlayered and imported after `@import 'tailwindcss'`, so these
+   rules win over templUI's utility classes. That is the same mechanism the
+   .btn-primary w-full override below relies on. */
+.field-label,
+[data-nq-label] {
+  @apply text-[13px] font-semibold;
+  color: var(--muted-foreground);
+}
+
+/* Matched on the three text-like control kinds by name rather than on
+   [data-nq-control] as a whole. A blanket rule also catches the checkbox, and
+   because these rules are unlayered they beat templUI's size-4, collapsing it
+   to a 2px sliver — the geometry has to not apply rather than be undone
+   afterwards. CheckboxField keeps templUI's own square treatment, which is
+   already correct in both brands. */
+.field-input,
+[data-nq-control='input'],
+[data-nq-control='select'],
+[data-nq-control='textarea'] {
+  @apply w-full rounded-md px-3.5 py-2.5 text-subhead outline-none transition;
+  /* iOS grouped field: a quiet fill on the card, no outline until focus. */
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  border: 1px solid transparent;
+  color: var(--foreground);
+  height: auto;
+  box-shadow: none;
+}
+
+html.dark .field-input,
+html.dark [data-nq-control='input'],
+html.dark [data-nq-control='select'],
+html.dark [data-nq-control='textarea'] {
+  background: var(--color-elevated-card);
+}
+
+.field-input:focus,
+.field-input:focus-visible,
+[data-nq-control='input']:focus,
+[data-nq-control='input']:focus-visible,
+[data-nq-control='select']:focus,
+[data-nq-control='select']:focus-visible,
+[data-nq-control='textarea']:focus,
+[data-nq-control='textarea']:focus-visible {
+  border-color: var(--color-tint);
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+/* Legacy form classes: alias the .field-input look so pages still using
+   .form-input/.form-select/.form-textarea (scenarios, rebalancing,
+   retirement, tax) get the themed treatment without markup changes.
+   background-color (not the shorthand) so @tailwindcss/forms keeps its
+   select chevron image. Prefer .field-input in new markup. */
+.form-input,
+.form-select,
+.form-textarea {
+  @apply w-full rounded-lg px-3.5 py-2.5 text-sm outline-none transition;
+  background-color: var(--color-card-bg);
+  border: 1px solid transparent;
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+html.dark .form-input,
+html.dark .form-select,
+html.dark .form-textarea {
+  background-color: var(--color-elevated-card);
+}
+
+.form-input:focus,
+.form-input:focus-visible,
+.form-select:focus,
+.form-select:focus-visible,
+.form-textarea:focus,
+.form-textarea:focus-visible {
+  border-color: var(--color-tint);
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+/* Radios/checkboxes on legacy pages pick up the brand tint. */
+input[type='radio'],
+input[type='checkbox'] {
+  accent-color: var(--color-tint);
+}

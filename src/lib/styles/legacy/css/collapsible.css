@@ -1,0 +1,55 @@
+/* Collapsible settings panels — see CollapsibleSection in
+ * internal/pages/components/kit.templ.
+ *
+ * Native <details> is deliberate: the settings pages are served through
+ * hx-boost, so a JS-driven disclosure would need re-initialising after every
+ * swap. The cost is that the fold is not animatable in browsers without
+ * ::details-content, which is why the transition sits behind @supports and the
+ * panel is perfectly usable without it.
+ *
+ * Unbranded on purpose: check-brand-scoped-layout.py rejects structural
+ * properties declared only under html[data-brand='vigil']. */
+
+.collapsible-section > summary {
+  list-style: none;
+}
+
+.collapsible-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.collapsible-section-chevron {
+  transition: rotate 180ms ease-out;
+}
+
+.collapsible-section[open] > summary .collapsible-section-chevron {
+  rotate: 180deg;
+}
+
+@supports (interpolate-size: allow-keywords) {
+  .collapsible-section {
+    interpolate-size: allow-keywords;
+  }
+
+  .collapsible-section::details-content {
+    overflow: hidden;
+    block-size: 0;
+    transition:
+      block-size 200ms ease-out,
+      content-visibility 200ms allow-discrete;
+  }
+
+  .collapsible-section[open]::details-content {
+    block-size: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapsible-section-chevron {
+    transition: none;
+  }
+
+  .collapsible-section::details-content {
+    transition: none;
+  }
+}

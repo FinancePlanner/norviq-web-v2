@@ -1,0 +1,116 @@
+/* Norviq motion overrides for vendored templUI components.
+ *
+ * WHY THIS FILE EXISTS
+ * dialog, popover, tabs and toast used to be hand-patched in
+ * internal/components/. Every one of those patches was a transition tweak
+ * expressed as a Tailwind class, which meant four vendored files drifted from
+ * the version go.mod pins and scripts/gen-templui.sh skipped diffing them —
+ * so the v1.12.0 -> v1.12.1 delta went unreviewed and CI could not see it.
+ * The components are pristine again; the motion lives here instead.
+ *
+ * WHY IT IS IMPORTED LAST, unlike the base layer in surface.css
+ * The specificity ties decide this. Pristine tabs carries
+ * `.transition-[color,box-shadow]` (0,1,0) and our `[data-tui-tabs-trigger]`
+ * is also (0,1,0); pristine popover carries `.transition-opacity`,
+ * `.duration-150` and `.ease-out`, all (0,1,0), against
+ * `[data-tui-popover-content]` (0,1,0). A tie is broken by source order, so
+ * these rules have to come AFTER Tailwind's utilities. surface.css is
+ * imported before Tailwind on purpose (it is a base layer that utilities must
+ * be able to override) and would therefore lose.
+ *
+ *   surface.css        -> pre-Tailwind  -> base, utilities win
+ *   css/templui-motion.css   -> post-Tailwind -> override, this wins
+ *
+ * Every selector below keys off a data attribute templUI already emits, so
+ * none of this depends on a local edit to a vendored file.
+ */
+
+/* dialog — animate opacity and transform only. Pristine uses transition-all,
+ * which also animated borders and layout and made the panel jitter (July 2026
+ * motion audit). The backdrop animates its colour only. */
+dialog[data-tui-dialog-content] {
+  transition-property: opacity, transform;
+  transition-timing-function: var(--ease-standard, ease-out);
+}
+
+dialog[data-tui-dialog-content]::backdrop {
+  transition-property: background-color;
+  transition-duration: 200ms;
+}
+
+/* popover — scale from the trigger rather than from the content's own centre.
+ * This replaces a local originFor() helper that had been added to the vendored
+ * popover.templ; it is unnecessary because the component already emits
+ * data-tui-popover-placement on the same element. */
+[data-tui-popover-content] {
+  transition-property: opacity, transform;
+  transition-duration: 150ms;
+  transition-timing-function: var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+}
+
+[data-tui-popover-content][data-tui-popover-open='false'] {
+  transform: scale(0.97);
+}
+
+[data-tui-popover-content][data-tui-popover-placement^='top'] {
+  transform-origin: bottom;
+}
+
+[data-tui-popover-content][data-tui-popover-placement^='bottom'] {
+  transform-origin: top;
+}
+
+[data-tui-popover-content][data-tui-popover-placement^='left'] {
+  transform-origin: right;
+}
+
+[data-tui-popover-content][data-tui-popover-placement^='right'] {
+  transform-origin: left;
+}
+
+/* Was motion-reduce:data-[tui-popover-open=false]:scale-100 on the patched
+ * component. */
+@media (prefers-reduced-motion: reduce) {
+  [data-tui-popover-content][data-tui-popover-open='false'] {
+    transform: none;
+  }
+}
+
+/* tabs — Norviq motion tokens instead of Tailwind's defaults, and
+ * background-color included so the trigger's fill animates with its text. */
+[data-tui-tabs-trigger] {
+  transition-property: color, box-shadow, background-color;
+  transition-duration: 150ms;
+  transition-timing-function: var(--ease-standard, ease-out);
+}
+
+/* toast — transition + @starting-style rather than a keyframe, so rapid-fire
+ * toasts retarget smoothly instead of restarting from zero.
+ *
+ * NOT OPTIONAL. Pristine templUI enters with `animate-in fade-in
+ * slide-in-from-bottom-4`, and neither tailwindcss-animate nor tw-animate-css
+ * is loaded (styles.css @plugin lists only forms and typography), so those
+ * classes emit nothing at all. Without the rules below, reverting the toast
+ * patch leaves toasts with no enter animation.
+ *
+ * Centring uses the CSS `translate` property (Tailwind v4), which leaves
+ * `transform` free for motion. Exit is handled in toast.js — faster, same path
+ * out. */
+[data-tui-toast] {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--motion-med) var(--ease-decelerate),
+    transform var(--motion-med) var(--ease-decelerate);
+}
+
+@starting-style {
+  [data-tui-toast] {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  [data-tui-toast][data-position*='top'] {
+    transform: translateY(-1rem);
+  }
+}

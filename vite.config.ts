@@ -1,5 +1,4 @@
 /// <reference types="vitest/config" />
-import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { mdsvex } from 'mdsvex';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import tailwindcss from '@tailwindcss/vite';
@@ -10,7 +9,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+const dirname = import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -33,10 +32,6 @@ export default defineConfig({
       remoteFunctions: true,
       forkPreloads: true
     }
-  }), paraglideVitePlugin({
-    project: './project.inlang',
-    outdir: './src/lib/paraglide',
-    emitTsDeclarations: true
   })],
   test: {
     expect: {

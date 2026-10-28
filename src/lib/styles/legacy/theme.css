@@ -1,0 +1,217 @@
+/*
+ * Norviq theme — The Vigil (Command Center): neon cyan + emerald on near-black.
+ * Canonical spec: docs/vigil-identity.md (StockProject root)
+ *
+ * ONE BRAND, TWO SCOPES. This file used to carry four: :root / html.dark for
+ * Classic, then html[data-brand='vigil'] / html.dark[data-brand='vigil'] layered
+ * over them. Classic was retired (2026-08-26), so the two Vigil scopes were
+ * folded down into :root and html.dark. The resolved value of every token is
+ * unchanged — the merge was computed from the old cascade and checked token by
+ * token, not re-authored.
+ *
+ * html[data-brand='vigil'] is still set pre-paint and is still used as a hook by
+ * surface.css. It always matches; it is no longer a switch.
+ *
+ * COLOR MODEL — OKLCH on a fixed hue axis.
+ * Every neutral sits on ONE hue (220, cyan-biased), so lightness steps stay
+ * perceptually even and surfaces never drift in temperature. Accents keep their
+ * own hues: cyan 222 light / 202 dark.
+ *
+ * The previous palette was hex and hue-inconsistent — light neutrals landed on
+ * 257-271 (slate) while dark neutrals sat on 286 (zinc), so switching appearance
+ * shifted the whole UI's temperature. That is the drift this model removes.
+ *
+ * DARK BORDERS ARE ALPHA, NOT SOLID. `oklch(1 0.01 250 / 10%)` composites over
+ * whatever sits behind it, so a hairline reads correctly on the page background,
+ * on a card, and on the sidebar without three separate tokens.
+ *
+ * SIDEBAR IS LIGHTER THAN THE PAGE IN DARK MODE (0.17 vs 0.145). That background-
+ * layer split is doing a lot of the work visually; do not "fix" it to match.
+ *
+ * :root IS THE FULL LIGHT PALETTE; html.dark carries only what differs. That is
+ * why html.dark is the shorter block — a token absent from it is inherited, not
+ * missing. The equal-specificity tie-break that made the old four-scope order
+ * load-bearing no longer applies, since there is nothing left to tie with.
+ *
+ * CHART SURFACES: the 9-slot categorical palette in internal/charts/charts.go is
+ * validated against the card background of each scope. If you change
+ * --color-card-bg, re-check contrast (>=3:1 per slot) before committing. The
+ * light card is deliberately 0.995 and not lower — at 0.99 the olive slot #65A30D
+ * falls to 2.998 and fails.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Labels are sentence case at iOS footnote/subheadline/headline sizes. */
+  --label-size-sm: 0.8125rem;
+  --label-size: 0.9375rem;
+  --label-size-lg: 1.0625rem;
+  --label-weight: 600;
+  --page-max: 72rem;
+  --page-pad: 1rem;
+  --rail: 20rem;
+  --gap: 1rem;
+  --metric-col: 7.5rem;
+  /* iOS spacing scale (AppTheme.Spacing) and card geometry. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --card-pad: 1rem;
+  --stack-gap: 1.25rem;
+  --color-tint: oklch(0.609 0.111 222);
+  --color-tint-soft: oklch(0.960 0.025 210);
+  --color-secondary-tint: oklch(0.600 0.130 162);
+  --color-ember: oklch(0.700 0.130 205);
+  --color-bronze: oklch(0.520 0.090 220);
+  --color-page-bg: oklch(0.975 0.006 220); /* chrome-hex: vigil-light #f3f8fa */
+  /* Must stay >= 0.995: at 0.99 the olive chart slot fails its 3:1 floor.
+     (This was declared twice until 2026-09-02; the second line always won.) */
+  --color-card-bg: oklch(1 0.002 250);
+  --color-elevated-card: oklch(0.945 0.010 220);
+  --color-surface: oklch(0.945 0.010 220);
+  --color-top-bar: oklch(0.985 0.005 220);
+  --color-danger: oklch(0.560 0.200 15);
+  --color-success: oklch(0.600 0.130 162);
+  --color-signal: oklch(0.640 0.150 158);
+  --color-warning: oklch(0.640 0.150 62);
+  --color-amber: oklch(0.830 0.160 82);
+  --color-disabled: oklch(0.700 0.030 220);
+  --color-scrim: oklch(0.180 0.030 220 / 45%);
+  --color-splash-ring: oklch(0.609 0.111 222 / 22%);
+  --color-splash-core: oklch(0.680 0.130 200 / 75%);
+  --color-category-variable: oklch(0.550 0.130 62);
+  --color-category-leisure: oklch(0.520 0.220 295);
+
+  /* Budget pillars. Mirrors iOS BudgetPlannerModels.swift so the two clients
+   * agree on which colour means which pillar: fundamentals borrows the primary
+   * tint, fun the secondary tint, and Future You gets its own indigo. Custom
+   * pillars hash into the numbered slots below. */
+  --color-pillar-fundamentals: var(--color-tint);
+  --color-pillar-future-you: oklch(0.520 0.170 285);
+  --color-pillar-fun: var(--color-secondary-tint);
+  --color-pillar-custom-1: oklch(0.580 0.110 180);
+  --color-pillar-custom-2: oklch(0.620 0.120 220);
+  --color-pillar-custom-3: oklch(0.640 0.120 160);
+  --color-pillar-custom-4: oklch(0.640 0.150 62);
+  --color-pillar-custom-5: oklch(0.620 0.180 350);
+  --color-pillar-custom-6: oklch(0.520 0.090 60);
+  --color-pillar-custom-7: oklch(0.540 0.150 265);
+  --hairline: oklch(0.300 0.030 220 / 10%);
+  --app-tabbar-height: 3.0625rem; /* iOS tab bar: 49pt */
+  /* iOS AppTheme.Radius: control 12, card 16, hero 20. --radius is the card. */
+  --radius: 1rem;
+  --radius-control: 0.75rem;
+  --radius-hero: 1.25rem;
+  --background: var(--color-page-bg);
+  --foreground: oklch(0.200 0.020 220);
+  --card: var(--color-card-bg);
+  --card-foreground: oklch(0.200 0.020 220);
+  --popover: var(--color-card-bg);
+  --popover-foreground: oklch(0.200 0.020 220);
+  --primary: var(--color-tint);
+  --primary-foreground: oklch(0.995 0.003 220);
+  --secondary: var(--color-elevated-card);
+  --secondary-foreground: oklch(0.200 0.020 220);
+  --muted: var(--color-elevated-card);
+  --muted-foreground: oklch(0.520 0.030 220);
+  --accent: var(--color-tint-soft);
+  --accent-foreground: var(--color-tint);
+  --destructive: var(--color-danger);
+  --border: oklch(0.890 0.015 220);
+  --input: oklch(0.860 0.020 220);
+  --ring: var(--color-tint);
+  --sidebar: oklch(0.965 0.008 220);
+  --sidebar-foreground: oklch(0.200 0.020 220);
+  --sidebar-primary: var(--color-tint);
+  --sidebar-primary-foreground: oklch(0.995 0.003 220);
+  --sidebar-accent: oklch(0.945 0.010 220);
+  --sidebar-accent-foreground: oklch(0.200 0.020 220);
+  --sidebar-border: oklch(0.890 0.015 220);
+  --sidebar-ring: var(--color-tint);
+  --chart-axis: oklch(0.520 0.030 220);
+  --chart-grid: oklch(0.890 0.015 220);
+  --chart-line: var(--color-tint);
+  --chart-line-alt: var(--color-secondary-tint);
+  --chart-down: var(--color-danger);
+  --chart-tooltip-bg: var(--color-card-bg);
+  --chart-tooltip-border: var(--border);
+  --chart-tooltip-text: var(--foreground);
+  --chart-area-opacity: 0.16;
+  --chart-pointer: oklch(0.600 0.030 220);
+  --chart-emphasis-border: var(--color-card-bg);
+  --motion-fast: 140ms;
+  --motion-med: 240ms;
+  --motion-slow: 420ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1.1);
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* iOS GlassCard fallback material: soft, low, no rim light. */
+  --panel-shadow: 0 6px 12px oklch(0 0 0 / 5%);
+  --panel-shadow-md: 0 8px 20px oklch(0 0 0 / 7%);
+  --panel-shadow-lg: 0 16px 40px oklch(0 0 0 / 10%);
+}
+
+html.dark {
+  color-scheme: dark;
+
+  --color-tint: oklch(0.875 0.149 202);
+  --color-tint-soft: oklch(0.875 0.149 202 / 10%);
+  --color-secondary-tint: oklch(0.878 0.218 155);
+  --color-ember: oklch(0.900 0.100 200);
+  --color-bronze: oklch(0.760 0.120 205);
+  --color-page-bg: oklch(0.130 0.008 220); /* chrome-hex: vigil-dark #050809 */
+  --color-card-bg: oklch(0.190 0.008 250);
+  --color-elevated-card: oklch(0.215 0.016 220);
+  --color-surface: oklch(0.215 0.016 220);
+  --color-top-bar: oklch(0.155 0.010 220);
+  --color-danger: oklch(0.680 0.200 15);
+  --color-success: oklch(0.878 0.218 155);
+  --color-signal: oklch(0.878 0.218 155);
+  --color-warning: oklch(0.830 0.160 82);
+  --color-amber: oklch(0.770 0.160 70);
+  --color-disabled: oklch(0.580 0.025 220);
+  --color-scrim: oklch(0 0 0 / 72%);
+  --color-splash-ring: oklch(0.875 0.149 202 / 32%);
+  --color-splash-core: oklch(0.878 0.218 155 / 72%);
+  --color-category-variable: oklch(0.770 0.160 70);
+  --color-category-leisure: oklch(0.720 0.160 295);
+
+  /* Only the pillar tokens that do not already follow a tint need a dark value. */
+  --color-pillar-future-you: oklch(0.720 0.150 285);
+  --color-pillar-custom-1: oklch(0.800 0.120 180);
+  --color-pillar-custom-2: oklch(0.840 0.140 220);
+  --color-pillar-custom-3: oklch(0.840 0.150 160);
+  --color-pillar-custom-4: oklch(0.830 0.160 82);
+  --color-pillar-custom-5: oklch(0.780 0.160 350);
+  --color-pillar-custom-6: oklch(0.740 0.090 60);
+  --color-pillar-custom-7: oklch(0.740 0.150 265);
+  --hairline: oklch(1 0.020 210 / 9%);
+  --foreground: oklch(0.950 0.020 200);
+  --card-foreground: oklch(0.950 0.020 200);
+  --popover-foreground: oklch(0.950 0.020 200);
+  --primary-foreground: oklch(0.150 0.030 220);
+  --secondary-foreground: oklch(0.950 0.020 200);
+  --muted-foreground: oklch(0.680 0.030 210);
+  --accent: var(--color-elevated-card);
+  --border: oklch(1 0.020 210 / 12%);
+  --input: oklch(1 0.020 210 / 16%);
+  --sidebar: oklch(0.155 0.010 220);
+  --sidebar-foreground: oklch(0.950 0.020 200);
+  --sidebar-primary-foreground: oklch(0.150 0.030 220);
+  --sidebar-accent: oklch(0.215 0.016 220);
+  --sidebar-accent-foreground: oklch(0.950 0.020 200);
+  --sidebar-border: oklch(1 0.020 210 / 12%);
+  --chart-axis: oklch(0.680 0.030 210);
+  --chart-grid: oklch(0.260 0.018 220);
+  --chart-tooltip-border: oklch(0.260 0.018 220);
+  --chart-area-opacity: 0.28;
+  --chart-pointer: oklch(0.680 0.030 210);
+  --panel-shadow: 0 10px 16px oklch(0 0 0 / 18%);
+  --panel-shadow-md: 0 12px 24px oklch(0 0 0 / 24%);
+  --panel-shadow-lg: 0 20px 48px oklch(0 0 0 / 32%);
+}

@@ -1,0 +1,187 @@
+/* App shell: frame, sidebar, main column, bottom tabs and section sub-nav.
+ * Extracted verbatim from styles.css in original order.
+ *
+ * NOTE: .app-topbar itself is NOT here. Its rules sit ~600 lines earlier in
+ * styles.css, and pulling them forward would move them relative to the rules
+ * in between. Phase 1.1 reworks the shell and can consolidate then.
+ */
+
+/* App shell */
+.app-frame {
+  @apply flex min-h-dvh min-w-0 flex-col;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.app-body {
+  @apply flex min-h-0 min-w-0 flex-1;
+  overflow: hidden;
+}
+
+/* The desktop sidebar is styled entirely in Tailwind utilities against the
+ * sidebar token plane (--sidebar, --sidebar-accent, --sidebar-border); see
+ * SidebarNav in internal/pages/components/shell.templ. The 264 lines of
+ * .app-sidebar-* rules that used to sit here were retired with that rebuild.
+ * The class names survive in the markup as semantic hooks for tests and QA
+ * tooling, but they carry no styling — do not add rules for them here.
+ *
+ * The one exception is the block below. Group collapse is a mechanism, not a
+ * skin: it needs a relationship between <html> and a descendant that utilities
+ * cannot express, and it must stay unbranded so check-brand-scoped-layout.py
+ * does not flag `display` / `grid-template-rows` as Vigil-only structure. */
+
+/* Sidebar group collapse. --nav-rows / --nav-turn are re-exported per group by
+ * sidebarGroupVars in pages/components/shell.templ, which resolves them from
+ * --nav-<key>-* on <html> (set pre-paint by ThemeInitScript, updated by
+ * initSidebarGroups). See the comment on sidebarGroupVars for why the state
+ * lives on <html> and not on the group itself. */
+.app-sidebar-group-panel {
+  display: grid;
+  grid-template-rows: var(--nav-rows, 0fr);
+  transition: grid-template-rows 200ms ease-out;
+}
+
+.app-sidebar-group-panel > * {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.app-sidebar-group-chevron {
+  rotate: var(--nav-turn, 0turn);
+  transition: rotate 200ms ease-out;
+}
+
+/* The 3rem rail flattens to icons, so every group must be open there regardless
+ * of its expanded-mode state — a collapsed group would hide its icons outright. */
+html[data-sidebar='collapsed'] .app-sidebar-group-panel {
+  grid-template-rows: 1fr;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-sidebar-group-panel,
+  .app-sidebar-group-chevron {
+    transition: none;
+  }
+}
+
+.app-main {
+  @apply min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-5;
+  padding-bottom: calc(var(--app-tabbar-height) + 1rem + env(safe-area-inset-bottom, 0px));
+  scroll-padding-bottom: calc(var(--app-tabbar-height) + 1rem + env(safe-area-inset-bottom, 0px));
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 1024px) {
+  .app-main {
+    padding-bottom: 1.5rem;
+    scroll-padding-bottom: 1.5rem;
+  }
+}
+
+.mobile-section-subnav {
+  @apply -mx-1 mb-4;
+}
+
+.app-bottom-tabs {
+  @apply relative z-40 grid shrink-0 grid-cols-5 border-t lg:hidden;
+  min-height: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  background: var(--color-top-bar);
+  border-color: var(--border);
+}
+
+/* Critical CSS sets display:grid; keep desktop chrome hard-hidden when sidebar shows. */
+@media (min-width: 1024px) {
+  .app-topbar {
+    display: none !important;
+  }
+
+  .app-bottom-tabs {
+    display: none !important;
+  }
+}
+
+.app-bottom-tabs-more {
+  @apply absolute bottom-full right-3 z-50 mb-2 flex min-w-44 flex-col gap-1 rounded-2xl border p-2 shadow-lg;
+  background: var(--color-card-bg);
+  border-color: var(--border);
+}
+
+.app-bottom-more-link {
+  @apply flex items-center gap-3 rounded-md px-3 py-2.5 text-subhead font-semibold;
+  color: var(--muted-foreground);
+}
+
+.app-bottom-more-link-active {
+  color: var(--color-tint);
+  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+}
+
+.app-bottom-tab {
+  @apply flex min-h-0 flex-col items-center justify-center gap-0.5 py-1.5 text-[10px] font-semibold leading-none;
+  color: var(--muted-foreground);
+}
+
+.app-bottom-tab-active {
+  color: var(--color-tint);
+}
+
+.app-bottom-tab-icon {
+  @apply inline-flex h-6 w-6 items-center justify-center leading-none;
+}
+
+.app-bottom-tab-active .app-bottom-tab-icon {
+  color: var(--color-tint);
+}
+
+.app-icon-btn {
+  @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded border opacity-80 hover:opacity-100;
+  border-color: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.app-icon-btn-active {
+  @apply opacity-100;
+  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+  color: var(--color-tint);
+  border-color: color-mix(in srgb, var(--color-tint) 25%, transparent);
+}
+
+.app-topbar .norviq-logo {
+  @apply h-10 w-10;
+}
+
+.app-page-content {
+  @apply mx-auto min-w-0 max-w-5xl;
+}
+
+.section-subnav {
+  @apply mt-4 flex gap-2 overflow-x-auto pb-1 pr-4;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-inline-end: 1rem;
+  scrollbar-width: none;
+}
+
+.section-subnav::-webkit-scrollbar {
+  display: none;
+}
+
+.section-subnav-link {
+  @apply inline-flex shrink-0 items-center gap-1.5 rounded-md border px-3 py-1.5 text-footnote font-semibold transition;
+  border-color: var(--border);
+  color: var(--muted-foreground);
+}
+
+.section-subnav-link:hover {
+  color: var(--foreground);
+}
+
+.section-subnav-link-active {
+  color: var(--color-tint);
+  background: var(--color-tint-soft);
+  border-color: var(--border);
+  position: relative;
+}
+

@@ -1,0 +1,127 @@
+/* Loading states: the htmx form spinner, skeleton indicators, the boosted-nav
+ * progress bar and the View Transitions fade. See docs/ui-conventions.md.
+ * Extracted verbatim from styles.css in original order.
+ */
+
+/* --- Loading-state foundation (see docs/ui-conventions.md) ---------------- */
+
+/* Any HTMX form submit: the primary button gets a spinner + goes inert.
+   Zero markup needed — applies wherever hx-post/hx-get lives on the form. */
+@keyframes nq-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* [data-nq-submit] is emitted by components.SubmitButton. It is listed here
+   alongside .btn-primary because this rule is the ONLY form-spinner mechanism
+   in the app: a submit button that matches neither selector silently loses its
+   loading state, with nothing failing loudly. Any new button wrapper must set
+   one of the two. */
+form.htmx-request .btn-primary[type='submit'],
+form.htmx-request [data-nq-submit],
+.btn-primary.htmx-request,
+[data-nq-submit].htmx-request {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+form.htmx-request .btn-primary[type='submit']::after,
+form.htmx-request [data-nq-submit]::after,
+.btn-primary.htmx-request::after,
+[data-nq-submit].htmx-request::after {
+  content: '';
+  width: 0.9rem;
+  height: 0.9rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: nq-spin 600ms linear infinite;
+}
+
+/* Global fallback: any button/link that fired an HTMX request goes inert
+   and shows a progress cursor until the swap lands. Forms get the richer
+   spinner treatment above; this catches every hx-get/hx-post trigger that
+   isn't a form. */
+button.htmx-request,
+a.htmx-request,
+label.htmx-request {
+  pointer-events: none;
+  opacity: 0.65;
+  cursor: progress;
+}
+
+/* Skeleton indicator: hidden until its container is mid-request. Point
+   hx-indicator at an element carrying .skeleton-indicator that wraps
+   SkeletonBlock/ListSkeleton, and it shows while content loads. */
+.skeleton-indicator {
+  display: none;
+}
+
+.htmx-request .skeleton-indicator,
+.skeleton-indicator.htmx-request {
+  display: block;
+}
+
+/* Top progress bar for boosted (SPA-style) navigations. */
+.nq-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  height: 2px;
+  width: 0;
+  opacity: 0;
+  background: var(--color-tint);
+  transition:
+    width 400ms var(--ease-decelerate),
+    opacity 200ms var(--ease-standard);
+}
+
+html.nq-navigating .nq-progress {
+  opacity: 1;
+  width: 70%;
+}
+
+html.nq-nav-done .nq-progress {
+  opacity: 0;
+  width: 100%;
+}
+
+/* Cross-page fade for boosted navigations via the View Transitions API. */
+::view-transition-old(root) {
+  animation: nq-vt-out var(--motion-fast, 160ms) var(--ease-standard) both;
+}
+
+::view-transition-new(root) {
+  animation: nq-vt-in var(--motion-med, 240ms) var(--ease-decelerate) both;
+}
+
+@keyframes nq-vt-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes nq-vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  form.htmx-request .btn-primary[type='submit']::after,
+  form.htmx-request [data-nq-submit]::after,
+  .btn-primary.htmx-request::after,
+  [data-nq-submit].htmx-request::after {
+    animation-duration: 1.4s;
+  }
+}
+
