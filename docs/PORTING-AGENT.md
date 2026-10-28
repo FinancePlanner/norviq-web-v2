@@ -44,3 +44,5 @@ REPORT (final message, at most 350 words): the routes done, partial and not done
 - Formatting: `#lib/format.js` (Go names: formatCurrency, formatSignedPercent, …). Never hand-roll number/date formatting.
 - PostHog capture-once: `setPostHogCaptureOnce(locals, event, props)` from `#lib/analytics/runtime.server.js` wherever Go calls `session.SetPostHogCaptureOnce`.
 - Dialogs: native `<dialog>` via `tui/dialog`, `openDialog(id)` replaces `window.tui.dialog`.
+- RevenueCat (Go `billing.js`): `billingPage()` attachment from `#lib/billing-client.js`. Same DOM contract as Go (`#subscription-root` data attributes, `[data-action="purchase"]`, `[data-rc-price]`, `#billing-error`). After a purchase it calls `invalidateAll()` instead of the htmx `#billing-status` swap. `POST /billing/restore` (+server.ts) is owned by settings-admin.
+- Badges: `NavBadge` fetches its URL and expects JSON `{count}` (e.g. `/groups/unread-badge`), not the Go HTML fragment.
