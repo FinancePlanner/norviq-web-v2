@@ -39,8 +39,26 @@ async function refreshIfNeeded(event: Parameters<Handle>[0]['event']) {
 	}
 }
 
+// Staging preview wall: the preview Worker is on a public workers.dev URL, so
+// PREVIEW_BASIC_AUTH ("user:pass") keeps strangers out. Unset in production.
+function previewAuthorized(header: string | null, expected: string): boolean {
+	if (!expected) return true;
+	if (!header?.startsWith('Basic ')) return false;
+	try {
+		return atob(header.slice(6)) === expected;
+	} catch {
+		return false;
+	}
+}
+
 export const handle: Handle = async ({ event, resolve }) => {
 	const cfg = config();
+	if (!previewAuthorized(event.request.headers.get('authorization'), cfg.previewBasicAuth)) {
+		return new Response('Authentication required', {
+			status: 401,
+			headers: { 'WWW-Authenticate': 'Basic realm="Norviq staging", charset="UTF-8"' }
+		});
+	}
 	const locale = resolveRequestLanguage(event.cookies.get(LANG_COOKIE), event.request.headers.get('accept-language'));
 	event.locals.locale = locale;
 	event.locals.t = translator(locale);

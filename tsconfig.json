@@ -6,11 +6,19 @@
 			"$app/types",
 			"node",
 			"./worker-configuration.d.ts"
-		]
+		],
+		"checkJs": false
 	},
 	"include": [
 		"src",
 		"vite.config.ts",
 		"playwright.config.ts"
+	],
+	"exclude": [
+		"node_modules",
+		".svelte-kit/output",
+		".svelte-kit/cloudflare",
+		".svelte-kit/cloudflare-tmp",
+		"src/service-worker"
 	]
 }

@@ -26,6 +26,8 @@ export const variables = defineEnvVars({
 	POSTHOG_HOST: { schema: optional },
 	PUBLIC_API_TOKEN: { schema: optional },
 	EDGE_CLIENT_IP_KEY: { schema: optional },
+	// Staging preview only: "user:pass" puts the whole site behind HTTP basic auth.
+	PREVIEW_BASIC_AUTH: { schema: optional },
 	// Dev only: /__dev/login signs in as these staging test accounts.
 	DEV_LOGIN_EMAIL: { schema: optional },
 	DEV_LOGIN_EMAIL_ONBOARDING: { schema: optional },

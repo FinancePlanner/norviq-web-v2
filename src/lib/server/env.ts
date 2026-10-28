@@ -51,6 +51,7 @@ export function config() {
 		// Shared with norviq-backend-v2 (EDGE_CLIENT_IP_KEY). The backend trusts
 		// X-Norviq-Client-IP only when this key matches; see api.ts.
 		edgeClientIPKey: str('EDGE_CLIENT_IP_KEY'),
+		previewBasicAuth: str('PREVIEW_BASIC_AUTH'),
 
 	};
 }

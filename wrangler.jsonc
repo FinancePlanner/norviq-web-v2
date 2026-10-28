@@ -25,6 +25,27 @@
 		"SENTRY_ENVIRONMENT": "production",
 		"POSTHOG_PROJECT_TOKEN": "phc_qHfAXXGQairNucPjrppE2i9i3bf2Hqvyi3UcG9z7jCNN",
 		"POSTHOG_HOST": "https://eu.i.posthog.com"
+	},
+	"env": {
+		// Hosted staging preview: `wrangler deploy --env staging` →
+		// norviq-web-staging.<account>.workers.dev. Calls the staging API at
+		// api-staging.norviq.org, which only admits requests carrying the
+		// edge key (infra apps/norviq/preview-gate). Secrets for this env:
+		//   SESSION_SECRET, EDGE_CLIENT_IP_KEY (= norviq-staging edge-client-ip-key),
+		//   PUBLIC_API_TOKEN (= staging web-env), PREVIEW_BASIC_AUTH ("user:pass").
+		"staging": {
+			"name": "norviq-web-staging",
+			"workers_dev": true,
+			"vars": {
+				"GO_ENV": "staging",
+				"BACKEND_URL": "https://api-staging.norviq.org",
+				"PUBLIC_BASE_URL": "https://norviq-web-staging.workers.dev",
+				"COOKIE_SECURE": "true",
+				"SENTRY_ENVIRONMENT": "staging",
+				"POSTHOG_PROJECT_TOKEN": "",
+				"POSTHOG_HOST": ""
+			}
+		}
 	}
 	// Cutover (step 3 in docs/DEPLOY.md) adds:
 	// "routes": [
