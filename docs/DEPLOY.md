@@ -142,6 +142,12 @@ Cutover:
    `wrangler deploy --secrets-file` with a JSON file kept outside the repo.
 2. `bun run build && bunx wrangler deploy`. It's reachable only on its
    workers.dev URL for now; smoke it there with an internal account.
+   Done 2026-10-29: `https://norviq-web.fernandocorreia316.workers.dev`
+   (version 953a13aa) behind `PREVIEW_BASIC_AUTH` (same value as staging),
+   new `SESSION_SECRET`, prod `PUBLIC_API_TOKEN` + `REVENUECAT_WEB_API_KEY`.
+   No `EDGE_CLIENT_IP_KEY` yet (not sealed in `norviq`). Public pages 200,
+   app pages redirect to login. At cutover: `wrangler secret delete
+   PREVIEW_BASIC_AUTH` and `wrangler secret put EDGE_CLIENT_IP_KEY`.
 3. Uncomment the custom-domain `routes` in `wrangler.jsonc` and deploy. That
    replaces the `norviq.org`/`www` A records with the Worker. Everyone is
    signed out once, because sessions aren't shared with the Go web.
