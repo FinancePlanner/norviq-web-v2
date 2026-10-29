@@ -11,6 +11,7 @@
 	import MCPStatusWidget from '#lib/features/dashboard/panels/MCPStatusWidget.svelte';
 	import TerminalSummaryCard from '#lib/features/dashboard/panels/TerminalSummaryCard.svelte';
 	import TaxPanel from '#lib/features/dashboard/panels/TaxPanel.svelte';
+	import GuidedStartCard from '#lib/features/auth-onboarding/guided-start/GuidedStartCard.svelte';
 	import { commandGreeting } from '#lib/features/dashboard/command-center/overview.js';
 
 	let { data } = $props();
@@ -34,8 +35,7 @@
 		</div>
 	</header>
 	<MarketBriefShell src="/dashboard/market-brief" />
-	<!-- guidedstart.Card belongs to the /guided-start domain; until it lands
-	     the card is treated as not visible (see docs/parity/dashboard.md). -->
+	<GuidedStartCard vm={data.guidedStart} />
 	<OverviewAttentionPanel vm={vm.overview} />
 	<InvestableCapacityHero vm={vm.overview} />
 	<section class="cc-rail cc-rail-now cc-modules" aria-label="Needs you now">
