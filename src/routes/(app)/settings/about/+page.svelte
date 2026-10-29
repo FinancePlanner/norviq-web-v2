@@ -3,6 +3,8 @@
 	import { BrandLogo } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
+	import { capture } from '#lib/analytics/index.js';
+	import { DiscordURL } from '#lib/discord.js';
 
 	const version = '1.0';
 </script>
@@ -34,7 +36,13 @@
 			<a href="https://www.norviq.org/security" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Security</a>
 			<a href="https://instagram.com/norviqplan" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Follow on Instagram</a>
 			<a href="https://x.com/NorviqPlanner" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Follow on X</a>
-			<a href="https://discord.gg/3QVkas3rH" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Join Discord</a>
+			<a
+				href={DiscordURL}
+				class="settings-about-link glass-card block px-5 py-4"
+				target="_blank"
+				rel="noopener noreferrer"
+				onclick={() => capture('discord_link_clicked', { surface: 'settings' })}>{t('Join us on Discord')}</a
+			>
 		</nav>
 		<p class="mt-8 text-center text-xs opacity-40">Version {version} · Web PWA</p>
 	</vigil.SettingsShell>
