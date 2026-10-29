@@ -6,96 +6,101 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 
 ### /sw.js (1)
 
-- [ ] `GET /sw.js` → serviceWorkerHandler(staticContent)
+- [x] `GET /sw.js` → serviceWorkerHandler(staticContent) → v2: static/sw.js (existing mapping)
 
 ### /install.sh (1)
 
-- [ ] `GET /install.sh` → installScriptHandler(staticContent)
+- [x] `GET /install.sh` → installScriptHandler(staticContent) → v2: see docs/parity/public.md
 
 ### /runtime-config.js (1)
 
-- [ ] `GET /runtime-config.js` → runtimeConfigHandler(deps.Config, deps.Session)
+- [x] `GET /runtime-config.js` → runtimeConfigHandler(deps.Config, deps.Session) → v2: not needed: root layout runtime data
 
 ### /robots.txt (1)
 
-- [ ] `GET /robots.txt` → robotsHandler(deps.Config)
+- [x] `GET /robots.txt` → robotsHandler(deps.Config) → v2: see docs/parity/public.md
 
 ### /.well-known (2)
 
-- [ ] `GET /.well-known/apple-app-site-association` → appleAppSiteAssociationHandler
-- [ ] `GET /.well-known/security.txt` → securityTxtHandler(deps.Config, nil)
+- [x] `GET /.well-known/apple-app-site-association` → appleAppSiteAssociationHandler → v2: see docs/parity/public.md
+- [x] `GET /.well-known/security.txt` → securityTxtHandler(deps.Config, nil) → v2: see docs/parity/public.md
 
 ### /apple-app-site-association (1)
 
-- [ ] `GET /apple-app-site-association` → appleAppSiteAssociationHandler
+- [x] `GET /apple-app-site-association` → appleAppSiteAssociationHandler → v2: see docs/parity/public.md
 
 ### /sitemap.xml (1)
 
-- [ ] `GET /sitemap.xml` → sitemapHandler(deps.Config, sitemapPaths(articlesHandler.SitemapPaths,
+- [x] `GET /sitemap.xml` → sitemapHandler(deps.Config, sitemapPaths(articlesHandler.SitemapPaths, → v2: see docs/parity/public.md
 
 ### /llms.txt (1)
 
-- [ ] `GET /llms.txt` → llmsTxtHandler(deps.Config)
+- [x] `GET /llms.txt` → llmsTxtHandler(deps.Config) → v2: see docs/parity/public.md
 
 ### /static (1)
 
-- [ ] `HANDLE /static/*` → staticFileServer(http.FS(staticContent))
+- [x] `HANDLE /static/*` → staticFileServer(http.FS(staticContent)) → v2: static/static/ (existing mapping)
 
 ### /thinking-orbs (1)
 
-- [ ] `HANDLE /thinking-orbs/js/*` → http.StripPrefix("/thinking-orbs/js/", http.FileServer(http.FS(orbScri
+- [x] `HANDLE /thinking-orbs/js/*` → http.StripPrefix("/thinking-orbs/js/", http.FileServer(http.FS(orbScri → v2: dead (no orb canvas), not ported
 
 ### /root (1)
 
-- [ ] `GET /` → handlers.RootHandler(deps)
+- [x] `GET /` → handlers.RootHandler(deps) → v2: see docs/parity/public.md
 
 ### /market-brief (1)
 
-- [ ] `GET /market-brief` → marketBriefHandler.Partial("/market-brief")
+- [x] `GET /market-brief` → marketBriefHandler.Partial("/market-brief") → v2: see docs/parity/public.md
 
 ### /brief (4)
 
-- [ ] `GET /brief` → marketBriefHandler.Latest
-- [ ] `GET /brief/{date}/{slot}` → marketBriefHandler.Page
-- [ ] `GET /brief/{date}/{slot}/og.png` → marketBriefHandler.OGImage
-- [ ] `GET /brief/{date}/{slot}/card.png` → marketBriefHandler.CardImage
+- [x] `GET /brief` → marketBriefHandler.Latest → v2: see docs/parity/public.md
+- [x] `GET /brief/{date}/{slot}` → marketBriefHandler.Page → v2: see docs/parity/public.md
+- [x] `GET /brief/{date}/{slot}/og.png` → marketBriefHandler.OGImage → v2: see docs/parity/public.md
+- [x] `GET /brief/{date}/{slot}/card.png` → marketBriefHandler.CardImage → v2: see docs/parity/public.md
+
+### /digest (2)
+
+- [x] `GET /digest/unsubscribe` → handlers.DigestUnsubscribePage(deps) → v2: see docs/parity/public.md
+- [x] `POST /digest/unsubscribe` → handlers.DigestUnsubscribeSubmit(deps) → v2: see docs/parity/public.md
 
 ### /privacy (1)
 
-- [ ] `GET /privacy` → legalHandler.Privacy
+- [x] `GET /privacy` → legalHandler.Privacy → v2: see docs/parity/public.md
 
 ### /terms (1)
 
-- [ ] `GET /terms` → legalHandler.Terms
+- [x] `GET /terms` → legalHandler.Terms → v2: see docs/parity/public.md
 
 ### /legal (1)
 
-- [ ] `GET /legal` → legalHandler.Notice
+- [x] `GET /legal` → legalHandler.Notice → v2: see docs/parity/public.md
 
 ### /security (1)
 
-- [ ] `GET /security` → legalHandler.Security
+- [x] `GET /security` → legalHandler.Security → v2: see docs/parity/public.md
 
 ### /facebook-data-deletion (1)
 
-- [ ] `GET /facebook-data-deletion` → legalHandler.FacebookDataDeletion
+- [x] `GET /facebook-data-deletion` → legalHandler.FacebookDataDeletion → v2: see docs/parity/public.md
 
 ### /s (1)
 
-- [ ] `GET /s/{symbol}` → handlers.NewPublicStockHandler(deps).Page
+- [x] `GET /s/{symbol}` → handlers.NewPublicStockHandler(deps).Page → v2: see docs/parity/public.md
 
 ### /p (1)
 
-- [ ] `GET /p/{slug}` → handlers.NewPublicPortfolioShareHandler(deps).Page
+- [x] `GET /p/{slug}` → handlers.NewPublicPortfolioShareHandler(deps).Page → v2: see docs/parity/public.md
 
 ### /i (1)
 
-- [ ] `GET /i/{code}` → handlers.PublicInvite(deps)
+- [x] `GET /i/{code}` → handlers.PublicInvite(deps) → v2: see docs/parity/public.md
 
 ### /g (2)
 
-- [ ] `GET /g/{code}` → handlers.PublicGroupInvite(deps)
-- [ ] `POST /g/{code}/join` → appHandler.GroupsRedeemInvite
+- [x] `GET /g/{code}` → handlers.PublicGroupInvite(deps) → v2: see docs/parity/public.md
+- [x] `POST /g/{code}/join` → appHandler.GroupsRedeemInvite → v2: see docs/parity/public.md
 
 ### /auth (5)
 
@@ -677,27 +682,27 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 
 ### /articles (16)
 
-- [ ] `GET /articles` → h.Feed
-- [ ] `GET /articles/ticker/{symbol}` → h.TickerFeed
-- [ ] `GET /articles/images/{id}` → h.Image
-- [ ] `GET /articles/{code}/og.png` → h.OGImage
-- [ ] `GET /articles/{code}/card.png` → h.CardImage
-- [ ] `POST /articles/{code}/view` → h.View
-- [ ] `GET /articles/{slugcode}` → h.Detail
-- [ ] `GET /articles/new` → h.NewForm
-- [ ] `POST /articles/new` → h.Create
-- [ ] `POST /articles/preview` → h.Preview
-- [ ] `GET /articles/{code}/edit` → h.EditForm
-- [ ] `POST /articles/{code}/edit` → h.Update
-- [ ] `POST /articles/{code}/delete` → h.Delete
-- [ ] `POST /articles/{code}/vote` → h.Vote
-- [ ] `POST /articles/{code}/report` → h.Report
-- [ ] `POST /articles/{code}/visibility` → h.Visibility
+- [x] `GET /articles` → h.Feed → v2: see docs/parity/public.md
+- [x] `GET /articles/ticker/{symbol}` → h.TickerFeed → v2: see docs/parity/public.md
+- [x] `GET /articles/images/{id}` → h.Image → v2: see docs/parity/public.md
+- [x] `GET /articles/{code}/og.png` → h.OGImage → v2: see docs/parity/public.md
+- [x] `GET /articles/{code}/card.png` → h.CardImage → v2: see docs/parity/public.md
+- [x] `POST /articles/{code}/view` → h.View → v2: see docs/parity/public.md
+- [x] `GET /articles/{slugcode}` → h.Detail → v2: see docs/parity/public.md
+- [x] `GET /articles/new` → h.NewForm → v2: see docs/parity/public.md
+- [x] `POST /articles/new` → h.Create → v2: see docs/parity/public.md
+- [x] `POST /articles/preview` → h.Preview → v2: see docs/parity/public.md
+- [x] `GET /articles/{code}/edit` → h.EditForm → v2: see docs/parity/public.md
+- [x] `POST /articles/{code}/edit` → h.Update → v2: see docs/parity/public.md
+- [x] `POST /articles/{code}/delete` → h.Delete → v2: see docs/parity/public.md
+- [x] `POST /articles/{code}/vote` → h.Vote → v2: see docs/parity/public.md
+- [x] `POST /articles/{code}/report` → h.Report → v2: see docs/parity/public.md
+- [x] `POST /articles/{code}/visibility` → h.Visibility → v2: see docs/parity/public.md
 
 ### /a (1)
 
-- [ ] `GET /a/{code}` → h.ShortLink
+- [x] `GET /a/{code}` → h.ShortLink → v2: see docs/parity/public.md
 
 ### /u (1)
 
-- [ ] `GET /u/{username}/articles` → h.AuthorFeed
+- [x] `GET /u/{username}/articles` → h.AuthorFeed → v2: see docs/parity/public.md

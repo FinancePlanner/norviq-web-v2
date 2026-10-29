@@ -88,7 +88,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	const response = await resolve(event, {
-		transformPageChunk: ({ html }) => html.replace('%lang%', locale)
+		// locals.locale, not the request's: a page whose language comes from its
+		// URL (/brief/{date}/{slot}?lang=pt-PT) sets it in its load.
+		transformPageChunk: ({ html }) => html.replace('%lang%', event.locals.locale)
 	});
 	response.headers.set('X-Content-Type-Options', 'nosniff');
 	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
