@@ -13,22 +13,37 @@ v2 layout:
 - `src/lib/features/stock/` — loaders, view models and tab components
   (`analysis/`, `builder/`, the rest at the top level)
 
-## Routes
+## Routes (17/17 done)
 
-- [ ] `GET /portfolio/{symbol}/quote` → appHandler.StockDetailQuote
-- [ ] `GET /portfolio/{symbol}/pressure` → appHandler.StockPressure
-- [ ] `GET /portfolio/{symbol}/earnings/transcript` → appHandler.StockEarningsTranscript
-- [ ] `GET /portfolio/{symbol}/valuation/edit` → appHandler.StockValuationForm
-- [ ] `POST /portfolio/{symbol}/valuation` → appHandler.StockValuationSave
-- [ ] `GET /portfolio/{symbol}/builder` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/builder/chart` → appHandler.StockChartBuilderChart
-- [ ] `GET /portfolio/{symbol}/builder/csv` → appHandler.StockChartBuilderCSV
-- [ ] `GET /portfolio/{symbol}/statements` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/ownership` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/analysis` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/forecast` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/compare` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/earnings` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/{tab}` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/terminal` → h.StockTerminal
+- [x] `GET /portfolio/{symbol}` → `[symbol]/+page.server.ts` + `DetailPage.svelte` / `tabs/OverviewTab.svelte`
+- [x] `GET /portfolio/{symbol}/{tab}` → `[symbol]/[tab]/+page.*` (chart, overview, news, sentiment; 404 on unknown tab)
+- [x] `GET /portfolio/{symbol}/builder` → `[tab]` + gate MarketFundamentals → `builder/ChartBuilderTab.svelte`
+- [x] `GET /portfolio/{symbol}/statements` → `[tab]` + gate MarketFundamentals → `tabs/StatementsTab.svelte`
+- [x] `GET /portfolio/{symbol}/ownership` → `[tab]` + gate MarketFundamentals → `tabs/OwnershipTab.svelte`
+- [x] `GET /portfolio/{symbol}/analysis` → `[tab]` + gate MarketFundamentals → `analysis/AnalysisTab.svelte` (+ scroll-spy)
+- [x] `GET /portfolio/{symbol}/forecast` → `[tab]` + gate MarketFundamentals → `tabs/ForecastTab.svelte`
+- [x] `GET /portfolio/{symbol}/compare` → `[tab]` + gate PeerComparison → `tabs/CompareTab.svelte`
+- [x] `GET /portfolio/{symbol}/earnings` → `[tab]` + gate EarningsText → `tabs/EarningsTab.svelte` (reuses `features/portfolio/earningsviz`)
+- [x] `GET /portfolio/{symbol}/quote` → `[symbol]/quote/+server.ts` (JSON; HeroCard polls it every 20s while visible)
+- [x] `GET /portfolio/{symbol}/pressure` → component `tabs/PressureCard.svelte` (TanStack on `/api/v1/market/pressure/{symbol}`; fragment URL retired)
+- [x] `GET /portfolio/{symbol}/terminal` → component `tabs/TerminalCard.svelte` (TanStack on `/api/v1/terminal-positions?ticker=`; fragment URL retired)
+- [x] `GET /portfolio/{symbol}/earnings/transcript` → `[symbol]/earnings/transcript/+server.ts` (JSON) → `tabs/TranscriptPanel.svelte` in `#transcript-dialog` (speechSynthesis player ported)
+- [x] `GET /portfolio/{symbol}/valuation/edit` → `[symbol]/valuation/edit/+server.ts` (JSON) → `tabs/ValuationPanel.svelte`
+- [x] `POST /portfolio/{symbol}/valuation` → `[symbol]/valuation/+server.ts` (JSON for the dialog, 303 for a plain post)
+- [x] `GET /portfolio/{symbol}/builder/chart` → `[symbol]/builder/chart/+server.ts` (JSON result VM) → `builder/ChartBuilderResult.svelte`
+- [x] `GET /portfolio/{symbol}/builder/csv` → `[symbol]/builder/csv/+server.ts`
+
+## Notes
+
+- Position menu (Edit / Sell / Price alert) reuses the portfolio feature's `PositionActionPanel` + `positionAction`; its dialog sits next to the menu instead of at the end of the page.
+- AI consent: no stock route calls an AI-consent-gated endpoint in Go, so no gate is wired.
+- Go oddities kept: the overview's "Price history" and "Thesis confidence" cards always show their empty state (Go never loaded history or sentiment for the overview); valuation save treats a backend 4xx/5xx as success (Go checked only the transport error); market cap renders as "$5038567.65M"; the compare chart plots only the primary symbol; the analysis scroll-spy never activates (no section has an id); chart-builder growth losses on currency series show without a minus sign.
+
+## Shared changes
+
+- `src/lib/components/shell/StockSubNav.svelte`: optional `activePath` prop (Go passed the lower-cased stock path, so `/portfolio/AAPL` still marks its tab).
+
+## Backend gaps / unverified
+
+- Staging market data is rate limited/sparse: price history ("No price history available"), technicals, statements, insider/13F/congress, income statements and chart-builder CSV (502 "Rate limit exceeded") returned errors, so those tabs were only verified in their empty/error branches.
+- Not browser-verified: ECharts rendering, dialogs, quote polling, pressure/terminal client fetches. Valuation save success path not exercised (would write staging data).
