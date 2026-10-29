@@ -4,7 +4,7 @@
 	import * as dialog from '#lib/components/norviq/tui/dialog/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
-	import { registerPasskey } from '#lib/features/settings-admin/passkey-register.js';
+	import { registerPasskey } from '#lib/features/auth-onboarding/passkey.js';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
