@@ -14,7 +14,7 @@
 	}: { code: string; count: number; voted: boolean; canVote: boolean; loginURL: string } = $props();
 
 	// svelte-ignore state_referenced_locally
-	let state = $state({ count, voted });
+	let vote = $state({ count, voted });
 	let busy = $state(false);
 
 	async function toggle() {
@@ -24,11 +24,11 @@
 			const res = await fetch('/articles/' + code + '/vote', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: new URLSearchParams({ on: String(!state.voted) })
+				body: new URLSearchParams({ on: String(!vote.voted) })
 			});
 			if (!res.ok) return;
 			const out = (await res.json()) as { upvoteCount: number; voted: boolean };
-			state = { count: out.upvoteCount, voted: out.voted };
+			vote = { count: out.upvoteCount, voted: out.voted };
 		} catch {
 			/* left as it was */
 		} finally {
@@ -41,11 +41,11 @@
 	{#if canVote}
 		<NativeButton
 			class="rounded-lg border border-border px-3 py-1.5 text-sm font-medium aria-pressed:bg-muted"
-			aria-pressed={state.voted ? 'true' : 'false'}
+			aria-pressed={vote.voted ? 'true' : 'false'}
 			aria-label="Upvote"
 			onclick={toggle}
 		>
-			▲ {state.count}
+			▲ {vote.count}
 		</NativeButton>
 	{:else}
 		<a href={loginURL} class="rounded-lg border border-border px-3 py-1.5 text-sm font-medium" aria-label="Sign in to upvote"
