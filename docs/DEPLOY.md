@@ -53,7 +53,16 @@ browser ──basic auth──▶ Worker "norviq-web-staging" (*.workers.dev, wr
   `EDGE_CLIENT_IP_KEY` (the value sealed in #483), `PUBLIC_API_TOKEN` (staging
   web-env value), `PREVIEW_BASIC_AUTH` (`user:pass`, keeps strangers off the
   workers.dev URL).
-- Deploy: `bun run build && bunx wrangler deploy --env staging`.
+- Deploy: `bun run build && bunx wrangler deploy --env staging`. The first
+  deploy passed `--secrets-file` (JSON, kept outside the repo) so the Worker
+  was never live without the basic-auth wall.
+- Live since 2026-10-29: `https://norviq-web-staging.fernandocorreia316.workers.dev`
+  (basic auth). LuminaVaultInfra#483 + #484 are merged and the gate passes only
+  the edge key (verified in-pod: no/wrong key 401, right key 204). The TLS
+  certificate for `api-staging.norviq.org` issues once the DNS A record exists;
+  until then every backend call from the Worker fails.
+- Smoke against it: `bun run smoke:browser scripts/smoke-pages.txt <url>` needs a
+  basic-auth-aware context; locally use the dev server and the port-forward.
 
 ## Commands
 

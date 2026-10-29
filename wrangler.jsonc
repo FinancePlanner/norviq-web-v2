@@ -39,7 +39,7 @@
 			"vars": {
 				"GO_ENV": "staging",
 				"BACKEND_URL": "https://api-staging.norviq.org",
-				"PUBLIC_BASE_URL": "https://norviq-web-staging.workers.dev",
+				"PUBLIC_BASE_URL": "https://norviq-web-staging.fernandocorreia316.workers.dev",
 				"COOKIE_SECURE": "true",
 				"SENTRY_ENVIRONMENT": "staging",
 				"POSTHOG_PROJECT_TOKEN": "",
