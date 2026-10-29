@@ -1,3 +1,4 @@
+import { noteGuidedAction } from '../../auth-onboarding/guided-start/guided.server.js';
 import { json, text, type RequestEvent } from '@sveltejs/kit';
 import { formatFloat } from '#lib/format.js';
 import { Feature, isFeatureAvailable, isPro } from '#lib/billing.js';
@@ -46,16 +47,6 @@ async function readForm(event: RequestEvent): Promise<FormData | null> {
 	} catch {
 		return null;
 	}
-}
-
-// internal/session/guided_start.go keys.
-const KEY_GUIDED_STEP = 'guidedStartStep';
-const KEY_GUIDED_STEP_ACTED = 'guidedStartStepActed';
-
-/** session.NoteGuidedAction */
-async function noteGuidedAction(event: RequestEvent, step: string) {
-	const session = event.locals.session;
-	if (session.get<string>(KEY_GUIDED_STEP) === step) await session.set(KEY_GUIDED_STEP_ACTED, true);
 }
 
 /** middleware.RequireFeature(TargetAlerts, "Price alerts"): 402 the page ignores. */

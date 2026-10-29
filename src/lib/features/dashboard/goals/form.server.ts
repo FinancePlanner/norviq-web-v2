@@ -98,15 +98,7 @@ export function redirectFinancialGoals(notice: string, errorMessage: string): ne
 	redirect(303, '/goals' + (encoded ? '?' + encoded : ''));
 }
 
-// internal/session/guided_start.go keys.
-const KEY_GUIDED_STEP = 'guidedStartStep';
-const KEY_GUIDED_STEP_ACTED = 'guidedStartStepActed';
-
-/** session.NoteGuidedAction */
-export async function noteGuidedAction(event: RequestEvent, step: string): Promise<void> {
-	const session = event.locals.session;
-	if (session.get<string>(KEY_GUIDED_STEP) === step) await session.set(KEY_GUIDED_STEP_ACTED, true);
-}
+export { noteGuidedAction } from '../../auth-onboarding/guided-start/guided.server.js';
 
 const GOAL_TYPES = [
 	'retirement',
