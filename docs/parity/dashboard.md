@@ -36,17 +36,17 @@ Legend: `[x]` done · `[~]` partial (why) · `[ ]` not done (why).
 
 ## /goals (7)
 
-- [ ] `GET /goals`
-- [ ] `POST /goals`
-- [ ] `POST /goals/bulk`
-- [ ] `POST /goals/{id}/what-if`
-- [ ] `POST /goals/{id}/contributions`
-- [ ] `POST /goals/{id}/suggestions/{suggestionID}/accept`
-- [ ] `GET /goals/{id}/report.pdf`
+- [x] `GET /goals` → `src/routes/(app)/goals/+page.{server.ts,svelte}`
+- [x] `POST /goals` → form action `?/create`
+- [~] `POST /goals/bulk` → form action `?/bulk` (Go's Pause/Activate buttons are `type="button"`, so they never submit; ported as-is)
+- [x] `POST /goals/{id}/what-if` → form action `?/whatIf`, result rendered in `#what-if-result`
+- [x] `POST /goals/{id}/contributions` → `+server.ts` at the same path (no Go page posts to it)
+- [x] `POST /goals/{id}/suggestions/{suggestionID}/accept` → form action `?/accept`
+- [x] `GET /goals/{id}/report.pdf` → `+server.ts`; fpdf subset ported to `features/dashboard/goals/pdf.ts` (no npm dep; WinAnsi text, so `·`/`•`/`—` no longer print as mojibake)
 
 ## /news (1)
 
-- [ ] `GET /news/view`
+- [x] `GET /news/view` → `src/routes/(app)/news/view/+server.ts` (records view, 302 to canonicalised external URL)
 
 ## /assistant (8)
 
@@ -61,9 +61,9 @@ Legend: `[x]` done · `[~]` partial (why) · `[ ]` not done (why).
 
 ## /notifications (3)
 
-- [ ] `GET /notifications`
-- [ ] `POST /notifications/read-all`
-- [ ] `POST /notifications/{id}/read`
+- [x] `GET /notifications` → `src/routes/(app)/notifications/+page.{server.ts,svelte}`
+- [x] `POST /notifications/read-all` → `+server.ts` at the same path (plain post, 303 back)
+- [x] `POST /notifications/{id}/read` → `+server.ts` at the same path (404 on bad id, 303 back)
 
 ## Out of scope but rendered by the same Go files
 
