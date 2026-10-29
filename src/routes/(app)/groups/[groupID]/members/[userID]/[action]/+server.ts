@@ -7,7 +7,8 @@ import {
 	kickGroupMember,
 	refusal,
 	setGroupMemberRole,
-	transferGroup
+	transferGroup,
+	readForm
 } from '#lib/features/social/groups/groups.server.js';
 
 // GroupsMember runs a member action: role, kick, ban or transfer.
@@ -15,7 +16,7 @@ export const POST: RequestHandler = async (event) => {
 	await requireGroups(event);
 	const userID = groupsID(event.params.userID);
 	const action = event.params.action;
-	const form = await event.request.formData();
+	const form = await readForm(event);
 	return groupsAction(event, 'member', async (groupID) => {
 		switch (action) {
 			case 'role': {

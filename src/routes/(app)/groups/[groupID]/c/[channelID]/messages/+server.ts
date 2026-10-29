@@ -8,7 +8,8 @@ import {
 	GROUPS_PAGE_SIZE,
 	rowOptions,
 	sendGroupMessage,
-	type MessageQuery
+	type MessageQuery,
+	readForm
 } from '#lib/features/social/groups/groups.server.js';
 import { buildRows, chatHref } from '#lib/features/social/groups/view.js';
 import type { GroupMessage, GroupMessagePage, RowsResponse } from '#lib/features/social/groups/types.js';
@@ -57,7 +58,7 @@ export const POST: RequestHandler = async (event) => {
 	await requireGroups(event);
 	const groupID = groupsID(event.params.groupID);
 	const channelID = groupsID(event.params.channelID);
-	const form = await event.request.formData();
+	const form = await readForm(event);
 	const body = String(form.get('body') ?? '').trim();
 	let clientID = String(form.get('client_id') ?? '').trim();
 	if (clientID === '') clientID = crypto.randomUUID();

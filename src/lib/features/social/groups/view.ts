@@ -51,6 +51,13 @@ export function groupsError(url: URL): string {
 	return new TextDecoder().decode(bytes.slice(0, 200)).replace(/�$/, '');
 }
 
+/**
+ * sameID compares backend ids. The backend sends upper-case UUIDs while path
+ * parameters are normalised to lower case, so ids compare case-insensitively.
+ */
+export const sameID = (a: unknown, b: unknown) =>
+	typeof a === 'string' && typeof b === 'string' && a !== '' && a.toLowerCase() === b.toLowerCase();
+
 /** ChatHref is a channel's address. */
 export const chatHref = (groupID: string, channelID: string) => `/groups/${groupID}/c/${channelID}`;
 
@@ -340,7 +347,7 @@ export function railItems(items: GroupSummary[], activeID: string): RailItem[] {
 		name: group.name,
 		href: '/groups/' + group.id,
 		unread: group.unreadCount,
-		active: group.id === activeID,
+		active: sameID(group.id, activeID),
 		emoji: group.iconEmoji ?? '',
 		muted: group.membership ? !group.membership.pushEnabled : false
 	}));
@@ -352,7 +359,7 @@ export function channelItems(detail: GroupDetail, activeID: string): ChannelItem
 		name: channel.name,
 		href: chatHref(detail.group.id, channel.id),
 		unread: channel.unreadCount,
-		active: channel.id === activeID
+		active: sameID(channel.id, activeID)
 	}));
 }
 

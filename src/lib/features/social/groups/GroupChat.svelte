@@ -16,7 +16,7 @@
 	import MessageRowView from './MessageRowView.svelte';
 	import Notices from './Notices.svelte';
 	import Rail from './Rail.svelte';
-	import { chatHref } from './view.js';
+	import { chatHref, sameID } from './view.js';
 	import type { ChannelPanelVM, ChatVM, MessageRow, RailItem, RailResponse, RowsResponse } from './types.js';
 
 	let { vm }: { vm: ChatVM } = $props();
@@ -118,11 +118,11 @@
 			refreshSidebars();
 		});
 		on('message.created', (data) => {
-			if (data.channelId === initial.channelId) catchUp();
+			if (sameID(data.channelId, initial.channelId)) catchUp();
 			else refreshSidebars();
 		});
 		on('message.deleted', (data) => {
-			if (data.channelId !== initial.channelId) return;
+			if (!sameID(data.channelId, initial.channelId)) return;
 			const id = String(data.messageId || '');
 			const i = rows.findIndex((r) => r.id === id);
 			if (i >= 0) tombstone(i);
@@ -131,13 +131,13 @@
 		on('channel.created', () => refreshSidebars());
 		on('channel.updated', () => refreshSidebars());
 		on('channel.deleted', (data) => {
-			if (data.channelId === initial.channelId) window.location.assign(`/groups/${initial.groupId}`);
+			if (sameID(data.channelId, initial.channelId)) window.location.assign(`/groups/${initial.groupId}`);
 			else refreshSidebars();
 		});
 		on('group.updated', () => refreshSidebars());
 		on('invitation.received', () => refreshSidebars());
 		on('membership.removed', (data) => {
-			if (data.groupId === initial.groupId) window.location.assign('/groups?notice=removed');
+			if (sameID(data.groupId, initial.groupId)) window.location.assign('/groups?notice=removed');
 			else refreshSidebars();
 		});
 		// The backend ends each stream after ten minutes; EventSource

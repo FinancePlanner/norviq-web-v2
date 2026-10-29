@@ -241,3 +241,12 @@ export async function groupsAction(
 
 /** A 4xx refusal built in the web tier (Go's &api.BoardsError{...}). */
 export const refusal = (status: number, reason = '') => new APIError(status, reason);
+
+/** The posted form, or an empty one (Go's r.FormValue tolerates a bodiless post). */
+export async function readForm(event: RequestEvent): Promise<FormData> {
+	try {
+		return await event.request.formData();
+	} catch {
+		return new FormData();
+	}
+}

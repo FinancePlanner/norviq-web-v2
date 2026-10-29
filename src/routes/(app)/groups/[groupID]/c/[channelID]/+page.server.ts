@@ -13,7 +13,7 @@ import {
 	rowOptions
 } from '#lib/features/social/groups/groups.server.js';
 import type { ChatVM, GroupDetail, GroupListResponse, GroupMessagePage } from '#lib/features/social/groups/types.js';
-import { buildRows, channelItems, groupNotice, groupsError, railItems } from '#lib/features/social/groups/view.js';
+import { buildRows, sameID, channelItems, groupNotice, groupsError, railItems } from '#lib/features/social/groups/view.js';
 
 // GroupsChat: a channel page with the rail, channels and the newest messages.
 export const load: PageServerLoad = async (event) => {
@@ -27,7 +27,7 @@ export const load: PageServerLoad = async (event) => {
 		groupsFailure(err, event.url.pathname);
 	}
 	if (!detail.group.membership) redirect(303, '/groups/' + groupID);
-	const channel = (detail.channels ?? []).find((c) => c.id === channelID);
+	const channel = (detail.channels ?? []).find((c) => sameID(c.id, channelID));
 	if (!channel) redirect(303, '/groups/' + groupID);
 	let page: GroupMessagePage;
 	try {

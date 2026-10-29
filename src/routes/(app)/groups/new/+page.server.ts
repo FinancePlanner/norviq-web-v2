@@ -6,7 +6,8 @@ import {
 	createGroup,
 	groupsFailure,
 	groupsRedirectError,
-	isServerFailure
+	isServerFailure,
+	readForm
 } from '#lib/features/social/groups/groups.server.js';
 import { groupLanding, groupsError, topicAllowsTicker, withNotice } from '#lib/features/social/groups/view.js';
 import type { CreateGroupRequest, GroupDetail, GroupForm } from '#lib/features/social/groups/types.js';
@@ -24,7 +25,7 @@ const optional = (v: string) => (v.trim() === '' ? undefined : v.trim());
 export const actions: Actions = {
 	default: async (event) => {
 		const cfg = await requireGroups(event);
-		const data = await event.request.formData();
+		const data = await readForm(event);
 		const value = (k: string) => String(data.get(k) ?? '');
 		const form: GroupForm = {
 			name: value('name').trim(),
