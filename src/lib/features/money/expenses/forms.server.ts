@@ -205,7 +205,7 @@ export async function submitSalary(event: RequestEvent) {
 	if (snapshotID) {
 		if (!isUUID(snapshotID)) return renderError('Invalid budget snapshot.');
 		try {
-			await apiJSON(event, 'PUT', `/v1/budget/snapshots/${snapshotID}`, body);
+			await apiJSON(event, 'PATCH', `/v1/budget/snapshots/${snapshotID}`, body);
 		} catch {
 			return renderError('Could not update salary and targets.');
 		}
@@ -361,7 +361,7 @@ export async function submitPlanItem(event: RequestEvent, itemID: string) {
 	} else {
 		if (!isUUID(itemID)) return renderError('Invalid plan item.');
 		try {
-			await apiJSON(event, 'PUT', `/v1/budget/items/${itemID}`, body);
+			await apiJSON(event, 'PATCH', `/v1/budget/items/${itemID}`, body);
 		} catch {
 			return renderError('Could not update plan item.');
 		}
@@ -483,7 +483,7 @@ export async function submitRecurring(event: RequestEvent, templateID: string) {
 	} else {
 		if (!isUUID(templateID)) return renderError('Invalid recurring template.');
 		try {
-			await apiJSON(event, 'PUT', `/v1/expenses/recurring/${templateID}`, body);
+			await apiJSON(event, 'PATCH', `/v1/expenses/recurring/${templateID}`, body);
 		} catch {
 			return renderError('Could not update recurring template.');
 		}

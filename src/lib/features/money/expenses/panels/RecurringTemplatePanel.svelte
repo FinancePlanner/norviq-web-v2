@@ -17,7 +17,7 @@
 	let vm = $state(untrack(() => initial));
 	let failure = $state('');
 
-	const action = $derived(vm.isEdit ? `/expenses/recurring/${vm.templateID}` : '/expenses/recurring');
+	const action = $derived(vm.isEdit ? `/expenses/recurring/${vm.templateID}?/update` : '/expenses/recurring');
 	const deleteAction = $derived(`/expenses/recurring/${vm.templateID}?/delete&month=${encodeURIComponent(vm.monthQuery)}`);
 </script>
 
