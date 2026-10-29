@@ -164,32 +164,32 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 
 ### /dashboard (26)
 
-- [ ] `GET /dashboard` → appHandler.Dashboard
-- [ ] `GET /dashboard/pulse` → appHandler.DashboardPulse
-- [ ] `GET /dashboard/action-queue` → appHandler.DashboardActionQueue
-- [ ] `POST /dashboard/action/{id}/read` → appHandler.DashboardActionRead
-- [ ] `GET /dashboard/panel/tax` → appHandler.DashboardTaxPanel
-- [ ] `GET /dashboard/ledger` → appHandler.DashboardLedger
-- [ ] `GET /dashboard/activity-feed` → appHandler.DashboardActivityFeed
-- [ ] `GET /dashboard/search` → appHandler.DashboardSearch
-- [ ] `GET /dashboard/recent-spend` → appHandler.DashboardRecentSpend
-- [ ] `GET /dashboard/economy-pulse` → appHandler.DashboardEconomyPulse
-- [ ] `GET /dashboard/news-ticker` → appHandler.DashboardNewsTicker
-- [ ] `GET /dashboard/market-brief` → marketBriefHandler.Partial("/dashboard/market-brief")
-- [ ] `POST /dashboard/quick-expense` → appHandler.DashboardQuickExpense
-- [ ] `GET /dashboard/activity` → appHandler.DashboardActivity
-- [ ] `GET /dashboard/activity-list` → appHandler.DashboardActivityList
-- [ ] `GET /dashboard/insights` → appHandler.DashboardInsights
-- [ ] `GET /dashboard/insights/ai` → appHandler.DashboardAIInsightsPartial
-- [ ] `GET /dashboard/why-moved` → appHandler.DashboardWhyMovedPartial
-- [ ] `GET /dashboard/mcp-status` → appHandler.DashboardMCPStatusPartial
-- [ ] `POST /dashboard/insights/goals` → appHandler.DashboardInsightsCreateGoal
-- [ ] `POST /dashboard/insights/goals/{id}/toggle` → appHandler.DashboardInsightsToggleGoal
-- [ ] `GET /dashboard/insights/goals/{id}/edit` → appHandler.DashboardInsightsGoalEditForm
-- [ ] `PATCH /dashboard/insights/goals/{id}` → appHandler.DashboardInsightsUpdateGoal
-- [ ] `DELETE /dashboard/insights/goals/{id}` → appHandler.DashboardInsightsDeleteGoal
-- [ ] `GET /dashboard/insights/focus-points` → appHandler.DashboardInsightsFocusPointsPartial
-- [ ] `GET /dashboard/terminal` → h.DashboardTerminalSummary
+- [x] `GET /dashboard` → appHandler.Dashboard → v2: see dashboard.md
+- [x] `GET /dashboard/pulse` → appHandler.DashboardPulse → v2: see dashboard.md
+- [x] `GET /dashboard/action-queue` → appHandler.DashboardActionQueue → v2: see dashboard.md
+- [x] `POST /dashboard/action/{id}/read` → appHandler.DashboardActionRead → v2: see dashboard.md
+- [x] `GET /dashboard/panel/tax` → appHandler.DashboardTaxPanel → v2: see dashboard.md
+- [x] `GET /dashboard/ledger` → appHandler.DashboardLedger → v2: see dashboard.md
+- [x] `GET /dashboard/activity-feed` → appHandler.DashboardActivityFeed → v2: see dashboard.md
+- [x] `GET /dashboard/search` → appHandler.DashboardSearch → v2: see dashboard.md
+- [x] `GET /dashboard/recent-spend` → appHandler.DashboardRecentSpend → v2: see dashboard.md
+- [x] `GET /dashboard/economy-pulse` → appHandler.DashboardEconomyPulse → v2: see dashboard.md
+- [x] `GET /dashboard/news-ticker` → appHandler.DashboardNewsTicker → v2: see dashboard.md
+- [x] `GET /dashboard/market-brief` → marketBriefHandler.Partial("/dashboard/market-brief") → v2: see dashboard.md
+- [x] `POST /dashboard/quick-expense` → appHandler.DashboardQuickExpense → v2: see dashboard.md
+- [x] `GET /dashboard/activity` → appHandler.DashboardActivity → v2: see dashboard.md
+- [x] `GET /dashboard/activity-list` → appHandler.DashboardActivityList → v2: see dashboard.md
+- [x] `GET /dashboard/insights` → appHandler.DashboardInsights → v2: see dashboard.md
+- [x] `GET /dashboard/insights/ai` → appHandler.DashboardAIInsightsPartial → v2: see dashboard.md
+- [x] `GET /dashboard/why-moved` → appHandler.DashboardWhyMovedPartial → v2: see dashboard.md
+- [x] `GET /dashboard/mcp-status` → appHandler.DashboardMCPStatusPartial → v2: see dashboard.md
+- [x] `POST /dashboard/insights/goals` → appHandler.DashboardInsightsCreateGoal → v2: see dashboard.md
+- [x] `POST /dashboard/insights/goals/{id}/toggle` → appHandler.DashboardInsightsToggleGoal → v2: see dashboard.md
+- [x] `GET /dashboard/insights/goals/{id}/edit` → appHandler.DashboardInsightsGoalEditForm → v2: see dashboard.md
+- [x] `PATCH /dashboard/insights/goals/{id}` → appHandler.DashboardInsightsUpdateGoal → v2: see dashboard.md
+- [x] `DELETE /dashboard/insights/goals/{id}` → appHandler.DashboardInsightsDeleteGoal → v2: see dashboard.md
+- [x] `GET /dashboard/insights/focus-points` → appHandler.DashboardInsightsFocusPointsPartial → v2: see dashboard.md
+- [x] `GET /dashboard/terminal` → h.DashboardTerminalSummary → v2: see dashboard.md
 
 ### /guided-start (4)
 
@@ -200,426 +200,426 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 
 ### /settings (44)
 
-- [ ] `POST /settings/show-me-around` → appHandler.ShowMeAround
-- [ ] `GET /settings` → appHandler.Settings
-- [ ] `POST /settings/export` → appHandler.SettingsExportSubmit
-- [ ] `GET /settings/export/{id}/download` → appHandler.SettingsExportDownload
-- [ ] `POST /settings/api-access` → appHandler.SettingsAPIAccessCreate
-- [ ] `POST /settings/api-access/{id}/revoke` → appHandler.SettingsAPIAccessRevoke
-- [ ] `GET /settings/api-access/{id}/verify` → appHandler.APIAccessVerifyPartial
-- [ ] `POST /settings/ai-providers` → appHandler.SettingsAIProvidersConnect
-- [ ] `POST /settings/ai-consent/revoke` → appHandler.SettingsAIConsentRevoke
-- [ ] `POST /settings/ai-providers/{id}/verify` → appHandler.SettingsAIProvidersVerify
-- [ ] `POST /settings/ai-providers/{id}/disconnect` → appHandler.SettingsAIProvidersDisconnect
-- [ ] `POST /settings/news-ticker/toggle` → appHandler.SettingsNewsTickerToggle
-- [ ] `POST /settings/news-ticker/feeds` → appHandler.SettingsNewsTickerAddFeed
-- [ ] `POST /settings/news-ticker/feeds/{id}/delete` → appHandler.SettingsNewsTickerRemoveFeed
-- [ ] `GET /settings/banks` → appHandler.SettingsBanks
-- [ ] `POST /settings/banks/link-session` → appHandler.SettingsBanksLinkSession
-- [ ] `POST /settings/banks/exchange` → appHandler.SettingsBanksExchange
-- [ ] `GET /settings/banks/institutions` → appHandler.SettingsBanksInstitutions
-- [ ] `POST /settings/banks/connect-eu` → appHandler.SettingsBanksConnectEU
-- [ ] `POST /settings/banks/{id}/sync` → appHandler.SettingsBanksSync
-- [ ] `POST /settings/banks/{id}/disconnect` → appHandler.SettingsBanksDisconnect
-- [ ] `POST /settings/banks/transactions/{id}/import` → appHandler.SettingsBanksImport
-- [ ] `POST /settings/banks/transactions/{id}/dismiss` → appHandler.SettingsBanksDismiss
-- [ ] `POST /settings/integrations/telegram` → appHandler.SettingsTelegramConnect
-- [ ] `POST /settings/integrations/telegram/disconnect` → appHandler.SettingsTelegramDisconnect
-- [ ] `POST /settings/integrations/telegram/alerts` → appHandler.SettingsTelegramAlerts
-- [ ] `POST /settings/integrations/ibkr/connect` → appHandler.SettingsIBKRConnect
-- [ ] `GET /settings/integrations/ibkr/callback` → appHandler.SettingsIBKRCallback
-- [ ] `POST /settings/integrations/ibkr/sync` → appHandler.SettingsIBKRSync
-- [ ] `POST /settings/integrations/ibkr/disconnect` → appHandler.SettingsIBKRDisconnect
-- [ ] `GET /settings/profile/oauth/{provider}/connect` → authHandler.OAuthLinkStart
-- [ ] `GET /settings/{section}` → appHandler.Settings
-- [ ] `POST /settings/language` → appHandler.SettingsLanguageSubmit
-- [ ] `POST /settings/profile` → appHandler.SettingsProfileSubmit
-- [ ] `POST /settings/profile/delete` → appHandler.SettingsProfileDelete
-- [ ] `POST /settings/passkey/register/begin` → appHandler.PasskeyRegisterBegin
-- [ ] `POST /settings/passkey/register/finish` → appHandler.PasskeyRegisterFinish
-- [ ] `POST /settings/notifications/earnings` → appHandler.SettingsNotificationsSubmit
-- [ ] `POST /settings/feedback` → appHandler.SettingsFeedbackSubmit
-- [ ] `GET /settings/subscription/status` → appHandler.SubscriptionStatusPartial
-- [ ] `GET /settings/friends-privacy` → h.FriendsPrivacy
-- [ ] `POST /settings/friends-privacy` → h.FriendsPrivacySubmit
-- [ ] `GET /settings/blocked` → h.BlockedUsers
-- [ ] `POST /settings/blocked/{userId}/unblock` → h.BlockedUserUnblock
+- [x] `POST /settings/show-me-around` → appHandler.ShowMeAround → v2: see settings-admin.md
+- [x] `GET /settings` → appHandler.Settings → v2: see settings-admin.md
+- [x] `POST /settings/export` → appHandler.SettingsExportSubmit → v2: see settings-admin.md
+- [x] `GET /settings/export/{id}/download` → appHandler.SettingsExportDownload → v2: see settings-admin.md
+- [x] `POST /settings/api-access` → appHandler.SettingsAPIAccessCreate → v2: see settings-admin.md
+- [x] `POST /settings/api-access/{id}/revoke` → appHandler.SettingsAPIAccessRevoke → v2: see settings-admin.md
+- [x] `GET /settings/api-access/{id}/verify` → appHandler.APIAccessVerifyPartial → v2: see settings-admin.md
+- [x] `POST /settings/ai-providers` → appHandler.SettingsAIProvidersConnect → v2: see settings-admin.md
+- [x] `POST /settings/ai-consent/revoke` → appHandler.SettingsAIConsentRevoke → v2: see settings-admin.md
+- [x] `POST /settings/ai-providers/{id}/verify` → appHandler.SettingsAIProvidersVerify → v2: see settings-admin.md
+- [x] `POST /settings/ai-providers/{id}/disconnect` → appHandler.SettingsAIProvidersDisconnect → v2: see settings-admin.md
+- [x] `POST /settings/news-ticker/toggle` → appHandler.SettingsNewsTickerToggle → v2: see settings-admin.md
+- [x] `POST /settings/news-ticker/feeds` → appHandler.SettingsNewsTickerAddFeed → v2: see settings-admin.md
+- [x] `POST /settings/news-ticker/feeds/{id}/delete` → appHandler.SettingsNewsTickerRemoveFeed → v2: see settings-admin.md
+- [x] `GET /settings/banks` → appHandler.SettingsBanks → v2: see money.md
+- [x] `POST /settings/banks/link-session` → appHandler.SettingsBanksLinkSession → v2: see settings-admin.md
+- [x] `POST /settings/banks/exchange` → appHandler.SettingsBanksExchange → v2: see settings-admin.md
+- [x] `GET /settings/banks/institutions` → appHandler.SettingsBanksInstitutions → v2: see settings-admin.md
+- [x] `POST /settings/banks/connect-eu` → appHandler.SettingsBanksConnectEU → v2: see settings-admin.md
+- [x] `POST /settings/banks/{id}/sync` → appHandler.SettingsBanksSync → v2: see settings-admin.md
+- [x] `POST /settings/banks/{id}/disconnect` → appHandler.SettingsBanksDisconnect → v2: see settings-admin.md
+- [x] `POST /settings/banks/transactions/{id}/import` → appHandler.SettingsBanksImport → v2: see settings-admin.md
+- [x] `POST /settings/banks/transactions/{id}/dismiss` → appHandler.SettingsBanksDismiss → v2: see settings-admin.md
+- [x] `POST /settings/integrations/telegram` → appHandler.SettingsTelegramConnect → v2: see settings-admin.md
+- [x] `POST /settings/integrations/telegram/disconnect` → appHandler.SettingsTelegramDisconnect → v2: see settings-admin.md
+- [x] `POST /settings/integrations/telegram/alerts` → appHandler.SettingsTelegramAlerts → v2: see settings-admin.md
+- [x] `POST /settings/integrations/ibkr/connect` → appHandler.SettingsIBKRConnect → v2: see settings-admin.md
+- [x] `GET /settings/integrations/ibkr/callback` → appHandler.SettingsIBKRCallback → v2: see settings-admin.md
+- [x] `POST /settings/integrations/ibkr/sync` → appHandler.SettingsIBKRSync → v2: see settings-admin.md
+- [x] `POST /settings/integrations/ibkr/disconnect` → appHandler.SettingsIBKRDisconnect → v2: see settings-admin.md
+- [x] `GET /settings/profile/oauth/{provider}/connect` → authHandler.OAuthLinkStart → v2: see settings-admin.md
+- [x] `GET /settings/{section}` → appHandler.Settings → v2: see settings-admin.md
+- [x] `POST /settings/language` → appHandler.SettingsLanguageSubmit → v2: see settings-admin.md
+- [x] `POST /settings/profile` → appHandler.SettingsProfileSubmit → v2: see settings-admin.md
+- [x] `POST /settings/profile/delete` → appHandler.SettingsProfileDelete → v2: see settings-admin.md
+- [x] `POST /settings/passkey/register/begin` → appHandler.PasskeyRegisterBegin → v2: see settings-admin.md
+- [x] `POST /settings/passkey/register/finish` → appHandler.PasskeyRegisterFinish → v2: see settings-admin.md
+- [x] `POST /settings/notifications/earnings` → appHandler.SettingsNotificationsSubmit → v2: see settings-admin.md
+- [x] `POST /settings/feedback` → appHandler.SettingsFeedbackSubmit → v2: see settings-admin.md
+- [x] `GET /settings/subscription/status` → appHandler.SubscriptionStatusPartial → v2: see settings-admin.md
+- [x] `GET /settings/friends-privacy` → h.FriendsPrivacy → v2: see settings-admin.md
+- [x] `POST /settings/friends-privacy` → h.FriendsPrivacySubmit → v2: see settings-admin.md
+- [x] `GET /settings/blocked` → h.BlockedUsers → v2: see settings-admin.md
+- [x] `POST /settings/blocked/{userId}/unblock` → h.BlockedUserUnblock → v2: see settings-admin.md
 
 ### /goals (7)
 
-- [ ] `GET /goals` → appHandler.FinancialGoals
-- [ ] `POST /goals` → appHandler.FinancialGoalCreate
-- [ ] `POST /goals/bulk` → appHandler.FinancialGoalBulkUpdate
-- [ ] `POST /goals/{id}/what-if` → appHandler.FinancialGoalWhatIf
-- [ ] `POST /goals/{id}/contributions` → appHandler.FinancialGoalContributionCreate
-- [ ] `POST /goals/{id}/suggestions/{suggestionID}/accept` → appHandler.FinancialGoalSuggestionAccept
-- [ ] `GET /goals/{id}/report.pdf` → appHandler.FinancialGoalPDF
+- [x] `GET /goals` → appHandler.FinancialGoals → v2: see dashboard.md
+- [x] `POST /goals` → appHandler.FinancialGoalCreate → v2: see dashboard.md
+- [x] `POST /goals/bulk` → appHandler.FinancialGoalBulkUpdate → v2: see dashboard.md
+- [x] `POST /goals/{id}/what-if` → appHandler.FinancialGoalWhatIf → v2: see dashboard.md
+- [x] `POST /goals/{id}/contributions` → appHandler.FinancialGoalContributionCreate → v2: see dashboard.md
+- [x] `POST /goals/{id}/suggestions/{suggestionID}/accept` → appHandler.FinancialGoalSuggestionAccept → v2: see dashboard.md
+- [x] `GET /goals/{id}/report.pdf` → appHandler.FinancialGoalPDF → v2: see dashboard.md
 
 ### /chart-builder (1)
 
-- [ ] `GET /chart-builder` → appHandler.ChartBuilderStandalone
+- [x] `GET /chart-builder` → appHandler.ChartBuilderStandalone → v2: see planning-tools.md
 
 ### /news (1)
 
-- [ ] `GET /news/view` → appHandler.NewsArticleView
+- [x] `GET /news/view` → appHandler.NewsArticleView → v2: see dashboard.md
 
 ### /assistant (8)
 
-- [ ] `GET /assistant` → appHandler.Assistant
-- [ ] `POST /assistant/conversations` → appHandler.AssistantCreateConversation
-- [ ] `GET /assistant/conversations/{id}` → appHandler.AssistantConversation
-- [ ] `POST /assistant/conversations/{id}/turn` → appHandler.AssistantTurn
-- [ ] `POST /assistant/conversations/{id}/stream` → appHandler.AssistantStreamTurn
-- [ ] `POST /assistant/actions/{id}/confirm` → appHandler.AssistantConfirmAction
-- [ ] `POST /assistant/actions/{id}/cancel` → appHandler.AssistantCancelAction
-- [ ] `DELETE /assistant/tips/{id}` → appHandler.AssistantDismissTip
+- [x] `GET /assistant` → appHandler.Assistant → v2: see dashboard.md
+- [x] `POST /assistant/conversations` → appHandler.AssistantCreateConversation → v2: see dashboard.md
+- [x] `GET /assistant/conversations/{id}` → appHandler.AssistantConversation → v2: see dashboard.md
+- [x] `POST /assistant/conversations/{id}/turn` → appHandler.AssistantTurn → v2: see dashboard.md
+- [x] `POST /assistant/conversations/{id}/stream` → appHandler.AssistantStreamTurn → v2: see dashboard.md
+- [x] `POST /assistant/actions/{id}/confirm` → appHandler.AssistantConfirmAction → v2: see dashboard.md
+- [x] `POST /assistant/actions/{id}/cancel` → appHandler.AssistantCancelAction → v2: see dashboard.md
+- [x] `DELETE /assistant/tips/{id}` → appHandler.AssistantDismissTip → v2: see dashboard.md
 
 ### /portfolio (92)
 
-- [ ] `GET /portfolio` → appHandler.PortfolioHoldings
-- [ ] `GET /portfolio/one-page` → appHandler.PortfolioOnePage
-- [ ] `POST /portfolio/one-page/share-link` → appHandler.PortfolioShareLinkCreate
-- [ ] `DELETE /portfolio/one-page/share-link` → appHandler.PortfolioShareLinkRevoke
-- [ ] `GET /portfolio/rebalancing` → appHandler.PortfolioRebalancing
-- [ ] `POST /portfolio/rebalancing/{id}/model` → appHandler.PortfolioRebalancingModelSave
-- [ ] `POST /portfolio/rebalancing/{id}/simulate` → appHandler.PortfolioRebalancingSimulate
-- [ ] `POST /portfolio/rebalancing/{id}/plans` → appHandler.PortfolioRebalancingPlanSave
-- [ ] `POST /portfolio/rebalancing/{id}/plans/{planID}/complete` → appHandler.PortfolioRebalancingPlanComplete
-- [ ] `GET /portfolio/rebalancing/{id}/plans/{planID}/export.{format}` → appHandler.PortfolioRebalancingPlanExport
-- [ ] `POST /portfolio/rebalancing/{id}/preferences` → appHandler.PortfolioRebalancingPreferences
-- [ ] `POST /portfolio/rebalancing/{id}/alerts/{alertID}/acknowledge` → appHandler.PortfolioRebalancingAlertAcknowledge
-- [ ] `GET /portfolio/retirement` → appHandler.RetirementPlanner
-- [ ] `POST /portfolio/retirement` → appHandler.RetirementPlannerSave
-- [ ] `POST /portfolio/positions` → appHandler.PortfolioCreatePosition
-- [ ] `GET /portfolio/positions/{id}/edit` → appHandler.PortfolioPositionEditForm
-- [ ] `PUT /portfolio/positions/{id}` → appHandler.PortfolioPositionUpdate
-- [ ] `DELETE /portfolio/positions/{id}` → appHandler.PortfolioPositionDelete
-- [ ] `GET /portfolio/positions/{id}/sell` → appHandler.PortfolioPositionSellForm
-- [ ] `POST /portfolio/positions/{id}/sell` → appHandler.PortfolioPositionSell
-- [ ] `GET /portfolio/quotes` → appHandler.PortfolioHoldingsQuotes
-- [ ] `GET /portfolio/positions/{id}/alert` → appHandler.PortfolioPositionAlertForm
-- [ ] `POST /portfolio/positions/{id}/alert` → appHandler.PortfolioPositionAlertSave
-- [ ] `GET /portfolio/targets` → appHandler.PortfolioTargets
-- [ ] `GET /portfolio/targets/add` → appHandler.PortfolioTargetsAddForm
-- [ ] `POST /portfolio/targets` → appHandler.PortfolioTargetsCreate
-- [ ] `GET /portfolio/targets/{id}/edit` → appHandler.PortfolioTargetsEditForm
-- [ ] `PUT /portfolio/targets/{id}` → appHandler.PortfolioTargetsUpdate
-- [ ] `DELETE /portfolio/targets/{id}/remove` → appHandler.PortfolioTargetsDelete
-- [ ] `DELETE /portfolio/targets/{id}` → appHandler.PortfolioTargetDelete
-- [ ] `GET /portfolio/allocation` → appHandler.PortfolioAllocation
-- [ ] `GET /portfolio/sector-gains` → appHandler.PortfolioSectorGains
-- [ ] `GET /portfolio/watchlist` → appHandler.PortfolioWatchlist
-- [ ] `GET /portfolio/screens` → appHandler.SmartScreens
-- [ ] `POST /portfolio/screens` → appHandler.SmartScreenCreate
-- [ ] `POST /portfolio/screens/{id}` → appHandler.SmartScreenUpdate
-- [ ] `POST /portfolio/screens/{id}/evaluate` → appHandler.SmartScreenEvaluate
-- [ ] `POST /portfolio/screens/{id}/delete` → appHandler.SmartScreenDelete
-- [ ] `GET /portfolio/rebalancing-rules` → appHandler.RebalancingRules
-- [ ] `POST /portfolio/rebalancing/{id}` → appHandler.RebalancingRuleSave
-- [ ] `POST /portfolio/rebalancing/{id}/events/{eventID}/confirm` → appHandler.RebalanceEventConfirm
-- [ ] `POST /portfolio/rebalancing/{id}/events/{eventID}/dismiss` → appHandler.RebalanceEventDismiss
-- [ ] `GET /portfolio/watchlist/quotes` → appHandler.PortfolioWatchlistQuotes
-- [ ] `GET /portfolio/watchlist/search` → appHandler.PortfolioWatchlistSearch
-- [ ] `POST /portfolio/watchlist/items` → appHandler.PortfolioWatchlistAdd
-- [ ] `GET /portfolio/watchlist/items/{id}/edit` → appHandler.PortfolioWatchlistItemEditForm
-- [ ] `PATCH /portfolio/watchlist/items/{id}` → appHandler.PortfolioWatchlistItemUpdate
-- [ ] `DELETE /portfolio/watchlist/items/{id}` → appHandler.PortfolioWatchlistRemove
-- [ ] `GET /portfolio/import/screenshot` → appHandler.PortfolioScreenshotImportForm
-- [ ] `POST /portfolio/import/screenshot/preview` → appHandler.PortfolioScreenshotImportPreview
-- [ ] `POST /portfolio/import/screenshot/commit` → appHandler.PortfolioScreenshotImportCommit
-- [ ] `GET /portfolio/watchlist/import/csv` → appHandler.PortfolioWatchlistCSVImportForm
-- [ ] `POST /portfolio/watchlist/import/csv/preview` → appHandler.PortfolioWatchlistCSVImportPreview
-- [ ] `POST /portfolio/watchlist/import/csv/commit` → appHandler.PortfolioWatchlistCSVImportCommit
-- [ ] `GET /portfolio/watchlist/list` → appHandler.PortfolioWatchlistListForm
-- [ ] `GET /portfolio/watchlist/list/{id}` → appHandler.PortfolioWatchlistListForm
-- [ ] `POST /portfolio/watchlist/list` → appHandler.PortfolioWatchlistListCreate
-- [ ] `PUT /portfolio/watchlist/list/{id}` → appHandler.PortfolioWatchlistListUpdate
-- [ ] `DELETE /portfolio/watchlist/list/{id}` → appHandler.PortfolioWatchlistListDelete
-- [ ] `GET /portfolio/allocation/list` → appHandler.PortfolioAllocationListForm
-- [ ] `GET /portfolio/allocation/list/{id}` → appHandler.PortfolioAllocationListForm
-- [ ] `POST /portfolio/allocation/list` → appHandler.PortfolioAllocationListCreate
-- [ ] `PUT /portfolio/allocation/list/{id}` → appHandler.PortfolioAllocationListUpdate
-- [ ] `DELETE /portfolio/allocation/list/{id}` → appHandler.PortfolioAllocationListDelete
-- [ ] `GET /portfolio/earnings` → appHandler.PortfolioEarnings
-- [ ] `GET /portfolio/dividends` → appHandler.PortfolioDividends
-- [ ] `GET /portfolio/news/article` → appHandler.PortfolioNewsArticleForm
-- [ ] `GET /portfolio/news/article/{id}` → appHandler.PortfolioNewsArticleForm
-- [ ] `POST /portfolio/news/article` → appHandler.PortfolioNewsArticleCreate
-- [ ] `PUT /portfolio/news/article/{id}` → appHandler.PortfolioNewsArticleUpdate
-- [ ] `DELETE /portfolio/news/article/{id}` → appHandler.PortfolioNewsArticleDelete
-- [ ] `GET /portfolio/news/open` → appHandler.PortfolioNewsOpen
-- [ ] `POST /portfolio/news/thesis-watch/{id}/feedback` → appHandler.PortfolioThesisWatchFeedback
-- [ ] `GET /portfolio/news/thesis-watch/{id}/open` → appHandler.PortfolioThesisWatchOpen
-- [ ] `GET /portfolio/news` → appHandler.PortfolioNews
-- [ ] `GET /portfolio/{symbol}/quote` → appHandler.StockDetailQuote
-- [ ] `GET /portfolio/{symbol}/pressure` → appHandler.StockPressure
-- [ ] `GET /portfolio/{symbol}/earnings/transcript` → appHandler.StockEarningsTranscript
-- [ ] `GET /portfolio/{symbol}/valuation/edit` → appHandler.StockValuationForm
-- [ ] `POST /portfolio/{symbol}/valuation` → appHandler.StockValuationSave
-- [ ] `GET /portfolio/{symbol}/builder` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/builder/chart` → appHandler.StockChartBuilderChart
-- [ ] `GET /portfolio/{symbol}/builder/csv` → appHandler.StockChartBuilderCSV
-- [ ] `GET /portfolio/{symbol}/statements` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/ownership` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/analysis` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/forecast` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/compare` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/earnings` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/{tab}` → appHandler.StockDetail
-- [ ] `GET /portfolio/{symbol}/terminal` → h.StockTerminal
+- [x] `GET /portfolio` → appHandler.PortfolioHoldings → v2: see portfolio.md
+- [x] `GET /portfolio/one-page` → appHandler.PortfolioOnePage → v2: see portfolio.md
+- [x] `POST /portfolio/one-page/share-link` → appHandler.PortfolioShareLinkCreate → v2: see portfolio.md
+- [x] `DELETE /portfolio/one-page/share-link` → appHandler.PortfolioShareLinkRevoke → v2: see portfolio.md
+- [x] `GET /portfolio/rebalancing` → appHandler.PortfolioRebalancing → v2: see portfolio.md
+- [x] `POST /portfolio/rebalancing/{id}/model` → appHandler.PortfolioRebalancingModelSave → v2: see portfolio.md
+- [x] `POST /portfolio/rebalancing/{id}/simulate` → appHandler.PortfolioRebalancingSimulate → v2: see portfolio.md
+- [x] `POST /portfolio/rebalancing/{id}/plans` → appHandler.PortfolioRebalancingPlanSave → v2: see portfolio.md
+- [x] `POST /portfolio/rebalancing/{id}/plans/{planID}/complete` → appHandler.PortfolioRebalancingPlanComplete → v2: see portfolio.md
+- [x] `GET /portfolio/rebalancing/{id}/plans/{planID}/export.{format}` → appHandler.PortfolioRebalancingPlanExport → v2: see portfolio.md
+- [x] `POST /portfolio/rebalancing/{id}/preferences` → appHandler.PortfolioRebalancingPreferences → v2: see portfolio.md
+- [x] `POST /portfolio/rebalancing/{id}/alerts/{alertID}/acknowledge` → appHandler.PortfolioRebalancingAlertAcknowledge → v2: see portfolio.md
+- [x] `GET /portfolio/retirement` → appHandler.RetirementPlanner → v2: see portfolio.md
+- [x] `POST /portfolio/retirement` → appHandler.RetirementPlannerSave → v2: see portfolio.md
+- [x] `POST /portfolio/positions` → appHandler.PortfolioCreatePosition → v2: see portfolio.md
+- [x] `GET /portfolio/positions/{id}/edit` → appHandler.PortfolioPositionEditForm → v2: see portfolio.md
+- [x] `PUT /portfolio/positions/{id}` → appHandler.PortfolioPositionUpdate → v2: see portfolio.md
+- [x] `DELETE /portfolio/positions/{id}` → appHandler.PortfolioPositionDelete → v2: see portfolio.md
+- [x] `GET /portfolio/positions/{id}/sell` → appHandler.PortfolioPositionSellForm → v2: see portfolio.md
+- [x] `POST /portfolio/positions/{id}/sell` → appHandler.PortfolioPositionSell → v2: see portfolio.md
+- [x] `GET /portfolio/quotes` → appHandler.PortfolioHoldingsQuotes → v2: see portfolio.md
+- [x] `GET /portfolio/positions/{id}/alert` → appHandler.PortfolioPositionAlertForm → v2: see portfolio.md
+- [x] `POST /portfolio/positions/{id}/alert` → appHandler.PortfolioPositionAlertSave → v2: see portfolio.md
+- [x] `GET /portfolio/targets` → appHandler.PortfolioTargets → v2: see portfolio.md
+- [x] `GET /portfolio/targets/add` → appHandler.PortfolioTargetsAddForm → v2: see portfolio.md
+- [x] `POST /portfolio/targets` → appHandler.PortfolioTargetsCreate → v2: see portfolio.md
+- [x] `GET /portfolio/targets/{id}/edit` → appHandler.PortfolioTargetsEditForm → v2: see portfolio.md
+- [x] `PUT /portfolio/targets/{id}` → appHandler.PortfolioTargetsUpdate → v2: see portfolio.md
+- [x] `DELETE /portfolio/targets/{id}/remove` → appHandler.PortfolioTargetsDelete → v2: see portfolio.md
+- [x] `DELETE /portfolio/targets/{id}` → appHandler.PortfolioTargetDelete → v2: see portfolio.md
+- [x] `GET /portfolio/allocation` → appHandler.PortfolioAllocation → v2: see portfolio.md
+- [x] `GET /portfolio/sector-gains` → appHandler.PortfolioSectorGains → v2: see portfolio.md
+- [x] `GET /portfolio/watchlist` → appHandler.PortfolioWatchlist → v2: see portfolio.md
+- [x] `GET /portfolio/screens` → appHandler.SmartScreens → v2: see dashboard.md
+- [x] `POST /portfolio/screens` → appHandler.SmartScreenCreate → v2: see dashboard.md
+- [x] `POST /portfolio/screens/{id}` → appHandler.SmartScreenUpdate → v2: see portfolio.md
+- [x] `POST /portfolio/screens/{id}/evaluate` → appHandler.SmartScreenEvaluate → v2: see portfolio.md
+- [x] `POST /portfolio/screens/{id}/delete` → appHandler.SmartScreenDelete → v2: see portfolio.md
+- [x] `GET /portfolio/rebalancing-rules` → appHandler.RebalancingRules → v2: see dashboard.md
+- [x] `POST /portfolio/rebalancing/{id}` → appHandler.RebalancingRuleSave → v2: see portfolio.md
+- [x] `POST /portfolio/rebalancing/{id}/events/{eventID}/confirm` → appHandler.RebalanceEventConfirm → v2: see portfolio.md
+- [x] `POST /portfolio/rebalancing/{id}/events/{eventID}/dismiss` → appHandler.RebalanceEventDismiss → v2: see portfolio.md
+- [x] `GET /portfolio/watchlist/quotes` → appHandler.PortfolioWatchlistQuotes → v2: see portfolio.md
+- [x] `GET /portfolio/watchlist/search` → appHandler.PortfolioWatchlistSearch → v2: see portfolio.md
+- [x] `POST /portfolio/watchlist/items` → appHandler.PortfolioWatchlistAdd → v2: see portfolio.md
+- [x] `GET /portfolio/watchlist/items/{id}/edit` → appHandler.PortfolioWatchlistItemEditForm → v2: see portfolio.md
+- [x] `PATCH /portfolio/watchlist/items/{id}` → appHandler.PortfolioWatchlistItemUpdate → v2: see portfolio.md
+- [x] `DELETE /portfolio/watchlist/items/{id}` → appHandler.PortfolioWatchlistRemove → v2: see portfolio.md
+- [x] `GET /portfolio/import/screenshot` → appHandler.PortfolioScreenshotImportForm → v2: see portfolio.md
+- [x] `POST /portfolio/import/screenshot/preview` → appHandler.PortfolioScreenshotImportPreview → v2: see portfolio.md
+- [x] `POST /portfolio/import/screenshot/commit` → appHandler.PortfolioScreenshotImportCommit → v2: see portfolio.md
+- [x] `GET /portfolio/watchlist/import/csv` → appHandler.PortfolioWatchlistCSVImportForm → v2: see portfolio.md
+- [x] `POST /portfolio/watchlist/import/csv/preview` → appHandler.PortfolioWatchlistCSVImportPreview → v2: see portfolio.md
+- [x] `POST /portfolio/watchlist/import/csv/commit` → appHandler.PortfolioWatchlistCSVImportCommit → v2: see portfolio.md
+- [x] `GET /portfolio/watchlist/list` → appHandler.PortfolioWatchlistListForm → v2: see portfolio.md
+- [x] `GET /portfolio/watchlist/list/{id}` → appHandler.PortfolioWatchlistListForm → v2: see portfolio.md
+- [x] `POST /portfolio/watchlist/list` → appHandler.PortfolioWatchlistListCreate → v2: see portfolio.md
+- [x] `PUT /portfolio/watchlist/list/{id}` → appHandler.PortfolioWatchlistListUpdate → v2: see portfolio.md
+- [x] `DELETE /portfolio/watchlist/list/{id}` → appHandler.PortfolioWatchlistListDelete → v2: see portfolio.md
+- [x] `GET /portfolio/allocation/list` → appHandler.PortfolioAllocationListForm → v2: see portfolio.md
+- [x] `GET /portfolio/allocation/list/{id}` → appHandler.PortfolioAllocationListForm → v2: see portfolio.md
+- [x] `POST /portfolio/allocation/list` → appHandler.PortfolioAllocationListCreate → v2: see portfolio.md
+- [x] `PUT /portfolio/allocation/list/{id}` → appHandler.PortfolioAllocationListUpdate → v2: see portfolio.md
+- [x] `DELETE /portfolio/allocation/list/{id}` → appHandler.PortfolioAllocationListDelete → v2: see portfolio.md
+- [x] `GET /portfolio/earnings` → appHandler.PortfolioEarnings → v2: see portfolio.md
+- [x] `GET /portfolio/dividends` → appHandler.PortfolioDividends → v2: see portfolio.md
+- [x] `GET /portfolio/news/article` → appHandler.PortfolioNewsArticleForm → v2: see portfolio.md
+- [x] `GET /portfolio/news/article/{id}` → appHandler.PortfolioNewsArticleForm → v2: see portfolio.md
+- [x] `POST /portfolio/news/article` → appHandler.PortfolioNewsArticleCreate → v2: see portfolio.md
+- [x] `PUT /portfolio/news/article/{id}` → appHandler.PortfolioNewsArticleUpdate → v2: see portfolio.md
+- [x] `DELETE /portfolio/news/article/{id}` → appHandler.PortfolioNewsArticleDelete → v2: see portfolio.md
+- [x] `GET /portfolio/news/open` → appHandler.PortfolioNewsOpen → v2: see portfolio.md
+- [x] `POST /portfolio/news/thesis-watch/{id}/feedback` → appHandler.PortfolioThesisWatchFeedback → v2: see portfolio.md
+- [x] `GET /portfolio/news/thesis-watch/{id}/open` → appHandler.PortfolioThesisWatchOpen → v2: see portfolio.md
+- [x] `GET /portfolio/news` → appHandler.PortfolioNews → v2: see portfolio.md
+- [x] `GET /portfolio/{symbol}/quote` → appHandler.StockDetailQuote → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/pressure` → appHandler.StockPressure → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/earnings/transcript` → appHandler.StockEarningsTranscript → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/valuation/edit` → appHandler.StockValuationForm → v2: see stock.md
+- [x] `POST /portfolio/{symbol}/valuation` → appHandler.StockValuationSave → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/builder` → appHandler.StockDetail → v2: see planning-tools.md
+- [x] `GET /portfolio/{symbol}/builder/chart` → appHandler.StockChartBuilderChart → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/builder/csv` → appHandler.StockChartBuilderCSV → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/statements` → appHandler.StockDetail → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/ownership` → appHandler.StockDetail → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/analysis` → appHandler.StockDetail → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/forecast` → appHandler.StockDetail → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/compare` → appHandler.StockDetail → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/earnings` → appHandler.StockDetail → v2: see stock.md
+- [x] `GET /portfolio/{symbol}` → appHandler.StockDetail → v2: see portfolio.md
+- [x] `GET /portfolio/{symbol}/{tab}` → appHandler.StockDetail → v2: see stock.md
+- [x] `GET /portfolio/{symbol}/terminal` → h.StockTerminal → v2: see stock.md
 
 ### /portfolios (6)
 
-- [ ] `GET /portfolios` → appHandler.PortfolioWorkspace
-- [ ] `POST /portfolios` → appHandler.PortfolioWorkspaceCreate
-- [ ] `POST /portfolios/{id}/clone` → appHandler.PortfolioWorkspaceClone
-- [ ] `POST /portfolios/{id}/invite` → appHandler.PortfolioWorkspaceInvite
-- [ ] `POST /portfolios/{id}/cash` → appHandler.PortfolioWorkspaceCash
-- [ ] `POST /portfolios/{id}/archive` → appHandler.PortfolioWorkspaceArchive
+- [x] `GET /portfolios` → appHandler.PortfolioWorkspace → v2: see portfolio.md
+- [x] `POST /portfolios` → appHandler.PortfolioWorkspaceCreate → v2: see portfolio.md
+- [x] `POST /portfolios/{id}/clone` → appHandler.PortfolioWorkspaceClone → v2: see portfolio.md
+- [x] `POST /portfolios/{id}/invite` → appHandler.PortfolioWorkspaceInvite → v2: see portfolio.md
+- [x] `POST /portfolios/{id}/cash` → appHandler.PortfolioWorkspaceCash → v2: see portfolio.md
+- [x] `POST /portfolios/{id}/archive` → appHandler.PortfolioWorkspaceArchive → v2: see portfolio.md
 
 ### /planning (4)
 
-- [ ] `GET /planning/grow` → appHandler.PlanningGrow
-- [ ] `POST /planning/grow/preview` → appHandler.PlanningGrowPreview
-- [ ] `GET /planning/retire` → appHandler.PlanningRetire
-- [ ] `POST /planning/retire/preview` → appHandler.PlanningRetirePreview
+- [x] `GET /planning/grow` → appHandler.PlanningGrow → v2: see planning-tools.md
+- [x] `POST /planning/grow/preview` → appHandler.PlanningGrowPreview → v2: see planning-tools.md
+- [x] `GET /planning/retire` → appHandler.PlanningRetire → v2: see planning-tools.md
+- [x] `POST /planning/retire/preview` → appHandler.PlanningRetirePreview → v2: see planning-tools.md
 
 ### /simulator (3)
 
-- [ ] `GET /simulator` → appHandler.Simulator
-- [ ] `POST /simulator/preview` → appHandler.SimulatorPreview
-- [ ] `POST /simulator/save` → appHandler.SimulatorSave
+- [x] `GET /simulator` → appHandler.Simulator → v2: see planning-tools.md
+- [x] `POST /simulator/preview` → appHandler.SimulatorPreview → v2: see planning-tools.md
+- [x] `POST /simulator/save` → appHandler.SimulatorSave → v2: see planning-tools.md
 
 ### /forecast (5)
 
-- [ ] `GET /forecast` → appHandler.NetWorthForecast
-- [ ] `POST /forecast` → appHandler.NetWorthForecastCreate
-- [ ] `POST /forecast/{id}` → appHandler.NetWorthForecastUpdate
-- [ ] `POST /forecast/{id}/run` → appHandler.NetWorthForecastRun
-- [ ] `POST /forecast/{id}/delete` → appHandler.NetWorthForecastDelete
+- [x] `GET /forecast` → appHandler.NetWorthForecast → v2: see dashboard.md
+- [x] `POST /forecast` → appHandler.NetWorthForecastCreate → v2: see dashboard.md
+- [x] `POST /forecast/{id}` → appHandler.NetWorthForecastUpdate → v2: see planning-tools.md
+- [x] `POST /forecast/{id}/run` → appHandler.NetWorthForecastRun → v2: see planning-tools.md
+- [x] `POST /forecast/{id}/delete` → appHandler.NetWorthForecastDelete → v2: see planning-tools.md
 
 ### /notifications (3)
 
-- [ ] `GET /notifications` → appHandler.NotificationInbox
-- [ ] `POST /notifications/read-all` → appHandler.NotificationsReadAll
-- [ ] `POST /notifications/{id}/read` → appHandler.NotificationRead
+- [x] `GET /notifications` → appHandler.NotificationInbox → v2: see dashboard.md
+- [x] `POST /notifications/read-all` → appHandler.NotificationsReadAll → v2: see dashboard.md
+- [x] `POST /notifications/{id}/read` → appHandler.NotificationRead → v2: see dashboard.md
 
 ### /scenarios (11)
 
-- [ ] `GET /scenarios` → appHandler.Scenarios
-- [ ] `POST /scenarios/runs` → appHandler.ScenarioCreateRun
-- [ ] `POST /scenarios/snapshot-review` → appHandler.ScenarioSnapshotReview
-- [ ] `GET /scenarios/runs/{id}` → appHandler.ScenarioRunStatus
-- [ ] `DELETE /scenarios/runs/{id}` → appHandler.ScenarioRunCancel
-- [ ] `GET /scenarios/runs/{id}/report.pdf` → appHandler.ScenarioRunPDF
-- [ ] `POST /scenarios/compare` → appHandler.ScenarioRunsCompare
-- [ ] `POST /scenarios/configurations/{id}/runs` → appHandler.ScenarioDefinitionRun
-- [ ] `DELETE /scenarios/configurations/{id}` → appHandler.ScenarioDefinitionDelete
-- [ ] `POST /scenarios/risk-profiles` → appHandler.ScenarioRiskProfileSave
-- [ ] `DELETE /scenarios/risk-profiles/{id}` → appHandler.ScenarioRiskProfileDelete
+- [x] `GET /scenarios` → appHandler.Scenarios → v2: see planning-tools.md
+- [x] `POST /scenarios/runs` → appHandler.ScenarioCreateRun → v2: see planning-tools.md
+- [x] `POST /scenarios/snapshot-review` → appHandler.ScenarioSnapshotReview → v2: see planning-tools.md
+- [x] `GET /scenarios/runs/{id}` → appHandler.ScenarioRunStatus → v2: see planning-tools.md
+- [x] `DELETE /scenarios/runs/{id}` → appHandler.ScenarioRunCancel → v2: see planning-tools.md
+- [x] `GET /scenarios/runs/{id}/report.pdf` → appHandler.ScenarioRunPDF → v2: see planning-tools.md
+- [x] `POST /scenarios/compare` → appHandler.ScenarioRunsCompare → v2: see planning-tools.md
+- [x] `POST /scenarios/configurations/{id}/runs` → appHandler.ScenarioDefinitionRun → v2: see planning-tools.md
+- [x] `DELETE /scenarios/configurations/{id}` → appHandler.ScenarioDefinitionDelete → v2: see planning-tools.md
+- [x] `POST /scenarios/risk-profiles` → appHandler.ScenarioRiskProfileSave → v2: see planning-tools.md
+- [x] `DELETE /scenarios/risk-profiles/{id}` → appHandler.ScenarioRiskProfileDelete → v2: see planning-tools.md
 
 ### /trading (1)
 
-- [ ] `GET /trading` → appHandler.TradingDashboard
+- [x] `GET /trading` → appHandler.TradingDashboard → v2: see planning-tools.md
 
 ### /expenses (46)
 
-- [ ] `GET /expenses` → appHandler.ExpensesPlanner
-- [ ] `GET /expenses/tax-teaser` → appHandler.ExpensesTaxTeaser
-- [ ] `POST /expenses/dca-ticker` → appHandler.ExpensesDcaTickerUpdate
-- [ ] `POST /expenses/alert-policy` → appHandler.ExpensesAlertPolicyUpdate
-- [ ] `POST /expenses/reallocation` → appHandler.ExpensesReallocationCommit
-- [ ] `GET /expenses/bulk` → appHandler.ExpensesBulkTargets
-- [ ] `POST /expenses/bulk` → appHandler.ExpensesBulkTargetsSubmit
-- [ ] `POST /expenses/templates` → appHandler.ExpensesTemplateCreate
-- [ ] `POST /expenses/templates/{id}/apply` → appHandler.ExpensesTemplateApply
-- [ ] `GET /expenses/report.pdf` → appHandler.ExpensesBudgetPDF
-- [ ] `GET /expenses/financing` → appHandler.ExpensesFinancing
-- [ ] `POST /expenses/financing/simulate` → appHandler.ExpensesFinancingSimulate
-- [ ] `POST /expenses/financing/save` → appHandler.ExpensesFinancingSave
-- [ ] `GET /expenses/year` → appHandler.ExpensesYear
-- [ ] `GET /expenses/categories/{pillar}` → appHandler.ExpensesCategory
-- [ ] `GET /expenses/record` → appHandler.ExpensesRecordForm
-- [ ] `POST /expenses/record` → appHandler.ExpensesRecordSubmit
-- [ ] `POST /expenses/receipt/parse-qr` → receiptsHandler.ParseQR
-- [ ] `POST /expenses/receipt/ocr` → receiptsHandler.ScanOCR
-- [ ] `GET /expenses/receipt/import` → receiptsHandler.ReceiptImportForm
-- [ ] `POST /expenses/receipt/scan` → receiptsHandler.ScanBatch
-- [ ] `POST /expenses/receipt/commit` → receiptsHandler.CommitBatch
-- [ ] `GET /expenses/import` → appHandler.ExpensesImportPage
-- [ ] `POST /expenses/import/analyze` → appHandler.ExpensesImportAnalyze
-- [ ] `POST /expenses/import/{sessionID}/preview` → appHandler.ExpensesImportPreview
-- [ ] `POST /expenses/import/{sessionID}/commit` → appHandler.ExpensesImportCommit
-- [ ] `DELETE /expenses/import/{sessionID}` → appHandler.ExpensesImportDiscard
-- [ ] `GET /expenses/plan-item` → appHandler.ExpensesPlanItemForm
-- [ ] `GET /expenses/plan-item/{id}` → appHandler.ExpensesPlanItemForm
-- [ ] `POST /expenses/plan-item` → appHandler.ExpensesPlanItemCreate
-- [ ] `PUT /expenses/plan-item/{id}` → appHandler.ExpensesPlanItemUpdate
-- [ ] `DELETE /expenses/plan-item/{id}` → appHandler.ExpensesPlanItemDelete
-- [ ] `GET /expenses/category` → appHandler.ExpensesCategoryLabelForm
-- [ ] `POST /expenses/category` → appHandler.ExpensesCategoryLabelCreate
-- [ ] `DELETE /expenses/category/{id}` → appHandler.ExpensesCategoryLabelDelete
-- [ ] `GET /expenses/recurring` → appHandler.ExpensesRecurringForm
-- [ ] `GET /expenses/recurring/{id}` → appHandler.ExpensesRecurringForm
-- [ ] `POST /expenses/recurring` → appHandler.ExpensesRecurringCreate
-- [ ] `PUT /expenses/recurring/{id}` → appHandler.ExpensesRecurringUpdate
-- [ ] `DELETE /expenses/recurring/{id}` → appHandler.ExpensesRecurringDelete
-- [ ] `POST /expenses/suggestions/{id}/dismiss` → appHandler.ExpensesDismissSuggestion
-- [ ] `GET /expenses/salary` → appHandler.ExpensesSalaryForm
-- [ ] `POST /expenses/salary` → appHandler.ExpensesSalarySubmit
-- [ ] `GET /expenses/partner` → appHandler.ExpensesPartnerForm
-- [ ] `POST /expenses/partner` → appHandler.ExpensesPartnerSubmit
-- [ ] `DELETE /expenses/{id}` → appHandler.ExpensesDelete
+- [x] `GET /expenses` → appHandler.ExpensesPlanner → v2: see money.md
+- [x] `GET /expenses/tax-teaser` → appHandler.ExpensesTaxTeaser → v2: see money.md
+- [x] `POST /expenses/dca-ticker` → appHandler.ExpensesDcaTickerUpdate → v2: see money.md
+- [x] `POST /expenses/alert-policy` → appHandler.ExpensesAlertPolicyUpdate → v2: see money.md
+- [x] `POST /expenses/reallocation` → appHandler.ExpensesReallocationCommit → v2: see money.md
+- [x] `GET /expenses/bulk` → appHandler.ExpensesBulkTargets → v2: see money.md
+- [x] `POST /expenses/bulk` → appHandler.ExpensesBulkTargetsSubmit → v2: see money.md
+- [x] `POST /expenses/templates` → appHandler.ExpensesTemplateCreate → v2: see money.md
+- [x] `POST /expenses/templates/{id}/apply` → appHandler.ExpensesTemplateApply → v2: see money.md
+- [x] `GET /expenses/report.pdf` → appHandler.ExpensesBudgetPDF → v2: see money.md
+- [x] `GET /expenses/financing` → appHandler.ExpensesFinancing → v2: see money.md
+- [x] `POST /expenses/financing/simulate` → appHandler.ExpensesFinancingSimulate → v2: see money.md
+- [x] `POST /expenses/financing/save` → appHandler.ExpensesFinancingSave → v2: see money.md
+- [x] `GET /expenses/year` → appHandler.ExpensesYear → v2: see money.md
+- [x] `GET /expenses/categories/{pillar}` → appHandler.ExpensesCategory → v2: see money.md
+- [x] `GET /expenses/record` → appHandler.ExpensesRecordForm → v2: see money.md
+- [x] `POST /expenses/record` → appHandler.ExpensesRecordSubmit → v2: see money.md
+- [x] `POST /expenses/receipt/parse-qr` → receiptsHandler.ParseQR → v2: see money.md
+- [x] `POST /expenses/receipt/ocr` → receiptsHandler.ScanOCR → v2: see money.md
+- [x] `GET /expenses/receipt/import` → receiptsHandler.ReceiptImportForm → v2: see money.md
+- [x] `POST /expenses/receipt/scan` → receiptsHandler.ScanBatch → v2: see money.md
+- [x] `POST /expenses/receipt/commit` → receiptsHandler.CommitBatch → v2: see money.md
+- [x] `GET /expenses/import` → appHandler.ExpensesImportPage → v2: see money.md
+- [x] `POST /expenses/import/analyze` → appHandler.ExpensesImportAnalyze → v2: see money.md
+- [x] `POST /expenses/import/{sessionID}/preview` → appHandler.ExpensesImportPreview → v2: see money.md
+- [x] `POST /expenses/import/{sessionID}/commit` → appHandler.ExpensesImportCommit → v2: see money.md
+- [x] `DELETE /expenses/import/{sessionID}` → appHandler.ExpensesImportDiscard → v2: see money.md
+- [x] `GET /expenses/plan-item` → appHandler.ExpensesPlanItemForm → v2: see money.md
+- [x] `GET /expenses/plan-item/{id}` → appHandler.ExpensesPlanItemForm → v2: see money.md
+- [x] `POST /expenses/plan-item` → appHandler.ExpensesPlanItemCreate → v2: see money.md
+- [x] `PUT /expenses/plan-item/{id}` → appHandler.ExpensesPlanItemUpdate → v2: see money.md
+- [x] `DELETE /expenses/plan-item/{id}` → appHandler.ExpensesPlanItemDelete → v2: see money.md
+- [x] `GET /expenses/category` → appHandler.ExpensesCategoryLabelForm → v2: see money.md
+- [x] `POST /expenses/category` → appHandler.ExpensesCategoryLabelCreate → v2: see money.md
+- [x] `DELETE /expenses/category/{id}` → appHandler.ExpensesCategoryLabelDelete → v2: see money.md
+- [x] `GET /expenses/recurring` → appHandler.ExpensesRecurringForm → v2: see money.md
+- [x] `GET /expenses/recurring/{id}` → appHandler.ExpensesRecurringForm → v2: see money.md
+- [x] `POST /expenses/recurring` → appHandler.ExpensesRecurringCreate → v2: see money.md
+- [x] `PUT /expenses/recurring/{id}` → appHandler.ExpensesRecurringUpdate → v2: see money.md
+- [x] `DELETE /expenses/recurring/{id}` → appHandler.ExpensesRecurringDelete → v2: see money.md
+- [x] `POST /expenses/suggestions/{id}/dismiss` → appHandler.ExpensesDismissSuggestion → v2: see money.md
+- [x] `GET /expenses/salary` → appHandler.ExpensesSalaryForm → v2: see money.md
+- [x] `POST /expenses/salary` → appHandler.ExpensesSalarySubmit → v2: see money.md
+- [x] `GET /expenses/partner` → appHandler.ExpensesPartnerForm → v2: see money.md
+- [x] `POST /expenses/partner` → appHandler.ExpensesPartnerSubmit → v2: see money.md
+- [x] `DELETE /expenses/{id}` → appHandler.ExpensesDelete → v2: see money.md
 
 ### /reports (16)
 
-- [ ] `GET /reports` → appHandler.Reports
-- [ ] `GET /reports/advanced` → appHandler.AdvancedReports
-- [ ] `POST /reports/advanced/templates` → appHandler.AdvancedReportTemplateCreate
-- [ ] `POST /reports/advanced/runs` → appHandler.AdvancedReportRunCreate
-- [ ] `POST /reports/advanced/schedules` → appHandler.AdvancedReportScheduleCreate
-- [ ] `GET /reports/advanced/artifacts/{id}` → appHandler.AdvancedReportArtifact
-- [ ] `GET /reports/deep-dive` → appHandler.ReportsDeepDiveIndex
-- [ ] `GET /reports/deep-dive/calendar` → appHandler.ReportsDeepDiveCalendar
-- [ ] `GET /reports/deep-dive/contribution` → appHandler.ReportsDeepDiveContribution
-- [ ] `GET /reports/deep-dive/currency` → appHandler.ReportsDeepDiveCurrency
-- [ ] `GET /reports/deep-dive/notes` → appHandler.ReportsDeepDiveNotes
-- [ ] `GET /reports/deep-dive/sectors` → appHandler.ReportsDeepDiveSectors
-- [ ] `GET /reports/deep-dive/scorecard` → appHandler.ReportsDeepDiveScorecard
-- [ ] `GET /reports/deep-dive/volatility` → appHandler.ReportsDeepDiveVolatility
-- [ ] `GET /reports/deep-dive/winners` → appHandler.ReportsDeepDiveWinners
-- [ ] `GET /reports/{tab}` → appHandler.Reports
+- [x] `GET /reports` → appHandler.Reports → v2: see insights.md
+- [x] `GET /reports/advanced` → appHandler.AdvancedReports → v2: see insights.md
+- [x] `POST /reports/advanced/templates` → appHandler.AdvancedReportTemplateCreate → v2: see insights.md
+- [x] `POST /reports/advanced/runs` → appHandler.AdvancedReportRunCreate → v2: see insights.md
+- [x] `POST /reports/advanced/schedules` → appHandler.AdvancedReportScheduleCreate → v2: see insights.md
+- [x] `GET /reports/advanced/artifacts/{id}` → appHandler.AdvancedReportArtifact → v2: see insights.md
+- [x] `GET /reports/deep-dive` → appHandler.ReportsDeepDiveIndex → v2: see insights.md
+- [x] `GET /reports/deep-dive/calendar` → appHandler.ReportsDeepDiveCalendar → v2: see insights.md
+- [x] `GET /reports/deep-dive/contribution` → appHandler.ReportsDeepDiveContribution → v2: see insights.md
+- [x] `GET /reports/deep-dive/currency` → appHandler.ReportsDeepDiveCurrency → v2: see insights.md
+- [x] `GET /reports/deep-dive/notes` → appHandler.ReportsDeepDiveNotes → v2: see insights.md
+- [x] `GET /reports/deep-dive/sectors` → appHandler.ReportsDeepDiveSectors → v2: see insights.md
+- [x] `GET /reports/deep-dive/scorecard` → appHandler.ReportsDeepDiveScorecard → v2: see insights.md
+- [x] `GET /reports/deep-dive/volatility` → appHandler.ReportsDeepDiveVolatility → v2: see insights.md
+- [x] `GET /reports/deep-dive/winners` → appHandler.ReportsDeepDiveWinners → v2: see insights.md
+- [x] `GET /reports/{tab}` → appHandler.Reports → v2: see insights.md
 
 ### /tax (16)
 
-- [ ] `GET /tax` → appHandler.Tax
-- [ ] `GET /tax/filing` → appHandler.TaxFiling
-- [ ] `POST /tax/profile` → appHandler.TaxProfileSave
-- [ ] `POST /tax/instruments/{id}/market-admission` → appHandler.TaxInstrumentMarketAdmissionSave
-- [ ] `POST /tax/instruments/{id}/fund-classification` → appHandler.TaxInstrumentFundClassificationSave
-- [ ] `POST /tax/funds/annual-inputs` → appHandler.TaxFundAnnualInputSave
-- [ ] `POST /tax/scenarios` → appHandler.TaxScenarioCreate
-- [ ] `POST /tax/action-plans` → appHandler.TaxActionPlanCreate
-- [ ] `POST /tax/opportunities/{id}/dismiss` → appHandler.TaxOpportunityDismiss
-- [ ] `POST /tax/opportunities/{id}/restore` → appHandler.TaxOpportunityRestore
-- [ ] `POST /tax/location-scenarios` → appHandler.TaxLocationScenarioCreate
-- [ ] `POST /tax/placement-plans` → appHandler.TaxPlacementPlanCreate
-- [ ] `POST /tax/notifications` → appHandler.TaxNotificationsSave
-- [ ] `POST /tax/reports` → appHandler.TaxReportCreate
-- [ ] `GET /tax/reports/{id}/status` → appHandler.TaxReportStatus
-- [ ] `GET /tax/reports/{id}/download` → appHandler.TaxReportDownload
+- [x] `GET /tax` → appHandler.Tax → v2: see money.md
+- [x] `GET /tax/filing` → appHandler.TaxFiling → v2: see money.md
+- [x] `POST /tax/profile` → appHandler.TaxProfileSave → v2: see money.md
+- [x] `POST /tax/instruments/{id}/market-admission` → appHandler.TaxInstrumentMarketAdmissionSave → v2: see money.md
+- [x] `POST /tax/instruments/{id}/fund-classification` → appHandler.TaxInstrumentFundClassificationSave → v2: see money.md
+- [x] `POST /tax/funds/annual-inputs` → appHandler.TaxFundAnnualInputSave → v2: see money.md
+- [x] `POST /tax/scenarios` → appHandler.TaxScenarioCreate → v2: see money.md
+- [x] `POST /tax/action-plans` → appHandler.TaxActionPlanCreate → v2: see money.md
+- [x] `POST /tax/opportunities/{id}/dismiss` → appHandler.TaxOpportunityDismiss → v2: see money.md
+- [x] `POST /tax/opportunities/{id}/restore` → appHandler.TaxOpportunityRestore → v2: see money.md
+- [x] `POST /tax/location-scenarios` → appHandler.TaxLocationScenarioCreate → v2: see money.md
+- [x] `POST /tax/placement-plans` → appHandler.TaxPlacementPlanCreate → v2: see money.md
+- [x] `POST /tax/notifications` → appHandler.TaxNotificationsSave → v2: see money.md
+- [x] `POST /tax/reports` → appHandler.TaxReportCreate → v2: see money.md
+- [x] `GET /tax/reports/{id}/status` → appHandler.TaxReportStatus → v2: see money.md
+- [x] `GET /tax/reports/{id}/download` → appHandler.TaxReportDownload → v2: see money.md
 
 ### /markets (6)
 
-- [ ] `GET /markets` → appHandler.Markets
-- [ ] `GET /markets/overview` → appHandler.MarketsOverview
-- [ ] `GET /markets/earnings` → appHandler.MarketsEarnings
-- [ ] `GET /markets/congress` → appHandler.MarketsCongress
-- [ ] `GET /markets/sentiment` → appHandler.MarketsSentiment
-- [ ] `GET /markets/sentiment/board` → appHandler.MarketsSentimentBoard
+- [x] `GET /markets` → appHandler.Markets → v2: see insights.md
+- [x] `GET /markets/overview` → appHandler.MarketsOverview → v2: see insights.md
+- [x] `GET /markets/earnings` → appHandler.MarketsEarnings → v2: see insights.md
+- [x] `GET /markets/congress` → appHandler.MarketsCongress → v2: see insights.md
+- [x] `GET /markets/sentiment` → appHandler.MarketsSentiment → v2: see insights.md
+- [x] `GET /markets/sentiment/board` → appHandler.MarketsSentimentBoard → v2: see insights.md
 
 ### /pilots (4)
 
-- [ ] `GET /pilots` → appHandler.PilotsBrowse
-- [ ] `GET /pilots/{slug}` → appHandler.PilotDetail
-- [ ] `GET /pilots/{slug}/follow` → appHandler.PilotFollowForm
-- [ ] `POST /pilots/{slug}/follow` → appHandler.PilotFollowCreate
+- [x] `GET /pilots` → appHandler.PilotsBrowse → v2: see settings-admin.md
+- [x] `GET /pilots/{slug}` → appHandler.PilotDetail → v2: see settings-admin.md
+- [x] `GET /pilots/{slug}/follow` → appHandler.PilotFollowForm → v2: see settings-admin.md
+- [x] `POST /pilots/{slug}/follow` → appHandler.PilotFollowCreate → v2: see settings-admin.md
 
 ### /pilot-follows (3)
 
-- [ ] `GET /pilot-follows/{id}` → appHandler.PilotFollowDetail
-- [ ] `POST /pilot-follows/{id}/status` → appHandler.PilotFollowStatus
-- [ ] `POST /pilot-follows/{id}/stop` → appHandler.PilotFollowStop
+- [x] `GET /pilot-follows/{id}` → appHandler.PilotFollowDetail → v2: see settings-admin.md
+- [x] `POST /pilot-follows/{id}/status` → appHandler.PilotFollowStatus → v2: see settings-admin.md
+- [x] `POST /pilot-follows/{id}/stop` → appHandler.PilotFollowStop → v2: see settings-admin.md
 
 ### /economy (3)
 
-- [ ] `GET /economy` → appHandler.Economy
-- [ ] `GET /economy/news` → appHandler.EconomyNews
-- [ ] `GET /economy/{section}` → appHandler.Economy
+- [x] `GET /economy` → appHandler.Economy → v2: see insights.md
+- [x] `GET /economy/news` → appHandler.EconomyNews → v2: see insights.md
+- [x] `GET /economy/{section}` → appHandler.Economy → v2: see insights.md
 
 ### /crypto (9)
 
-- [ ] `GET /crypto/portfolio/holding` → appHandler.CryptoPortfolioHoldingForm
-- [ ] `GET /crypto/portfolio/holding/{id}` → appHandler.CryptoPortfolioHoldingForm
-- [ ] `POST /crypto/portfolio/holding` → appHandler.CryptoPortfolioHoldingCreate
-- [ ] `PUT /crypto/portfolio/holding/{id}` → appHandler.CryptoPortfolioHoldingUpdate
-- [ ] `DELETE /crypto/portfolio/holding/{id}` → appHandler.CryptoPortfolioHoldingDelete
-- [ ] `GET /crypto/markets/fragment` → appHandler.CryptoMarketsFragment
-- [ ] `GET /crypto/coin/{symbol}` → appHandler.CryptoCoin
-- [ ] `GET /crypto` → appHandler.Crypto
-- [ ] `GET /crypto/{tab}` → appHandler.Crypto
+- [x] `GET /crypto/portfolio/holding` → appHandler.CryptoPortfolioHoldingForm → v2: see planning-tools.md
+- [x] `GET /crypto/portfolio/holding/{id}` → appHandler.CryptoPortfolioHoldingForm → v2: see planning-tools.md
+- [x] `POST /crypto/portfolio/holding` → appHandler.CryptoPortfolioHoldingCreate → v2: see planning-tools.md
+- [x] `PUT /crypto/portfolio/holding/{id}` → appHandler.CryptoPortfolioHoldingUpdate → v2: see planning-tools.md
+- [x] `DELETE /crypto/portfolio/holding/{id}` → appHandler.CryptoPortfolioHoldingDelete → v2: see planning-tools.md
+- [x] `GET /crypto/markets/fragment` → appHandler.CryptoMarketsFragment → v2: see planning-tools.md
+- [x] `GET /crypto/coin/{symbol}` → appHandler.CryptoCoin → v2: see planning-tools.md
+- [x] `GET /crypto` → appHandler.Crypto → v2: see planning-tools.md
+- [x] `GET /crypto/{tab}` → appHandler.Crypto → v2: see planning-tools.md
 
 ### /research (6)
 
-- [ ] `GET /research` → appHandler.Research
-- [ ] `POST /research` → appHandler.ResearchSubmit
-- [ ] `POST /research/{id}/delete` → appHandler.ResearchDelete
-- [ ] `GET /research/memos/{id}` → appHandler.ResearchMemo
-- [ ] `POST /research/memos/{id}/bookmark` → appHandler.ResearchMemoBookmark
-- [ ] `POST /research/memos/{id}/delete` → appHandler.ResearchMemoDelete
+- [x] `GET /research` → appHandler.Research → v2: see planning-tools.md
+- [x] `POST /research` → appHandler.ResearchSubmit → v2: see planning-tools.md
+- [x] `POST /research/{id}/delete` → appHandler.ResearchDelete → v2: see planning-tools.md
+- [x] `GET /research/memos/{id}` → appHandler.ResearchMemo → v2: see planning-tools.md
+- [x] `POST /research/memos/{id}/bookmark` → appHandler.ResearchMemoBookmark → v2: see planning-tools.md
+- [x] `POST /research/memos/{id}/delete` → appHandler.ResearchMemoDelete → v2: see planning-tools.md
 
 ### /boards (18)
 
-- [ ] `GET /boards` → appHandler.BoardsDirectory
-- [ ] `POST /boards` → appHandler.BoardsCreate
-- [ ] `GET /boards/activity` → appHandler.BoardsActivity
-- [ ] `POST /boards/activity/settings` → appHandler.BoardsActivitySettings
-- [ ] `GET /boards/guidelines` → appHandler.BoardsGuidelines
-- [ ] `POST /boards/guidelines` → appHandler.BoardsGuidelinesAccept
-- [ ] `POST /boards/report` → appHandler.BoardsReport
-- [ ] `POST /boards/block` → appHandler.BoardsBlock
-- [ ] `GET /boards/p/{id}` → appHandler.BoardsPostRedirect
-- [ ] `POST /boards/p/{id}/vote` → appHandler.BoardsVote
-- [ ] `POST /boards/p/{id}/comments` → appHandler.BoardsComment
-- [ ] `POST /boards/p/{id}/delete` → appHandler.BoardsDeletePost
-- [ ] `POST /boards/c/{id}/delete` → appHandler.BoardsDeleteComment
-- [ ] `GET /boards/{slug}` → appHandler.BoardsBoard
-- [ ] `POST /boards/{slug}/delete` → appHandler.BoardsDeleteBoard
-- [ ] `GET /boards/{slug}/submit` → appHandler.BoardsSubmitForm
-- [ ] `POST /boards/{slug}/submit` → appHandler.BoardsSubmit
-- [ ] `GET /boards/{slug}/p/{id}` → appHandler.BoardsPost
+- [x] `GET /boards` → appHandler.BoardsDirectory → v2: see social.md
+- [x] `POST /boards` → appHandler.BoardsCreate → v2: see social.md
+- [x] `GET /boards/activity` → appHandler.BoardsActivity → v2: see social.md
+- [x] `POST /boards/activity/settings` → appHandler.BoardsActivitySettings → v2: see social.md
+- [x] `GET /boards/guidelines` → appHandler.BoardsGuidelines → v2: see social.md
+- [x] `POST /boards/guidelines` → appHandler.BoardsGuidelinesAccept → v2: see social.md
+- [x] `POST /boards/report` → appHandler.BoardsReport → v2: see social.md
+- [x] `POST /boards/block` → appHandler.BoardsBlock → v2: see social.md
+- [x] `GET /boards/p/{id}` → appHandler.BoardsPostRedirect → v2: see social.md
+- [x] `POST /boards/p/{id}/vote` → appHandler.BoardsVote → v2: see social.md
+- [x] `POST /boards/p/{id}/comments` → appHandler.BoardsComment → v2: see social.md
+- [x] `POST /boards/p/{id}/delete` → appHandler.BoardsDeletePost → v2: see social.md
+- [x] `POST /boards/c/{id}/delete` → appHandler.BoardsDeleteComment → v2: see social.md
+- [x] `GET /boards/{slug}` → appHandler.BoardsBoard → v2: see social.md
+- [x] `POST /boards/{slug}/delete` → appHandler.BoardsDeleteBoard → v2: see social.md
+- [x] `GET /boards/{slug}/submit` → appHandler.BoardsSubmitForm → v2: see social.md
+- [x] `POST /boards/{slug}/submit` → appHandler.BoardsSubmit → v2: see social.md
+- [x] `GET /boards/{slug}/p/{id}` → appHandler.BoardsPost → v2: see social.md
 
 ### /admin (4)
 
-- [ ] `GET /admin/community` → appHandler.BoardsAdmin
-- [ ] `POST /admin/community/sanctions` → appHandler.BoardsAdminSanction
-- [ ] `POST /admin/community/sanctions/{id}/revoke` → appHandler.BoardsAdminRevoke
-- [ ] `POST /admin/community/reports/{id}/resolve` → appHandler.BoardsAdminResolve
+- [x] `GET /admin/community` → appHandler.BoardsAdmin → v2: see settings-admin.md
+- [x] `POST /admin/community/sanctions` → appHandler.BoardsAdminSanction → v2: see settings-admin.md
+- [x] `POST /admin/community/sanctions/{id}/revoke` → appHandler.BoardsAdminRevoke → v2: see settings-admin.md
+- [x] `POST /admin/community/reports/{id}/resolve` → appHandler.BoardsAdminResolve → v2: see settings-admin.md
 
 ### /groups (31)
 
-- [ ] `GET /groups` → appHandler.GroupsHome
-- [ ] `GET /groups/unread-badge` → appHandler.GroupsUnreadBadge
-- [ ] `GET /groups/rail` → appHandler.GroupsRail
-- [ ] `GET /groups/events` → appHandler.GroupsEvents
-- [ ] `GET /groups/discover` → appHandler.GroupsDiscover
-- [ ] `GET /groups/new` → appHandler.GroupsNew
-- [ ] `POST /groups/new` → appHandler.GroupsCreate
-- [ ] `GET /groups/join` → appHandler.GroupsJoinLink
-- [ ] `POST /groups/block` → appHandler.GroupsBlock
-- [ ] `POST /groups/invitations/{invitationID}/accept` → appHandler.GroupsAcceptInvitation
-- [ ] `POST /groups/invitations/{invitationID}/decline` → appHandler.GroupsDeclineInvitation
-- [ ] `POST /groups/m/{messageID}/delete` → appHandler.GroupsDeleteMessage
-- [ ] `POST /groups/m/{messageID}/report` → appHandler.GroupsReportMessage
-- [ ] `GET /groups/{groupID}` → appHandler.GroupsOpen
-- [ ] `POST /groups/{groupID}/join` → appHandler.GroupsJoin
-- [ ] `GET /groups/{groupID}/c/{channelID}` → appHandler.GroupsChat
-- [ ] `GET /groups/{groupID}/c/{channelID}/panel` → appHandler.GroupsChannelPanel
-- [ ] `GET /groups/{groupID}/c/{channelID}/messages` → appHandler.GroupsMessages
-- [ ] `POST /groups/{groupID}/c/{channelID}/messages` → appHandler.GroupsSend
-- [ ] `POST /groups/{groupID}/c/{channelID}/read` → appHandler.GroupsMarkRead
-- [ ] `GET /groups/{groupID}/settings` → appHandler.GroupsSettings
-- [ ] `POST /groups/{groupID}/notifications` → appHandler.GroupsNotifications
-- [ ] `POST /groups/{groupID}/edit` → appHandler.GroupsEdit
-- [ ] `POST /groups/{groupID}/invitations` → appHandler.GroupsInviteFriends
-- [ ] `POST /groups/{groupID}/invites` → appHandler.GroupsCreateInvite
-- [ ] `POST /groups/{groupID}/invites/{inviteID}/revoke` → appHandler.GroupsRevokeInvite
-- [ ] `POST /groups/{groupID}/channels` → appHandler.GroupsCreateChannel
-- [ ] `POST /groups/{groupID}/channels/{channelID}/delete` → appHandler.GroupsDeleteChannel
-- [ ] `POST /groups/{groupID}/members/{userID}/{action}` → appHandler.GroupsMember
-- [ ] `POST /groups/{groupID}/leave` → appHandler.GroupsLeave
-- [ ] `POST /groups/{groupID}/delete` → appHandler.GroupsDelete
+- [x] `GET /groups` → appHandler.GroupsHome → v2: see social.md
+- [x] `GET /groups/unread-badge` → appHandler.GroupsUnreadBadge → v2: see social.md
+- [x] `GET /groups/rail` → appHandler.GroupsRail → v2: see social.md
+- [x] `GET /groups/events` → appHandler.GroupsEvents → v2: see social.md
+- [x] `GET /groups/discover` → appHandler.GroupsDiscover → v2: see social.md
+- [x] `GET /groups/new` → appHandler.GroupsNew → v2: see social.md
+- [x] `POST /groups/new` → appHandler.GroupsCreate → v2: see social.md
+- [x] `GET /groups/join` → appHandler.GroupsJoinLink → v2: see social.md
+- [x] `POST /groups/block` → appHandler.GroupsBlock → v2: see social.md
+- [x] `POST /groups/invitations/{invitationID}/accept` → appHandler.GroupsAcceptInvitation → v2: see social.md
+- [x] `POST /groups/invitations/{invitationID}/decline` → appHandler.GroupsDeclineInvitation → v2: see social.md
+- [x] `POST /groups/m/{messageID}/delete` → appHandler.GroupsDeleteMessage → v2: see social.md
+- [x] `POST /groups/m/{messageID}/report` → appHandler.GroupsReportMessage → v2: see social.md
+- [x] `GET /groups/{groupID}` → appHandler.GroupsOpen → v2: see social.md
+- [x] `POST /groups/{groupID}/join` → appHandler.GroupsJoin → v2: see social.md
+- [x] `GET /groups/{groupID}/c/{channelID}` → appHandler.GroupsChat → v2: see social.md
+- [x] `GET /groups/{groupID}/c/{channelID}/panel` → appHandler.GroupsChannelPanel → v2: see social.md
+- [x] `GET /groups/{groupID}/c/{channelID}/messages` → appHandler.GroupsMessages → v2: see social.md
+- [x] `POST /groups/{groupID}/c/{channelID}/messages` → appHandler.GroupsSend → v2: see social.md
+- [x] `POST /groups/{groupID}/c/{channelID}/read` → appHandler.GroupsMarkRead → v2: see social.md
+- [x] `GET /groups/{groupID}/settings` → appHandler.GroupsSettings → v2: see social.md
+- [x] `POST /groups/{groupID}/notifications` → appHandler.GroupsNotifications → v2: see social.md
+- [x] `POST /groups/{groupID}/edit` → appHandler.GroupsEdit → v2: see social.md
+- [x] `POST /groups/{groupID}/invitations` → appHandler.GroupsInviteFriends → v2: see social.md
+- [x] `POST /groups/{groupID}/invites` → appHandler.GroupsCreateInvite → v2: see social.md
+- [x] `POST /groups/{groupID}/invites/{inviteID}/revoke` → appHandler.GroupsRevokeInvite → v2: see social.md
+- [x] `POST /groups/{groupID}/channels` → appHandler.GroupsCreateChannel → v2: see social.md
+- [x] `POST /groups/{groupID}/channels/{channelID}/delete` → appHandler.GroupsDeleteChannel → v2: see social.md
+- [x] `POST /groups/{groupID}/members/{userID}/{action}` → appHandler.GroupsMember → v2: see social.md
+- [x] `POST /groups/{groupID}/leave` → appHandler.GroupsLeave → v2: see social.md
+- [x] `POST /groups/{groupID}/delete` → appHandler.GroupsDelete → v2: see social.md
 
 ### /ai-consent (2)
 
@@ -628,57 +628,57 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 
 ### /billing (4)
 
-- [ ] `POST /billing/restore` → appHandler.BillingRestore
-- [ ] `POST /billing/coupons/redeem` → appHandler.BillingCouponRedeem
-- [ ] `GET /billing/manage` → appHandler.BillingManage
-- [ ] `GET /billing/checkout` → appHandler.BillingCheckout
+- [x] `POST /billing/restore` → appHandler.BillingRestore → v2: see settings-admin.md
+- [x] `POST /billing/coupons/redeem` → appHandler.BillingCouponRedeem → v2: see settings-admin.md
+- [x] `GET /billing/manage` → appHandler.BillingManage → v2: see settings-admin.md
+- [x] `GET /billing/checkout` → appHandler.BillingCheckout → v2: see settings-admin.md
 
 ### /logout (1)
 
-- [ ] `POST /logout` → authHandler.Logout
+- [x] `POST /logout` → authHandler.Logout → v2: see (foundation: src/routes/logout)
 
 ### /terminal (13)
 
-- [ ] `GET /terminal` → h.Terminal
-- [ ] `PATCH /terminal/positions/{id}` → h.TerminalPositionUpdate
-- [ ] `POST /terminal/positions` → h.TerminalPositionCreate
-- [ ] `DELETE /terminal/positions/{id}` → h.TerminalPositionDelete
-- [ ] `POST /terminal/positions/{id}/duplicate` → h.TerminalPositionDuplicate
-- [ ] `POST /terminal/positions/{id}/move` → h.TerminalPositionMove
-- [ ] `POST /terminal/positions/{id}/ai/facts` → h.TerminalAIFacts
-- [ ] `POST /terminal/positions/{id}/ai/scenario` → h.TerminalAIScenario
-- [ ] `POST /terminal/sample/dismiss` → h.TerminalSampleDismiss
-- [ ] `POST /terminal/autobuys` → h.TerminalAutobuyCreate
-- [ ] `PATCH /terminal/autobuys/{id}` → h.TerminalAutobuyUpdate
-- [ ] `POST /terminal/autobuys/{id}/active` → h.TerminalAutobuyActive
-- [ ] `DELETE /terminal/autobuys/{id}` → h.TerminalAutobuyDelete
+- [x] `GET /terminal` → h.Terminal → v2: see planning-tools.md
+- [x] `PATCH /terminal/positions/{id}` → h.TerminalPositionUpdate → v2: see planning-tools.md
+- [x] `POST /terminal/positions` → h.TerminalPositionCreate → v2: see planning-tools.md
+- [x] `DELETE /terminal/positions/{id}` → h.TerminalPositionDelete → v2: see planning-tools.md
+- [x] `POST /terminal/positions/{id}/duplicate` → h.TerminalPositionDuplicate → v2: see planning-tools.md
+- [x] `POST /terminal/positions/{id}/move` → h.TerminalPositionMove → v2: see planning-tools.md
+- [x] `POST /terminal/positions/{id}/ai/facts` → h.TerminalAIFacts → v2: see planning-tools.md
+- [x] `POST /terminal/positions/{id}/ai/scenario` → h.TerminalAIScenario → v2: see planning-tools.md
+- [x] `POST /terminal/sample/dismiss` → h.TerminalSampleDismiss → v2: see planning-tools.md
+- [x] `POST /terminal/autobuys` → h.TerminalAutobuyCreate → v2: see planning-tools.md
+- [x] `PATCH /terminal/autobuys/{id}` → h.TerminalAutobuyUpdate → v2: see planning-tools.md
+- [x] `POST /terminal/autobuys/{id}/active` → h.TerminalAutobuyActive → v2: see planning-tools.md
+- [x] `DELETE /terminal/autobuys/{id}` → h.TerminalAutobuyDelete → v2: see planning-tools.md
 
 ### /friends (18)
 
-- [ ] `GET /friends` → h.Friends
-- [ ] `GET /friends/search` → h.FriendsSearch
-- [ ] `POST /friends/requests` → h.FriendRequestSend
-- [ ] `POST /friends/requests/{id}/accept` → h.FriendRequestAccept
-- [ ] `POST /friends/requests/{id}/decline` → h.FriendRequestDecline
-- [ ] `POST /friends/requests/{id}/cancel` → h.FriendRequestCancel
-- [ ] `GET /friends/invite` → h.FriendsInvite
-- [ ] `POST /friends/invite/{code}/accept` → h.FriendsInviteAccept
-- [ ] `GET /friends/u/{userId}` → h.FriendProfile
-- [ ] `POST /friends/u/{userId}/unfriend` → h.FriendRemove
-- [ ] `POST /friends/u/{userId}/block` → h.FriendBlock
-- [ ] `POST /friends/u/{userId}/report` → h.FriendReport
-- [ ] `POST /friends/x/start` → h.FriendsXStart
-- [ ] `GET /friends/x/callback` → h.FriendsXCallback
-- [ ] `POST /friends/facebook/start` → h.FriendsFacebookStart
-- [ ] `GET /friends/facebook/callback` → h.FriendsFacebookCallback
-- [ ] `POST /friends/facebook/disconnect` → h.FriendsFacebookDisconnect
-- [ ] `GET /friends/leaderboard` → h.Leaderboard
+- [x] `GET /friends` → h.Friends → v2: see social.md
+- [x] `GET /friends/search` → h.FriendsSearch → v2: see social.md
+- [x] `POST /friends/requests` → h.FriendRequestSend → v2: see social.md
+- [x] `POST /friends/requests/{id}/accept` → h.FriendRequestAccept → v2: see social.md
+- [x] `POST /friends/requests/{id}/decline` → h.FriendRequestDecline → v2: see social.md
+- [x] `POST /friends/requests/{id}/cancel` → h.FriendRequestCancel → v2: see social.md
+- [x] `GET /friends/invite` → h.FriendsInvite → v2: see social.md
+- [x] `POST /friends/invite/{code}/accept` → h.FriendsInviteAccept → v2: see social.md
+- [x] `GET /friends/u/{userId}` → h.FriendProfile → v2: see social.md
+- [x] `POST /friends/u/{userId}/unfriend` → h.FriendRemove → v2: see social.md
+- [x] `POST /friends/u/{userId}/block` → h.FriendBlock → v2: see social.md
+- [x] `POST /friends/u/{userId}/report` → h.FriendReport → v2: see social.md
+- [x] `POST /friends/x/start` → h.FriendsXStart → v2: see social.md
+- [x] `GET /friends/x/callback` → h.FriendsXCallback → v2: see social.md
+- [x] `POST /friends/facebook/start` → h.FriendsFacebookStart → v2: see social.md
+- [x] `GET /friends/facebook/callback` → h.FriendsFacebookCallback → v2: see social.md
+- [x] `POST /friends/facebook/disconnect` → h.FriendsFacebookDisconnect → v2: see social.md
+- [x] `GET /friends/leaderboard` → h.Leaderboard → v2: see social.md
 
 ### /xp (3)
 
-- [ ] `GET /xp` → h.XPHistory
-- [ ] `GET /xp/card` → h.XPCard
-- [ ] `POST /xp/check-in` → h.XPCheckIn
+- [x] `GET /xp` → h.XPHistory → v2: see dashboard.md
+- [x] `GET /xp/card` → h.XPCard → v2: see social.md
+- [x] `POST /xp/check-in` → h.XPCheckIn → v2: see social.md
 
 ### /articles (16)
 
