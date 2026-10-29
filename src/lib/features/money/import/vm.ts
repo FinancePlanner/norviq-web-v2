@@ -228,7 +228,10 @@ export function spreadsheetImportErrorMessage(status: number): string {
 /**
  * Rebuilds the decision from the review form. The form is the single source
  * of truth for what the reader approved, so preview and commit build it
- * identically. Nil Go slices marshal as null; kept so the wire body matches.
+ * identically. Unlike Go, which marshals nil slices as null and omits empty
+ * optional fields, every collection is sent, empty if need be:
+ * StockPlanShared decodes them with synthesized Codable, so a null or missing
+ * one is a 400 ("No such key 'categoryMappings'").
  */
 export function decisionFromForm(form: FormData): Record<string, unknown> {
 	const value = (key: string) => {
@@ -247,13 +250,13 @@ export function decisionFromForm(form: FormData): Record<string, unknown> {
 	if (order !== '') decision.dateFormat = order;
 
 	const sheetName = value('sheet_name');
-	let columns: Record<string, unknown>[] | null = null;
+	const columns: Record<string, unknown>[] = [];
 	for (const [key, v] of firstValues) {
 		if (!key.startsWith('column_')) continue;
-		(columns ??= []).push({
+		columns.push({
 			letter: key.slice('column_'.length),
 			detectedType: 'text',
-			sampleValues: null,
+			sampleValues: [],
 			field: v,
 			confidence: 1,
 			source: 'user'
@@ -275,7 +278,7 @@ export function decisionFromForm(form: FormData): Record<string, unknown> {
 					notes: []
 				}
 			]
-		: null;
+		: [];
 
 	const categoryMappings: Record<string, unknown>[] = [];
 	for (const [key, v] of firstValues) {
@@ -288,7 +291,7 @@ export function decisionFromForm(form: FormData): Record<string, unknown> {
 			source: 'user'
 		});
 	}
-	if (categoryMappings.length > 0) decision.categoryMappings = categoryMappings;
+	decision.categoryMappings = categoryMappings;
 
 	const rates: Record<string, number> = {};
 	for (const [key, v] of firstValues) {
@@ -298,7 +301,7 @@ export function decisionFromForm(form: FormData): Record<string, unknown> {
 		const rate = Number(raw);
 		if (rate > 0) rates[key.slice('rate_'.length)] = rate;
 	}
-	if (Object.keys(rates).length > 0) decision.exchangeRates = rates;
+	decision.exchangeRates = rates;
 
 	const overrides: Record<string, unknown>[] = [];
 	for (const key of firstValues.keys()) {
@@ -307,7 +310,7 @@ export function decisionFromForm(form: FormData): Record<string, unknown> {
 		if (!/^[+-]?\d+$/.test(raw)) continue;
 		overrides.push({ sheetName, row: Number.parseInt(raw, 10), include: false });
 	}
-	if (overrides.length > 0) decision.rowOverrides = overrides;
+	decision.rowOverrides = overrides;
 
 	return decision;
 }
