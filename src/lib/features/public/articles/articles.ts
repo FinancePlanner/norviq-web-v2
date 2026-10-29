@@ -5,6 +5,9 @@
 import { shortDate } from '#lib/features/settings-admin/go-time.js';
 import type { ArticleSummary, Card } from './types.js';
 
+/** The error message composeGate's 403 carries; (app)/articles/+error.svelte keys on it. */
+export const BOARDS_BANNED = 'Boards access removed';
+
 export const DISCLAIMER = 'User-generated opinion. Not investment advice.';
 
 const codePattern = /^[abcdefghjkmnpqrstuvwxyz23456789]{8}$/;

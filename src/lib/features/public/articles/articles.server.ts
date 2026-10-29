@@ -10,7 +10,7 @@ import { render as renderMarkdown } from '#lib/markdown.js';
 import { allowedSymbol } from '#lib/publicsymbols.js';
 import { queryEscape } from '#lib/sharelinks.js';
 import { buildShareLinks } from '#lib/components/norviq/share-links.js';
-import { DISCLAIMER, articleCard, articlePath, cursorPattern, goJSON, goShortDate, noticeFor, rfc3339 } from './articles.js';
+import { BOARDS_BANNED, DISCLAIMER, articleCard, articlePath, cursorPattern, goJSON, goShortDate, noticeFor, rfc3339 } from './articles.js';
 import type {
 	ArticleDetail,
 	ArticleListQuery,
@@ -336,6 +336,32 @@ export function newIdempotencyKey(): string {
 export function enforceBodyLimit(event: RequestEvent, limit: number): void {
 	const len = Number(event.request.headers.get('content-length') ?? '0');
 	if (len > limit) error(413, 'Request body too large');
+}
+
+/**
+ * composeGate (+ loadBoardsViewer): a banned member gets the Boards banned
+ * page (403, rendered by (app)/articles/+error.svelte), one who hasn't
+ * accepted the guidelines is sent to them, and one without a username sees
+ * the composer blocked.
+ */
+export async function composeGate(event: RequestEvent, vm: ComposeVM): Promise<void> {
+	let status: CommunityViewerStatus;
+	try {
+		status = await communityViewer(event);
+	} catch (err) {
+		console.error('community viewer load failed', err);
+		error(502, 'Boards are temporarily unavailable');
+	}
+	if (status.activeSanction && !status.isAdmin && status.activeSanction.kind === 'ban') {
+		error(403, BOARDS_BANNED);
+	}
+	if (!status.guidelinesAccepted && !status.isAdmin) {
+		redirect(303, '/boards/guidelines?next=' + queryEscape(event.url.pathname + event.url.search));
+	}
+	if (!status.hasUsername) {
+		vm.blocked = true;
+		vm.error = 'Pick a username in Settings before publishing.';
+	}
 }
 
 export function emptyForm(): ComposeForm {
