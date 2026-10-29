@@ -1,4 +1,5 @@
 /
+/achievements
 /admin/community
 /ai-consent
 /articles
@@ -117,3 +118,5 @@
 /terms
 /trading
 /xp
+/portfolio/AAPL/chart
+/portfolio/brk.b/chart
