@@ -93,6 +93,6 @@ export const actions: Actions = {
 			console.error('invalid bank hosted link');
 			redirect(303, '/settings/banks?bank=error');
 		}
-		redirect(303, hostedURL);
+		redirect(303, hostedURL, { external: true });
 	}
 };

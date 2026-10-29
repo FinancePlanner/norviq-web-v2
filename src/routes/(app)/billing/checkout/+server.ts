@@ -8,5 +8,5 @@ import { config, DEFAULT_IOS_APP_STORE_URL } from '#lib/server/env.js';
 export const GET: RequestHandler = () => {
 	const cfg = config();
 	if (cfg.revenueCatWebAPIKey.trim() !== '') redirect(303, '/settings/subscription');
-	redirect(303, cfg.iosAppStoreURL || DEFAULT_IOS_APP_STORE_URL);
+	redirect(303, cfg.iosAppStoreURL || DEFAULT_IOS_APP_STORE_URL, { external: true });
 };

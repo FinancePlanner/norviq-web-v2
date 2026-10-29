@@ -38,5 +38,6 @@ export const GET: RequestHandler = async (event) => {
 	await session.set(KEY_OAUTH_REDIRECT_URI, redirectURI);
 	await session.set(KEY_OAUTH_FLOW_ID, resp.flowId);
 	await session.set(KEY_OAUTH_INTENT, 'link');
-	redirect(303, resp.authorizationURL);
+	// The provider's consent page, as returned by the backend (Go redirects to it as-is).
+	redirect(303, resp.authorizationURL, { external: true });
 };

@@ -21,5 +21,6 @@ export const GET: RequestHandler = async (event) => {
 		redirect(303, MANAGE_ERROR);
 	}
 	const target = safeBillingRedirect(resp?.managementUrl);
-	redirect(303, target ?? MANAGE_ERROR);
+	// safeBillingRedirect has already restricted the host.
+	redirect(303, target ?? MANAGE_ERROR, { external: true });
 };
