@@ -4681,6 +4681,54 @@ html.dark .theme-toggle-btn-active {
   border: 1px solid color-mix(in srgb, var(--color-tint) 35%, transparent);
 }
 
+.achievements-grid {
+  @apply grid gap-3 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.achievement-card {
+  @apply p-4;
+}
+
+.achievement-card.is-locked,
+.achievement-card.is-hidden {
+  @apply text-muted-foreground;
+}
+
+.achievement-card.is-locked .achievement-icon,
+.achievement-card.is-hidden .achievement-icon {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.achievement-card.is-earned {
+  border: 1px solid color-mix(in srgb, var(--color-tint) 35%, transparent);
+}
+
+.achievement-icon {
+  @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full;
+  background: color-mix(in srgb, var(--color-tint) 14%, transparent);
+  color: var(--color-tint);
+}
+
+.achievement-card.is-locked .achievement-icon,
+.achievement-card.is-hidden .achievement-icon {
+  color: inherit;
+}
+
+.achievement-pips {
+  @apply flex flex-wrap gap-2;
+}
+
+.achievement-pip {
+  @apply rounded-full px-2 py-0.5 text-caption font-medium text-muted-foreground;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+}
+
+.achievement-pip.is-earned {
+  color: inherit;
+  border-color: var(--color-tint);
+  background: color-mix(in srgb, var(--color-tint) 14%, transparent);
+}
+
 .settings-about {
   @apply max-w-2xl;
 }
