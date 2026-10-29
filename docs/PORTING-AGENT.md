@@ -46,3 +46,15 @@ REPORT (final message, at most 350 words): the routes done, partial and not done
 - Dialogs: native `<dialog>` via `tui/dialog`, `openDialog(id)` replaces `window.tui.dialog`.
 - RevenueCat (Go `billing.js`): `billingPage()` attachment from `#lib/billing-client.js`. Same DOM contract as Go (`#subscription-root` data attributes, `[data-action="purchase"]`, `[data-rc-price]`, `#billing-error`). After a purchase it calls `invalidateAll()` instead of the htmx `#billing-status` swap. `POST /billing/restore` (+server.ts) is owned by settings-admin.
 - Badges: `NavBadge` fetches its URL and expects JSON `{count}` (e.g. `/groups/unread-badge`), not the Go HTML fragment.
+
+## Lessons from wave A (read before starting)
+
+- Check/build in a worktree: `bun run check` (svelte-kit sync + svelte-check) and `bun run build` (vite build). `bun run types:check` is separate and needs a prior build.
+- **Run the build, not only the check.** A client-rendered module (anything a `+page.svelte` imports) must never value-import `#lib/server/*`; svelte-check misses it, the build fails with `server_only_import`. Use `import type`.
+- **Off-site redirects** need `redirect(303, url, { external: true })` in SvelteKit 3, or they 500 (App Store, OAuth providers, bank hosted links, checkout).
+- If you use sub-agents (at most 2), they share your worktree index: everyone commits with `git commit -- <paths>`.
+- Do **not** grant AI consent on the staging test accounts (user decision). Report consented paths as unverified.
+- Avoid leaving test data on staging; clean up what you create and list what remains.
+- Go HTML fragments loaded into modals become their own routes, opened with `preloadData()` in a dialog (see `features/money`).
+- Before re-implementing a helper, grep `src/lib/features/*` on main: settings-admin (passkey-register, api-errors, go-time, pilots gate, banks), money (quick-expense, PDF), billing-client.
+- Delete `.svelte-kit/output` after builds and stop your dev server when done (disk filled once).
