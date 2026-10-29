@@ -11,6 +11,8 @@
 	import { sidebarIcon, tabIcon } from './nav-icons.js';
 	import { shell } from './shell-state.svelte.js';
 	import { pageMotion } from '#lib/motion.js';
+	import { achievementsOn } from '#lib/nav.js';
+	import UnlockToast from '#lib/features/achievements/UnlockToast.svelte';
 
 	// Port of shell.templ AppShell: mobile top bar, collapsible sidebar, main
 	// column (trial banner + mobile section sub-nav + page), mobile bottom tabs.
@@ -217,6 +219,9 @@
 					{/if}
 				{/each}
 				{@render children()}
+				{#if achievementsOn(social)}
+					<UnlockToast />
+				{/if}
 			</main>
 		</div>
 
