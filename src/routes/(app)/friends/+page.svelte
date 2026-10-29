@@ -14,18 +14,16 @@
 	let { data }: PageProps = $props();
 
 	// The debounced /friends/search partial (hx-trigger "input changed delay:300ms, search").
-	let query = $state('');
-	let live = $state<SearchVM | null>(null);
+	// Writable deriveds: reset from the load on every navigation (SSR included).
+	let query = $derived(data.query);
+	let live = $derived.by((): SearchVM | null => {
+		void data.query;
+		return null;
+	});
 	let loading = $state(false);
 	let timer: ReturnType<typeof setTimeout> | undefined;
-	let lastSent = '';
+	let lastSent = $derived(data.query);
 	let seq = 0;
-
-	$effect.pre(() => {
-		query = data.query;
-		live = null;
-		lastSent = data.query;
-	});
 
 	const shown = $derived(live ?? data.search);
 

@@ -13,16 +13,14 @@
 	let { data }: PageProps = $props();
 
 	// Rows appended by "Load more" (hx-swap beforeend) and the oob-swapped control.
-	let more = $state<SocialFeedItem[]>([]);
-	let cursor = $state('');
-	let failed = $state(false);
-	let loading = $state(false);
-
-	$effect.pre(() => {
-		more = [];
-		cursor = data.nextCursor;
-		failed = false;
+	// Writable deriveds: reset from the load on every navigation (SSR included).
+	let more = $derived.by((): SocialFeedItem[] => {
+		void data.items;
+		return [];
 	});
+	let cursor = $derived(data.nextCursor);
+	let failed = $derived(data.loadMoreFailed);
+	let loading = $state(false);
 
 	const items = $derived([...data.items, ...more]);
 
