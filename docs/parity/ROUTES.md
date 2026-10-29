@@ -60,6 +60,11 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 - [x] `GET /brief/{date}/{slot}/og.png` → marketBriefHandler.OGImage → v2: see docs/parity/public.md
 - [x] `GET /brief/{date}/{slot}/card.png` → marketBriefHandler.CardImage → v2: see docs/parity/public.md
 
+### /digest (2)
+
+- [x] `GET /digest/unsubscribe` → handlers.DigestUnsubscribePage(deps) → v2: see docs/parity/public.md
+- [x] `POST /digest/unsubscribe` → handlers.DigestUnsubscribeSubmit(deps) → v2: see docs/parity/public.md
+
 ### /privacy (1)
 
 - [x] `GET /privacy` → legalHandler.Privacy → v2: see docs/parity/public.md
