@@ -61,8 +61,11 @@ browser ──basic auth──▶ Worker "norviq-web-staging" (*.workers.dev, wr
   the edge key (verified in-pod: no/wrong key 401, right key 204). The TLS
   certificate for `api-staging.norviq.org` issues once the DNS A record exists;
   until then every backend call from the Worker fails.
-- Smoke against it: `bun run smoke:browser scripts/smoke-pages.txt <url>` needs a
-  basic-auth-aware context; locally use the dev server and the port-forward.
+- Smoke against it with a real account (no `/__dev/login` there):
+  `SMOKE_BASIC_AUTH=user:pass SMOKE_EMAIL=webv2-test@norviq-staging.invalid
+  SMOKE_PASSWORD_FILE=<file> bun run smoke:browser scripts/smoke-pages.txt <url>`.
+  2026-10-29: 116/122 clean (the same 6 expected failures as locally), and
+  assistant SSE plus a watchlist add/remove passed through the Worker.
 
 ## Moving norviq.org DNS to Cloudflare (before cutover, as its own step)
 
@@ -111,6 +114,13 @@ Steps:
 
 Rollback: switch Namecheap back to Namecheap BasicDNS. The old records are still
 there as long as you don't delete them.
+
+DNSSEC: turning it off in Namecheap stops signing the zone immediately, but the
+DS record stays at the `.org` registry until Namecheap pushes the removal. In
+between, validating resolvers return SERVFAIL for the whole domain. On
+2026-10-29 that gap lasted about 8 minutes (DS gone at 18:15 UTC), and some
+resolvers kept the bogus answer cached for up to an hour after. Do it at a
+quiet time, and enable DNSSEC in Cloudflare only after the zone is Active.
 
 ## Production cutover checklist
 
