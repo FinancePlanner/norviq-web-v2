@@ -12,6 +12,7 @@
 	import TerminalSummaryCard from '#lib/features/dashboard/panels/TerminalSummaryCard.svelte';
 	import TaxPanel from '#lib/features/dashboard/panels/TaxPanel.svelte';
 	import GuidedStartCard from '#lib/features/auth-onboarding/guided-start/GuidedStartCard.svelte';
+	import XPCardShell from '#lib/features/social/friends/XPCardShell.svelte';
 	import { commandGreeting } from '#lib/features/dashboard/command-center/overview.js';
 
 	let { data } = $props();
@@ -40,7 +41,9 @@
 	<InvestableCapacityHero vm={vm.overview} />
 	<section class="cc-rail cc-rail-now cc-modules" aria-label="Needs you now">
 		<ActionQueuePanel queue={vm.queue} />
-		<!-- friends.XPCardShell (when leaderboards are on) belongs to the friends domain. -->
+		{#if data.social.enabled && data.social.leaderboards}
+			<XPCardShell />
+		{/if}
 		{#await data.mcpStatus}
 			<MCPStatusWidget />
 		{:then status}

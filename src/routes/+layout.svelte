@@ -6,6 +6,7 @@
 	import { page } from '$app/state';
 	import { onMount, untrack } from 'svelte';
 	import { initTheme } from '#lib/theme.svelte.js';
+	import { rememberTimezone } from '#lib/timezone.js';
 	import { captureOnce, initAnalytics, trackPageview } from '#lib/analytics/index.js';
 	import type { LayoutProps } from './$types';
 	import './layout.css';
@@ -14,6 +15,7 @@
 
 	// theme.js: keep "system" appearance following OS changes on every page.
 	onMount(() => initTheme());
+	onMount(rememberTimezone);
 
 	const queryClient = new QueryClient({
 		defaultOptions: { queries: { enabled: browser, staleTime: 30_000, refetchOnWindowFocus: false } }
