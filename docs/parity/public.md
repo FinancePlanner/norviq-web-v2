@@ -4,6 +4,7 @@ Group `(public)` (no shell, `src/routes/(public)/+layout.svelte` = `templates.Pu
 PWA head meta + mesh background; no service worker). Machine files are ungrouped
 `+server.ts` with Go's bytes and headers. Feature code: `src/lib/features/public/`.
 
+Re-checked against norviq-web ec05890 (landing.templ, landing.js, seo.go, digest unsubscribe).
 Verified side by side against the Go web (same staging API, same PUBLIC_BASE_URL):
 robots.txt, llms.txt, security.txt, AASA and sitemap.xml are byte-identical; `/`,
 the legal pages, `/brief/{date}/{slot}` (en + pt-PT, 200 and 404), `/articles` and
@@ -16,7 +17,7 @@ Share images were compared visually with Go's output.
 ### Machine files / static
 - [x] GET /robots.txt → `routes/robots.txt/+server.ts`
 - [x] GET /sitemap.xml → `routes/sitemap.xml/+server.ts` (articles + latest brief paths)
-- [x] GET /llms.txt → `routes/llms.txt/+server.ts`
+- [x] GET /llms.txt → `routes/llms.txt/+server.ts` (includes the Discord line from ec05890)
 - [x] GET /.well-known/apple-app-site-association → `routes/.well-known/apple-app-site-association/+server.ts`
 - [x] GET /.well-known/security.txt → `routes/.well-known/security.txt/+server.ts`
 - [x] GET /apple-app-site-association → `routes/apple-app-site-association/+server.ts`
@@ -27,7 +28,7 @@ Share images were compared visually with Go's output.
 - [x] HANDLE /thinking-orbs/js/* → **dead, not ported**: Go loads `orb.js` in AppLayout but no Go page renders an `orb.Orb` canvas.
 
 ### Landing and legal
-- [x] GET / → `(public)/+page.server.ts` + `features/public/landing/` (signed-in → `postAuthRedirect` 303; `IOS_STORE_REDIRECT_ENABLED` + iPhone/iPad UA → 302 to the App Store unless `?web=1` / `norviq_stay_web` cookie; `?web=1` sets the cookie; hero card wall, landing.css, CTA `cta_clicked` capture, scroll reveals via `#lib/motion.js` `initScrollTaste` = motion-reveal.js, market brief card via `MarketBriefShell` = market-brief.js)
+- [x] GET / → `(public)/+page.server.ts` + `features/public/landing/` (signed-in → `postAuthRedirect` 303; `IOS_STORE_REDIRECT_ENABLED` + iPhone/iPad UA → 302 to the App Store unless `?web=1` / `norviq_stay_web` cookie; `?web=1` sets the cookie; hero card wall, landing.css, CTA `cta_clicked` capture, scroll reveals via `#lib/motion.js` `initScrollTaste` = motion-reveal.js, market brief card via `MarketBriefShell` = market-brief.js; footer "Join us on Discord" link with `discord_link_clicked {surface: footer}` capture, as of norviq-web ec05890)
 - [x] GET /privacy, /terms, /legal, /security, /facebook-data-deletion → `(public)/<path>/+page.server.ts` + `features/public/legal/LegalPage.svelte`; text in `documents.json`, dumped from Go's `content.go`/`notices.go` with encoding/json (byte-identical; regenerate when the legal text changes)
 
 ### Market brief
@@ -35,6 +36,10 @@ Share images were compared visually with Go's output.
 - [x] GET /brief → `(public)/brief/+page.server.ts` (302 to the latest, in `?lang`; 404 page / 503)
 - [x] GET /brief/{date}/{slot} → `(public)/brief/[date]/[slot]/` + `features/public/brief/` (language from `?lang`, sets `locals.locale` so `<html lang>` and `t()` follow it; 404 page in `(public)/brief/+error.svelte`)
 - [x] GET /brief/{date}/{slot}/og.png, /card.png → `(public)/brief/[date]/[slot]/{og,card}.png/+server.ts`
+
+### Weekly digest (added with norviq-web ec05890)
+- [x] GET /digest/unsubscribe → `(public)/digest/unsubscribe/+page.server.ts` load (404 on a malformed token; confirm button only, the GET never unsubscribes; `private, no-store`, noindex + no-referrer)
+- [x] POST /digest/unsubscribe → same file, default action (`POST /v1/digest/unsubscribe?token=` with no bearer; 502 + error banner on failure, "You're unsubscribed" on success; 404 on a malformed token)
 
 ### Articles (sub-agent)
 - [x] GET /articles → `(public)/articles/+page.server.ts`
@@ -67,7 +72,8 @@ Share images were compared visually with Go's output.
 ## Shared files changed
 - `src/hooks.server.ts`: `<html lang>` uses `event.locals.locale` (so a page can set its own language).
 - `src/lib/features/dashboard/market-brief/`: `MarketBriefContent.svelte` split out of `MarketBriefCard.svelte` (same output), reused by `/brief/{date}/{slot}`.
-- `docs/parity/ROUTES.md`: rows ticked.
+- `docs/parity/ROUTES.md`: rows ticked; `/digest` section added (route is newer than the inventory).
+- `src/lib/i18n/pt-PT.json`: one entry, "Join us on Discord" (from norviq-web `active.pt-PT.json`).
 
 ## Backend gaps (staging)
 - `/s/{symbol}`: market history returns empty bars; technicals "No price history"; insider/institutional/congress "provider rate limited"; recent earnings 503. Only the header and sentiment render on staging.
