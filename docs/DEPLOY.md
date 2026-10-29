@@ -64,6 +64,86 @@ browser ──basic auth──▶ Worker "norviq-web-staging" (*.workers.dev, wr
 - Smoke against it: `bun run smoke:browser scripts/smoke-pages.txt <url>` needs a
   basic-auth-aware context; locally use the dev server and the port-forward.
 
+## Moving norviq.org DNS to Cloudflare (before cutover, as its own step)
+
+Worker custom domains need the zone on Cloudflare. Today `norviq.org` uses
+Namecheap BasicDNS (`dns1/dns2.registrar-servers.com`), so a record added in
+Cloudflare has no effect until the nameservers move. Do the move a few days
+before cutover so DNS and app changes never land together. Nothing changes for
+users if the records are copied exactly.
+
+Records visible from outside on 2026-10-29. This is not exhaustive: export the
+zone from Namecheap → Advanced DNS and compare.
+
+| Name | Type | Value | Cloudflare proxy |
+|---|---|---|---|
+| `norviq.org` | A | 178.105.244.185 | DNS only until cutover |
+| `www` | A | 178.105.244.185 | DNS only until cutover |
+| `api` | A | 178.105.244.185 | **DNS only, always** |
+| `api-staging` | A | 178.105.244.185 | **DNS only, always** |
+| `mcp` | A | 178.105.244.185 | **DNS only, always** |
+| `norviq.org` | MX | 10 mx1.privateemail.com, 10 mx2.privateemail.com | n/a |
+| `norviq.org` | TXT | `v=spf1 include:spf.privateemail.com ~all` | n/a |
+| `_dmarc` | TXT | `v=DMARC1; p=none;` | n/a |
+| `send` | MX | 10 feedback-smtp.eu-west-1.amazonses.com | n/a |
+| `send` | TXT | `v=spf1 include:amazonses.com ~all` | n/a |
+| `resend._domainkey` | TXT | Resend DKIM key (copy exactly from the export) | n/a |
+
+The cluster hosts stay "DNS only" because cert-manager issues their
+certificates with HTTP-01 on the node. Proxying them would also change the
+client IP the API sees.
+
+Steps:
+
+1. Export every record from Namecheap. Also check for anything that isn't a
+   DNS record: URL redirects and email forwarding are Namecheap features that
+   stop working once the nameservers move.
+2. Cloudflare dashboard → Add site `norviq.org` (Free plan). Compare its
+   auto-imported records with the export and fix any that are missing or wrong,
+   including the proxy column above.
+3. Namecheap → Domain → Nameservers → Custom DNS → the two Cloudflare
+   nameservers it gives you. Wait for Cloudflare to show the zone as Active.
+4. Verify: `dig +short NS norviq.org`, then each row above with
+   `dig +short <name> <type> @1.1.1.1`. Send a test email to and from
+   `@norviq.org`, check Resend shows the domain verified, and confirm the Go
+   web, API, MCP and staging still serve with valid certificates.
+5. Leave it like this. The Go web keeps serving `norviq.org` and `www`.
+
+Rollback: switch Namecheap back to Namecheap BasicDNS. The old records are still
+there as long as you don't delete them.
+
+## Production cutover checklist
+
+Preconditions, in order:
+
+- [ ] Backend v2 serves `/v1/auth` in production with `EDGE_CLIENT_IP_KEY`
+      sealed into namespace `norviq` (norviq-91 session). Until then, login and
+      signup rate limits would see Cloudflare's egress IPs.
+- [ ] Zone on Cloudflare (section above), stable for a few days.
+- [ ] Staging preview checked end to end (`api-staging` certificate issued,
+      login, assistant, a few writes).
+
+Cutover:
+
+1. Worker production secrets:
+   `wrangler secret put SESSION_SECRET` (new random value),
+   `PUBLIC_API_TOKEN` and `REVENUECAT_WEB_API_KEY` (from the prod `web-env`),
+   `EDGE_CLIENT_IP_KEY` (the value sealed in `norviq`). Or use one
+   `wrangler deploy --secrets-file` with a JSON file kept outside the repo.
+2. `bun run build && bunx wrangler deploy`. It's reachable only on its
+   workers.dev URL for now; smoke it there with an internal account.
+3. Uncomment the custom-domain `routes` in `wrangler.jsonc` and deploy. That
+   replaces the `norviq.org`/`www` A records with the Worker. Everyone is
+   signed out once, because sessions aren't shared with the Go web.
+4. Smoke production: landing, login, dashboard, a write, `/robots.txt`,
+   `/sitemap.xml`, `/.well-known/apple-app-site-association` (universal links
+   for iOS), Apple and Google sign-in, passkeys, and a RevenueCat purchase page.
+5. Keep the Go web running in the cluster for at least a week.
+
+Rollback: remove the custom-domain routes (or delete them in the dashboard) and
+recreate the two A records pointing to 178.105.244.185. The Go web serves again
+right away.
+
 ## Commands
 
 ```bash
