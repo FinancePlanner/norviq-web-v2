@@ -26,7 +26,9 @@
 
 	let { username, email, sidebarItems, social, trialExpired, children }: Props = $props();
 
-	const activePath = $derived(page.url.pathname);
+	// Go renderShell's activePath: a page may render under another section's nav
+	// (pilots under /markets) by returning `activePath` from its load.
+	const activePath = $derived(typeof page.data.activePath === 'string' && page.data.activePath ? page.data.activePath : page.url.pathname);
 	const activeTab = $derived(tabFor(activePath));
 	const groupKeys = $derived(sidebarItems.map((g) => g.tab));
 	let moreOpen = $state(false);
@@ -210,7 +212,7 @@
 				{#each sidebarItems as group (group.tab)}
 					{#if group.tab === activeTab && (group.children?.length ?? 0) > 1}
 						<div class="mobile-section-subnav lg:hidden">
-							<SectionSubNav items={group.children ?? []} />
+							<SectionSubNav items={group.children ?? []} {activePath} />
 						</div>
 					{/if}
 				{/each}
