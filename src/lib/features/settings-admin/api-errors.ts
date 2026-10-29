@@ -1,4 +1,11 @@
-import { isAPIError } from '#lib/server/api.js';
+import type { APIError } from '#lib/server/api.js';
+
+// Client-safe: pilots/vm.ts (rendered in the browser) uses apiErrorMessage, so
+// this module must not value-import #lib/server/api. APIError is recognised
+// structurally (name + numeric status) instead of with instanceof.
+function isAPIError(e: unknown): e is APIError {
+	return e instanceof Error && e.name === 'APIError' && typeof (e as { status?: unknown }).status === 'number';
+}
 
 // Port of norviq-web internal/handlers/auth.go apiErrorMessage and
 // readableAPIReasons, shared by every settings/admin/pilots/billing handler.
