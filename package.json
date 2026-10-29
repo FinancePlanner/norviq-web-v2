@@ -17,6 +17,7 @@
 		"test:e2e": "playwright install && playwright test",
 		"gen": "wrangler types",
 		"types:check": "wrangler types --check",
+		"smoke:browser": "node scripts/smoke-browser.mjs",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build"
 	},
