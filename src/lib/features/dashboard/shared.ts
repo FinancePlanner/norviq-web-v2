@@ -34,13 +34,14 @@ function parts(t: Date, timeZone = 'UTC') {
 
 /**
  * The subset of Go's time.Format layouts this domain uses: "Jan", "Jan 2",
- * "Jan 2, 3:04 PM", "Mon, Jan 2", "2 Jan 2006", "Jan 2, 2006", "15:04", "3:04 PM".
+ * "Jan 2, 3:04 PM", "Jan 2, '06", "Mon, Jan 2", "2 Jan 2006", "Jan 2, 2006", "15:04", "3:04 PM".
  */
 export function goFormat(t: Date, layout: string, timeZone = 'UTC'): string {
 	const p = parts(t, timeZone);
 	const h12 = p.hour % 12 === 0 ? 12 : p.hour % 12;
 	const tokens: Record<string, string> = {
 		'2006': String(p.year),
+		"'06": "'" + String(p.year % 100).padStart(2, '0'),
 		Jan: MONTHS[p.month - 1],
 		Mon: WEEKDAYS[p.weekday] ?? '',
 		'15': String(p.hour).padStart(2, '0'),
@@ -50,7 +51,7 @@ export function goFormat(t: Date, layout: string, timeZone = 'UTC'): string {
 		'3': String(h12),
 		PM: p.hour >= 12 ? 'PM' : 'AM'
 	};
-	return layout.replace(/2006|Jan|Mon|15|04|02|PM|2|3/g, (m) => tokens[m] ?? m);
+	return layout.replace(/2006|'06|Jan|Mon|15|04|02|PM|2|3/g, (m) => tokens[m] ?? m);
 }
 
 /** handlers.relativeTimeSince. */
@@ -94,4 +95,10 @@ export function parseTime(raw: string | null | undefined): Date | null {
 	if (!raw) return null;
 	const d = new Date(raw);
 	return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** "2006-01-02" in timeZone. */
+export function isoDate(t: Date, timeZone = 'UTC'): string {
+	const p = parts(t, timeZone);
+	return `${p.year}-${String(p.month).padStart(2, '0')}-${String(p.day).padStart(2, '0')}`;
 }
