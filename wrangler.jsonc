@@ -44,12 +44,15 @@
 				"SENTRY_ENVIRONMENT": "staging",
 				"POSTHOG_PROJECT_TOKEN": "",
 				"POSTHOG_HOST": ""
-			}
+			},
+			// routes would otherwise be inherited and staging would claim norviq.org.
+			"routes": []
 		}
-	}
-	// Cutover (step 3 in docs/DEPLOY.md) adds:
-	// "routes": [
-	//   { "pattern": "www.norviq.org", "custom_domain": true },
-	//   { "pattern": "norviq.org", "custom_domain": true }
-	// ]
+	},
+	// Production serves norviq.org and www (cutover, step 3 in docs/DEPLOY.md).
+	// Rollback: remove these and recreate the two A records → 178.105.244.185.
+	"routes": [
+		{ "pattern": "www.norviq.org", "custom_domain": true },
+		{ "pattern": "norviq.org", "custom_domain": true }
+	]
 }
