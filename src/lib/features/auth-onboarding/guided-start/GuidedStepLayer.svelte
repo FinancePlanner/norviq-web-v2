@@ -17,7 +17,7 @@
 	const target = untrack(() => stepTarget(layer.step));
 	const announce = untrack(() => layer.announce);
 
-	let state = $state<'open' | 'finished' | 'gone'>('open');
+	let phase = $state<'open' | 'finished' | 'gone'>('open');
 	let found = $state(false);
 	let ringStyle = $state('');
 	let dismissed = false;
@@ -81,17 +81,17 @@
 	function end(result: PollResult) {
 		if (result.state === 'done') {
 			capture('guided_start_step_completed', outcomeProps(result.outcome, true));
-			state = 'finished';
+			phase = 'finished';
 		} else if (result.state === 'ended') {
 			capture(result.event, outcomeProps(result.outcome, false));
-			state = 'gone';
+			phase = 'gone';
 		}
 	}
 
 	let pollTimer: ReturnType<typeof setTimeout> | undefined;
 	function schedulePoll(attempt: number) {
 		pollTimer = setTimeout(async () => {
-			if (state !== 'open') return;
+			if (phase !== 'open') return;
 			let result: PollResult;
 			try {
 				const res = await fetch(`/guided-start/poll?attempt=${attempt}`, { headers: { Accept: 'application/json' } });
@@ -99,7 +99,7 @@
 			} catch {
 				result = { state: 'pending' };
 			}
-			if (state !== 'open') return;
+			if (phase !== 'open') return;
 			if (result.state === 'pending') schedulePoll(attempt + 1);
 			else end(result); // 'none': the poller swaps itself out and stops
 		}, pollDelayMs(attempt));
@@ -116,7 +116,7 @@
 
 	onMount(() => {
 		const onKey = (event: KeyboardEvent) => {
-			if (event.key !== 'Escape' || state !== 'open') return;
+			if (event.key !== 'Escape' || phase !== 'open') return;
 			if (modalIsOpen(event)) return;
 			void skip();
 		};
@@ -151,7 +151,7 @@
 	});
 </script>
 
-{#if state === 'open'}
+{#if phase === 'open'}
 	<div id="guided-step-layer" class="guided-step-layer" bind:this={root}>
 		{#if found}
 			<div class="guided-step-ring" style={ringStyle} aria-hidden="true"></div>
@@ -164,7 +164,7 @@
 			<div class="guided-step-poller" aria-hidden="true"></div>
 		</div>
 	</div>
-{:else if state === 'finished'}
+{:else if phase === 'finished'}
 	<div id="guided-step-layer" class="guided-step-layer is-finished">
 		<div class="guided-step-bubble" role="status" aria-live="polite">
 			<p class="text-sm font-semibold">Done.</p>

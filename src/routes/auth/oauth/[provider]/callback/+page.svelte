@@ -6,7 +6,11 @@
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
-	const result = $derived(form ?? ('error' in data ? data : null));
+	const result = $derived.by(() => {
+		if (form) return form;
+		const d = data as { error?: string; next?: string };
+		return typeof d.error === 'string' ? { error: d.error, next: d.next ?? '' } : null;
+	});
 </script>
 
 <AuthMeta title="Sign in - Norviq" keywords="Sign in - Norviq" description="Securely access your Norviq account." />
