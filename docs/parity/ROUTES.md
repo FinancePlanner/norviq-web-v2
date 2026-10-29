@@ -99,63 +99,63 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 
 ### /auth (5)
 
-- [ ] `GET /auth/oauth/{provider}/callback` → authHandler.OAuthCallback
-- [ ] `POST /auth/oauth/{provider}/callback` → authHandler.OAuthCallbackPost
-- [ ] `GET /auth/oauth/{provider}/start` → authHandler.OAuthStart
-- [ ] `POST /auth/passkey/begin` → authHandler.PasskeyBegin
-- [ ] `POST /auth/passkey/finish` → authHandler.PasskeyFinish
+- [x] `GET /auth/oauth/{provider}/callback` → authHandler.OAuthCallback → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /auth/oauth/{provider}/callback` → authHandler.OAuthCallbackPost → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /auth/oauth/{provider}/start` → authHandler.OAuthStart → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /auth/passkey/begin` → authHandler.PasskeyBegin → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /auth/passkey/finish` → authHandler.PasskeyFinish → v2: see docs/parity/auth-onboarding.md
 
 ### /login (2)
 
-- [ ] `GET /login` → authHandler.LoginPage
-- [ ] `POST /login` → authHandler.LoginSubmit
+- [x] `GET /login` → authHandler.LoginPage → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /login` → authHandler.LoginSubmit → v2: see docs/parity/auth-onboarding.md
 
 ### /signup (2)
 
-- [ ] `GET /signup` → authHandler.SignupPage
-- [ ] `POST /signup` → authHandler.SignupSubmit
+- [x] `GET /signup` → authHandler.SignupPage → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /signup` → authHandler.SignupSubmit → v2: see docs/parity/auth-onboarding.md
 
 ### /forgot-password (2)
 
-- [ ] `GET /forgot-password` → authHandler.ForgotPasswordPage
-- [ ] `POST /forgot-password` → authHandler.ForgotPasswordSubmit
+- [x] `GET /forgot-password` → authHandler.ForgotPasswordPage → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /forgot-password` → authHandler.ForgotPasswordSubmit → v2: see docs/parity/auth-onboarding.md
 
 ### /reset-password (3)
 
-- [ ] `GET /reset-password` → authHandler.ResetPasswordPage
-- [ ] `POST /reset-password` → authHandler.ResetPasswordSubmit
-- [ ] `POST /reset-password/resend` → authHandler.ResetPasswordResend
+- [x] `GET /reset-password` → authHandler.ResetPasswordPage → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /reset-password` → authHandler.ResetPasswordSubmit → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /reset-password/resend` → authHandler.ResetPasswordResend → v2: see docs/parity/auth-onboarding.md
 
 ### /mfa (3)
 
-- [ ] `GET /mfa` → authHandler.MFAPartial
-- [ ] `POST /mfa/verify` → authHandler.MFAVerify
-- [ ] `POST /mfa/resend` → authHandler.MFAResend
+- [x] `GET /mfa` → authHandler.MFAPartial → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /mfa/verify` → authHandler.MFAVerify → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /mfa/resend` → authHandler.MFAResend → v2: see docs/parity/auth-onboarding.md
 
 ### /onboarding (16)
 
-- [ ] `GET /onboarding/questionnaire` → onboardingHandler.Questionnaire
-- [ ] `POST /onboarding/questionnaire` → onboardingHandler.QuestionnaireSubmit
-- [ ] `GET /onboarding/paywall` → onboardingHandler.Paywall
-- [ ] `POST /onboarding/paywall/continue` → onboardingHandler.PaywallContinue
-- [ ] `GET /onboarding` → onboardingHandler.Welcome
-- [ ] `GET /onboarding/import` → onboardingHandler.ImportMenu
-- [ ] `GET /onboarding/import/csv` → onboardingHandler.ImportCSV
-- [ ] `POST /onboarding/import/csv/preview` → onboardingHandler.ImportCSVPreview
-- [ ] `POST /onboarding/import/csv/commit` → onboardingHandler.ImportCSVCommit
-- [ ] `GET /onboarding/import/manual` → onboardingHandler.ImportManual
-- [ ] `POST /onboarding/import/manual` → onboardingHandler.ImportManualSubmit
-- [ ] `GET /onboarding/budget` → onboardingHandler.Budget
-- [ ] `POST /onboarding/budget` → onboardingHandler.BudgetSubmit
-- [ ] `GET /onboarding/done` → onboardingHandler.Done
-- [ ] `POST /onboarding/skip` → onboardingHandler.Skip
-- [ ] `POST /onboarding/complete` → onboardingHandler.Complete
+- [x] `GET /onboarding/questionnaire` → onboardingHandler.Questionnaire → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /onboarding/questionnaire` → onboardingHandler.QuestionnaireSubmit → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /onboarding/paywall` → onboardingHandler.Paywall → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /onboarding/paywall/continue` → onboardingHandler.PaywallContinue → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /onboarding` → onboardingHandler.Welcome → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /onboarding/import` → onboardingHandler.ImportMenu → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /onboarding/import/csv` → onboardingHandler.ImportCSV → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /onboarding/import/csv/preview` → onboardingHandler.ImportCSVPreview → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /onboarding/import/csv/commit` → onboardingHandler.ImportCSVCommit → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /onboarding/import/manual` → onboardingHandler.ImportManual → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /onboarding/import/manual` → onboardingHandler.ImportManualSubmit → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /onboarding/budget` → onboardingHandler.Budget → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /onboarding/budget` → onboardingHandler.BudgetSubmit → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /onboarding/done` → onboardingHandler.Done → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /onboarding/skip` → onboardingHandler.Skip → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /onboarding/complete` → onboardingHandler.Complete → v2: see docs/parity/auth-onboarding.md
 
 ### /oauth (3)
 
-- [ ] `GET /oauth/consent` → appHandler.OAuthConsent
-- [ ] `POST /oauth/consent/approve` → appHandler.OAuthConsentApprove
-- [ ] `POST /oauth/consent/deny` → appHandler.OAuthConsentDeny
+- [x] `GET /oauth/consent` → appHandler.OAuthConsent → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /oauth/consent/approve` → appHandler.OAuthConsentApprove → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /oauth/consent/deny` → appHandler.OAuthConsentDeny → v2: see docs/parity/auth-onboarding.md
 
 ### /dashboard (26)
 
@@ -188,10 +188,10 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 
 ### /guided-start (4)
 
-- [ ] `GET /guided-start/start` → appHandler.GuidedStartStep
-- [ ] `GET /guided-start/poll` → appHandler.GuidedStartPoll
-- [ ] `POST /guided-start/skip` → appHandler.GuidedStartSkip
-- [ ] `POST /guided-start/dismiss` → appHandler.GuidedStartDismiss
+- [x] `GET /guided-start/start` → appHandler.GuidedStartStep → v2: see docs/parity/auth-onboarding.md
+- [x] `GET /guided-start/poll` → appHandler.GuidedStartPoll → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /guided-start/skip` → appHandler.GuidedStartSkip → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /guided-start/dismiss` → appHandler.GuidedStartDismiss → v2: see docs/parity/auth-onboarding.md
 
 ### /settings (44)
 
@@ -618,8 +618,8 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 
 ### /ai-consent (2)
 
-- [ ] `GET /ai-consent` → appHandler.AIConsentPage
-- [ ] `POST /ai-consent` → appHandler.AIConsentGrant
+- [x] `GET /ai-consent` → appHandler.AIConsentPage → v2: see docs/parity/auth-onboarding.md
+- [x] `POST /ai-consent` → appHandler.AIConsentGrant → v2: see docs/parity/auth-onboarding.md
 
 ### /billing (4)
 

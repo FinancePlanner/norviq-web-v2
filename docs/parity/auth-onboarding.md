@@ -80,3 +80,47 @@ registered outside every group in Go, so it is ungrouped here.
   `passkeyButton()` attachment. Google / Apple / X sign-in are plain links to
   `/auth/oauth/{provider}/start` (no client SDK in Go either).
 - `internal/server/assets/guided-start.js` → `GuidedStepLayer.svelte`.
+
+## Shared changes
+
+- `vite.config.ts`: `csrf.trustedOrigins: ['https://appleid.apple.com']` (Apple
+  `form_post` to the callback; Go exempted `/auth/oauth/*/callback` from nosurf).
+- `src/routes/(app)/+layout.server.ts` / `+layout.svelte`: `guidedStep` from
+  `guidedStepLayer(event)` and `<GuidedStepLayer>` after the page (Go
+  `renderShell` → `withGuidedStepLayer`).
+- `docs/parity/ROUTES.md`: ticked the 42 rows.
+
+## For other domains
+
+- Dashboard: render `GuidedStartCard` with `vm = await loadGuidedCard(event)`
+  (`guided-start/guided.server.js`) where Go rendered `guidedstart.Card`.
+- Settings: `POST /settings/show-me-around` should call
+  `patchOnboardingProgress(event, {guidedStartDismissed:false})`,
+  `setGuidedShowCompleted` (when all done), `setGuidedPendingSource(event,'settings')`
+  and capture `guided_start_reopened`. Passkey registration: `registerPasskey()` /
+  `passkeyRegisterButton(onFeedback)` in `passkey.ts`.
+- Portfolio / expenses / goals: call `noteGuidedAction(event, step)` where Go called
+  `session.NoteGuidedAction`, and keep the `data-guide` targets.
+- `SubscriptionPlanCards.svelte` + `subscriptionPlanOptionVMs()` are a local copy of
+  the settings subscription cards; merge with the settings port.
+
+## Deviations
+
+- `POST /onboarding/budget` error: Go answered a native post with the bare
+  `BudgetForm` fragment; v2 re-renders the whole page with the banner.
+- htmx fragments (`/mfa`, `/guided-start/poll|skip|dismiss`, CSV preview) are
+  components; poll/skip/dismiss answer JSON.
+- Signup email check approximates Go `net/mail.ParseAddress`.
+
+## Verification (dev server :5203, staging API)
+
+- All GET pages 200 signed in (completed account and fresh account) or redirect
+  exactly as the Go guards do; no SSR errors in the dev log.
+- Exercised end to end on a new account created through `/signup`
+  (`port_ao_*@norviq-staging.invalid`): signup → login → questionnaire → paywall →
+  continue → welcome → import → CSV preview + commit → manual (add_row, validation) →
+  budget (error + save) → done → complete → dashboard → logout.
+- Not exercisable locally: OAuth start (backend rejects the localhost redirect URI,
+  same as Go would; falls back to `/login?error=oauth`), passkey (backend says not
+  enabled), MFA (no MFA account), `POST /ai-consent` (deliberately not run: granting
+  consent on staging accounts is the user's call), MCP consent approve/deny (no flow).
