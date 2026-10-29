@@ -24,3 +24,7 @@ export const POST: RequestHandler = async (event) => {
 	if (runes.length > ARTICLE_PREVIEW_MAX_RUNES) body = runes.slice(0, ARTICLE_PREVIEW_MAX_RUNES).join('');
 	return new Response(render(body), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 };
+
+// Go has no GET here: chi sends it to the public detail route, whose slug
+// parse 404s "preview".
+export const GET: RequestHandler = () => new Response('404 page not found', { status: 404 });
