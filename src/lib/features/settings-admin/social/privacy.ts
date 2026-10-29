@@ -1,4 +1,4 @@
-import { leaderboardsOn, type SocialConfig } from '#lib/nav.js';
+import { achievementsOn, leaderboardsOn, type SocialConfig } from '#lib/nav.js';
 
 // Port of norviq-web internal/pages/settings/social_viewmodel.go and the
 // social types it reads from internal/api/social.go.
@@ -18,6 +18,7 @@ export interface SocialPrivacySettings {
 	showStreaks: boolean;
 	showXP: boolean;
 	leaderboardOptIn: boolean;
+	showAchievements: boolean;
 }
 
 export const emptyPrivacySettings: SocialPrivacySettings = {
@@ -28,7 +29,8 @@ export const emptyPrivacySettings: SocialPrivacySettings = {
 	showReturnPercent: false,
 	showStreaks: false,
 	showXP: false,
-	leaderboardOptIn: false
+	leaderboardOptIn: false,
+	showAchievements: false
 };
 
 /** Keep only the fields Go's SocialPrivacySettings struct carries (what it PUTs back). */
@@ -66,7 +68,8 @@ export interface PrivacyToggle {
 
 /**
  * PrivacyToggles: the switches this deployment can honor. The submit writes
- * only these fields back, so a hidden switch keeps whatever the user set on iOS.
+ * only the ones the form marked as shown, so a hidden switch keeps whatever
+ * the user set on iOS.
  * Like Go, the contacts/X/Facebook switches read the raw flags.
  */
 export function privacyToggles(cfg: SocialConfig): PrivacyToggle[] {
@@ -76,6 +79,7 @@ export function privacyToggles(cfg: SocialConfig): PrivacyToggle[] {
 		{ key: 'showReturnPercent', label: 'Show my return %', description: 'Off by default. Friends see a percentage, never an amount.' }
 	];
 	if (leaderboardsOn(cfg)) toggles.push({ key: 'leaderboardOptIn', label: "Appear on friends' leaderboards" });
+	if (achievementsOn(cfg)) toggles.push({ key: 'showAchievements', label: 'Show achievements to friends' });
 	if (cfg.contactsDiscovery) {
 		toggles.push({
 			key: 'discoverableByContacts',

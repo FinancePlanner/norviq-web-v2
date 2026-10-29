@@ -52,7 +52,14 @@ export const actions: Actions = {
 			SearchVisibility.FriendsOfFriends,
 			SearchVisibility.Nobody
 		);
-		for (const toggle of privacyToggles(cfg)) current[toggle.key] = form.get(toggle.key) === 'true';
+		// Each switch the form rendered carries a hidden shown=<key> marker; an
+		// unchecked switch posts nothing else, so the marker is what tells "shown
+		// and off" apart from "not on this form". Only marked switches are written.
+		const shown = new Set(form.getAll('shown').map(String));
+		for (const toggle of privacyToggles(cfg)) {
+			if (!shown.has(toggle.key)) continue;
+			current[toggle.key] = form.get(toggle.key) === 'true';
+		}
 		try {
 			await socialDo(event, 'PUT', '/v1/social/privacy', current);
 		} catch (err) {
