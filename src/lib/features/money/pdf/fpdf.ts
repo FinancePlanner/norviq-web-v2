@@ -199,6 +199,23 @@ export class Fpdf {
 		return this.y;
 	}
 
+	getX() {
+		return this.x;
+	}
+
+	/** SetLineWidth(width) in mm. */
+	setLineWidth(width: number) {
+		this.lineWidth = width;
+		if (this.#page > 0) this.#out(fmt2(width * this.k) + ' w');
+	}
+
+	/** Rect(x, y, w, h, styleStr): "D" (or "") strokes, "F" fills, "DF"/"FD" both. */
+	rect(x: number, y: number, w: number, h: number, style: '' | 'D' | 'F' | 'DF' | 'FD') {
+		const op = style === 'F' ? 'f' : style === 'DF' || style === 'FD' ? 'B' : 'S';
+		const k = this.k;
+		this.#out(`${fmt2(x * k)} ${fmt2((this.h - y) * k)} ${fmt2(w * k)} ${fmt2(-h * k)} re ${op}`);
+	}
+
 	setX(x: number) {
 		this.x = x >= 0 ? x : this.w + x;
 	}
