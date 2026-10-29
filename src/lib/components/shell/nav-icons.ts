@@ -76,6 +76,7 @@ const byPath: Record<string, Component> = {
 	'/groups/discover': Compass,
 	'/groups/new': Plus,
 	'/friends/leaderboard': Trophy,
+	'/achievements': Trophy,
 	'/xp': Sparkles,
 	'/friends/invite': UserPlus
 };
