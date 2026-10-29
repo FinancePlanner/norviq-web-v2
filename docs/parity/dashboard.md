@@ -20,18 +20,18 @@ Legend: `[x]` done · `[~]` partial (why) · `[ ]` not done (why).
 - [ ] `GET /dashboard/news-ticker` → component
 - [ ] `GET /dashboard/market-brief` → component
 - [ ] `POST /dashboard/quick-expense` → component
-- [ ] `GET /dashboard/activity` → `src/routes/(app)/dashboard/activity/`
-- [ ] `GET /dashboard/activity-list` → component
-- [ ] `GET /dashboard/insights` → `src/routes/(app)/dashboard/insights/`
-- [ ] `GET /dashboard/insights/ai` → component
+- [x] `GET /dashboard/activity` → `src/routes/(app)/dashboard/activity/` (`?limit=` honoured, clamped 20–100; filter select inert as in Go)
+- [x] `GET /dashboard/activity-list` → `ActivityListSection` "Load more" (fetches `/api/v1/activities?limit=N`)
+- [x] `GET /dashboard/insights` → `src/routes/(app)/dashboard/insights/`
+- [~] `GET /dashboard/insights/ai` → streamed `ai` promise in the insights load + `AIInsightsSection` (no-consent path verified; consented path unverified, see below)
 - [ ] `GET /dashboard/why-moved` → component
 - [ ] `GET /dashboard/mcp-status` → component
-- [ ] `POST /dashboard/insights/goals` → form action
-- [ ] `POST /dashboard/insights/goals/{id}/toggle` → form action
-- [ ] `GET /dashboard/insights/goals/{id}/edit` → component state
-- [ ] `PATCH /dashboard/insights/goals/{id}` → form action
-- [ ] `DELETE /dashboard/insights/goals/{id}` → form action
-- [ ] `GET /dashboard/insights/focus-points` → component
+- [x] `POST /dashboard/insights/goals` → `?/create`
+- [x] `POST /dashboard/insights/goals/{id}/toggle` → `?/toggle`
+- [x] `GET /dashboard/insights/goals/{id}/edit` → `FocusPointsSection` edit state (`FocusPointEditForm`)
+- [x] `PATCH /dashboard/insights/goals/{id}` → `?/update`
+- [x] `DELETE /dashboard/insights/goals/{id}` → `?/delete` (confirm() = hx-confirm)
+- [x] `GET /dashboard/insights/focus-points` → `FocusPointsSection` (actions return fresh points; Cancel just leaves edit mode)
 - [ ] `GET /dashboard/terminal` → component
 
 ## /goals (7)
@@ -75,4 +75,9 @@ other domains; only `InboxPage` (notifications) is ported here.
 
 ## Backend gaps
 
+- `DELETE /v1/goals/{id}` answers 200 on staging; the spec and Go expect 204, so Go (and this faithful port) shows "Focus points unavailable right now." after a delete that did succeed.
+
 ## Not verified
+
+- `/dashboard/insights/ai` with AI consent granted (the three cards). The staging test account has no consent and granting it was not permitted; only the consent-card path was checked.
+- Client-side behaviour of activity "Load more", focus-point edit/delete UI and the hydrated AI consent card: no browser was available; the actions and the proxy endpoints were exercised with curl.

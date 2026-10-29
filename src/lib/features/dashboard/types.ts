@@ -99,3 +99,6 @@ export interface InsightsPageViewModel {
 	insightsError: boolean;
 	goalsError: boolean;
 }
+
+/** GET /dashboard/insights/ai: the consent prompt, or the three cards. */
+export type AIInsightsResult = { consentRequired: true; next: string } | { consentRequired: false; cards: AIInsightCardVM[] };
