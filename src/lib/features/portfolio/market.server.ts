@@ -174,8 +174,11 @@ const hiddenRollup = (): SentimentRollupVM => buildSentimentRollup('', null, 0, 
 export async function loadPortfolioSentimentRollup(event: RequestEvent, portfolioID: string): Promise<SentimentRollupVM> {
 	try {
 		const id = parseUUID(portfolioID);
+		// Bounded like the per-symbol batch: the holdings page waits for this
+		// call, and a slow roll-up should cost the card, not the page.
 		const resp = await apiJSON<Schemas['PortfolioSentimentResponse']>(event, 'GET', '/v1/insights/sentiment/portfolio', undefined, {
-			query: id ? { portfolioListId: id } : undefined
+			query: id ? { portfolioListId: id } : undefined,
+			signal: AbortSignal.timeout(ENRICHMENT_TIMEOUT_MS)
 		});
 		return mapSentimentRollup(resp);
 	} catch (err) {
