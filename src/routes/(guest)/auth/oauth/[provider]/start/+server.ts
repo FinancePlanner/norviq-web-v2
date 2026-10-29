@@ -33,5 +33,5 @@ export const GET: RequestHandler = async (event) => {
 	if (!resp?.authorizationURL || !resp.flowId) redirect(303, '/login?error=oauth');
 
 	await saveOAuthFlow(event, provider, redirectURI, resp.flowId, 'login');
-	redirect(303, resp.authorizationURL);
+	redirect(303, resp.authorizationURL, { external: true });
 };

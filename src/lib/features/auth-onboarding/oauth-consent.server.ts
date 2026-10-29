@@ -48,5 +48,5 @@ export async function decideConsent(event: RequestEvent, approve: boolean): Prom
 	}
 	if (!redirectURL) error(502, 'Could not complete the authorization request.');
 	if (!isSafeRedirectURL(redirectURL)) error(502, 'Invalid redirect URI returned by server.');
-	redirect(303, redirectURL);
+	redirect(303, redirectURL, { external: true });
 }
