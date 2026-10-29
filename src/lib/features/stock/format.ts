@@ -2,7 +2,13 @@
 // (stock_detail_data.go, stock_detail_tabs_data.go, app.go). Same names and
 // output; shared by every tab under features/stock.
 
-import { formatCompactCurrency, formatCurrency, formatFloat, formatSignedPercent, changeClass } from '#lib/format.js';
+import {
+	formatCompactCurrency,
+	formatCurrency,
+	formatFloat,
+	formatSignedPercent,
+	changeClass
+} from '#lib/format.js';
 import { shortDate } from '#lib/features/settings-admin/go-time.js';
 
 type Num = number | null | undefined;

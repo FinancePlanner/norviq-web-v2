@@ -22,4 +22,11 @@ export interface StatementRowVM {
 	value: string;
 }
 
-export const emptyConsensus = (): ConsensusVM => ({ hasData: false, error: '', consensus: '', totalRatings: 0, bullishPct: '', buckets: [] });
+export const emptyConsensus = (): ConsensusVM => ({
+	hasData: false,
+	error: '',
+	consensus: '',
+	totalRatings: 0,
+	bullishPct: '',
+	buckets: []
+});

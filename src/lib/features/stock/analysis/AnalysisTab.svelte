@@ -69,7 +69,12 @@
 						{#each vm.kpis as kpi, i (i)}
 							<div class="fin-analysis-kpi">
 								<p class="fin-analysis-kpi-label">{kpi.label}</p>
-								<p class={cls('fin-analysis-kpi-value spring-pop', metricToneClass(kpi.tone))} data-motion="spring">{kpi.value}</p>
+								<p
+									class={cls('fin-analysis-kpi-value spring-pop', metricToneClass(kpi.tone))}
+									data-motion="spring"
+								>
+									{kpi.value}
+								</p>
 							</div>
 						{/each}
 					</div>
@@ -81,7 +86,9 @@
 					<div class="flex flex-wrap items-end justify-between gap-3">
 						<div>
 							<p class="fin-analysis-eyebrow">Fair value range</p>
-							<p class="fin-analysis-dcf-current mt-1 spring-pop" data-motion="spring">{band.currentLabel}</p>
+							<p class="fin-analysis-dcf-current spring-pop mt-1" data-motion="spring">
+								{band.currentLabel}
+							</p>
 							<p class="fin-analysis-dcf-sub mt-1">
 								{#if band.upsideLabel !== ''}{band.upsideLabel}{:else if band.downsideLabel !== ''}{band.downsideLabel}{/if}
 							</p>
@@ -94,9 +101,15 @@
 					</div>
 					<div class="fin-dcf-track mt-5">
 						<div class="fin-dcf-gradient"></div>
-						<div class="fin-dcf-marker" style="left: {formatFloat(band.markerPct, 2)}%" aria-hidden="true"></div>
+						<div
+							class="fin-dcf-marker"
+							style="left: {formatFloat(band.markerPct, 2)}%"
+							aria-hidden="true"
+						></div>
 					</div>
-					<div class="fin-dcf-labels mt-2 flex justify-between text-[11px] font-semibold text-muted-foreground">
+					<div
+						class="fin-dcf-labels mt-2 flex justify-between text-[11px] font-semibold text-muted-foreground"
+					>
 						<span>Bear</span>
 						<span>Base</span>
 						<span>Bull</span>
@@ -130,8 +143,12 @@
 							<div class="fin-consensus-legend mt-2">
 								{#each positive(c.buckets) as bucket (bucket.label)}
 									<span class="fin-consensus-legend-item">
-										<span class={'fin-consensus-dot fin-consensus-' + consensusBucketClass(bucket.label)}></span>
-										{bucket.label} {bucket.count}
+										<span
+											class={'fin-consensus-dot fin-consensus-' +
+												consensusBucketClass(bucket.label)}
+										></span>
+										{bucket.label}
+										{bucket.count}
 									</span>
 								{/each}
 							</div>
@@ -176,11 +193,11 @@
 								{#each vm.estimates as row, i (i)}
 									<tr>
 										<th scope="row">{row.period}</th>
-										<td class="text-right vigil-mono tabular-nums">{row.revenue}</td>
-										<td class="text-right vigil-mono tabular-nums">{row.eps}</td>
-										<td class="text-right vigil-mono tabular-nums">{row.ebitda}</td>
-										<td class="text-right vigil-mono tabular-nums">{row.netIncome}</td>
-										<td class="text-right vigil-mono tabular-nums">{row.analystsEPS}</td>
+										<td class="vigil-mono text-right tabular-nums">{row.revenue}</td>
+										<td class="vigil-mono text-right tabular-nums">{row.eps}</td>
+										<td class="vigil-mono text-right tabular-nums">{row.ebitda}</td>
+										<td class="vigil-mono text-right tabular-nums">{row.netIncome}</td>
+										<td class="vigil-mono text-right tabular-nums">{row.analystsEPS}</td>
 									</tr>
 								{/each}
 							</tbody>
@@ -196,7 +213,9 @@
 								<div class="fin-growth-sparkline-card">
 									<div class="fin-growth-sparkline-head">
 										<p class="fin-growth-sparkline-label">{item.label}</p>
-										<p class={cls('fin-growth-sparkline-latest', metricToneClass(item.tone))}>{item.latest}</p>
+										<p class={cls('fin-growth-sparkline-latest', metricToneClass(item.tone))}>
+											{item.latest}
+										</p>
 									</div>
 									<GrowthSparkline points={item.points} tone={item.tone} />
 									<div class="fin-growth-sparkline-years">
@@ -211,7 +230,9 @@
 						{#each section.metrics as metric, i (i)}
 							<div class="fin-analysis-metric">
 								<p class="command-metric-label">{metric.label}</p>
-								<p class={cls('command-metric-value', metricSentimentClass(metric.tone))}>{metric.value}</p>
+								<p class={cls('command-metric-value', metricSentimentClass(metric.tone))}>
+									{metric.value}
+								</p>
 								{#if metric.hint !== ''}
 									<p class="fin-analysis-metric-hint">{metric.hint}</p>
 								{/if}
@@ -221,7 +242,9 @@
 				</vigil.Panel>
 			{/if}
 		{/each}
-		<p class="fin-analysis-footnote">Figures are trailing or consensus where labeled. Growth rates use fiscal-year comparisons.</p>
+		<p class="fin-analysis-footnote">
+			Figures are trailing or consensus where labeled. Growth rates use fiscal-year comparisons.
+		</p>
 	{:else}
 		<SectionCard title="Analysis">
 			<EmptyState

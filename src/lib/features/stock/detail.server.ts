@@ -5,13 +5,24 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
-import { changeClass, formatCompactCurrency, formatCompactNumber, formatCurrency, formatSignedPercent } from '#lib/format.js';
+import {
+	changeClass,
+	formatCompactCurrency,
+	formatCompactNumber,
+	formatCurrency,
+	formatSignedPercent
+} from '#lib/format.js';
 import { stockTabFeature } from '#lib/nav.js';
-import { buildSentimentBadge, sentimentBadgeClass, sentimentPostCountLabel } from '#lib/components/norviq/sentiment.js';
+import {
+	buildSentimentBadge,
+	sentimentBadgeClass,
+	sentimentPostCountLabel
+} from '#lib/components/norviq/sentiment.js';
 import { goFormat } from '#lib/features/dashboard/shared.js';
 import { formatShares } from '#lib/features/portfolio/market.server.js';
 import { loadEarningsVisualizerViewModel } from '#lib/features/portfolio/earningsviz/visualizer.server.js';
 import { loadAnalysisTab } from './analysis/load.server.js';
+import { emptyAnalysisTab } from './analysis/types.js';
 import { loadChartBuilderTab } from './builder/load.server.js';
 import { mapGradesConsensus, type GradesConsensusResponse } from './consensus.js';
 import { emptyConsensus, type StatementRowVM } from './types.js';
@@ -48,7 +59,12 @@ type S = components['schemas'];
 const enc = encodeURIComponent;
 
 /** Go's `resp.JSON200 != nil` read: the body on a 2xx, null on any failure. */
-async function get<T>(event: RequestEvent, path: string, query?: Record<string, string | number>, what = path): Promise<T | null> {
+async function get<T>(
+	event: RequestEvent,
+	path: string,
+	query?: Record<string, string | number>,
+	what = path
+): Promise<T | null> {
 	try {
 		return (await apiJSON<T>(event, 'GET', path, undefined, query ? { query } : {})) ?? null;
 	} catch (err) {
@@ -106,16 +122,30 @@ export function emptyDetailViewModel(symbol: string, tab: string): DetailViewMod
 		consensus: emptyConsensus(),
 		basicFinancials: { hasData: false, error: '', metrics: [] },
 		chart: { hasData: false, error: '', labels: [], values: [] },
-		chartBuilder: null,
-		statements: { hasData: false, error: '', balanceSheet: [], cashFlow: [], ratioRows: [], balancePeriod: '', cashFlowPeriod: '', ratiosPeriod: '' },
-		analysis: null,
+		chartBuilder: { groups: [], error: '' },
+		statements: {
+			hasData: false,
+			error: '',
+			balanceSheet: [],
+			cashFlow: [],
+			ratioRows: [],
+			balancePeriod: '',
+			cashFlowPeriod: '',
+			ratiosPeriod: ''
+		},
+		analysis: emptyAnalysisTab(),
 		forecast: { hasData: false, scenarios: [], chart: null },
 		compare: { hasData: false, peers: [], selectedPeer: '', rows: [], chart: null },
 		news: { hasData: false, articles: [] },
 		sentiment: emptySentiment(),
 		earnings: { hasData: false, error: '', streakHeadline: '', streakTone: '', events: [] },
 		earningsVisualizer: null,
-		ownership: { hasData: false, insider: emptyInsider(), institutional: emptyInstitutional(), congress: emptyCongress() },
+		ownership: {
+			hasData: false,
+			insider: emptyInsider(),
+			institutional: emptyInstitutional(),
+			congress: emptyCongress()
+		},
 		technicals: { present: false }
 	};
 }
@@ -140,7 +170,10 @@ function emptySentiment(): SentimentTabVM {
 export type StockListItem = S['StockListItem'];
 
 /** findPortfolioStock: a transport failure is an error; a non-200 answer is "not held". */
-export async function findPortfolioStock(event: RequestEvent, symbol: string): Promise<{ item: StockListItem | null; error: unknown }> {
+export async function findPortfolioStock(
+	event: RequestEvent,
+	symbol: string
+): Promise<{ item: StockListItem | null; error: unknown }> {
 	try {
 		const items = await apiJSON<StockListItem[]>(event, 'GET', '/v1/stocks');
 		const item = (items ?? []).find((i) => i.symbol.trim().toUpperCase() === symbol) ?? null;
@@ -208,9 +241,24 @@ export async function loadStockDetailViewModel(
 	const s = enc(symbol);
 	const [market, profile, valuation, periodReturns, targets] = await Promise.all([
 		get<S['StockDetailsResponse']>(event, '/v1/market/details', { symbol }, 'market details'),
-		get<S['CompanyProfileResponse']>(event, `/v1/market/profile/${s}`, undefined, 'company profile'),
-		get<S['StockValuationRequest']>(event, `/v1/stocks/symbol/${s}/valuation`, undefined, 'valuation'),
-		get<S['StockPeriodReturnsResponse']>(event, `/v1/market/returns/${s}`, undefined, 'period returns'),
+		get<S['CompanyProfileResponse']>(
+			event,
+			`/v1/market/profile/${s}`,
+			undefined,
+			'company profile'
+		),
+		get<S['StockValuationRequest']>(
+			event,
+			`/v1/stocks/symbol/${s}/valuation`,
+			undefined,
+			'valuation'
+		),
+		get<S['StockPeriodReturnsResponse']>(
+			event,
+			`/v1/market/returns/${s}`,
+			undefined,
+			'period returns'
+		),
 		get<S['ScenarioTargetResponse'][]>(event, '/v1/targets', undefined, 'targets')
 	]);
 
@@ -275,8 +323,10 @@ export async function loadStockDetailViewModel(
 		vm.estimateCurrency = optionalString(profile.estimateCurrency);
 		vm.website = optionalString(profile.weburl);
 		vm.ipo = profile.ipo ? goDate(profile.ipo) : '-';
-		if (profile.marketCapitalization != null) vm.marketCap = formatCurrency(profile.marketCapitalization * 1_000_000);
-		if (profile.shareOutstanding != null) vm.sharesOutstanding = formatCompactNumber(profile.shareOutstanding * 1_000_000);
+		if (profile.marketCapitalization != null)
+			vm.marketCap = formatCurrency(profile.marketCapitalization * 1_000_000);
+		if (profile.shareOutstanding != null)
+			vm.sharesOutstanding = formatCompactNumber(profile.shareOutstanding * 1_000_000);
 		vm.companyMeta = joinMeta(vm.exchange, vm.industry, vm.country);
 	}
 	if (vm.companyName === '') vm.companyName = symbol;
@@ -300,8 +350,18 @@ export async function loadStockDetailViewModel(
 async function loadStockOverviewMarketDepth(event: RequestEvent, vm: DetailViewModel) {
 	const s = enc(vm.symbol);
 	const [consensus, financials] = await Promise.all([
-		get<GradesConsensusResponse[]>(event, `/v1/market/grades-consensus/${s}`, undefined, 'grades consensus'),
-		get<S['BasicFinancialsResponse']>(event, `/v1/market/basic-financials/${s}`, undefined, 'basic financials')
+		get<GradesConsensusResponse[]>(
+			event,
+			`/v1/market/grades-consensus/${s}`,
+			undefined,
+			'grades consensus'
+		),
+		get<S['BasicFinancialsResponse']>(
+			event,
+			`/v1/market/basic-financials/${s}`,
+			undefined,
+			'basic financials'
+		)
 	]);
 	if (consensus && consensus.length > 0) vm.consensus = mapGradesConsensus(consensus);
 	else vm.consensus.error = 'Could not load analyst consensus.';
@@ -327,12 +387,21 @@ function metricPercentFraction(metric: Metric, key: string): number | null {
 function seriesLatestValue(series: Series, metricKey: string, frequency: string): number | null {
 	const points = series?.[frequency]?.[metricKey];
 	if (!points || points.length === 0) return null;
-	const sorted = [...points].sort((a, b) => (a.period > b.period ? -1 : a.period < b.period ? 1 : 0));
+	const sorted = [...points].sort((a, b) =>
+		a.period > b.period ? -1 : a.period < b.period ? 1 : 0
+	);
 	return sorted[0].v;
 }
 
 function resolvedPERatio(metric: Metric): number | null {
-	for (const key of ['peTTM', 'peBasicExclExtraTTM', 'peExclExtraTTM', 'peAnnual', 'peNormalizedAnnual', 'forwardPE']) {
+	for (const key of [
+		'peTTM',
+		'peBasicExclExtraTTM',
+		'peExclExtraTTM',
+		'peAnnual',
+		'peNormalizedAnnual',
+		'forwardPE'
+	]) {
 		const v = metricNumber(metric, key);
 		if (v != null) return v;
 	}
@@ -357,7 +426,9 @@ function resolvedCurrentRatio(metric: Metric, series: Series): number | null {
 	);
 }
 
-export function mapBasicFinancials(data: S['BasicFinancialsResponse']): DetailViewModel['basicFinancials'] {
+export function mapBasicFinancials(
+	data: S['BasicFinancialsResponse']
+): DetailViewModel['basicFinancials'] {
 	const metric = data.metric as Metric;
 	const series = data.series as unknown as Series;
 	const rows: StatementRowVM[] = [];
@@ -388,7 +459,13 @@ export function mapBasicFinancials(data: S['BasicFinancialsResponse']): DetailVi
 // ---------------------------------------------------------------------------
 // stock_detail_tabs_data.go
 
-async function loadStockDetailTabData(event: RequestEvent, vm: DetailViewModel, comparePeer: string, earningsFiling: string, isPro: boolean) {
+async function loadStockDetailTabData(
+	event: RequestEvent,
+	vm: DetailViewModel,
+	comparePeer: string,
+	earningsFiling: string,
+	isPro: boolean
+) {
 	const tab = vm.activeTab.trim().toLowerCase();
 	// Skip the fetch for a tab the user cannot see. This skip is the
 	// enforcement: the ownership feeds are session-auth only on the backend.
@@ -428,11 +505,27 @@ async function loadStockDetailTabData(event: RequestEvent, vm: DetailViewModel, 
 }
 
 async function loadStockSentimentTab(event: RequestEvent, vm: DetailViewModel) {
-	const data = await get<S['TickerSentimentResponse']>(event, `/v1/insights/tickers/${enc(vm.symbol)}/sentiment`, { days: 14, limit: 20 }, 'ticker sentiment');
+	const data = await get<S['TickerSentimentResponse']>(
+		event,
+		`/v1/insights/tickers/${enc(vm.symbol)}/sentiment`,
+		{ days: 14, limit: 20 },
+		'ticker sentiment'
+	);
 	if (!data) return;
 	const aggregate = data.aggregate as { label: string; postCount: number };
-	const tab: SentimentTabVM = { ...emptySentiment(), symbol: data.symbol, aggregateLabel: aggregate.label, postCount: aggregate.postCount };
-	for (const post of data.posts as { author?: string | null; authorHandle?: string | null; text: string; url?: string | null; sentimentLabel: string }[]) {
+	const tab: SentimentTabVM = {
+		...emptySentiment(),
+		symbol: data.symbol,
+		aggregateLabel: aggregate.label,
+		postCount: aggregate.postCount
+	};
+	for (const post of data.posts as {
+		author?: string | null;
+		authorHandle?: string | null;
+		text: string;
+		url?: string | null;
+		sentimentLabel: string;
+	}[]) {
 		tab.posts.push({
 			author: derefString(post.author),
 			handle: derefString(post.authorHandle),
@@ -447,9 +540,16 @@ async function loadStockSentimentTab(event: RequestEvent, vm: DetailViewModel) {
 }
 
 async function attachDailySentiment(event: RequestEvent, tab: SentimentTabVM) {
-	const batch = await get<S['SymbolSentimentBatchResponse']>(event, '/v1/insights/sentiment/symbols', { symbols: tab.symbol }, 'sentiment batch');
+	const batch = await get<S['SymbolSentimentBatchResponse']>(
+		event,
+		'/v1/insights/sentiment/symbols',
+		{ symbols: tab.symbol },
+		'sentiment batch'
+	);
 	if (!batch) return;
-	const reading = (batch.symbols as Record<string, S['SymbolSentiment']> | undefined)?.[tab.symbol.toUpperCase()];
+	const reading = (batch.symbols as Record<string, S['SymbolSentiment']> | undefined)?.[
+		tab.symbol.toUpperCase()
+	];
 	if (!reading) return;
 
 	tab.hasDaily = true;
@@ -457,7 +557,13 @@ async function attachDailySentiment(event: RequestEvent, tab: SentimentTabVM) {
 	tab.asOf = reading.asOfDate;
 	tab.badge = buildSentimentBadge(reading.label, reading.score, reading.delta1d, reading.postCount);
 	tab.sourceLabel = describeSentimentSources(reading.sourceCounts);
-	const themes = reading.themes as { summary?: string | null; themes: { label: string; stance: string; evidenceCount: number }[] } | null | undefined;
+	const themes = reading.themes as
+		| {
+				summary?: string | null;
+				themes: { label: string; stance: string; evidenceCount: number }[];
+		  }
+		| null
+		| undefined;
 	if (themes) {
 		tab.summary = derefString(themes.summary);
 		for (const theme of themes.themes ?? []) {
@@ -471,7 +577,12 @@ async function attachDailySentiment(event: RequestEvent, tab: SentimentTabVM) {
 	}
 
 	// History is Pro-gated upstream; a 402 simply leaves the chart out.
-	const history = await get<S['SymbolSentiment'][]>(event, `/v1/insights/sentiment/history/${enc(tab.symbol)}`, { limit: 30 }, 'sentiment history');
+	const history = await get<S['SymbolSentiment'][]>(
+		event,
+		`/v1/insights/sentiment/history/${enc(tab.symbol)}`,
+		{ limit: 30 },
+		'sentiment history'
+	);
 	if (!history) return;
 	const points: number[] = [];
 	const labels: string[] = [];
@@ -503,7 +614,9 @@ function describeSentimentSources(counts: S['SentimentSourceCounts']): string {
 async function loadStockChartTab(event: RequestEvent, vm: DetailViewModel) {
 	let bars: S['StockHistory'][] | null;
 	try {
-		bars = await apiJSON<S['StockHistory'][]>(event, 'GET', '/v1/market/history', undefined, { query: { symbol: vm.symbol } });
+		bars = await apiJSON<S['StockHistory'][]>(event, 'GET', '/v1/market/history', undefined, {
+			query: { symbol: vm.symbol }
+		});
 	} catch (err) {
 		if (!isAPIError(err)) {
 			vm.chart.error = 'Could not load price history.';
@@ -524,7 +637,11 @@ async function loadStockChartTab(event: RequestEvent, vm: DetailViewModel) {
 	};
 }
 
-function formatStatementPeriod(date: string, period?: string | null, fiscalYear?: string | null): string {
+function formatStatementPeriod(
+	date: string,
+	period?: string | null,
+	fiscalYear?: string | null
+): string {
 	let label = goDate(date);
 	if ((period ?? '').trim() !== '') label = period!.trim() + ' · ' + label;
 	else if ((fiscalYear ?? '').trim() !== '') label = fiscalYear!.trim() + ' · ' + label;
@@ -536,7 +653,13 @@ async function loadStockStatementsTab(event: RequestEvent, vm: DetailViewModel) 
 	const query = { limit: 1, period: 'annual' };
 	const stmt = vm.statements;
 	const [balance, cash, ratios] = await Promise.all([
-		apiJSON<S['BalanceSheetStatementResponse'][]>(event, 'GET', `/v1/market/balance-sheet-statement/${s}`, undefined, { query }).catch((err) => {
+		apiJSON<S['BalanceSheetStatementResponse'][]>(
+			event,
+			'GET',
+			`/v1/market/balance-sheet-statement/${s}`,
+			undefined,
+			{ query }
+		).catch((err) => {
 			// Only a transport error set the message in Go; a non-200 just left no data.
 			if (!isAPIError(err)) {
 				stmt.error = 'Could not load financial statements.';
@@ -565,9 +688,18 @@ async function loadStockStatementsTab(event: RequestEvent, vm: DetailViewModel) 
 		const row = cash[0];
 		stmt.cashFlowPeriod = formatStatementPeriod(row.date, row.period, row.fiscalYear);
 		stmt.cashFlow = [
-			{ label: 'Operating cash flow', value: formatOptionalCurrency(row.netCashProvidedByOperatingActivities) },
-			{ label: 'Investing cash flow', value: formatOptionalCurrency(row.netCashProvidedByInvestingActivities) },
-			{ label: 'Financing cash flow', value: formatOptionalCurrency(row.netCashProvidedByFinancingActivities) },
+			{
+				label: 'Operating cash flow',
+				value: formatOptionalCurrency(row.netCashProvidedByOperatingActivities)
+			},
+			{
+				label: 'Investing cash flow',
+				value: formatOptionalCurrency(row.netCashProvidedByInvestingActivities)
+			},
+			{
+				label: 'Financing cash flow',
+				value: formatOptionalCurrency(row.netCashProvidedByFinancingActivities)
+			},
 			{ label: 'Free cash flow', value: formatOptionalCurrency(row.freeCashFlow) },
 			{ label: 'Net income', value: formatOptionalCurrency(row.netIncome) },
 			{ label: 'CapEx', value: formatOptionalCurrency(row.capitalExpenditure) }
@@ -593,11 +725,23 @@ async function loadStockStatementsTab(event: RequestEvent, vm: DetailViewModel) 
 	if (!stmt.hasData) stmt.error = 'Financial statements unavailable for this symbol.';
 }
 
-type ProjectionYear = { year: number; revenue: number; revenueGrowth: number; eps: number; sharePriceLow: number; sharePriceHigh: number };
+type ProjectionYear = {
+	year: number;
+	revenue: number;
+	revenueGrowth: number;
+	eps: number;
+	sharePriceLow: number;
+	sharePriceHigh: number;
+};
 type ProjectionScenario = { kind: string; years: ProjectionYear[] };
 
 async function loadStockForecastTab(event: RequestEvent, vm: DetailViewModel) {
-	const insights = await get<S['StockInsightsResponse']>(event, `/v1/stocks/${enc(vm.symbol)}/insights`, undefined, 'insights');
+	const insights = await get<S['StockInsightsResponse']>(
+		event,
+		`/v1/stocks/${enc(vm.symbol)}/insights`,
+		undefined,
+		'insights'
+	);
 	const scenarios = (insights?.projectionScenarios ?? []) as unknown as ProjectionScenario[];
 	if (scenarios.length === 0) return;
 	vm.forecast = {
@@ -626,7 +770,12 @@ async function loadStockForecastTab(event: RequestEvent, vm: DetailViewModel) {
 
 async function loadStockCompareTab(event: RequestEvent, vm: DetailViewModel, rawPeer: string) {
 	let comparePeer = rawPeer.trim().toUpperCase();
-	const insights = await get<S['StockInsightsResponse']>(event, `/v1/stocks/${enc(vm.symbol)}/insights`, undefined, 'insights');
+	const insights = await get<S['StockInsightsResponse']>(
+		event,
+		`/v1/stocks/${enc(vm.symbol)}/insights`,
+		undefined,
+		'insights'
+	);
 	const peers = (insights?.peers ?? []) as S['StockInsightPeerDTO'][];
 	if (comparePeer === '' && peers.length > 0) comparePeer = peers[0].symbol.trim().toUpperCase();
 
@@ -638,28 +787,75 @@ async function loadStockCompareTab(event: RequestEvent, vm: DetailViewModel, raw
 	tab.selectedPeer = comparePeer;
 	if (comparePeer === '' || comparePeer === vm.symbol.toUpperCase()) return;
 
-	const rows = await get<S['StockAnalysisMetricsResponse'][]>(event, '/v1/market/compare', { symbols: vm.symbol + ',' + comparePeer }, 'market compare');
+	const rows = await get<S['StockAnalysisMetricsResponse'][]>(
+		event,
+		'/v1/market/compare',
+		{ symbols: vm.symbol + ',' + comparePeer },
+		'market compare'
+	);
 	if (!rows || rows.length === 0) return;
 	const bySymbol = new Map(rows.map((r) => [r.symbol.toUpperCase(), r]));
-	const primary = bySymbol.get(vm.symbol.toUpperCase()) ?? ({} as Partial<S['StockAnalysisMetricsResponse']>);
+	const primary =
+		bySymbol.get(vm.symbol.toUpperCase()) ?? ({} as Partial<S['StockAnalysisMetricsResponse']>);
 	const peer = bySymbol.get(comparePeer) ?? ({} as Partial<S['StockAnalysisMetricsResponse']>);
 
 	tab.hasData = true;
 	tab.rows = [
-		{ label: 'Price', primary: formatOptionalCurrency(primary.currentPrice), peer: formatOptionalCurrency(peer.currentPrice) },
-		{ label: 'Market cap', primary: formatOptionalCurrency(primary.marketCap), peer: formatOptionalCurrency(peer.marketCap) },
-		{ label: 'TTM P/E', primary: formatOptionalNumber(primary.ttmPE), peer: formatOptionalNumber(peer.ttmPE) },
-		{ label: 'Forward P/E', primary: formatOptionalNumber(primary.forwardPE), peer: formatOptionalNumber(peer.forwardPE) },
-		{ label: 'Gross margin', primary: formatOptionalRatioPercent(primary.grossMargin), peer: formatOptionalRatioPercent(peer.grossMargin) },
-		{ label: 'Net margin', primary: formatOptionalRatioPercent(primary.netMargin), peer: formatOptionalRatioPercent(peer.netMargin) },
-		{ label: 'TTM revenue growth', primary: formatOptionalRatioPercent(primary.ttmRevenueGrowth), peer: formatOptionalRatioPercent(peer.ttmRevenueGrowth) },
-		{ label: 'TTM EPS growth', primary: formatOptionalRatioPercent(primary.ttmEPSGrowth), peer: formatOptionalRatioPercent(peer.ttmEPSGrowth) },
-		{ label: 'DCF base', primary: formatOptionalCurrency(primary.dcfBasePrice), peer: formatOptionalCurrency(peer.dcfBasePrice) }
+		{
+			label: 'Price',
+			primary: formatOptionalCurrency(primary.currentPrice),
+			peer: formatOptionalCurrency(peer.currentPrice)
+		},
+		{
+			label: 'Market cap',
+			primary: formatOptionalCurrency(primary.marketCap),
+			peer: formatOptionalCurrency(peer.marketCap)
+		},
+		{
+			label: 'TTM P/E',
+			primary: formatOptionalNumber(primary.ttmPE),
+			peer: formatOptionalNumber(peer.ttmPE)
+		},
+		{
+			label: 'Forward P/E',
+			primary: formatOptionalNumber(primary.forwardPE),
+			peer: formatOptionalNumber(peer.forwardPE)
+		},
+		{
+			label: 'Gross margin',
+			primary: formatOptionalRatioPercent(primary.grossMargin),
+			peer: formatOptionalRatioPercent(peer.grossMargin)
+		},
+		{
+			label: 'Net margin',
+			primary: formatOptionalRatioPercent(primary.netMargin),
+			peer: formatOptionalRatioPercent(peer.netMargin)
+		},
+		{
+			label: 'TTM revenue growth',
+			primary: formatOptionalRatioPercent(primary.ttmRevenueGrowth),
+			peer: formatOptionalRatioPercent(peer.ttmRevenueGrowth)
+		},
+		{
+			label: 'TTM EPS growth',
+			primary: formatOptionalRatioPercent(primary.ttmEPSGrowth),
+			peer: formatOptionalRatioPercent(peer.ttmEPSGrowth)
+		},
+		{
+			label: 'DCF base',
+			primary: formatOptionalCurrency(primary.dcfBasePrice),
+			peer: formatOptionalCurrency(peer.dcfBasePrice)
+		}
 	];
 
 	// loadComparePriceChart: only the primary symbol's recent closes, as %
 	// change from the first (the peer argument was unused in Go).
-	const bars = await get<S['StockHistory'][]>(event, '/v1/market/history', { symbol: vm.symbol }, 'market history');
+	const bars = await get<S['StockHistory'][]>(
+		event,
+		'/v1/market/history',
+		{ symbol: vm.symbol },
+		'market history'
+	);
 	const all = bars ?? [];
 	const closes = all.slice(all.length > 14 ? all.length - 14 : 0).map((b) => b.close);
 	if (closes.length >= 2) {
@@ -672,7 +868,12 @@ async function loadStockCompareTab(event: RequestEvent, vm: DetailViewModel, raw
 }
 
 async function loadStockNewsTab(event: RequestEvent, vm: DetailViewModel) {
-	const articles = await get<{ title: string; date: string; url: string }[]>(event, '/v1/market/news', { symbol: vm.symbol, limit: 25 }, 'market news');
+	const articles = await get<{ title: string; date: string; url: string }[]>(
+		event,
+		'/v1/market/news',
+		{ symbol: vm.symbol, limit: 25 },
+		'market news'
+	);
 	if (!articles) return;
 	vm.news.articles = articles.map((a) => ({
 		headline: (a.title ?? '').trim(),
@@ -684,9 +885,23 @@ async function loadStockNewsTab(event: RequestEvent, vm: DetailViewModel) {
 	vm.news.hasData = vm.news.articles.length > 0;
 }
 
-async function loadStockEarningsTab(event: RequestEvent, vm: DetailViewModel, earningsFiling: string) {
-	vm.earningsVisualizer = await loadEarningsVisualizerViewModel(event, vm.symbol, earningsFiling, '/portfolio/' + vm.symbol.toLowerCase() + '/earnings');
-	const events = await get<S['EarningsResponse'][]>(event, `/v1/market/earnings/${enc(vm.symbol)}`, { limit: 12 }, 'earnings');
+async function loadStockEarningsTab(
+	event: RequestEvent,
+	vm: DetailViewModel,
+	earningsFiling: string
+) {
+	vm.earningsVisualizer = await loadEarningsVisualizerViewModel(
+		event,
+		vm.symbol,
+		earningsFiling,
+		'/portfolio/' + vm.symbol.toLowerCase() + '/earnings'
+	);
+	const events = await get<S['EarningsResponse'][]>(
+		event,
+		`/v1/market/earnings/${enc(vm.symbol)}`,
+		{ limit: 12 },
+		'earnings'
+	);
 	if (!events) return;
 	vm.earnings = mapStockEarningsTab(events);
 }
@@ -694,7 +909,13 @@ async function loadStockEarningsTab(event: RequestEvent, vm: DetailViewModel, ea
 export function mapStockEarningsTab(events: S['EarningsResponse'][]): EarningsTabVM {
 	const sorted = [...events].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
 	const streak = headlineEarningsStreak(sorted);
-	const tab: EarningsTabVM = { hasData: false, error: '', streakHeadline: streak.headline, streakTone: streak.tone, events: [] };
+	const tab: EarningsTabVM = {
+		hasData: false,
+		error: '',
+		streakHeadline: streak.headline,
+		streakTone: streak.tone,
+		events: []
+	};
 	for (const e of sorted) {
 		const [verdict, verdictTone] = earningsRowVerdict(e.beatStreak, e.missStreak);
 		tab.events.push({
@@ -729,4 +950,3 @@ async function loadStockOwnershipTab(event: RequestEvent, vm: DetailViewModel) {
 	]);
 	tab.hasData = tab.insider.present || tab.institutional.present || tab.congress.present;
 }
-

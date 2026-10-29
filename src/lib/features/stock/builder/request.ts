@@ -15,7 +15,8 @@ import {
 } from './types.js';
 
 export type ChartBuilderResponse = components['schemas']['ChartBuilderResponse'];
-export type ChartBuilderMetricCatalogResponse = components['schemas']['ChartBuilderMetricCatalogResponse'];
+export type ChartBuilderMetricCatalogResponse =
+	components['schemas']['ChartBuilderMetricCatalogResponse'];
 type SeriesFormat = components['schemas']['ChartBuilderSeries']['format'];
 
 export const chartBuilderMaxMetrics = 20;
@@ -31,7 +32,8 @@ export interface ChartBuilderRequest {
 	showGrowth: boolean;
 }
 
-export type ChartBuilderParseResult = { ok: true; request: ChartBuilderRequest } | { ok: false; error: string };
+export type ChartBuilderParseResult =
+	{ ok: true; request: ChartBuilderRequest } | { ok: false; error: string };
 
 const fail = (error: string): ChartBuilderParseResult => ({ ok: false, error });
 
@@ -104,7 +106,9 @@ export function splitChartBuilderValues(raw: readonly string[], uppercase: boole
 }
 
 /** Backend query parameters (GetChartBuilderParams / GetChartBuilderCSVParams). */
-export function chartBuilderBackendQuery(request: ChartBuilderRequest): Record<string, string | number> {
+export function chartBuilderBackendQuery(
+	request: ChartBuilderRequest
+): Record<string, string | number> {
 	const query: Record<string, string | number> = {
 		metrics: request.metrics.join(','),
 		period: request.period,
@@ -199,12 +203,22 @@ export function mapChartBuilderGrowth(response: ChartBuilderResponse): ChartBuil
 		const yoy = periods.map((period) => {
 			const point = byPeriod.get(period);
 			if (!point) return '—';
-			return formatChartBuilderChange(point.absolute, point.percent, series.format, series.currency);
+			return formatChartBuilderChange(
+				point.absolute,
+				point.percent,
+				series.format,
+				series.currency
+			);
 		});
 		rows.push({
 			label,
 			yoy,
-			totalChange: formatChartBuilderChange(growth.totalChange, growth.totalChangePercent, series.format, series.currency),
+			totalChange: formatChartBuilderChange(
+				growth.totalChange,
+				growth.totalChangePercent,
+				series.format,
+				series.currency
+			),
 			cagr: formatChartBuilderPercent(growth.cagr)
 		});
 	}
@@ -241,11 +255,17 @@ function signedFixed(value: number, prec: number): string {
 type Num = number | null | undefined;
 
 /** formatChartBuilderChange: "+12.3% (+$1.20B)", "—" when both are missing. */
-export function formatChartBuilderChange(absolute: Num, percent: Num, format: SeriesFormat | string, currency: string | null | undefined): string {
+export function formatChartBuilderChange(
+	absolute: Num,
+	percent: Num,
+	format: SeriesFormat | string,
+	currency: string | null | undefined
+): string {
 	if (absolute == null && percent == null) return '—';
 	const parts: string[] = [];
 	if (percent != null) parts.push(formatChartBuilderPercent(percent));
-	if (absolute != null) parts.push('(' + formatChartBuilderAbsolute(absolute, format, currency) + ')');
+	if (absolute != null)
+		parts.push('(' + formatChartBuilderAbsolute(absolute, format, currency) + ')');
 	return parts.join(' ');
 }
 
@@ -260,7 +280,11 @@ export function formatChartBuilderPercent(value: Num): string {
  * default branches print a "+" for gains but no "-" for losses (they format
  * the absolute value), so a decline shows as e.g. "$1.20B".
  */
-export function formatChartBuilderAbsolute(value: number, format: SeriesFormat | string, currency: string | null | undefined): string {
+export function formatChartBuilderAbsolute(
+	value: number,
+	format: SeriesFormat | string,
+	currency: string | null | undefined
+): string {
 	const sign = value > 0 ? '+' : '';
 	const abs = Math.abs(value);
 	let suffix = '';
@@ -319,7 +343,11 @@ export function chartBuilderBackendError(body: string, fallback: string): string
 	if (payload === null) return fallback;
 	if (typeof payload !== 'object' || Array.isArray(payload)) return fallback;
 	const { reason, message } = payload as { reason?: unknown; message?: unknown };
-	if ((reason != null && typeof reason !== 'string') || (message != null && typeof message !== 'string')) return fallback;
+	if (
+		(reason != null && typeof reason !== 'string') ||
+		(message != null && typeof message !== 'string')
+	)
+		return fallback;
 	const r = (reason ?? '').trim();
 	if (r !== '') return r;
 	const m = (message ?? '').trim();

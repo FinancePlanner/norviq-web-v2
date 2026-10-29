@@ -6,7 +6,14 @@ import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { apiJSON } from '#lib/server/api.js';
 import { changeClass, formatCompactNumber, formatCurrency, formatFloat } from '#lib/format.js';
-import type { CongressTradeVM, CongressVM, InsiderTradeVM, InsiderVM, InstitutionalVM, TechnicalsVM } from '#lib/components/norviq/market-signals.js';
+import type {
+	CongressTradeVM,
+	CongressVM,
+	InsiderTradeVM,
+	InsiderVM,
+	InstitutionalVM,
+	TechnicalsVM
+} from '#lib/components/norviq/market-signals.js';
 import { derefString, goDate } from './format.js';
 
 type S = components['schemas'];
@@ -18,26 +25,66 @@ export const ownershipTabCongressRows = 10;
 
 const enc = encodeURIComponent;
 
-export const emptyInsider = (): InsiderVM => ({ present: false, windowLabel: '', buys: 0, sells: 0, netShares: '', trades: [] });
+export const emptyInsider = (): InsiderVM => ({
+	present: false,
+	windowLabel: '',
+	buys: 0,
+	sells: 0,
+	netShares: '',
+	trades: []
+});
 export const emptyInstitutional = (): InstitutionalVM => ({ present: false, holders: [] });
 export const emptyCongress = (): CongressVM => ({ present: false, trades: [] });
 
 export async function loadTechnicals(event: RequestEvent, symbol: string): Promise<TechnicalsVM> {
-	return mapTechnicals(await apiJSON<S['TechnicalSignalsResponse']>(event, 'GET', `/v1/market/technicals/${enc(symbol)}`));
+	return mapTechnicals(
+		await apiJSON<S['TechnicalSignalsResponse']>(
+			event,
+			'GET',
+			`/v1/market/technicals/${enc(symbol)}`
+		)
+	);
 }
 
-export async function loadInsiderActivity(event: RequestEvent, symbol: string, days: number, maxTrades: number): Promise<InsiderVM> {
-	const resp = await apiJSON<S['InsiderActivityResponse']>(event, 'GET', `/v1/market/insider/${enc(symbol)}`, undefined, { query: { days } });
+export async function loadInsiderActivity(
+	event: RequestEvent,
+	symbol: string,
+	days: number,
+	maxTrades: number
+): Promise<InsiderVM> {
+	const resp = await apiJSON<S['InsiderActivityResponse']>(
+		event,
+		'GET',
+		`/v1/market/insider/${enc(symbol)}`,
+		undefined,
+		{ query: { days } }
+	);
 	return mapInsiderActivity(resp, maxTrades);
 }
 
-export async function loadInstitutionalOwnership(event: RequestEvent, symbol: string, maxHolders: number): Promise<InstitutionalVM> {
-	const resp = await apiJSON<S['InstitutionalOwnershipResponse']>(event, 'GET', `/v1/market/institutional/${enc(symbol)}`);
+export async function loadInstitutionalOwnership(
+	event: RequestEvent,
+	symbol: string,
+	maxHolders: number
+): Promise<InstitutionalVM> {
+	const resp = await apiJSON<S['InstitutionalOwnershipResponse']>(
+		event,
+		'GET',
+		`/v1/market/institutional/${enc(symbol)}`
+	);
 	return mapInstitutionalOwnership(resp, maxHolders);
 }
 
-export async function loadCongressTrades(event: RequestEvent, symbol: string, maxRows: number): Promise<CongressVM> {
-	const resp = await apiJSON<S['CongressTradesResponse']>(event, 'GET', `/v1/market/congress/${enc(symbol)}`);
+export async function loadCongressTrades(
+	event: RequestEvent,
+	symbol: string,
+	maxRows: number
+): Promise<CongressVM> {
+	const resp = await apiJSON<S['CongressTradesResponse']>(
+		event,
+		'GET',
+		`/v1/market/congress/${enc(symbol)}`
+	);
 	return mapCongressTrades(resp?.trades ?? [], maxRows);
 }
 
@@ -47,9 +94,15 @@ function clampPercent(v: number): number {
 	return v;
 }
 
-export function mapTechnicals(resp: S['TechnicalSignalsResponse'] | null | undefined): TechnicalsVM {
+export function mapTechnicals(
+	resp: S['TechnicalSignalsResponse'] | null | undefined
+): TechnicalsVM {
 	if (!resp) return { present: false };
-	const vm: TechnicalsVM = { present: true, asOf: goDate(resp.asOf), trendLabel: technicalTrendLabel(resp.trend) };
+	const vm: TechnicalsVM = {
+		present: true,
+		asOf: goDate(resp.asOf),
+		trendLabel: technicalTrendLabel(resp.trend)
+	};
 	if (resp.cross === 'goldenCross') {
 		vm.crossLabel = 'Golden cross';
 		vm.crossTone = 'positive';
@@ -114,7 +167,10 @@ function pluralize(count: number, singular: string, plural: string): string {
 	return `${count} ${count === 1 ? singular : plural}`;
 }
 
-export function mapInsiderActivity(resp: S['InsiderActivityResponse'] | null | undefined, maxTrades: number): InsiderVM {
+export function mapInsiderActivity(
+	resp: S['InsiderActivityResponse'] | null | undefined,
+	maxTrades: number
+): InsiderVM {
 	if (!resp) return emptyInsider();
 	const summary = resp.summary as { buys: number; sells: number; netShares: number };
 	if (resp.trades.length === 0 && summary.buys === 0 && summary.sells === 0) return emptyInsider();
@@ -127,7 +183,8 @@ export function mapInsiderActivity(resp: S['InsiderActivityResponse'] | null | u
 		netSharesTone: changeClass(summary.netShares),
 		trades: []
 	};
-	const cluster = resp.clusterBuy as { insiderCount: number; windowStart: string; windowEnd: string } | null | undefined;
+	const cluster = resp.clusterBuy as
+		{ insiderCount: number; windowStart: string; windowEnd: string } | null | undefined;
 	if (cluster) {
 		vm.clusterBuy = `Cluster buy: ${pluralize(cluster.insiderCount, 'insider', 'insiders')} bought between ${goDate(cluster.windowStart)} and ${goDate(cluster.windowEnd)}`;
 	}
@@ -160,15 +217,33 @@ function insiderKindLabel(kind: string): string {
 	}
 }
 
-export function mapInstitutionalOwnership(resp: S['InstitutionalOwnershipResponse'] | null | undefined, maxHolders: number): InstitutionalVM {
+export function mapInstitutionalOwnership(
+	resp: S['InstitutionalOwnershipResponse'] | null | undefined,
+	maxHolders: number
+): InstitutionalVM {
 	if (!resp) return emptyInstitutional();
-	if (resp.topHolders.length === 0 && resp.holdersCount == null && resp.institutionalOwnershipPct == null) return emptyInstitutional();
-	const vm: InstitutionalVM = { present: true, asOfQuarter: (resp.asOfQuarter ?? '').trim(), holders: [] };
-	if (resp.institutionalOwnershipPct != null) vm.ownershipPct = formatFloat(resp.institutionalOwnershipPct, 1) + '%';
+	if (
+		resp.topHolders.length === 0 &&
+		resp.holdersCount == null &&
+		resp.institutionalOwnershipPct == null
+	)
+		return emptyInstitutional();
+	const vm: InstitutionalVM = {
+		present: true,
+		asOfQuarter: (resp.asOfQuarter ?? '').trim(),
+		holders: []
+	};
+	if (resp.institutionalOwnershipPct != null)
+		vm.ownershipPct = formatFloat(resp.institutionalOwnershipPct, 1) + '%';
 	if (resp.holdersCount != null) vm.holdersCount = String(resp.holdersCount);
 	for (const holder of resp.topHolders) {
 		if (vm.holders.length === maxHolders) break;
-		const row = { name: holder.name, shares: formatCompactNumber(holder.shares), change: '—', changeTone: undefined as string | undefined };
+		const row = {
+			name: holder.name,
+			shares: formatCompactNumber(holder.shares),
+			change: '—',
+			changeTone: undefined as string | undefined
+		};
 		if (holder.changeInShares != null) {
 			row.change = formatSignedCompactNumber(holder.changeInShares);
 			row.changeTone = changeClass(holder.changeInShares);

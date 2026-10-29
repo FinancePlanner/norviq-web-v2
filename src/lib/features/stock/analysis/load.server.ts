@@ -49,14 +49,19 @@ function isGoDate(s: unknown): boolean {
 /** A row whose `date` would not decode fails the whole response in Go. */
 const datesDecode = (rows: { date: string }[]) => rows.every((r) => isGoDate(r.date));
 
-const nonEmpty = <T>(rows: T[] | null): T[] | null => (rows && Array.isArray(rows) && rows.length > 0 ? rows : null);
+const nonEmpty = <T>(rows: T[] | null): T[] | null =>
+	rows && Array.isArray(rows) && rows.length > 0 ? rows : null;
 
 export async function loadAnalysisTab(event: RequestEvent, symbol: string): Promise<AnalysisTabVM> {
 	if (!symbol) return emptyAnalysisTab();
 	const sym = encodeURIComponent(symbol);
 
 	const [analysis, ratios, growth, estimates, financials, consensus] = await Promise.all([
-		getJSON200<StockAnalysisMetricsResponse>(event, `/v1/market/analysis/${sym}`, {} as StockAnalysisMetricsResponse),
+		getJSON200<StockAnalysisMetricsResponse>(
+			event,
+			`/v1/market/analysis/${sym}`,
+			{} as StockAnalysisMetricsResponse
+		),
 		getJSON200<RatiosTTMResponse[]>(event, `/v1/market/ratios-ttm/${sym}`, []),
 		getJSON200<FinancialGrowthResponse[]>(event, `/v1/market/financial-growth/${sym}`, [], {
 			limit: 8,
@@ -66,7 +71,11 @@ export async function loadAnalysisTab(event: RequestEvent, symbol: string): Prom
 			limit: 6,
 			period: 'annual'
 		}),
-		getJSON200<BasicFinancialsResponse>(event, `/v1/market/basic-financials/${sym}`, {} as BasicFinancialsResponse),
+		getJSON200<BasicFinancialsResponse>(
+			event,
+			`/v1/market/basic-financials/${sym}`,
+			{} as BasicFinancialsResponse
+		),
 		getJSON200<GradesConsensusResponse[]>(event, `/v1/market/grades-consensus/${sym}`, [])
 	]);
 

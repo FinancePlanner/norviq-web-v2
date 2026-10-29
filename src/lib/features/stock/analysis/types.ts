@@ -87,7 +87,13 @@ export const emptyDCFBand = (): DCFBandVM => ({
 	downsideLabel: ''
 });
 
-export const emptyDCFCard = (): DCFCardVM => ({ hasData: false, bear: '', base: '', bull: '', current: '' });
+export const emptyDCFCard = (): DCFCardVM => ({
+	hasData: false,
+	bear: '',
+	base: '',
+	bull: '',
+	current: ''
+});
 
 /** The zero AnalysisTabVM (what Go's DetailViewModel held before the loader ran). */
 export const emptyAnalysisTab = (): AnalysisTabVM => ({

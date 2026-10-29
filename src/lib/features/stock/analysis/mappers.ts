@@ -88,7 +88,11 @@ export function buildAnalysisTabVM(
 		tab.estimates = mapAnalystEstimateRows(estimates);
 		if (tab.estimates.length > 0) {
 			tab.sections.push(
-				section('estimates', 'Forward estimates', 'Consensus revenue, EPS, and EBITDA ranges by fiscal period')
+				section(
+					'estimates',
+					'Forward estimates',
+					'Consensus revenue, EPS, and EBITDA ranges by fiscal period'
+				)
 			);
 		}
 	}
@@ -128,8 +132,16 @@ function analysisKPIs(m: StockAnalysisMetricsResponse): AnalysisMetricVM[] {
 }
 
 function analysisCoreSections(m: StockAnalysisMetricsResponse): AnalysisSectionVM[] {
-	const valuation = section('valuation', 'Valuation', 'Multiples, market structure, and discount rate inputs');
-	const profitability = section('profitability', 'Profitability', 'Margin profile and earnings power');
+	const valuation = section(
+		'valuation',
+		'Valuation',
+		'Multiples, market structure, and discount rate inputs'
+	);
+	const profitability = section(
+		'profitability',
+		'Profitability',
+		'Margin profile and earnings power'
+	);
 	const growth = section('growth', 'Growth', 'Historical and forward growth rates');
 	const forecast = section('dcf-inputs', 'DCF inputs', 'Terminal assumptions and exit multiples');
 
@@ -176,13 +188,16 @@ function analysisCoreSections(m: StockAnalysisMetricsResponse): AnalysisSectionV
 		['Base year', m.baseYear, MetricKind.Plain]
 	];
 
-	for (const [label, value, kind] of valuationFields) appendAnalysisMetric(valuation.metrics, label, value, kind);
-	for (const [label, value, kind] of profitFields) appendAnalysisMetric(profitability.metrics, label, value, kind);
+	for (const [label, value, kind] of valuationFields)
+		appendAnalysisMetric(valuation.metrics, label, value, kind);
+	for (const [label, value, kind] of profitFields)
+		appendAnalysisMetric(profitability.metrics, label, value, kind);
 	for (const [label, value] of growthFields) {
 		if (value == null) continue;
 		appendGrowthMetric(growth.metrics, label, value);
 	}
-	for (const [label, value, kind] of dcfFields) appendAnalysisMetric(forecast.metrics, label, value, kind);
+	for (const [label, value, kind] of dcfFields)
+		appendAnalysisMetric(forecast.metrics, label, value, kind);
 
 	return [valuation, profitability, growth, forecast].filter((s) => s.metrics.length > 0);
 }
@@ -268,8 +283,16 @@ function ratiosTTMSections(r: RatiosTTMResponse): AnalysisSectionVM[] {
 				['OCF / sales (TTM)', r.operatingCashFlowSalesRatioTTM, MetricKind.Percent],
 				['OCF coverage (TTM)', r.operatingCashFlowCoverageRatioTTM, MetricKind.Plain],
 				['CapEx coverage (TTM)', r.capitalExpenditureCoverageRatioTTM, MetricKind.Plain],
-				['Dividend + CapEx coverage (TTM)', r.dividendPaidAndCapexCoverageRatioTTM, MetricKind.Plain],
-				['Short-term OCF coverage (TTM)', r.shortTermOperatingCashFlowCoverageRatioTTM, MetricKind.Plain],
+				[
+					'Dividend + CapEx coverage (TTM)',
+					r.dividendPaidAndCapexCoverageRatioTTM,
+					MetricKind.Plain
+				],
+				[
+					'Short-term OCF coverage (TTM)',
+					r.shortTermOperatingCashFlowCoverageRatioTTM,
+					MetricKind.Plain
+				],
 				['Effective tax rate (TTM)', r.effectiveTaxRateTTM, MetricKind.Percent]
 			]
 		}
@@ -278,14 +301,19 @@ function ratiosTTMSections(r: RatiosTTMResponse): AnalysisSectionVM[] {
 	const out: AnalysisSectionVM[] = [];
 	for (const g of groups) {
 		const s = section(g.id, g.title, g.subtitle);
-		for (const [label, value, kind] of g.fields) appendAnalysisMetric(s.metrics, label, value, kind);
+		for (const [label, value, kind] of g.fields)
+			appendAnalysisMetric(s.metrics, label, value, kind);
 		if (s.metrics.length > 0) out.push(s);
 	}
 	return out;
 }
 
 function basicFinancialsSection(data: BasicFinancialsResponse): AnalysisSectionVM {
-	const s = section('market-snapshot', 'Market snapshot', 'Live ratio snapshot from market data providers');
+	const s = section(
+		'market-snapshot',
+		'Market snapshot',
+		'Live ratio snapshot from market data providers'
+	);
 	for (const row of mapBasicFinancialsRows(data)) {
 		s.metrics.push({ label: row.label, value: row.value, hint: '', tone: '' });
 	}
@@ -297,7 +325,11 @@ function financialGrowthSection(rows: FinancialGrowthResponse[]): AnalysisSectio
 	const sorted = [...rows].sort((a, b) => (a.date > b.date ? -1 : a.date < b.date ? 1 : 0));
 	const latest = sorted[0];
 
-	const s = section('financial-growth', 'Financial growth', `YoY and multi-year growth · ${dateMonthYear(latest.date)}`);
+	const s = section(
+		'financial-growth',
+		'Financial growth',
+		`YoY and multi-year growth · ${dateMonthYear(latest.date)}`
+	);
 	s.growthSparklines = mapFinancialGrowthSparklines(sorted);
 
 	const periodFields: [string, Num][] = [
@@ -376,7 +408,8 @@ function mapAnalystEstimateRows(rows: AnalystEstimatesResponse[]): AnalysisEstim
 		eps: formatOptionalNumber(row.epsAvg),
 		ebitda: formatOptionalCompactCurrency(row.ebitdaAvg),
 		netIncome: formatOptionalCompactCurrency(row.netIncomeAvg),
-		analystsEPS: row.numAnalystsEps != null && row.numAnalystsEps > 0 ? String(row.numAnalystsEps) : '-'
+		analystsEPS:
+			row.numAnalystsEps != null && row.numAnalystsEps > 0 ? String(row.numAnalystsEps) : '-'
 	}));
 }
 
@@ -420,7 +453,12 @@ function mapDCFBand(m: StockAnalysisMetricsResponse): DCFBandVM {
 	return vm;
 }
 
-function appendAnalysisMetric(rows: AnalysisMetricVM[], label: string, value: Num, kind: MetricKind) {
+function appendAnalysisMetric(
+	rows: AnalysisMetricVM[],
+	label: string,
+	value: Num,
+	kind: MetricKind
+) {
 	const metric = formatAnalysisMetric(label, value, kind);
 	if (metric) rows.push(metric);
 }
@@ -428,7 +466,12 @@ function appendAnalysisMetric(rows: AnalysisMetricVM[], label: string, value: Nu
 function appendGrowthMetric(rows: AnalysisMetricVM[], label: string, value: Num) {
 	if (value == null) return;
 	const normalized = normalizeGrowthPercent(value);
-	rows.push({ label, value: formatSignedPercent(normalized), hint: '', tone: growthTone(normalized) });
+	rows.push({
+		label,
+		value: formatSignedPercent(normalized),
+		hint: '',
+		tone: growthTone(normalized)
+	});
 }
 
 function normalizeGrowthPercent(value: number): number {
@@ -436,7 +479,11 @@ function normalizeGrowthPercent(value: number): number {
 	return value;
 }
 
-function formatAnalysisMetric(label: string, value: Num, kind: MetricKind): AnalysisMetricVM | null {
+function formatAnalysisMetric(
+	label: string,
+	value: Num,
+	kind: MetricKind
+): AnalysisMetricVM | null {
 	if (value == null) return null;
 	let formatted: string;
 	switch (kind) {
@@ -453,7 +500,9 @@ function formatAnalysisMetric(label: string, value: Num, kind: MetricKind): Anal
 			formatted = formatFloat(value, 2) + 'x';
 			break;
 		case MetricKind.Plain:
-			formatted = label.toLowerCase().includes('year') ? formatFloat(value, 0) : formatOptionalNumber(value);
+			formatted = label.toLowerCase().includes('year')
+				? formatFloat(value, 0)
+				: formatOptionalNumber(value);
 			break;
 		default:
 			formatted = formatOptionalNumber(value);
@@ -496,7 +545,14 @@ export function mapBasicFinancialsRows(data: BasicFinancialsResponse): Statement
 }
 
 function resolvedPERatio(metric: Metric): number | null {
-	for (const key of ['peTTM', 'peBasicExclExtraTTM', 'peExclExtraTTM', 'peAnnual', 'peNormalizedAnnual', 'forwardPE']) {
+	for (const key of [
+		'peTTM',
+		'peBasicExclExtraTTM',
+		'peExclExtraTTM',
+		'peAnnual',
+		'peNormalizedAnnual',
+		'forwardPE'
+	]) {
 		const v = metricNumber(metric, key);
 		if (v != null) return v;
 	}
@@ -536,14 +592,20 @@ function latestAnnualSeriesMetrics(series: Series): StatementRowVM[] {
 	return out;
 }
 
-function seriesLatestValue(series: Series | null | undefined, metricKey: string, frequency: string): number | null {
+function seriesLatestValue(
+	series: Series | null | undefined,
+	metricKey: string,
+	frequency: string
+): number | null {
 	if (!series) return null;
 	const byMetric = series[frequency];
 	if (!byMetric) return null;
 	const points = byMetric[metricKey];
 	if (!points || points.length === 0) return null;
 	// Highest period string first.
-	const sorted = [...points].sort((a, b) => (a.period > b.period ? -1 : a.period < b.period ? 1 : 0));
+	const sorted = [...points].sort((a, b) =>
+		a.period > b.period ? -1 : a.period < b.period ? 1 : 0
+	);
 	return sorted[0].v;
 }
 

@@ -15,8 +15,10 @@ interface EarningsRun {
 export function headlineEarningsStreak(runs: EarningsRun[]): EarningsStreak {
 	const sorted = [...runs].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
 	for (const run of sorted) {
-		if (run.beatStreak > 0) return { headline: 'Beat ' + quartersRunning(run.beatStreak), tone: 'positive' };
-		if (run.missStreak > 0) return { headline: 'Missed ' + quartersRunning(run.missStreak), tone: 'negative' };
+		if (run.beatStreak > 0)
+			return { headline: 'Beat ' + quartersRunning(run.beatStreak), tone: 'positive' };
+		if (run.missStreak > 0)
+			return { headline: 'Missed ' + quartersRunning(run.missStreak), tone: 'negative' };
 	}
 	return { headline: '', tone: '' };
 }

@@ -2,7 +2,12 @@
 // folder renders. analysis/ and builder/ carry their own.
 
 import type { SentimentBadgeVM } from '#lib/components/norviq/sentiment.js';
-import type { CongressVM, InsiderVM, InstitutionalVM, TechnicalsVM } from '#lib/components/norviq/market-signals.js';
+import type {
+	CongressVM,
+	InsiderVM,
+	InstitutionalVM,
+	TechnicalsVM
+} from '#lib/components/norviq/market-signals.js';
 import type { VisualizerVM } from '#lib/features/portfolio/earningsviz/index.js';
 import type { AnalysisTabVM } from './analysis/types.js';
 import type { ChartBuilderTabVM } from './builder/types.js';
@@ -212,9 +217,9 @@ export interface DetailViewModel {
 	consensus: ConsensusVM;
 	basicFinancials: BasicFinancialsVM;
 	chart: ChartTabVM;
-	chartBuilder: ChartBuilderTabVM | null;
+	chartBuilder: ChartBuilderTabVM;
 	statements: StatementsTabVM;
-	analysis: AnalysisTabVM | null;
+	analysis: AnalysisTabVM;
 	forecast: ForecastTabVM;
 	compare: CompareTabVM;
 	news: NewsTabVM;
@@ -306,4 +311,7 @@ export interface ValuationFormVM {
 }
 
 /** What GET valuation/edit, POST valuation answer (the htmx swap / HX-Redirect). */
-export type ValuationResult = { panel: 'form'; vm: ValuationFormVM } | { panel: 'error'; message: string } | { redirect: string };
+export type ValuationResult =
+	| { panel: 'form'; vm: ValuationFormVM }
+	| { panel: 'error'; message: string }
+	| { redirect: string };

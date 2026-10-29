@@ -3,7 +3,12 @@
 // that call through the /api/v1 proxy and maps it here (client-safe).
 
 import type { components } from '#lib/api/schema.js';
-import { formatFloat, number as formatNumber, currency as formatMoneyIn, percent as formatPercentRatio } from '#lib/format.js';
+import {
+	formatFloat,
+	number as formatNumber,
+	currency as formatMoneyIn,
+	percent as formatPercentRatio
+} from '#lib/format.js';
 import type { PressureVM, TerminalCardVM } from './detail.js';
 
 type S = components['schemas'];
@@ -19,7 +24,12 @@ export function compactVolume(value: number): string {
 
 /** mapPressure (stock_pressure.go). */
 export function mapPressure(data: S['MarketPressureResponse']): PressureVM {
-	const volume = data.volume as { relative: number; today: number; average30d: number; changePct: number };
+	const volume = data.volume as {
+		relative: number;
+		today: number;
+		average30d: number;
+		changePct: number;
+	};
 	const vm: PressureVM = {
 		symbol: data.symbol,
 		temperature: data.temperature,
@@ -43,7 +53,13 @@ export function mapPressure(data: S['MarketPressureResponse']): PressureVM {
 				buyCount: number;
 				sellCount: number;
 				netShares: number;
-				notable: { name: string; role?: string | null; side: string; shares: number; date: string }[];
+				notable: {
+					name: string;
+					role?: string | null;
+					side: string;
+					shares: number;
+					date: string;
+				}[];
 		  }
 		| null
 		| undefined;
@@ -137,7 +153,10 @@ type TerminalPosition = {
 };
 
 /** loadStockTerminalCard: the first scenario for the ticker, or the invitation to add one. */
-export function mapTerminalCard(base: TerminalCardVM, resp: { positions: TerminalPosition[]; currency: string } | null): TerminalCardVM {
+export function mapTerminalCard(
+	base: TerminalCardVM,
+	resp: { positions: TerminalPosition[]; currency: string } | null
+): TerminalCardVM {
 	if (base.unavailable) return base;
 	if (!resp) return { ...base, unavailable: true };
 	if (resp.positions.length === 0) return base;
@@ -145,10 +164,28 @@ export function mapTerminalCard(base: TerminalCardVM, resp: { positions: Termina
 	const vm: TerminalCardVM = { ...base, hasScenario: true };
 	const dash = '—';
 	if (p.scenarioError) {
-		return { ...vm, scenarioError: scenarioErrorCopy(p.scenarioError), terminalSharePrice: dash, sharesNeeded: dash, progressLabel: dash };
+		return {
+			...vm,
+			scenarioError: scenarioErrorCopy(p.scenarioError),
+			terminalSharePrice: dash,
+			sharesNeeded: dash,
+			progressLabel: dash
+		};
 	}
-	if (p.terminalSharePrice == null || p.sharesNeeded == null || p.progress == null || p.sharesStillNeeded == null || p.gapValueAtTerminal == null) {
-		return { ...vm, scenarioError: scenarioErrorCopy(''), terminalSharePrice: dash, sharesNeeded: dash, progressLabel: dash };
+	if (
+		p.terminalSharePrice == null ||
+		p.sharesNeeded == null ||
+		p.progress == null ||
+		p.sharesStillNeeded == null ||
+		p.gapValueAtTerminal == null
+	) {
+		return {
+			...vm,
+			scenarioError: scenarioErrorCopy(''),
+			terminalSharePrice: dash,
+			sharesNeeded: dash,
+			progressLabel: dash
+		};
 	}
 	vm.terminalSharePrice = formatMoneyIn(p.terminalSharePrice, resp.currency);
 	vm.sharesNeeded = formatNumber(p.sharesNeeded, 2);

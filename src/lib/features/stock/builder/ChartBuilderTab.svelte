@@ -7,7 +7,12 @@
 	order, both growth values, the hidden limit).
 -->
 <script lang="ts">
-	import { CheckboxField, Field, NativeButton, SubmitButton } from '#lib/components/norviq/index.js';
+	import {
+		CheckboxField,
+		Field,
+		NativeButton,
+		SubmitButton
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import ChartBuilderResult from './ChartBuilderResult.svelte';
 	import {
@@ -56,7 +61,10 @@
 	}
 
 	function metricDisabled(metric: ChartBuilderMetricVM): boolean {
-		return (!metric.supportsTTM && period === 'ttm') || (!selected.includes(metric.key) && selected.length >= maxMetrics);
+		return (
+			(!metric.supportsTTM && period === 'ttm') ||
+			(!selected.includes(metric.key) && selected.length >= maxMetrics)
+		);
 	}
 
 	function toggleMetric(key: string, checked: boolean) {
@@ -109,7 +117,14 @@
 	}
 </script>
 
-{#snippet radio(name: string, value: string, label: string, current: string, set: (v: string) => void, onchange?: () => void)}
+{#snippet radio(
+	name: string,
+	value: string,
+	label: string,
+	current: string,
+	set: (v: string) => void,
+	onchange?: () => void
+)}
 	<label class="cursor-pointer">
 		<input
 			type="radio"
@@ -125,7 +140,9 @@
 		<span
 			class={[
 				'block rounded-lg px-2 py-2 text-center text-xs font-semibold transition',
-				current === value ? 'bg-[var(--color-surface)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted-foreground)]'
+				current === value
+					? 'bg-[var(--color-surface)] text-[var(--foreground)] shadow-sm'
+					: 'text-[var(--muted-foreground)]'
 			]}>{label}</span
 		>
 	</label>
@@ -138,10 +155,15 @@
 				<p class="text-footnote font-semibold text-[var(--muted-foreground)]">Financial explorer</p>
 				<h2 class="mt-1 text-2xl font-semibold tracking-tight">Build a {symbol} chart</h2>
 				<p class="mt-2 max-w-2xl text-sm text-[var(--muted-foreground)]">
-					Combine statement line items, ratios, growth metrics, and derived cash-flow measures on one timeline.
+					Combine statement line items, ratios, growth metrics, and derived cash-flow measures on
+					one timeline.
 				</p>
 			</div>
-			<a href="/chart-builder" class="btn-secondary inline-flex w-auto items-center px-4 py-2 text-sm">Choose another stock</a>
+			<a
+				href="/chart-builder"
+				class="btn-secondary inline-flex w-auto items-center px-4 py-2 text-sm"
+				>Choose another stock</a
+			>
 		</div>
 	</vigil.Panel>
 
@@ -152,7 +174,9 @@
 		</section>
 	{:else if vm.groups.length === 0}
 		<section class="glass-card p-6">
-			<p class="text-sm text-[var(--muted-foreground)]">No chart metrics are available right now.</p>
+			<p class="text-sm text-[var(--muted-foreground)]">
+				No chart metrics are available right now.
+			</p>
 		</section>
 	{:else}
 		<form class="vigil-command-split is-aside-first items-start" {onsubmit}>
@@ -161,27 +185,42 @@
 					<div class="flex items-center justify-between gap-3">
 						<div>
 							<h3 class="font-semibold">Metrics</h3>
-							<p class="mt-1 text-xs text-[var(--muted-foreground)]"><span>{selected.length}</span> of 20 selected</p>
+							<p class="mt-1 text-xs text-[var(--muted-foreground)]">
+								<span>{selected.length}</span> of 20 selected
+							</p>
 						</div>
-						<NativeButton class="text-xs font-semibold text-[var(--color-tint)]" onclick={() => (selected = [])}>
+						<NativeButton
+							class="text-xs font-semibold text-[var(--color-tint)]"
+							onclick={() => (selected = [])}
+						>
 							Clear
 						</NativeButton>
 					</div>
 					<label class="mt-4 block">
 						<span class="sr-only">Filter metrics</span>
-						<Field type="search" placeholder="Search metrics" bind:value={metricQueryInput} aria-label="Search metrics" />
+						<Field
+							type="search"
+							placeholder="Search metrics"
+							bind:value={metricQueryInput}
+							aria-label="Search metrics"
+						/>
 					</label>
 					<div class="mt-4 max-h-[36rem] space-y-3 overflow-y-auto pr-1">
 						{#each vm.groups as group, index (group.key + ':' + index)}
-							<details class="rounded-lg border border-[var(--border)] bg-[var(--color-elevated-card)]" open={index < 2}>
-								<summary class="cursor-pointer px-3 py-3 text-sm font-semibold">{group.label}</summary>
+							<details
+								class="rounded-lg border border-[var(--border)] bg-[var(--color-elevated-card)]"
+								open={index < 2}
+							>
+								<summary class="cursor-pointer px-3 py-3 text-sm font-semibold"
+									>{group.label}</summary
+								>
 								<div class="space-y-1 border-t border-[var(--border)] p-2">
 									{#each group.metrics as metric, m (metric.key + ':' + m)}
 										{@const disabled = metricDisabled(metric)}
 										<label
 											class={[
 												'flex cursor-pointer items-start gap-3 rounded-xl px-2 py-2 text-sm transition hover:bg-[var(--color-surface)]',
-												disabled && 'opacity-45 cursor-not-allowed'
+												disabled && 'cursor-not-allowed opacity-45'
 											]}
 											style:display={metricVisible(metric) ? undefined : 'none'}
 										>
@@ -215,7 +254,9 @@
 				<vigil.Panel class="p-5 md:p-6">
 					<div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
 						<fieldset>
-							<legend class="text-footnote font-semibold text-[var(--muted-foreground)]">Period</legend>
+							<legend class="text-footnote font-semibold text-[var(--muted-foreground)]"
+								>Period</legend
+							>
 							<div class="mt-2 grid grid-cols-3 rounded-xl bg-[var(--color-elevated-card)] p-1">
 								{@render radio('period', 'annual', 'Annual', period, (v) => (period = v))}
 								{@render radio('period', 'quarter', 'Quarterly', period, (v) => (period = v))}
@@ -231,7 +272,9 @@
 						</fieldset>
 
 						<fieldset>
-							<legend class="text-footnote font-semibold text-[var(--muted-foreground)]">Chart</legend>
+							<legend class="text-footnote font-semibold text-[var(--muted-foreground)]"
+								>Chart</legend
+							>
 							<div class="mt-2 grid grid-cols-2 rounded-xl bg-[var(--color-elevated-card)] p-1">
 								{@render radio('chartType', 'bar', 'Bar', chartType, (v) => (chartType = v))}
 								{@render radio('chartType', 'line', 'Line', chartType, (v) => (chartType = v))}
@@ -249,12 +292,16 @@
 							bind:value={compare}
 						/>
 
-						<label class="flex min-h-[4.5rem] items-center gap-3 rounded-lg border border-[var(--border)] px-4 py-3">
+						<label
+							class="flex min-h-[4.5rem] items-center gap-3 rounded-lg border border-[var(--border)] px-4 py-3"
+						>
 							<input type="hidden" name="growth" value="false" />
 							<CheckboxField name="growth" value="true" bind:checked={showGrowth} />
 							<span>
 								<span class="block text-sm font-semibold">Growth table</span>
-								<span class="block text-[11px] text-[var(--muted-foreground)]">YoY, total, CAGR</span>
+								<span class="block text-[11px] text-[var(--muted-foreground)]"
+									>YoY, total, CAGR</span
+								>
 							</span>
 						</label>
 					</div>
@@ -265,7 +312,10 @@
 						<!-- hx-indicator: htmx's injected .htmx-indicator opacity rule, inline. -->
 						<span
 							id="chart-builder-loading"
-							class={['htmx-indicator text-sm text-[var(--muted-foreground)]', loading && 'htmx-request']}
+							class={[
+								'htmx-indicator text-sm text-[var(--muted-foreground)]',
+								loading && 'htmx-request'
+							]}
 							style:opacity={loading ? 1 : 0}
 							style:transition="opacity 200ms ease-in"
 							role="status">Building aligned series…</span

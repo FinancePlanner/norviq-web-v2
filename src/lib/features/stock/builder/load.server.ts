@@ -14,7 +14,12 @@ import {
 	type ChartBuilderRequest,
 	type ChartBuilderResponse
 } from './request.js';
-import { emptyChartBuilderResult, type ChartBuilderMetricGroupVM, type ChartBuilderResultVM, type ChartBuilderTabVM } from './types.js';
+import {
+	emptyChartBuilderResult,
+	type ChartBuilderMetricGroupVM,
+	type ChartBuilderResultVM,
+	type ChartBuilderTabVM
+} from './types.js';
 
 const CATALOG_ERROR = 'Could not load the metric catalog.';
 const DEFAULT_METRICS = new Set(['revenue', 'freeCashFlow']);
@@ -30,7 +35,10 @@ export function chartBuilderSymbol(raw: string | undefined): string {
 }
 
 /** loadStockChartBuilderTab: the metric catalog, revenue + free cash flow preselected. */
-export async function loadChartBuilderTab(event: RequestEvent, symbol: string): Promise<ChartBuilderTabVM> {
+export async function loadChartBuilderTab(
+	event: RequestEvent,
+	symbol: string
+): Promise<ChartBuilderTabVM> {
 	const vm: ChartBuilderTabVM = { groups: [], error: '' };
 	let res: Response;
 	let body: string;
@@ -58,19 +66,17 @@ export async function loadChartBuilderTab(event: RequestEvent, symbol: string): 
 		return vm;
 	}
 
-	vm.groups = (catalog.groups ?? []).map(
-		(group): ChartBuilderMetricGroupVM => ({
-			key: group.key,
-			label: group.label,
-			metrics: (group.metrics ?? []).map((metric) => ({
-				key: metric.key,
-				label: metric.label,
-				format: metric.format,
-				supportsTTM: metric.supportsTTM ?? false,
-				selected: DEFAULT_METRICS.has(metric.key)
-			}))
-		})
-	);
+	vm.groups = (catalog.groups ?? []).map((group): ChartBuilderMetricGroupVM => ({
+		key: group.key,
+		label: group.label,
+		metrics: (group.metrics ?? []).map((metric) => ({
+			key: metric.key,
+			label: metric.label,
+			format: metric.format,
+			supportsTTM: metric.supportsTTM ?? false,
+			selected: DEFAULT_METRICS.has(metric.key)
+		}))
+	}));
 	return vm;
 }
 
@@ -83,9 +89,15 @@ export async function loadChartBuilderResult(
 	let res: Response;
 	let body: string;
 	try {
-		res = await apiFetch(event, 'GET', '/v1/market/chart-builder/' + encodeURIComponent(symbol), null, {
-			query: chartBuilderBackendQuery(request)
-		});
+		res = await apiFetch(
+			event,
+			'GET',
+			'/v1/market/chart-builder/' + encodeURIComponent(symbol),
+			null,
+			{
+				query: chartBuilderBackendQuery(request)
+			}
+		);
 		body = await res.text();
 	} catch (err) {
 		console.warn('chart builder data fetch failed', { symbol, error: String(err) });
@@ -105,7 +117,10 @@ export async function loadChartBuilderResult(
 }
 
 /** StockChartBuilderChart, minus the templ render: the result VM for a query string. */
-export async function chartBuilderChartResult(event: RequestEvent, rawSymbol: string | undefined): Promise<ChartBuilderResultVM> {
+export async function chartBuilderChartResult(
+	event: RequestEvent,
+	rawSymbol: string | undefined
+): Promise<ChartBuilderResultVM> {
 	const symbol = chartBuilderSymbol(rawSymbol);
 	const parsed = parseChartBuilderRequest(event.url.searchParams);
 	if (!parsed.ok) return emptyChartBuilderResult(parsed.error);
@@ -122,7 +137,10 @@ function httpError(message: string, status: number): Response {
 }
 
 /** StockChartBuilderCSV: proxies the backend CSV export with Go's headers and error statuses. */
-export async function chartBuilderCSVResponse(event: RequestEvent, rawSymbol: string | undefined): Promise<Response> {
+export async function chartBuilderCSVResponse(
+	event: RequestEvent,
+	rawSymbol: string | undefined
+): Promise<Response> {
 	const symbol = chartBuilderSymbol(rawSymbol);
 	const parsed = parseChartBuilderRequest(event.url.searchParams);
 	if (!parsed.ok) return httpError(parsed.error, 400);
@@ -133,10 +151,16 @@ export async function chartBuilderCSVResponse(event: RequestEvent, rawSymbol: st
 	let body: ArrayBuffer;
 	try {
 		// The generated Go client sent no Accept header; don't ask for JSON here.
-		res = await apiFetch(event, 'GET', '/v1/market/chart-builder/' + encodeURIComponent(symbol) + '/csv', null, {
-			query: chartBuilderBackendQuery(request),
-			headers: { Accept: '*/*' }
-		});
+		res = await apiFetch(
+			event,
+			'GET',
+			'/v1/market/chart-builder/' + encodeURIComponent(symbol) + '/csv',
+			null,
+			{
+				query: chartBuilderBackendQuery(request),
+				headers: { Accept: '*/*' }
+			}
+		);
 		body = await res.arrayBuffer();
 	} catch (err) {
 		console.warn('chart builder CSV fetch failed', { symbol, error: String(err) });
@@ -145,12 +169,18 @@ export async function chartBuilderCSVResponse(event: RequestEvent, rawSymbol: st
 	if (res.status !== 200) {
 		const status = res.status >= 400 && res.status < 500 ? res.status : 502;
 		const text = new TextDecoder().decode(body);
-		return httpError(chartBuilderBackendError(text, 'Could not download this chart export.'), status);
+		return httpError(
+			chartBuilderBackendError(text, 'Could not download this chart export.'),
+			status
+		);
 	}
 
 	const headers = new Headers();
 	const disposition = res.headers.get('Content-Disposition');
-	headers.set('Content-Disposition', disposition || `attachment; filename="${symbol}-chart-builder-${request.period}.csv"`);
+	headers.set(
+		'Content-Disposition',
+		disposition || `attachment; filename="${symbol}-chart-builder-${request.period}.csv"`
+	);
 	headers.set('Content-Type', res.headers.get('Content-Type') || 'text/csv; charset=utf-8');
 	return new Response(body, { status: 200, headers });
 }

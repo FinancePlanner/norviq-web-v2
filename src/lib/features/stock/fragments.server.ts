@@ -6,7 +6,12 @@ import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { apiFetch, apiJSON, isAPIError } from '#lib/server/api.js';
 import { changeClass, formatCurrency, formatSignedPercent } from '#lib/format.js';
-import { fetchQuoteBatch, formatShares, quoteBySymbol, quoteRefreshStatusTime } from '#lib/features/portfolio/market.server.js';
+import {
+	fetchQuoteBatch,
+	formatShares,
+	quoteBySymbol,
+	quoteRefreshStatusTime
+} from '#lib/features/portfolio/market.server.js';
 import { findPortfolioStock } from './detail.server.js';
 import type { QuoteVM, TranscriptViewModel, ValuationFormVM, ValuationResult } from './detail.js';
 
@@ -14,7 +19,10 @@ type S = components['schemas'];
 const enc = encodeURIComponent;
 
 /** LoadStockDetailQuoteViewModel: null where Go answered 404. */
-export async function loadStockDetailQuote(event: RequestEvent, rawSymbol: string): Promise<QuoteVM | null> {
+export async function loadStockDetailQuote(
+	event: RequestEvent,
+	rawSymbol: string
+): Promise<QuoteVM | null> {
 	const symbol = rawSymbol.trim().toUpperCase();
 	const vm: QuoteVM = {
 		symbol,
@@ -49,7 +57,11 @@ export async function loadStockDetailQuote(event: RequestEvent, rawSymbol: strin
 	return vm;
 }
 
-export async function loadStockEarningsTranscript(event: RequestEvent, rawSymbol: string, dateISO: string): Promise<TranscriptViewModel> {
+export async function loadStockEarningsTranscript(
+	event: RequestEvent,
+	rawSymbol: string,
+	dateISO: string
+): Promise<TranscriptViewModel> {
 	const symbol = rawSymbol.trim().toUpperCase();
 	const vm: TranscriptViewModel = { symbol, date: dateISO, quarter: '', content: '', error: '' };
 	if (symbol === '' || dateISO.trim() === '') {
@@ -63,7 +75,13 @@ export async function loadStockEarningsTranscript(event: RequestEvent, rawSymbol
 	}
 	let resp: S['EarningsTranscriptResponse'] | null = null;
 	try {
-		resp = await apiJSON<S['EarningsTranscriptResponse']>(event, 'GET', `/v1/market/earnings/${enc(symbol)}/transcript`, undefined, { query: { date } });
+		resp = await apiJSON<S['EarningsTranscriptResponse']>(
+			event,
+			'GET',
+			`/v1/market/earnings/${enc(symbol)}/transcript`,
+			undefined,
+			{ query: { date } }
+		);
 	} catch {
 		resp = null;
 	}
@@ -87,7 +105,10 @@ function formatFloatInput(v: number): string {
 	return s === '' ? '0' : s;
 }
 
-export async function loadValuationForm(event: RequestEvent, rawSymbol: string): Promise<ValuationFormVM> {
+export async function loadValuationForm(
+	event: RequestEvent,
+	rawSymbol: string
+): Promise<ValuationFormVM> {
 	const symbol = rawSymbol.trim().toUpperCase();
 	const vm: ValuationFormVM = {
 		symbol: symbol.toLowerCase(),
@@ -102,7 +123,11 @@ export async function loadValuationForm(event: RequestEvent, rawSymbol: string):
 		targetDate: ''
 	};
 	try {
-		const v = await apiJSON<S['StockValuationRequest']>(event, 'GET', `/v1/stocks/symbol/${enc(symbol)}/valuation`);
+		const v = await apiJSON<S['StockValuationRequest']>(
+			event,
+			'GET',
+			`/v1/stocks/symbol/${enc(symbol)}/valuation`
+		);
 		if (v) {
 			vm.exists = true;
 			vm.bearLow = formatFloatInput(v.bearCase.low);
@@ -123,13 +148,17 @@ export async function loadValuationForm(event: RequestEvent, rawSymbol: string):
 /** parsePositiveFloat (onboarding.go): "," as decimal point, must be > 0. */
 function parsePositiveFloat(raw: string): number | null {
 	const s = raw.replaceAll(',', '.');
-	if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s) && !/^[+-]?(inf|infinity)$/i.test(s)) return null;
+	if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s) && !/^[+-]?(inf|infinity)$/i.test(s))
+		return null;
 	const v = Number(s.replace(/^([+-]?)inf(inity)?$/i, '$1Infinity'));
 	if (Number.isNaN(v) || v <= 0) return null;
 	return v;
 }
 
-function parseStockValuationForm(form: FormData, symbol: string): { body: S['StockValuationRequest'] | null; error: string } {
+function parseStockValuationForm(
+	form: FormData,
+	symbol: string
+): { body: S['StockValuationRequest'] | null; error: string } {
 	const val = (k: string) => String(form.get(k) ?? '').trim();
 	const parseRange = (lowKey: string, highKey: string) => {
 		const low = parsePositiveFloat(val(lowKey));
@@ -143,16 +172,26 @@ function parseStockValuationForm(form: FormData, symbol: string): { body: S['Sto
 	if (!base) return { body: null, error: 'Enter valid base case low and high prices.' };
 	const bull = parseRange('bull_low', 'bull_high');
 	if (!bull) return { body: null, error: 'Enter valid bull case low and high prices.' };
-	const body: S['StockValuationRequest'] = { symbol, bearCase: bear, baseCase: base, bullCase: bull };
+	const body: S['StockValuationRequest'] = {
+		symbol,
+		bearCase: bear,
+		baseCase: base,
+		bullCase: bull
+	};
 	const rationale = val('rationale');
 	if (rationale) body.rationale = rationale;
 	const rawDate = val('target_date');
-	if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate) && !Number.isNaN(Date.parse(rawDate + 'T00:00:00Z'))) body.targetDate = rawDate;
+	if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate) && !Number.isNaN(Date.parse(rawDate + 'T00:00:00Z')))
+		body.targetDate = rawDate;
 	return { body, error: '' };
 }
 
 /** StockValuationSave. */
-export async function saveValuation(event: RequestEvent, rawSymbol: string, form: FormData): Promise<ValuationResult> {
+export async function saveValuation(
+	event: RequestEvent,
+	rawSymbol: string,
+	form: FormData
+): Promise<ValuationResult> {
 	const symbol = rawSymbol.trim().toUpperCase();
 	const { body, error } = parseStockValuationForm(form, symbol);
 	if (!body) return { panel: 'error', message: error };
@@ -166,12 +205,21 @@ export async function saveValuation(event: RequestEvent, rawSymbol: string, form
 	}
 	try {
 		// Go checked only the transport error: a 4xx/5xx answer still redirected.
-		await apiFetch(event, create ? 'POST' : 'PUT', `/v1/stocks/symbol/${enc(symbol)}/valuation`, JSON.stringify(body), {
-			headers: { 'Content-Type': 'application/json' }
-		});
+		await apiFetch(
+			event,
+			create ? 'POST' : 'PUT',
+			`/v1/stocks/symbol/${enc(symbol)}/valuation`,
+			JSON.stringify(body),
+			{
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
 	} catch (err) {
 		console.warn('save stock valuation failed', symbol, err);
-		return { panel: 'error', message: 'Could not save valuation. Check your ranges and try again.' };
+		return {
+			panel: 'error',
+			message: 'Could not save valuation. Check your ranges and try again.'
+		};
 	}
 	return { redirect: '/portfolio/' + symbol.toLowerCase() };
 }

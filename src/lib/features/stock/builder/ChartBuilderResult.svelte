@@ -27,7 +27,9 @@
 	</section>
 {:else if !result.hasData}
 	<section class="glass-card p-6">
-		<p class="text-sm text-[var(--muted-foreground)]">No chart data is available for this selection.</p>
+		<p class="text-sm text-[var(--muted-foreground)]">
+			No chart data is available for this selection.
+		</p>
 	</section>
 {:else}
 	<section class="glass-card p-5 md:p-6">
@@ -41,7 +43,8 @@
 			<a
 				href={result.csvURL}
 				data-sveltekit-reload
-				class="btn-secondary inline-flex w-auto shrink-0 items-center px-4 py-2 text-sm">Download CSV</a
+				class="btn-secondary inline-flex w-auto shrink-0 items-center px-4 py-2 text-sm"
+				>Download CSV</a
 			>
 		</div>
 		{#if result.mixedUnits}
@@ -55,18 +58,21 @@
 			{#if chart}<EChart {...chart} />{/if}
 		</div>
 		<p class="mt-3 text-xs text-[var(--muted-foreground)]">
-			Missing peer periods are left blank; values are aligned to the primary company’s fiscal calendar.
+			Missing peer periods are left blank; values are aligned to the primary company’s fiscal
+			calendar.
 		</p>
 	</section>
 
 	{#if result.showGrowth}
-		<section class="mt-4 glass-card p-5 md:p-6">
+		<section class="glass-card mt-4 p-5 md:p-6">
 			<div>
 				<p class="text-footnote font-semibold text-[var(--muted-foreground)]">Backend-calculated</p>
 				<h3 class="mt-1 text-lg font-semibold">Growth</h3>
 			</div>
 			{#if result.growth.rows.length === 0}
-				<p class="mt-4 text-sm text-[var(--muted-foreground)]">Growth needs at least two comparable periods.</p>
+				<p class="mt-4 text-sm text-[var(--muted-foreground)]">
+					Growth needs at least two comparable periods.
+				</p>
 			{:else}
 				<div class="stock-forecast-table-wrap mt-4 overflow-x-auto">
 					<table.Table class="stock-forecast-table min-w-max">
@@ -83,7 +89,9 @@
 						<tbody>
 							{#each result.growth.rows as row, r (r)}
 								<tr>
-									<td class="sticky left-0 z-10 bg-[var(--color-surface)] font-semibold">{row.label}</td>
+									<td class="sticky left-0 z-10 bg-[var(--color-surface)] font-semibold"
+										>{row.label}</td
+									>
 									{#each row.yoy as value, i (i)}
 										<td>{value}</td>
 									{/each}
