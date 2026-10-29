@@ -17,7 +17,7 @@
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { initScrollTaste } from '#lib/motion.js';
 	import HeroWallCard from './HeroWallCard.svelte';
-	import { OGImagePath, absoluteURL, heroBackSlots, heroFrontSlots, type LandingVM } from './landing.js';
+	import { DiscordURL, OGImagePath, absoluteURL, heroBackSlots, heroFrontSlots, type LandingVM } from './landing.js';
 	import './landing.css';
 
 	let { vm }: { vm: LandingVM } = $props();
@@ -48,10 +48,16 @@
 			const target = link.classList.contains('store-badge') ? 'store' : 'signup';
 			capture('cta_clicked', { location, target, href: link.getAttribute('href') });
 		};
+		// landing.js trackDiscordClicks: the footer's Discord invite.
+		const onDiscord = (event: MouseEvent) => {
+			if ((event.target as Element | null)?.closest?.('a[data-discord-link]')) capture('discord_link_clicked', { surface: 'footer' });
+		};
+		document.addEventListener('click', onDiscord);
 		document.addEventListener('click', onClick);
 		return () => {
 			stopReveals();
 			document.removeEventListener('click', onClick);
+			document.removeEventListener('click', onDiscord);
 		};
 	});
 
@@ -328,6 +334,7 @@
 			<a href="/terms" class="hover:text-foreground">Terms of Use</a>
 			<a href="/legal" class="hover:text-foreground">Legal notice</a>
 			<a href="/security" class="hover:text-foreground">Security</a>
+			<a href={DiscordURL} class="hover:text-foreground" target="_blank" rel="noopener noreferrer" data-discord-link>{t('Join us on Discord')}</a>
 		</div>
 		<p class="landing-footer-copy mt-4 text-center text-footnote">&copy; 2026 Norviq. Nothing slips past.</p>
 	</footer>

@@ -2,6 +2,9 @@
 // structured_data.go) and internal/landing/device.go. Pure; safe on server
 // and client.
 
+/** config.DiscordURL: the community invite (landing footer, llms.txt). */
+export const DiscordURL = 'https://discord.gg/UmFCd87x8';
+
 /** The 1200×630 share card. */
 export const OGImagePath = '/static/images/og.png';
 

@@ -5,6 +5,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { config, publicPagesEnabled, DEFAULT_IOS_APP_STORE_URL } from '#lib/server/env.js';
 import { all as publicSymbols } from '#lib/publicsymbols.js';
 import { OperatorEmail, WebsiteURL } from '../legal/operator.js';
+import { DiscordURL } from '../landing/landing.js';
 
 // The only routes a crawler should index. Everything under the app shell
 // redirects to /login unauthenticated, so listing it would only produce
@@ -83,7 +84,8 @@ export function llmsTxt(event: Pick<RequestEvent, 'url' | 'request'>): Response 
 	b += '- Terms: ' + base + '/terms\n';
 	b += '- Legal notice: ' + base + '/legal\n';
 	b += '- Security: ' + base + '/security\n';
-	b += '- X: https://x.com/NorviqPlanner\n\n';
+	b += '- X: https://x.com/NorviqPlanner\n';
+	b += '- Discord: ' + DiscordURL + '\n\n';
 	b += 'The product app (dashboard, portfolio, expenses) is behind authentication and should not be indexed.\n';
 	return new Response(b, { headers: textHeaders });
 }
