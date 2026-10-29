@@ -1,0 +1,925 @@
+{
+	"facebook": {
+		"title": "Facebook Data Deletion",
+		"lastUpdated": "15 October 2026",
+		"intro": "Norviq can use Facebook to help you find friends who also use Norviq. This page explains what Norviq keeps when you connect Facebook and how to remove it.",
+		"sections": [
+			{
+				"id": "",
+				"heading": "What we store",
+				"body": [
+					"When you connect Facebook from Friends, Norviq stores your Facebook account id and the ids of your Facebook friends who also connected Facebook to Norviq. Facebook only shares friends who use Norviq too.",
+					"We do not store your Facebook password, your posts, your photos or your full friends list, and Norviq never posts to Facebook."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "",
+				"heading": "How to remove it",
+				"body": [
+					"In Norviq, open Friends and choose Find friends from Facebook, then Disconnect Facebook. You can also use Disconnect Facebook in Settings, Friends privacy. Either removes your Facebook account id and the stored friend ids straight away.",
+					"Deleting your Norviq account removes this Facebook data along with the rest of your account.",
+					"You can also email fernando@facorreia.com from the address on your Norviq account and ask us to remove your Facebook data. We confirm by email once it is done.",
+					"You can additionally remove Norviq from your Facebook account under Settings and privacy, Apps and websites. That stops Facebook sharing anything further with Norviq."
+				],
+				"table": null,
+				"links": null
+			}
+		]
+	},
+	"legal": {
+		"title": "Legal notice",
+		"lastUpdated": "15 October 2026",
+		"intro": "Who operates Norviq and how to contact them.",
+		"sections": [
+			{
+				"id": "operator",
+				"heading": "Operator",
+				"body": [
+					"Fernando Correia is responsible for the content of this website and the Norviq apps."
+				],
+				"table": {
+					"caption": "",
+					"headers": null,
+					"rows": [
+						[
+							"Name",
+							"Fernando Correia"
+						],
+						[
+							"Legal form",
+							"Individual; no company is registered yet"
+						],
+						[
+							"Country",
+							"Portugal"
+						],
+						[
+							"Correspondence address",
+							"Rua Espírito Santo 187, Matosinhos, Portugal"
+						],
+						[
+							"Email",
+							"fernando@facorreia.com"
+						],
+						[
+							"Website",
+							"https://www.norviq.org"
+						]
+					]
+				},
+				"links": null
+			},
+			{
+				"id": "trader",
+				"heading": "Trader information",
+				"body": [
+					"Norviq is offered by a trader within the meaning of EU consumer law and the Digital Services Act (Regulation (EU) 2022/2065). Trader: Fernando Correia, Portugal. Correspondence address: Rua Espírito Santo 187, Matosinhos, Portugal. Email: fernando@facorreia.com. The trader is an individual and is not entered in a commercial register.",
+					"Norviq offers its own services only. It does not sell products or services on behalf of others."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "hosting",
+				"heading": "Hosting",
+				"body": [
+					"Norviq is hosted by Hetzner Online GmbH on a server in Falkenstein, Germany."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "disputes",
+				"heading": "Consumer disputes",
+				"body": [
+					"Please contact us first at fernando@facorreia.com so we can try to resolve any issue.",
+					"Out-of-court resolution (Lei n.º 144/2015): the competent alternative dispute resolution entity is CNIACC (Centro Nacional de Informação e Arbitragem de Conflitos de Consumo, www.cniacc.pt). The full list of consumer dispute resolution entities is published at www.consumidor.gov.pt. If you live elsewhere in the EU, you can also contact the consumer body where you live."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "documents",
+				"heading": "Legal documents",
+				"body": null,
+				"table": null,
+				"links": [
+					{
+						"label": "Privacy Policy",
+						"href": "/privacy"
+					},
+					{
+						"label": "Terms of Use",
+						"href": "/terms"
+					},
+					{
+						"label": "Security",
+						"href": "/security"
+					},
+					{
+						"label": "Facebook data deletion",
+						"href": "/facebook-data-deletion"
+					}
+				]
+			}
+		]
+	},
+	"privacy": {
+		"title": "Privacy Policy",
+		"lastUpdated": "15 October 2026",
+		"intro": "Norviq is a personal finance and portfolio app for iPhone and the web. This policy explains who is responsible for your data, what we collect, why, how long we keep it, who helps us process it, and the rights you have.",
+		"sections": [
+			{
+				"id": "controller",
+				"heading": "Who is responsible for your data",
+				"body": [
+					"The data controller is Fernando Correia, an individual (sole operator; no company is registered yet), based in Portugal. Correspondence address: Rua Espírito Santo 187, Matosinhos, Portugal.",
+					"For anything about your data, including the requests described under Your rights, email fernando@facorreia.com. Norviq is run by one person; there is no separate data protection officer."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "data",
+				"heading": "Data we collect",
+				"body": [
+					"Account data: email address, username, sign-in identifiers (password hash, or your Apple, Google or X account identifier, and any passkeys) and the profile fields you choose to fill in.",
+					"Financial data you enter or import: portfolios, holdings, trades, watchlists, expenses, budgets, goals, tax preferences, notes, position memos and imported files.",
+					"Connected-account data: when you link a broker or bank, the account metadata, balances, holdings and transactions that provider returns (read-only).",
+					"Billing data: subscription status, entitlement level, product and purchase identifiers from Apple, RevenueCat and web checkout. We never see or store your full card number.",
+					"Technical data: IP address, device and browser type, request identifiers, error reports and server logs.",
+					"Usage data: which screens you open and which features you use, as described under Analytics and cookies.",
+					"Social data, only if you use those features: friends, reports and blocks, articles you publish, and, if you find friends through Facebook or import the accounts you follow on X, the identifiers those services return."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "required",
+				"heading": "What you must provide",
+				"body": [
+					"To create an account you need an email address and either a password or a sign-in provider (Apple, Google or X). Without these we cannot create or secure an account. Everything else (profile fields, financial data, connected accounts, AI features, Telegram and social features) is optional; leaving it out only means the related feature does not work."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "purposes",
+				"heading": "Why we use it and on what legal basis",
+				"body": [
+					"We do not sell personal data, and we do not use your financial records to give you individual investment, tax or legal advice.",
+					"Where we rely on legitimate interest, the interests are: keeping the service and accounts secure and preventing abuse and fraud; finding and fixing errors; and understanding, in aggregate, which features are used so we can improve them. You can object to any of these (see Your rights)."
+				],
+				"table": {
+					"caption": "",
+					"headers": [
+						"Purpose",
+						"Data",
+						"Legal basis (GDPR Art. 6)",
+						"Retention"
+					],
+					"rows": [
+						[
+							"Your account and sign-in",
+							"Account data",
+							"Contract",
+							"Until you delete your account"
+						],
+						[
+							"Core features: portfolio, expenses, budgets, goals, reports",
+							"Financial data you enter or import",
+							"Contract",
+							"Until you delete it or your account"
+						],
+						[
+							"Broker and bank sync (IBKR, Plaid, GoCardless)",
+							"Connected-account data",
+							"Contract, at your instruction",
+							"Until you disconnect or delete your account"
+						],
+						[
+							"AI features (assistant, insights, summaries, AI imports)",
+							"The context listed under AI features",
+							"Consent",
+							"See How long we keep data"
+						],
+						[
+							"Telegram bot",
+							"Telegram chat ID and the messages you exchange with the bot",
+							"Consent",
+							"Until you disconnect; Telegram keeps its own copy"
+						],
+						[
+							"Friends, articles and moderation",
+							"Social data, reports and blocks",
+							"Contract",
+							"Until you delete it or your account"
+						],
+						[
+							"Subscriptions and billing",
+							"Billing data",
+							"Contract; legal obligation (tax and billing records)",
+							"As long as tax and accounting law requires"
+						],
+						[
+							"Transactional email (password reset, sign-in codes)",
+							"Email address",
+							"Contract",
+							"Delivery logs only"
+						],
+						[
+							"Security, abuse and fraud prevention",
+							"Technical data",
+							"Legitimate interest (security)",
+							"Server logs about 14 days"
+						],
+						[
+							"Error diagnosis",
+							"Error reports with your user ID only",
+							"Legitimate interest (fixing errors)",
+							"Rolling retention in our error tracker"
+						],
+						[
+							"Product analytics",
+							"Usage data as described under Analytics and cookies",
+							"Legitimate interest (aggregate product analytics)",
+							"Aggregate reporting"
+						],
+						[
+							"Data exports you request",
+							"A copy of your data",
+							"Contract; legal obligation (your GDPR rights)",
+							"Download links expire after 7 days and files are deleted"
+						],
+						[
+							"Disaster recovery",
+							"Encrypted database backups",
+							"Legitimate interest (security)",
+							"Up to 12 months"
+						]
+					]
+				},
+				"links": null
+			},
+			{
+				"id": "retention",
+				"heading": "How long we keep data",
+				"body": [
+					"Deleting your account removes your data from the live database straight away. Copies inside encrypted backups expire on the schedule above, so a deleted account can remain in backups for up to 12 months. Backups are only restored to recover from an incident."
+				],
+				"table": {
+					"caption": "",
+					"headers": [
+						"Data",
+						"Kept for"
+					],
+					"rows": [
+						[
+							"Account data",
+							"Until you delete your account"
+						],
+						[
+							"Financial data you enter or import",
+							"Until you delete it or your account"
+						],
+						[
+							"Position memos",
+							"Until you delete them or your account"
+						],
+						[
+							"AI assistant conversations",
+							"Deleted 30 days after the last message"
+						],
+						[
+							"Pending AI action proposals (changes the assistant suggested that you have not confirmed)",
+							"30 days"
+						],
+						[
+							"AI usage records (counts and cost, no content)",
+							"14 months"
+						],
+						[
+							"AI action audit log (changes you confirmed)",
+							"90 days"
+						],
+						[
+							"Data exports",
+							"Download links expire after 7 days and files are deleted"
+						],
+						[
+							"Server logs (Grafana Cloud, EU)",
+							"About 14 days"
+						],
+						[
+							"Receipt images",
+							"Not retained after text extraction"
+						],
+						[
+							"Billing records",
+							"As long as tax and accounting law requires"
+						],
+						[
+							"Database backups",
+							"Daily backups 30 days, monthly backups 12 months"
+						]
+					]
+				},
+				"links": null
+			},
+			{
+				"id": "hosting",
+				"heading": "Where your data is stored and how it is protected",
+				"body": [
+					"Norviq runs on a single server rented from Hetzner Online GmbH in Falkenstein, Germany. The database is backed up nightly; backups are encrypted (age) before they leave the server and are stored on a Hetzner Storage Box in a Hetzner data center in Germany or Finland (EU).",
+					"Provider credentials (IBKR, Plaid and your own AI provider keys) are encrypted at rest with AES-256-GCM. For GoCardless no access token is stored, only the reference to your bank authorisation. API, MCP and OAuth tokens are stored only as SHA-256 hashes. Some profile fields (bio, partner name, date of birth) and AI conversations are encrypted at field level.",
+					"Administrative access is restricted to a private network (Tailscale) and to SSH from a single administrator IP address.",
+					"The Security page describes these measures, and their limits, in more detail. No system is perfectly secure."
+				],
+				"table": null,
+				"links": [
+					{
+						"label": "Security at Norviq",
+						"href": "/security"
+					}
+				]
+			},
+			{
+				"id": "connected-accounts",
+				"heading": "Connected financial accounts",
+				"body": [
+					"When you connect a brokerage or bank account, Norviq accesses that data on a read-only basis. Norviq cannot place trades, move money, or modify data at your financial institution.",
+					"Interactive Brokers (IBKR): portfolio and statement data is imported through IBKR's reporting feed using a token you provide. The token is stored encrypted.",
+					"Bank linking, where it is enabled, uses Plaid (United States) and GoCardless Bank Account Data (European Union and United Kingdom). Plaid access tokens are stored encrypted; for GoCardless only the reference to your bank authorisation is stored. You can revoke any connection at any time from Settings."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "ai",
+				"heading": "AI features",
+				"body": [
+					"Norviq's AI features (the Q assistant, insight cards, summaries, position memos, proactive tips and AI-assisted imports) only run after you give explicit consent. You can withdraw it at any time: on the web in Settings, AI providers; in the iPhone app in the assistant's Assistant settings. AI features then stop and nothing more is sent.",
+					"If you use version 1.4.0 or earlier of the iPhone app, AI features you open there run as before until you update; the update asks for your consent. Background AI features (tips, alerts, Telegram) require consent regardless.",
+					"AI requests go to Anthropic (Claude Haiku, called directly) and OpenRouter, which routes requests to Anthropic models and, for receipt and screenshot text extraction, to OpenAI (gpt-4o-mini). Requests sent through OpenRouter ask providers not to collect or retain the data. Anthropic does not use data sent through its commercial API to train its models.",
+					"Your name, email address and user ID are not sent to AI providers. Only the financial context a feature needs is sent, as listed below.",
+					"If you connect your own key for Anthropic, OpenAI or another OpenAI-compatible provider, assistant requests go to that provider account under your agreement with that provider.",
+					"AI output is informational. Norviq makes no decisions based solely on automated processing that have legal or similarly significant effects on you (GDPR Art. 22); any change the assistant proposes waits for you to confirm it.",
+					"Voice input is transcribed on Norviq's own server. No third party receives your recordings."
+				],
+				"table": {
+					"caption": "",
+					"headers": [
+						"Feature",
+						"Data sent to the AI provider"
+					],
+					"rows": [
+						[
+							"Insight cards",
+							"Portfolio totals, daily change, top and bottom holdings, sector allocation, monthly expense and budget summaries"
+						],
+						[
+							"Q assistant (web, iPhone and Telegram)",
+							"Your messages, plus a financial overview, recent expenses (title, amount, merchant, notes), budgets, crypto holdings, watchlist, trades and goals"
+						],
+						[
+							"Why it moved and screen summaries",
+							"The figures shown on that screen, such as your holdings' daily moves"
+						],
+						[
+							"Position memos",
+							"The holding and your notes on it"
+						],
+						[
+							"Proactive tips",
+							"Totals only"
+						],
+						[
+							"Imports",
+							"Receipt images, broker screenshots, or a digest of the spreadsheet you upload (its column headers and sample cell values)"
+						]
+					]
+				},
+				"links": null
+			},
+			{
+				"id": "mcp",
+				"heading": "MCP and API access",
+				"body": [
+					"With a Norviq personal access token you can connect your own AI client (such as Claude, Cursor or ChatGPT) through the Model Context Protocol (MCP). Norviq answers that client's tool calls with your account data. From then on the data is handled by the client you chose, under its own terms and privacy policy, not Norviq's.",
+					"Tokens are scoped, can be revoked at any time in Settings, API access, and are stored only as hashes."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "telegram",
+				"heading": "Telegram",
+				"body": [
+					"Linking the Norviq bot on Telegram is optional and needs your confirmation. Telegram chats are not end-to-end encrypted. Messages you send and the bot's replies, which can include your portfolio values, budgets and expenses when you ask for them, are stored on Telegram's servers under Telegram's privacy policy.",
+					"Disconnecting in Settings stops the bot. Messages already in the chat stay on Telegram until you delete them there."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "subprocessors",
+				"heading": "Service providers (sub-processors)",
+				"body": [
+					"These providers process personal data for Norviq. Providers you connect yourself (brokers, banks, Telegram, Facebook, X) only receive or return data once you link them."
+				],
+				"table": {
+					"caption": "",
+					"headers": [
+						"Provider",
+						"Purpose",
+						"Location",
+						"Transfer safeguard"
+					],
+					"rows": [
+						[
+							"Hetzner Online GmbH",
+							"Hosting: server, database and encrypted backups",
+							"Germany (Falkenstein); backups in Germany or Finland",
+							"EU"
+						],
+						[
+							"Anthropic",
+							"AI model provider (Claude)",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"OpenRouter",
+							"AI request routing",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"OpenAI (via OpenRouter)",
+							"Receipt and screenshot text extraction",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"Plaid",
+							"US bank linking",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"GoCardless Bank Account Data",
+							"EU and UK bank linking",
+							"EU / United Kingdom",
+							"EU; UK adequacy decision"
+						],
+						[
+							"Interactive Brokers",
+							"Brokerage import with a token you provide",
+							"Your IBKR account's entity",
+							"At your instruction"
+						],
+						[
+							"Telegram",
+							"Optional bot (not end-to-end encrypted)",
+							"United Arab Emirates / global",
+							"At your request, when you link the bot"
+						],
+						[
+							"RevenueCat",
+							"Subscriptions and web checkout",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"Stripe",
+							"Card payments for web purchases (through RevenueCat Web Billing)",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"Apple",
+							"Sign in with Apple, App Store payments, push notifications",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"Google",
+							"Sign in with Google",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"X (Twitter)",
+							"Sign in with X and importing the accounts you follow",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"Meta (Facebook)",
+							"Finding friends through Facebook, only if you use it (Limited Login; automatic event logging off)",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"Resend",
+							"Transactional email (password reset, sign-in codes)",
+							"United States",
+							"SCCs / EU-US Data Privacy Framework"
+						],
+						[
+							"PostHog",
+							"Product analytics on the web (cookieless) and in the iPhone app",
+							"EU (PostHog EU cloud)",
+							"EU"
+						],
+						[
+							"Amplitude",
+							"iPhone app analytics",
+							"EU (Amplitude EU data center)",
+							"EU"
+						],
+						[
+							"TelemetryDeck",
+							"iPhone app analytics",
+							"EU",
+							"EU"
+						],
+						[
+							"Sentry",
+							"Error tracking",
+							"EU (Germany data region)",
+							"EU"
+						],
+						[
+							"Grafana Cloud",
+							"Server logs and traces",
+							"EU",
+							"EU"
+						],
+						[
+							"Discord",
+							"Internal operations channel: feedback text, moderation reports (reported username, user ID and an excerpt) and sign-up notices without email addresses",
+							"United States",
+							"SCCs"
+						]
+					]
+				},
+				"links": null
+			},
+			{
+				"id": "transfers",
+				"heading": "International transfers",
+				"body": [
+					"Where a provider processes data outside the European Economic Area, the transfer relies on the European Commission's Standard Contractual Clauses (SCCs) or, for certified US companies, the EU-US Data Privacy Framework. Email us for a copy of the relevant safeguards."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "cookies",
+				"heading": "Analytics and cookies",
+				"body": [
+					"The website only sets cookies it needs to work: a session cookie that keeps you signed in, a CSRF cookie that protects forms, a language cookie, a timezone cookie (tz) so streaks and check-ins count days in your own time zone, and a cookie that remembers if you chose to stay on the web instead of opening the app. Display preferences such as sort order are kept in your browser's local storage.",
+					"Web analytics (PostHog EU) are cookieless: nothing is stored in your browser, session recording and automatic click capture are off, and events carry only a pseudonymous user ID, never your email or name.",
+					"Analytics in the iPhone app are not cookieless in the same way. PostHog and TelemetryDeck use a persistent pseudonymous ID. Amplitude (EU) uses a device identifier (Apple's identifier for vendor, IDFV) and receives your IP address. Events record actions you take in the app, which can include ticker symbols you view. None of them receive your email or name.",
+					"You can object to analytics by emailing us."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "rights",
+				"heading": "Your rights",
+				"body": [
+					"Under the GDPR (Articles 15 to 22) you can ask for access to your data, correction, erasure, restriction of processing and a portable copy, and you can object to processing based on legitimate interest. Where processing is based on consent, you can withdraw consent at any time without affecting what was done before.",
+					"To exercise a right, email fernando@facorreia.com from the address on your account. We answer within 30 days; if a request is complex we may extend that by up to two further months and will tell you why.",
+					"You can delete your account yourself: on the web in Settings, Profile, Delete account; in the iPhone app in Profile, Delete account. On the web, Settings, Data export downloads your portfolio, transactions or watchlist; for a full copy of your data, email us. Export download links expire after 7 days and the files are deleted.",
+					"You can also complain to the Portuguese data protection authority, CNPD (Comissão Nacional de Proteção de Dados, www.cnpd.pt), or to the authority where you live or work."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "breach",
+				"heading": "Security incidents",
+				"body": [
+					"If a personal data breach occurs, we notify the CNPD within 72 hours where the GDPR requires it, and we tell affected users without undue delay when the breach is likely to put their rights and freedoms at high risk."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "children",
+				"heading": "Children",
+				"body": [
+					"Norviq is for adults. You must be 18 or older to use it, and we do not knowingly collect data from anyone younger."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "changes",
+				"heading": "Changes to this policy",
+				"body": [
+					"When we change this policy we update the date at the top. Material changes are announced in the app or by email before they take effect."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "contact",
+				"heading": "Contact",
+				"body": [
+					"Privacy questions, rights requests, exports and deletion: fernando@facorreia.com."
+				],
+				"table": null,
+				"links": [
+					{
+						"label": "Legal notice",
+						"href": "/legal"
+					},
+					{
+						"label": "Terms of Use",
+						"href": "/terms"
+					},
+					{
+						"label": "Security",
+						"href": "/security"
+					}
+				]
+			}
+		]
+	},
+	"security": {
+		"title": "Security",
+		"lastUpdated": "15 October 2026",
+		"intro": "How Norviq protects your data, what that protection does not cover, and how to report a vulnerability. Norviq is run by one person; this page describes what is actually in place today.",
+		"sections": [
+			{
+				"id": "encryption",
+				"heading": "Encryption",
+				"body": [
+					"Credentials for the providers you connect (Interactive Brokers, Plaid and your own AI provider keys) are encrypted at rest with AES-256-GCM.",
+					"Personal access tokens, MCP tokens and OAuth tokens are stored only as SHA-256 hashes, so a database copy does not reveal usable tokens. A new token is shown to you once and never again.",
+					"Some profile fields (bio, partner name and date of birth) and AI assistant conversations are encrypted at field level. Other data in the database is protected by access controls rather than field-level encryption.",
+					"Connections to norviq.org use HTTPS."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "access",
+				"heading": "Access",
+				"body": [
+					"A single operator, Fernando Correia, runs Norviq. Administrative access is restricted to a private network (Tailscale) and to SSH from a single administrator IP address; the cluster's management API is not exposed to the public internet. The server was provisioned with the administrator's SSH key.",
+					"Connections to brokers and banks are read-only. Norviq cannot place trades, move money or change anything at your financial institution.",
+					"You can add a passkey to your account from your profile settings."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "hosting",
+				"heading": "Hosting and backups",
+				"body": [
+					"Norviq runs on a single server at Hetzner Online GmbH in Falkenstein, Germany. A single server means an outage there affects the whole service.",
+					"The database is backed up nightly. Backups are encrypted with age before they leave the server and are stored on a Hetzner Storage Box: daily backups for 30 days and monthly backups for 12 months."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "deletion",
+				"heading": "Account deletion",
+				"body": [
+					"You can delete your account in the app (Settings, Profile, Delete account). This removes your data from the live database at once; encrypted backups expire on the schedule above, at the latest 12 months later."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "incidents",
+				"heading": "If something goes wrong",
+				"body": [
+					"If a personal data breach occurs, we contain it, assess the risk, notify the Portuguese data protection authority (CNPD) within 72 hours where the GDPR requires it, and tell affected users without undue delay when the breach is likely to put them at high risk."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "audit",
+				"heading": "Independent review",
+				"body": [
+					"Norviq has not yet had an independent external security audit or penetration test. The reviews done so far were internal, so they are not independent. This page will say so when that changes."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "report",
+				"heading": "Report a vulnerability",
+				"body": [
+					"Email fernando@facorreia.com with a description of the issue, the steps to reproduce it and the impact you expect. Please do not access other people's data, degrade the service or publish the issue before it is fixed.",
+					"We will not take legal action against good-faith research that follows these rules. There is no paid bug bounty.",
+					"Machine-readable contact details are published in /.well-known/security.txt."
+				],
+				"table": null,
+				"links": [
+					{
+						"label": "security.txt",
+						"href": "/.well-known/security.txt"
+					},
+					{
+						"label": "Privacy Policy",
+						"href": "/privacy"
+					}
+				]
+			}
+		]
+	},
+	"terms": {
+		"title": "Terms of Use",
+		"lastUpdated": "15 October 2026",
+		"intro": "These terms are an agreement between you and Fernando Correia, who operates Norviq. By creating an account or using the app or website you agree to them.",
+		"sections": [
+			{
+				"id": "operator",
+				"heading": "Who provides Norviq",
+				"body": [
+					"Norviq is provided by Fernando Correia, an individual (sole operator; no company is registered yet), based in Portugal. Correspondence address: Rua Espírito Santo 187, Matosinhos, Portugal. Email: fernando@facorreia.com."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "service",
+				"heading": "The service",
+				"body": [
+					"Norviq provides personal finance planning, portfolio tracking, watchlists, expense and budget tracking, valuation and research tools, alerts, reports and optional AI features, on iPhone and the web. Some features need a paid subscription."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "eligibility",
+				"heading": "Eligibility and your account",
+				"body": [
+					"You must be at least 18 years old to use Norviq.",
+					"You are responsible for keeping your sign-in credentials secure and for activity under your account. Give accurate account information, and do not access or try to access anyone else's account or data. Tell us straight away at fernando@facorreia.com if you think your account has been compromised."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "read-only",
+				"heading": "Read-only financial data",
+				"body": [
+					"Norviq aggregates and displays your financial data for your information. Connections to brokers and banks are read-only: Norviq does not execute trades, transfers or payments.",
+					"You are responsible for the accuracy of the data you enter, import or upload. Imports and broker or bank feeds can contain errors made by you, the file, or the provider."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "not-advice",
+				"heading": "Not investment, tax or legal advice",
+				"body": [
+					"Norviq is a planning, portfolio tracking and research support tool. It is not an investment adviser, broker, tax adviser, legal adviser or fiduciary.",
+					"Nothing in Norviq, including AI-generated content, is financial, investment, legal, tax, accounting or trading advice. Norviq does not recommend that you buy, sell, hold or avoid any security, asset, cryptocurrency, fund or financial product.",
+					"Market data, company data, news, calculations, valuation scenarios, projections, fair value estimates, alerts and reports may be delayed, incomplete, unavailable, inaccurate, or based on assumptions that do not match your circumstances. Projections and scores are planning aids, not guarantees of future performance.",
+					"You are solely responsible for your investment and financial decisions and for checking data with primary sources, a regulated professional or your broker before acting."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "subscriptions",
+				"heading": "Subscriptions and payments",
+				"body": [
+					"Paid features are offered as auto-renewing subscriptions and, for some items, one-off purchases. Prices, billing period and any trial terms are shown before you buy.",
+					"On iPhone, purchases are made through the App Store and billed by Apple under Apple's terms. Renewal, cancellation and refunds for App Store purchases are handled by Apple; manage them in your Apple account settings.",
+					"On the web, purchases are made through our checkout (RevenueCat Web Billing, with card payments processed by Stripe). You can cancel a web subscription at any time; it stays active until the end of the period you paid for.",
+					"Right of withdrawal (EU and EEA consumers, web purchases): you can withdraw from a web purchase within 14 days of buying it without giving a reason, by emailing fernando@facorreia.com with a clear statement. We refund you within 14 days of receiving it, using the original payment method. If you asked for a subscription to start during the withdrawal period, we may keep an amount proportional to the service already provided. For digital content supplied immediately, the right to withdraw ends once supply begins, if you expressly agreed to that and acknowledged that you would lose the right.",
+					"You can use the model withdrawal form below, but you do not have to."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "withdrawal-form",
+				"heading": "Model withdrawal form",
+				"body": [
+					"(Complete and return this form only if you wish to withdraw from the contract.)",
+					"To Fernando Correia, fernando@facorreia.com:",
+					"I/We (*) hereby give notice that I/We (*) withdraw from my/our (*) contract for the supply of the following service / digital content (*):",
+					"Ordered on (*) / received on (*):",
+					"Name of consumer(s):",
+					"Address of consumer(s):",
+					"Signature of consumer(s) (only if this form is notified on paper):",
+					"Date:",
+					"(*) Delete as appropriate."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "acceptable-use",
+				"heading": "Acceptable use",
+				"body": [
+					"Use Norviq only for lawful purposes. Do not misuse the service, overload the API, bypass entitlement or usage limits, scrape data at scale, interfere with security, or reverse engineer private APIs."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "user-content",
+				"heading": "Friends and user content",
+				"body": [
+					"Norviq lets you connect with friends, share profiles, streaks and leaderboard positions, publish articles and send content to people you are connected with.",
+					"There is zero tolerance for objectionable content or abusive users: harassment, hate speech, threats, sexual content, spam, scams, impersonation and anything illegal are not allowed.",
+					"You can report a person from their profile (Report) and block them at any time; blocking hides you from each other immediately. You can also report content or users by email to fernando@facorreia.com.",
+					"We aim to review every report within 24 hours. We remove objectionable content and suspend or remove users who break these rules from social features or from Norviq altogether."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "termination",
+				"heading": "Ending your use of Norviq",
+				"body": [
+					"You can stop using Norviq and delete your account at any time on the web in Settings, Profile, Delete account, or in the iPhone app in Profile, Delete account. Cancel any App Store subscription in your Apple account first; deleting your Norviq account does not cancel it.",
+					"We may suspend or close an account that breaks these terms, puts other users or the service at risk, or where the law requires it. Unless the situation is urgent or the law prevents it, we tell you first and give you the chance to export your data. If we stop offering Norviq altogether, we give at least 30 days' notice."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "liability",
+				"heading": "Liability",
+				"body": [
+					"To the extent the law allows, Norviq is not liable for losses arising from investment or financial decisions, inaccurate user-entered or imported data, unavailable or inaccurate market data, outages of third-party providers, app store or payment platform issues, or use of the service in ways it does not support.",
+					"To the extent the law allows, our total liability to you for any claim relating to Norviq is limited to the fees you paid for Norviq in the 12 months before the claim.",
+					"Nothing in these terms excludes or limits liability that cannot be excluded or limited by law, including liability for death or personal injury caused by negligence, for fraud, or for gross negligence or wilful misconduct, and nothing affects your statutory rights as a consumer."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "law",
+				"heading": "Governing law and disputes",
+				"body": [
+					"These terms are governed by the law of Portugal. If you are a consumer living in another EU country, you also keep the protection of the mandatory consumer law of that country, and you can bring a claim in the courts where you live.",
+					"Please contact us first so we can try to resolve any issue. The European Commission's Online Dispute Resolution platform has closed.",
+					"Out-of-court resolution (Lei n.º 144/2015): the competent alternative dispute resolution entity is CNIACC (Centro Nacional de Informação e Arbitragem de Conflitos de Consumo, www.cniacc.pt). The full list of consumer dispute resolution entities is published at www.consumidor.gov.pt. If you live elsewhere in the EU, you can also contact the consumer body where you live."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "data-sources",
+				"heading": "Macroeconomic data sources",
+				"body": [
+					"Economy pages display public statistics from official sources: Eurostat (EU statistics), the European Central Bank Data Portal (policy rates and reference rates), the Federal Reserve Bank of St. Louis FRED API (United States series and international mirrors), IBGE and Banco Central do Brasil (Brazil). Figures are reproduced as published by those institutions, which do not endorse Norviq.",
+					"FRED® data is used under the FRED® API Terms of Use, available at https://fred.stlouisfed.org/docs/api/terms_of_use.html. By using Norviq features that display FRED® data you agree to be bound by those terms. FRED® is a registered trademark of the Federal Reserve Bank of St. Louis, which is not affiliated with Norviq.",
+					"Statistics are indicative and may be revised by the publishing institution after release. Norviq shows the as-of date and source for each figure; always check the original source before relying on a number."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "privacy",
+				"heading": "Privacy",
+				"body": [
+					"How we handle personal data is described in the Privacy Policy, which forms part of these terms."
+				],
+				"table": null,
+				"links": [
+					{
+						"label": "Privacy Policy",
+						"href": "/privacy"
+					}
+				]
+			},
+			{
+				"id": "changes",
+				"heading": "Changes to these terms",
+				"body": [
+					"We may update these terms as Norviq changes or the law requires. We give at least 30 days' notice of material changes in the app or by email, and the date at the top always shows the current version. If you do not agree to a change, you can delete your account before it takes effect."
+				],
+				"table": null,
+				"links": null
+			},
+			{
+				"id": "contact",
+				"heading": "Contact",
+				"body": [
+					"Questions about these terms: fernando@facorreia.com."
+				],
+				"table": null,
+				"links": null
+			}
+		]
+	}
+}
