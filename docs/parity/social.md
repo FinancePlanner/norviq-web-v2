@@ -55,3 +55,37 @@ Notes:
   (Go rendered the banned page in place; a +server endpoint can't render a page). Page loads still
   render the banned page via (app)/groups/+error.svelte.
 - Not in scope: GET /g/{code} (GroupsRedeemInvite / invite page) — public prefix, other domain.
+
+## /boards (18) — no flag in Go
+
+- [x] GET /boards, POST /boards (default action) → (app)/boards/+page.{server.ts,svelte}
+- [x] GET /boards/activity → (app)/boards/activity/+page.*; POST /boards/activity/settings → activity/settings/+page.server.ts
+- [x] GET/POST /boards/guidelines → (app)/boards/guidelines/+page.*
+- [x] POST /boards/report, POST /boards/block → action-only routes
+- [x] GET /boards/p/{id} → p/[id]/+page.server.ts (303)
+- [x] POST /boards/p/{id}/vote → p/[id]/vote/+server.ts (JSON; VoteButton updates in place)
+- [x] POST /boards/p/{id}/comments, /delete; POST /boards/c/{id}/delete → action-only routes
+- [x] GET /boards/{slug}, POST /boards/{slug}/delete, GET/POST /boards/{slug}/submit, GET /boards/{slug}/p/{id}
+- Not-found / banned pages: (app)/boards/+error.svelte. Helpers: src/lib/features/social/boards/.
+
+## /friends (18 + 3 achievements) and /xp (3)
+
+- [x] GET /friends; GET /friends/search (JSON for the page, plain request → /friends?q=)
+- [x] POST /friends/requests, /requests/{id}/accept|decline|cancel (+server.ts at the same URLs)
+- [x] GET /friends/invite; POST /friends/invite/{code}/accept
+- [x] GET /friends/u/{userId}; POST /unfriend, /block, /report
+- [x] GET /friends/u/{userId}/achievements, GET /friends/feed (+ load-more JSON), POST /friends/feed/{id}/congrats (achievements branch)
+- [x] GET /friends/leaderboard; GET /xp; GET /xp/card (JSON, consumed by XPCardShell); POST /xp/check-in
+- [~] POST /friends/x/start, GET /friends/x/callback, POST /friends/facebook/start, GET …/callback, POST …/disconnect — ported; only the flag-off 404 verified (xImport/facebookImport off on staging)
+
+## Merge notes
+
+- Dashboard XP card: `src/lib/features/social/friends/XPCardShell.svelte`; wire in place of the placeholder comment in
+  (app)/dashboard/+page.svelte: `{#if data.social.enabled && data.social.leaderboards}<XPCardShell />{/if}`.
+- Shared gaps (not changed here): 44 achievements strings missing from pt-PT.json; achievements CSS (`.achievement-*`
+  in styles.css, `.achievement-toast` in shell.css) missing from legacy CSS; v2 never writes the `tz` cookie
+  (Go `rememberTimezone`), so X-Timezone and chat times fall back to UTC; ~20 achievement icons missing from
+  icon-registry.ts (local map in features/social/friends/achievement-icons.ts); settings-admin `boardNotice` lacks
+  `reported`/`blocked`/`deleted` (full map in features/social/boards/boards.ts).
+- Client-side JS (chat SSE/scroll/pending rows, search debounce, feed load-more, vote, XP card) was not exercised in a
+  browser (extension unavailable); all endpoints behind it were exercised with curl.
