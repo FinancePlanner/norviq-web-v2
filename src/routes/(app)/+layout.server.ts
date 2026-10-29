@@ -2,6 +2,7 @@ import type { LayoutServerLoad } from './$types';
 import { loadAppContext } from '#lib/server/app-context.js';
 import { sidebarItemsFor } from '#lib/nav.js';
 import { availableFeatures } from '#lib/billing.js';
+import { guidedStepLayer } from '#lib/features/auth-onboarding/guided-start/guided.server.js';
 
 // Signed-in, onboarded pages. Auth and the onboarding gate run in
 // hooks.server.ts; this loads what the shell needs (AttachProStatus +
@@ -18,6 +19,8 @@ export const load: LayoutServerLoad = async (event) => {
 		features: availableFeatures(ctx.billing),
 		social: ctx.social,
 		articles: ctx.articles,
-		sidebarItems: sidebarItemsFor(event.locals.t, { social: ctx.social, articles: ctx.articles, locked: ctx.locked })
+		sidebarItems: sidebarItemsFor(event.locals.t, { social: ctx.social, articles: ctx.articles, locked: ctx.locked }),
+		// Go renderShell → withGuidedStepLayer: the open guided-start step, if any.
+		guidedStep: await guidedStepLayer(event)
 	};
 };

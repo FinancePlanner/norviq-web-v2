@@ -24,6 +24,12 @@ export default defineConfig({
       }
     },
     adapter: adapter(),
+    // Apple sign-in answers with a cross-site form_post to
+    // /auth/oauth/apple/callback (Go exempted that path from CSRF; the flow is
+    // protected by the OAuth state check instead).
+    csrf: {
+      trustedOrigins: ['https://appleid.apple.com']
+    },
     preprocess: [mdsvex({
       extensions: ['.svx', '.md']
     })],
