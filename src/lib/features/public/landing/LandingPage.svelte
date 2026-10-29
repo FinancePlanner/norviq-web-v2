@@ -17,20 +17,18 @@
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { initScrollTaste } from '#lib/motion.js';
 	import HeroWallCard from './HeroWallCard.svelte';
-	import { DiscordURL, OGImagePath, absoluteURL, heroBackSlots, heroFrontSlots, type LandingVM } from './landing.js';
+	import { DiscordURL, OGImagePath, absoluteURL, heroBackSlots, heroFrontSlots, structuredData, type LandingVM } from './landing.js';
 	import './landing.css';
 
 	let { vm }: { vm: LandingVM } = $props();
 
 	const canonical = $derived(absoluteURL(vm, '/'));
 	const ogImage = $derived(absoluteURL(vm, OGImagePath));
-	// PARITY ODDITY: Go's landing.templ puts `@templ.Raw(StructuredData(vm))`
-	// inside a <script> element, where templ treats it as raw text, so
-	// production serves that literal string as the JSON-LD (checked against
-	// the Go web, 2026-10-29). Ported byte-for-byte per the migration rules.
-	// The intended graph is structuredData(vm) in landing.ts; swap it in once the fix is
-	// agreed on both sides.
-	const jsonLD = '\n\t\t@templ.Raw(StructuredData(vm))\n\t';
+	// Go's landing.templ puts `@templ.Raw(StructuredData(vm))` inside a
+	// <script> element, where templ treats it as raw text, so Go serves that
+	// literal string as the JSON-LD. v2 deliberately serves the intended graph
+	// (approved 2026-10-29; see docs/parity/public.md).
+	const jsonLD = $derived(structuredData(vm));
 	const backSlots = heroBackSlots();
 	const frontSlots = heroFrontSlots();
 

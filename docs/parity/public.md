@@ -63,7 +63,7 @@ Share images were compared visually with Go's output.
 - [x] POST /g/{code}/join → `(app)/g/[code]/join/+server.ts`
 
 ## Deviations / notes
-- **Landing JSON-LD (Go bug, ported as-is):** Go's `landing.templ` puts `@templ.Raw(StructuredData(vm))` inside `<script>`, so production serves that literal text as JSON-LD. v2 emits the same bytes; the intended graph is `structuredData()` in `features/public/landing/landing.ts`, a one-line swap in `LandingPage.svelte`.
+- **Landing JSON-LD (Go bug, fixed in v2):** Go's `landing.templ` puts `@templ.Raw(StructuredData(vm))` inside `<script>`, so Go serves that literal text as JSON-LD. v2 serves the intended graph from `structuredData()` (approved 2026-10-29). See DEVIATIONS.md.
 - **Rendered-page caches** (Go `publicPageCache`) are not ported; data lookups are cached per isolate (brief, stock, invites, images) and the same `Cache-Control` lets the CDN share the HTML. Pages viewed with a session send `private, no-store` / `private` instead of Go's shared header, because every v2 page carries the root layout's user data.
 - **Share images:** `features/public/sharecard/` ports `internal/sharecard` with a small TrueType reader, rasteriser and PNG encoder (CompressionStream) and the Go fonts (BSD, ~300 KB in the server bundle). Layout/text fitting match Go; pixels differ only in anti-aliasing and compression. CPU per image is a few tens of ms on a cache miss.
 - **Brief 503** is the SvelteKit error page with Go's message (Go wrote plain text).
