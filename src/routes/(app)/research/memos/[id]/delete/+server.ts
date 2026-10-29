@@ -2,7 +2,7 @@ import { error, json, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
-import { aiConsentRequiredJSON, aiConsentReturnPath, hasAIConsent, isAIConsentRequired } from '#lib/features/dashboard/ai-consent.server.js';
+import { aiConsentRequiredJSON, aiConsentReturnPath, isAIConsentRequired } from '#lib/features/dashboard/ai-consent.server.js';
 import { deleteMemo, parseUUID } from '#lib/features/planning-tools/research/research.server.js';
 
 // POST /research/memos/{id}/delete (handlers.ResearchMemoDelete): 303 to /research.
@@ -10,7 +10,6 @@ export const POST: RequestHandler = async (event) => {
 	await requireFeature(event, Feature.AIInsights, 'AI insights');
 	const id = parseUUID(event.params.id);
 	if (!id) error(400, 'Invalid memo');
-	if (!(await hasAIConsent(event))) return json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
 	try {
 		await deleteMemo(event, id);
 	} catch (err) {
