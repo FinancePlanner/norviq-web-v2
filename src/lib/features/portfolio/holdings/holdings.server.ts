@@ -238,14 +238,18 @@ export async function loadHoldingsViewModel(event: RequestEvent, timeRange: stri
 		return null;
 	};
 
-	const [stocksRes, summary, performance, pnl, targetsRes] = await Promise.all([
+	// Wave 1 (8824553): everything that needs only the portfolio. The sentiment
+	// roll-up is computed server-side from the portfolio, not from the symbols,
+	// so it starts here instead of waiting for the holdings.
+	const [stocksRes, summary, performance, pnl, targetsRes, rollup] = await Promise.all([
 		apiJSON<StockListItem[]>(event, 'GET', '/v1/stocks', undefined, { query: q }).catch(fail('stocks')),
 		apiJSON<Schemas['PortfolioSummaryResponse']>(event, 'GET', '/v1/portfolio/summary', undefined, { query: q }).catch(fail('summary')),
 		apiJSON<Schemas['PortfolioPerformanceResponse']>(event, 'GET', '/v1/portfolio/performance', undefined, {
 			query: { ...q, range: selectedTimeRange }
 		}).catch(fail('performance')),
 		fetchPnlBySymbol(event, listID),
-		apiJSON<ScenarioTargetResponse[]>(event, 'GET', '/v1/targets').catch(fail('targets'))
+		apiJSON<ScenarioTargetResponse[]>(event, 'GET', '/v1/targets').catch(fail('targets')),
+		loadPortfolioSentimentRollup(event, portfolioID)
 	]);
 
 	let stocks = stocksRes ?? [];
@@ -285,10 +289,11 @@ export async function loadHoldingsViewModel(event: RequestEvent, timeRange: stri
 
 	stocks = sortStocksBySymbol(stocks);
 	const symbols = stocks.map((s) => s.symbol);
-	const [{ quotes, sparklines }, sentiments, rollup] = await Promise.all([
+	// Wave 2: both need the symbols and nothing else, and each degrades on its
+	// own budget, so they run side by side rather than adding up.
+	const [{ quotes, sparklines }, sentiments] = await Promise.all([
 		loadPortfolioMarketEnrichment(event, symbols),
-		fetchSentimentBySymbol(event, symbols),
-		loadPortfolioSentimentRollup(event, portfolioID)
+		fetchSentimentBySymbol(event, symbols)
 	]);
 	vm.sentiment = rollup;
 	const quoteMap = quoteBySymbol(quotes);

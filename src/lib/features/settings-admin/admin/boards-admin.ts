@@ -59,6 +59,9 @@ export interface ReportRow {
 }
 
 const boardNotices: Record<string, string> = {
+	reported: 'Thanks. A person will review the report.',
+	blocked: "Blocked. You won't see their posts or comments.",
+	deleted: 'Deleted.',
 	board: 'Board deleted.',
 	sanctioned: 'Done. It applies from their next request.',
 	lifted: 'Lifted.',
@@ -71,7 +74,8 @@ const boardNotices: Record<string, string> = {
 
 /** boardNotice: the flash text for ?notice=, or "". */
 export function boardNotice(raw: string | null): string {
-	return boardNotices[raw ?? ''] ?? '';
+	const key = raw ?? '';
+	return Object.hasOwn(boardNotices, key) ? boardNotices[key] : '';
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

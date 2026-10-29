@@ -1,4 +1,7 @@
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { loadSocialConfig } from '#lib/server/app-context.js';
+import { achievementsOn } from '#lib/features/social/gates.server.js';
 import type { components } from '#lib/api/schema.js';
 import { apiJSON } from '#lib/server/api.js';
 import { errorStatus } from '#lib/features/settings-admin/api-errors.js';
@@ -35,8 +38,10 @@ function mapBadgeCard(badge: BadgeProgress): BadgeCardVM {
 	};
 }
 
-// Go LoadBadgesVM.
+// Go LoadBadgesVM. Achievements replace the badge grid while the backend has
+// them on (handlers.Settings "badges" → 302 /achievements).
 export const load: PageServerLoad = async (event) => {
+	if (achievementsOn(await loadSocialConfig(event))) redirect(302, '/achievements');
 	try {
 		const payload = await apiJSON<BadgesListResponse>(event, 'GET', '/v1/badges');
 		return {

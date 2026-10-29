@@ -28,6 +28,7 @@ export const Path = {
 	Settings: '/settings',
 	Friends: '/friends',
 	XP: '/xp',
+	Achievements: '/achievements',
 	Boards: '/boards',
 	Articles: '/articles',
 	Groups: '/groups',
@@ -54,6 +55,8 @@ export interface SocialConfig {
 	messaging: boolean;
 	groups: boolean;
 	groupsPublic: boolean;
+	achievements: boolean;
+	activityFeed: boolean;
 }
 
 export const socialOff: SocialConfig = {
@@ -64,7 +67,9 @@ export const socialOff: SocialConfig = {
 	leaderboards: false,
 	messaging: false,
 	groups: false,
-	groupsPublic: false
+	groupsPublic: false,
+	achievements: false,
+	activityFeed: false
 };
 
 export const leaderboardsOn = (c: SocialConfig) => c.enabled && c.leaderboards;
@@ -72,6 +77,9 @@ export const groupsOn = (c: SocialConfig) => c.enabled && c.groups;
 export const groupsPublicOn = (c: SocialConfig) => groupsOn(c) && c.groupsPublic;
 export const xImportOn = (c: SocialConfig) => c.enabled && c.xImport;
 export const facebookImportOn = (c: SocialConfig) => c.enabled && c.facebookImport;
+export const achievementsOn = (c: SocialConfig) => c.enabled && !!c.achievements;
+/** Checks achievements too, so a stale config can never show a feed without them. */
+export const activityFeedOn = (c: SocialConfig) => achievementsOn(c) && !!c.activityFeed;
 
 type Tr = (s: string) => string;
 
@@ -92,6 +100,7 @@ function friendsGroup(t: Tr, cfg: SocialConfig): NavItem {
 			{ label: t('XP history'), path: Path.XP, tab: 'friends' }
 		);
 	}
+	if (achievementsOn(cfg)) children.push({ label: t('Achievements'), path: Path.Achievements, tab: 'friends' });
 	children.push({ label: t('Invite friends'), path: Path.Friends + '/invite', tab: 'friends' });
 	return { label: t('Friends'), path: Path.Friends, tab: 'friends', children };
 }
@@ -103,6 +112,18 @@ function groupsGroup(t: Tr, cfg: SocialConfig): NavItem {
 	if (groupsPublicOn(cfg)) children.push({ label: t('Discover'), path: Path.Groups + '/discover', tab: 'groups' });
 	children.push({ label: t('New group'), path: Path.Groups + '/new', tab: 'groups' });
 	return { label: t('Groups'), path: Path.Groups, tab: 'groups', children };
+}
+
+// withAchievementsBadges points Settings -> Badges at the achievements page and
+// relabels it: achievements replace the old badge grid while they are on.
+function withAchievementsBadges(items: NavItem[], t: Tr): NavItem[] {
+	for (const item of items) {
+		if (item.path !== Path.Settings || !item.children) continue;
+		item.children = item.children.map((c) =>
+			c.path === Path.Settings + '/badges' ? { label: t('Achievements'), path: Path.Achievements, tab: 'settings' } : c
+		);
+	}
+	return items;
 }
 
 function insertAfterHome(items: NavItem[], group: NavItem): NavItem[] {
@@ -244,6 +265,7 @@ export function sidebarItemsFor(
 		const boards = items.find((i) => i.path === Path.Boards);
 		boards?.children?.push({ label: t('Articles'), path: Path.Articles, tab: 'community' });
 	}
+	if (achievementsOn(opts.social)) items = withAchievementsBadges(items, t);
 	return applyFeatureLocks(items, opts.locked);
 }
 
@@ -341,7 +363,7 @@ export function activeTab(path: string): Tab {
 	if (p('/tax')) return 'tax';
 	if (p('/settings')) return 'settings';
 	if (p(Path.Groups) || p('/g/')) return 'groups';
-	if (p(Path.Friends) || p(Path.XP)) return 'friends';
+	if (p(Path.Friends) || p(Path.XP) || p(Path.Achievements)) return 'friends';
 	if (p(Path.Boards) || p(Path.Articles) || p('/admin/community')) return 'community';
 	return 'dashboard';
 }

@@ -11,6 +11,7 @@ import IconArrowDown from '@lucide/svelte/icons/arrow-down';
 import IconArrowLeft from '@lucide/svelte/icons/arrow-left';
 import IconArrowRight from '@lucide/svelte/icons/arrow-right';
 import IconArrowUp from '@lucide/svelte/icons/arrow-up';
+import IconArrowUpRight from '@lucide/svelte/icons/arrow-up-right';
 import IconAward from '@lucide/svelte/icons/award';
 import IconBadge from '@lucide/svelte/icons/badge';
 import IconBadgeCheck from '@lucide/svelte/icons/badge-check';
@@ -26,10 +27,12 @@ import IconBlocks from '@lucide/svelte/icons/blocks';
 import IconBold from '@lucide/svelte/icons/bold';
 import IconBookOpen from '@lucide/svelte/icons/book-open';
 import IconBookOpenText from '@lucide/svelte/icons/book-open-text';
+import IconBookmark from '@lucide/svelte/icons/bookmark';
 import IconBrainCircuit from '@lucide/svelte/icons/brain-circuit';
 import IconBriefcase from '@lucide/svelte/icons/briefcase';
 import IconBubbles from '@lucide/svelte/icons/bubbles';
 import IconCalendar from '@lucide/svelte/icons/calendar';
+import IconCalendarCheck from '@lucide/svelte/icons/calendar-check';
 import IconCalendarClock from '@lucide/svelte/icons/calendar-clock';
 import IconCalendarDays from '@lucide/svelte/icons/calendar-days';
 import IconChartCandlestick from '@lucide/svelte/icons/chart-candlestick';
@@ -42,10 +45,12 @@ import IconChevronLeft from '@lucide/svelte/icons/chevron-left';
 import IconChevronRight from '@lucide/svelte/icons/chevron-right';
 import IconCircle from '@lucide/svelte/icons/circle';
 import IconCircleAlert from '@lucide/svelte/icons/circle-alert';
+import IconCircleArrowUp from '@lucide/svelte/icons/circle-arrow-up';
 import IconCircleCheck from '@lucide/svelte/icons/circle-check';
 import IconCircleDashed from '@lucide/svelte/icons/circle-dashed';
 import IconCircleDot from '@lucide/svelte/icons/circle-dot';
 import IconCircleGauge from '@lucide/svelte/icons/circle-gauge';
+import IconCirclePlus from '@lucide/svelte/icons/circle-plus';
 import IconCircleUserRound from '@lucide/svelte/icons/circle-user-round';
 import IconCircleX from '@lucide/svelte/icons/circle-x';
 import IconClipboard from '@lucide/svelte/icons/clipboard';
@@ -59,6 +64,8 @@ import IconContainer from '@lucide/svelte/icons/container';
 import IconCopy from '@lucide/svelte/icons/copy';
 import IconCreditCard from '@lucide/svelte/icons/credit-card';
 import IconCross from '@lucide/svelte/icons/cross';
+import IconCrosshair from '@lucide/svelte/icons/crosshair';
+import IconCrown from '@lucide/svelte/icons/crown';
 import IconCurrency from '@lucide/svelte/icons/currency';
 import IconDiff from '@lucide/svelte/icons/diff';
 import IconDownload from '@lucide/svelte/icons/download';
@@ -66,6 +73,7 @@ import IconEllipsis from '@lucide/svelte/icons/ellipsis';
 import IconEye from '@lucide/svelte/icons/eye';
 import IconEyeOff from '@lucide/svelte/icons/eye-off';
 import IconFile from '@lucide/svelte/icons/file';
+import IconFileText from '@lucide/svelte/icons/file-text';
 import IconFileUp from '@lucide/svelte/icons/file-up';
 import IconFlag from '@lucide/svelte/icons/flag';
 import IconFlame from '@lucide/svelte/icons/flame';
@@ -82,6 +90,7 @@ import IconHash from '@lucide/svelte/icons/hash';
 import IconHeading from '@lucide/svelte/icons/heading';
 import IconHeart from '@lucide/svelte/icons/heart';
 import IconHistory from '@lucide/svelte/icons/history';
+import IconHourglass from '@lucide/svelte/icons/hourglass';
 import IconHouse from '@lucide/svelte/icons/house';
 import IconImage from '@lucide/svelte/icons/image';
 import IconImport from '@lucide/svelte/icons/import';
@@ -101,6 +110,7 @@ import IconListFilter from '@lucide/svelte/icons/list-filter';
 import IconListFilterPlus from '@lucide/svelte/icons/list-filter-plus';
 import IconLock from '@lucide/svelte/icons/lock';
 import IconLogOut from '@lucide/svelte/icons/log-out';
+import IconMedal from '@lucide/svelte/icons/medal';
 import IconMeh from '@lucide/svelte/icons/meh';
 import IconMenu from '@lucide/svelte/icons/menu';
 import IconMessageCircle from '@lucide/svelte/icons/message-circle';
@@ -114,15 +124,19 @@ import IconOption from '@lucide/svelte/icons/option';
 import IconPalette from '@lucide/svelte/icons/palette';
 import IconPanelLeft from '@lucide/svelte/icons/panel-left';
 import IconPencil from '@lucide/svelte/icons/pencil';
+import IconPencilLine from '@lucide/svelte/icons/pencil-line';
 import IconPercent from '@lucide/svelte/icons/percent';
+import IconPlane from '@lucide/svelte/icons/plane';
 import IconPlus from '@lucide/svelte/icons/plus';
 import IconQuote from '@lucide/svelte/icons/quote';
 import IconRadio from '@lucide/svelte/icons/radio';
 import IconRatio from '@lucide/svelte/icons/ratio';
 import IconReceipt from '@lucide/svelte/icons/receipt';
 import IconReceiptText from '@lucide/svelte/icons/receipt-text';
+import IconRefreshCw from '@lucide/svelte/icons/refresh-cw';
 import IconReply from '@lucide/svelte/icons/reply';
 import IconRows3 from '@lucide/svelte/icons/rows-3';
+import IconRuler from '@lucide/svelte/icons/ruler';
 import IconSave from '@lucide/svelte/icons/save';
 import IconScale from '@lucide/svelte/icons/scale';
 import IconScroll from '@lucide/svelte/icons/scroll';
@@ -131,15 +145,20 @@ import IconSection from '@lucide/svelte/icons/section';
 import IconSend from '@lucide/svelte/icons/send';
 import IconSettings from '@lucide/svelte/icons/settings';
 import IconShare from '@lucide/svelte/icons/share';
+import IconShoppingCart from '@lucide/svelte/icons/shopping-cart';
 import IconSignal from '@lucide/svelte/icons/signal';
+import IconSlidersHorizontal from '@lucide/svelte/icons/sliders-horizontal';
 import IconSmile from '@lucide/svelte/icons/smile';
 import IconSparkles from '@lucide/svelte/icons/sparkles';
 import IconSquare from '@lucide/svelte/icons/square';
 import IconStar from '@lucide/svelte/icons/star';
+import IconSunset from '@lucide/svelte/icons/sunset';
 import IconTable from '@lucide/svelte/icons/table';
 import IconTag from '@lucide/svelte/icons/tag';
 import IconTags from '@lucide/svelte/icons/tags';
 import IconTarget from '@lucide/svelte/icons/target';
+import IconTerminal from '@lucide/svelte/icons/terminal';
+import IconThumbsUp from '@lucide/svelte/icons/thumbs-up';
 import IconTrash2 from '@lucide/svelte/icons/trash-2';
 import IconTrendingUp from '@lucide/svelte/icons/trending-up';
 import IconTrendingUpDown from '@lucide/svelte/icons/trending-up-down';
@@ -154,6 +173,7 @@ import IconUserPlus from '@lucide/svelte/icons/user-plus';
 import IconUserRound from '@lucide/svelte/icons/user-round';
 import IconUserRoundCog from '@lucide/svelte/icons/user-round-cog';
 import IconUsers from '@lucide/svelte/icons/users';
+import IconUsersRound from '@lucide/svelte/icons/users-round';
 import IconVariable from '@lucide/svelte/icons/variable';
 import IconVault from '@lucide/svelte/icons/vault';
 import IconVideo from '@lucide/svelte/icons/video';
@@ -173,6 +193,7 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'arrow-left': IconArrowLeft,
 	'arrow-right': IconArrowRight,
 	'arrow-up': IconArrowUp,
+	'arrow-up-right': IconArrowUpRight,
 	'award': IconAward,
 	'badge': IconBadge,
 	'badge-check': IconBadgeCheck,
@@ -188,10 +209,12 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'bold': IconBold,
 	'book-open': IconBookOpen,
 	'book-open-text': IconBookOpenText,
+	'bookmark': IconBookmark,
 	'brain-circuit': IconBrainCircuit,
 	'briefcase': IconBriefcase,
 	'bubbles': IconBubbles,
 	'calendar': IconCalendar,
+	'calendar-check': IconCalendarCheck,
 	'calendar-clock': IconCalendarClock,
 	'calendar-days': IconCalendarDays,
 	'chart-candlestick': IconChartCandlestick,
@@ -204,10 +227,12 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'chevron-right': IconChevronRight,
 	'circle': IconCircle,
 	'circle-alert': IconCircleAlert,
+	'circle-arrow-up': IconCircleArrowUp,
 	'circle-check': IconCircleCheck,
 	'circle-dashed': IconCircleDashed,
 	'circle-dot': IconCircleDot,
 	'circle-gauge': IconCircleGauge,
+	'circle-plus': IconCirclePlus,
 	'circle-user-round': IconCircleUserRound,
 	'circle-x': IconCircleX,
 	'clipboard': IconClipboard,
@@ -221,6 +246,8 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'copy': IconCopy,
 	'credit-card': IconCreditCard,
 	'cross': IconCross,
+	'crosshair': IconCrosshair,
+	'crown': IconCrown,
 	'currency': IconCurrency,
 	'diff': IconDiff,
 	'download': IconDownload,
@@ -228,6 +255,7 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'eye': IconEye,
 	'eye-off': IconEyeOff,
 	'file': IconFile,
+	'file-text': IconFileText,
 	'file-up': IconFileUp,
 	'flag': IconFlag,
 	'flame': IconFlame,
@@ -244,6 +272,7 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'heading': IconHeading,
 	'heart': IconHeart,
 	'history': IconHistory,
+	'hourglass': IconHourglass,
 	'house': IconHouse,
 	'image': IconImage,
 	'import': IconImport,
@@ -263,6 +292,7 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'list-filter-plus': IconListFilterPlus,
 	'lock': IconLock,
 	'log-out': IconLogOut,
+	'medal': IconMedal,
 	'meh': IconMeh,
 	'menu': IconMenu,
 	'message-circle': IconMessageCircle,
@@ -276,15 +306,19 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'palette': IconPalette,
 	'panel-left': IconPanelLeft,
 	'pencil': IconPencil,
+	'pencil-line': IconPencilLine,
 	'percent': IconPercent,
+	'plane': IconPlane,
 	'plus': IconPlus,
 	'quote': IconQuote,
 	'radio': IconRadio,
 	'ratio': IconRatio,
 	'receipt': IconReceipt,
 	'receipt-text': IconReceiptText,
+	'refresh-cw': IconRefreshCw,
 	'reply': IconReply,
 	'rows-3': IconRows3,
+	'ruler': IconRuler,
 	'save': IconSave,
 	'scale': IconScale,
 	'scroll': IconScroll,
@@ -293,15 +327,20 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'send': IconSend,
 	'settings': IconSettings,
 	'share': IconShare,
+	'shopping-cart': IconShoppingCart,
 	'signal': IconSignal,
+	'sliders-horizontal': IconSlidersHorizontal,
 	'smile': IconSmile,
 	'sparkles': IconSparkles,
 	'square': IconSquare,
 	'star': IconStar,
+	'sunset': IconSunset,
 	'table': IconTable,
 	'tag': IconTag,
 	'tags': IconTags,
 	'target': IconTarget,
+	'terminal': IconTerminal,
+	'thumbs-up': IconThumbsUp,
 	'trash-2': IconTrash2,
 	'trending-up': IconTrendingUp,
 	'trending-up-down': IconTrendingUpDown,
@@ -316,6 +355,7 @@ export const iconRegistry: Record<string, Component<LucideProps>> = {
 	'user-round': IconUserRound,
 	'user-round-cog': IconUserRoundCog,
 	'users': IconUsers,
+	'users-round': IconUsersRound,
 	'variable': IconVariable,
 	'vault': IconVault,
 	'video': IconVideo,

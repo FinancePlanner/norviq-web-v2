@@ -680,6 +680,18 @@ mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; appe
 - [x] `GET /xp/card` → h.XPCard → v2: see social.md
 - [x] `POST /xp/check-in` → h.XPCheckIn → v2: see social.md
 
+### /achievements (3) — added in norviq-web ec05890 (MountAchievementsRoutes, RequireAchievements)
+
+- [x] `GET /achievements` → h.Achievements → v2: (app)/achievements/+page.{server.ts,svelte} (see docs/parity/go-sync.md)
+- [x] `GET /achievements/unseen` → h.AchievementsUnseen → v2: (app)/achievements/unseen/+server.ts (JSON) + UnlockToast.svelte in AppShell
+- [x] `POST /achievements/showcase` → h.AchievementsShowcase → v2: (app)/achievements/showcase/+server.ts
+
+### /friends achievements routes (3) — added in norviq-web ec05890 (RequireActivityFeed)
+
+- [x] `GET /friends/u/{userId}/achievements` → h.FriendAchievements → v2: see docs/parity/social.md
+- [x] `GET /friends/feed` → h.Feed → v2: see docs/parity/social.md
+- [x] `POST /friends/feed/{activityId}/congrats` → h.FeedCongrats → v2: see docs/parity/social.md
+
 ### /articles (16)
 
 - [x] `GET /articles` → h.Feed → v2: see docs/parity/public.md

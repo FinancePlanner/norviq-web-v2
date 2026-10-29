@@ -53,6 +53,7 @@
 					<h2 class="text-lg leading-none font-semibold tracking-tight">{t('What friends see')}</h2>
 					<div class="mt-4 space-y-4">
 						{#each data.toggles as toggle (toggle.key)}
+							<input type="hidden" name="shown" value={toggle.key} />
 							<SwitchField
 								id={'privacy-' + toggle.key}
 								name={toggle.key}

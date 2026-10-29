@@ -3,6 +3,8 @@
 	import { FormErrorBanner, SelectField, SubmitButton, TextareaField, ToastBanner, withSpinner } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
+	import { capture } from '#lib/analytics/index.js';
+	import { DiscordURL } from '#lib/discord.js';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -39,5 +41,15 @@
 			</div>
 			<SubmitButton class="w-auto px-6">Send feedback</SubmitButton>
 		</form>
+		<p class="mt-4 text-sm text-muted-foreground">
+			{t('Want to talk it through or see what others think?')}
+			<a
+				href={DiscordURL}
+				class="underline"
+				target="_blank"
+				rel="noopener noreferrer"
+				onclick={() => capture('discord_link_clicked', { surface: 'support' })}>{t('Join us on Discord')}</a
+			>
+		</p>
 	</vigil.SettingsShell>
 </div>

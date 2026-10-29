@@ -104,6 +104,32 @@ html[data-sidebar='collapsed'] .app-sidebar-group-panel {
   }
 }
 
+/* Unlock toast: pinned to the viewport so it never lands below the fold.
+   Mobile sits above the bottom tab bar; desktop takes the bottom-right corner. */
+.achievement-toast {
+  position: fixed;
+  z-index: 50;
+  left: calc(0.75rem + env(safe-area-inset-left, 0px));
+  right: calc(0.75rem + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.75rem);
+  max-width: 28rem;
+  margin-left: auto;
+}
+
+/* Opaque: the banner's translucent tint would show page content through it. */
+.achievement-toast.success-banner {
+  background: color-mix(in srgb, var(--color-success) 12%, var(--color-card-bg));
+  border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);
+}
+
+@media (min-width: 1024px) {
+  .achievement-toast {
+    left: auto;
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+}
+
 .app-bottom-tabs-more {
   @apply absolute bottom-full right-3 z-50 mb-2 flex min-w-44 flex-col gap-1 rounded-2xl border p-2 shadow-lg;
   background: var(--color-card-bg);
