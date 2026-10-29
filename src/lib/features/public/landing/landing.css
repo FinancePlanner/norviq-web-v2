@@ -1,0 +1,585 @@
+/*
+ * landing.css — landing-only layer, loaded after styles.css on `/` and only
+ * on `/`.
+ *
+ * ADDITIVE ONLY: selectors here exist nowhere in assets/styles.css, so the
+ * cascade there is untouched. Deliberately plain CSS: no `@import
+ * 'tailwindcss'`, because that would duplicate preflight and the whole utility
+ * surface into a second bundle.
+ *
+ * 2026-09-10: this file used to carry the WebGL scroll-world layer (canvas,
+ * Lenis stylesheet, html.nq-world gates). That went with the rest of the
+ * command-center decoration. The landing page's own rules live in styles.css
+ * under .landing-*; this file stays as the entry point the layout already loads
+ * and holds only rules `/` needs and nothing else does.
+ */
+
+/* Market brief section: the shell renders nothing when the feature is off or
+ * nothing has been generated, and an empty section must not leave the
+ * section's vertical padding behind as a gap under the hero. */
+.landing-market-brief:not(:has(.dash-panel)) {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Hero (2026-10-20): centred copy over a fanned wall of sample cards.
+ *
+ * The wall is two absolutely positioned rows. Each slot gets its geometry as
+ * custom properties from hero_cards.go (--hero-x, --hero-rot, --hero-y,
+ * --hero-z, --hero-delay); the
+ * rules here only turn them into position. Plain 2D: rotate + translate, no
+ * perspective. The sway runs on an inner element so it never fights the
+ * slot's own rotate/translate.
+ * ------------------------------------------------------------------------- */
+
+.landing-hero-v3 {
+  --card-h: clamp(11rem, 26vh, 18rem);
+  /* Phones show the front row only, which sits 20%+ below the baseline. */
+  --wall-h: calc(var(--card-h) * 0.86 + 12px);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* Full-bleed: undo .landing-page's side padding so the wall spans the
+   * viewport, then restore it for the copy. */
+  margin-inline: -1rem;
+  padding: 3rem 1rem calc(var(--wall-h) + 2.5rem);
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .landing-hero-v3 {
+    margin-inline: -1.5rem;
+    padding-inline: 1.5rem;
+    padding-top: 4.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .landing-hero-v3 {
+    /* The back row adds a raised arch behind the front one. */
+    --wall-h: calc(var(--card-h) * 1.08 + 12px);
+    margin-inline: -2rem;
+    padding-inline: 2rem;
+  }
+}
+
+.hero-glow {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  z-index: -1;
+  width: 42rem;
+  height: 24rem;
+  translate: -50% 0;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-tint) 10%, transparent);
+  filter: blur(64px);
+  pointer-events: none;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 48rem;
+  margin-inline: auto;
+}
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-card-bg) 60%, transparent);
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  transition:
+    border-color 180ms ease-out,
+    color 180ms ease-out;
+}
+
+.hero-pill:hover {
+  border-color: color-mix(in srgb, var(--color-tint) 50%, transparent);
+  color: var(--foreground);
+}
+
+.hero-pill:focus-visible {
+  outline: 2px solid var(--color-tint);
+  outline-offset: 3px;
+}
+
+.hero-pill-dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 9999px;
+  background: var(--color-tint);
+}
+
+.hero-pill-arrow {
+  opacity: 0.5;
+  transition: translate 180ms ease-out;
+}
+
+.hero-pill:hover .hero-pill-arrow {
+  translate: 2px 0;
+}
+
+.hero-title {
+  margin-top: 1.5rem;
+  color: var(--landing-heading-top);
+  font-family: var(--font-sans);
+  font-size: clamp(2.25rem, 1.35rem + 3.6vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.hero-title span {
+  display: block;
+  text-wrap: balance;
+}
+
+.hero-title-muted {
+  color: var(--muted-foreground);
+}
+
+.hero-subtitle {
+  max-width: 36rem;
+  margin-top: 1.25rem;
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+@media (min-width: 640px) {
+  .hero-subtitle {
+    font-size: 1.125rem;
+  }
+}
+
+.hero-store-row {
+  margin-top: 2rem;
+}
+
+.hero-store-row .landing-store-badges {
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .hero-store-row .landing-store-badges {
+    align-items: flex-start;
+  }
+}
+
+.hero-web-cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 1.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.hero-web-link {
+  color: var(--foreground);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+.hero-web-link:hover {
+  color: var(--color-tint);
+  text-decoration: underline;
+}
+
+.landing-nav-x {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.landing-nav-x:hover {
+  color: var(--foreground);
+}
+
+/* --- Card wall ------------------------------------------------------------ */
+
+.hero-wall {
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--wall-h);
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Fade the wall into the page: background at the bottom edge, clear by half
+ * height. */
+.hero-wall::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: linear-gradient(to top, var(--landing-bg) 0%, transparent 50%);
+}
+
+.hero-wall-slot {
+  position: absolute;
+  bottom: 0;
+  left: var(--hero-x);
+  z-index: var(--hero-z);
+  height: var(--card-h);
+  aspect-ratio: 2 / 3;
+  transform-origin: bottom center;
+  translate: -50% var(--hero-y);
+  /* Phones fan less: the same arc at 55% of the angle. */
+  rotate: calc(var(--hero-rot) * 0.55);
+}
+
+.hero-wall-back {
+  display: none;
+  scale: 0.9;
+}
+
+.hero-wall-md,
+.hero-wall-lg {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hero-wall-slot {
+    rotate: var(--hero-rot);
+  }
+
+  .hero-wall-back,
+  .hero-wall-md {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-wall-lg {
+    display: block;
+  }
+}
+
+/* The size container for the card's cqi units: an element's own cqi resolve
+ * against its nearest container *ancestor*, so it cannot be the card. */
+.hero-wall-sway {
+  height: 100%;
+  container-type: inline-size;
+  animation: hero-sway 7s ease-in-out infinite;
+  animation-delay: var(--hero-delay, 0s);
+}
+
+@keyframes hero-sway {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wall-sway {
+    animation: none;
+  }
+
+  .hero-pill-arrow {
+    transition: none;
+  }
+}
+
+.hero-card {
+  --tone: var(--color-tint);
+  display: flex;
+  flex-direction: column;
+  gap: 3cqi;
+  width: 100%;
+  height: 100%;
+  padding: 9cqi;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--color-card-bg);
+  box-shadow:
+    0 28px 56px -16px rgb(15 23 42 / 38%),
+    0 8px 18px -10px rgb(15 23 42 / 24%);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 7.5cqi;
+  line-height: 1.25;
+  text-align: left;
+  filter: brightness(0.94);
+}
+
+html.dark .hero-card {
+  box-shadow:
+    0 28px 60px -12px rgb(0 0 0 / 70%),
+    0 8px 18px -8px rgb(0 0 0 / 50%);
+  filter: brightness(0.7);
+}
+
+.hero-card .is-up,
+.hero-card.is-up {
+  --tone: var(--color-success);
+}
+
+.hero-card .is-down,
+.hero-card.is-down {
+  --tone: var(--color-danger);
+}
+
+/* Figures: the sans face with tabular numerals, as everywhere else in the
+ * app (mono is reserved for code). */
+.hc-mono {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.hc-head,
+.hc-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4cqi;
+}
+
+.hc-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 3cqi;
+  color: var(--muted-foreground);
+  font-size: 6.5cqi;
+  font-weight: 600;
+}
+
+.hc-label-accent {
+  color: var(--color-tint);
+}
+
+.hc-dot {
+  width: 4cqi;
+  height: 4cqi;
+  border-radius: 9999px;
+  background: var(--color-tint);
+}
+
+.hc-symbol {
+  font-size: 9cqi;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.hc-sub {
+  color: var(--muted-foreground);
+  font-size: 6.5cqi;
+}
+
+.hc-value {
+  font-size: 10cqi;
+  font-weight: 600;
+}
+
+.hc-big {
+  font-size: 13cqi;
+  font-weight: 700;
+}
+
+.hc-tone,
+.hc-value.is-down,
+.hc-value.is-up,
+.hc-lines .is-up,
+.hc-lines .is-down {
+  color: var(--tone);
+}
+
+.hc-delta {
+  align-self: flex-start;
+  padding: 1cqi 3.5cqi;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--tone) 14%, transparent);
+  color: var(--tone);
+  font-size: 6.5cqi;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.hc-head .hc-delta {
+  align-self: center;
+}
+
+.hc-spark {
+  width: 100%;
+  height: 38cqi;
+  margin-top: auto;
+  overflow: visible;
+}
+
+.hc-spark-line {
+  fill: none;
+  stroke: var(--tone);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hc-spark-area {
+  fill: color-mix(in srgb, var(--tone) 14%, transparent);
+}
+
+.hero-card-networth {
+  --tone: var(--color-success);
+}
+
+.hero-card-networth .hc-spark-line {
+  stroke: var(--color-tint);
+}
+
+.hero-card-networth .hc-spark-area {
+  fill: color-mix(in srgb, var(--color-tint) 16%, transparent);
+}
+
+.hc-ring {
+  position: relative;
+  width: 58cqi;
+  margin: 2cqi auto;
+}
+
+.hc-ring svg {
+  display: block;
+  width: 100%;
+  rotate: -90deg;
+}
+
+.hc-ring circle {
+  fill: none;
+  stroke-width: 3.6;
+}
+
+.hc-ring-track {
+  stroke: color-mix(in srgb, var(--muted-foreground) 18%, transparent);
+}
+
+.hc-ring-fill {
+  stroke: var(--color-tint);
+  stroke-linecap: round;
+}
+
+.hc-ring-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 11cqi;
+  font-weight: 700;
+}
+
+.hc-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5cqi;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 6.5cqi;
+}
+
+.hc-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 4cqi;
+  color: var(--muted-foreground);
+}
+
+.hc-lines li > :last-child {
+  color: var(--foreground);
+}
+
+.hc-lines li > .is-up,
+.hc-lines li > .is-down {
+  color: var(--tone);
+}
+
+.hero-card-budget .hc-lines,
+.hero-card-dividend .hc-lines,
+.hero-card-tax .hc-lines {
+  margin-top: auto;
+}
+
+.hc-note {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 6.5cqi;
+  line-height: 1.35;
+}
+
+.hero-card-insight .hc-lines {
+  margin-top: auto;
+  padding-top: 3cqi;
+  border-top: 1px solid var(--border);
+}
+
+.hc-merchant {
+  font-size: 9cqi;
+  font-weight: 700;
+}
+
+.hc-lines-dotted li {
+  padding-bottom: 2cqi;
+  border-bottom: 1px dashed color-mix(in srgb, var(--muted-foreground) 30%, transparent);
+}
+
+.hc-total {
+  margin-top: auto;
+  font-size: 9cqi;
+  font-weight: 700;
+}
+
+.hc-chip {
+  align-self: flex-start;
+  padding: 1.5cqi 4cqi;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--muted-foreground) 14%, transparent);
+  color: var(--foreground);
+  font-size: 6cqi;
+  font-weight: 600;
+}
+
+.hc-chip-accent {
+  background: color-mix(in srgb, var(--color-tint) 16%, transparent);
+  color: var(--color-tint);
+}
+
+.hero-card-shot {
+  padding: 0;
+  background: #0b0f14;
+}
+
+.hero-card-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* The hero pill jumps here; keep the heading clear of the sticky nav. */
+#eu-tax {
+  scroll-margin-top: 6.5rem;
+}
