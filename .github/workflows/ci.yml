@@ -1,0 +1,39 @@
+# Checks every PR and every push to main. A green push to main deploys the
+# staging Worker; production is a manual dispatch of deploy.yml.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      # Only the server project: the client and storybook projects need a
+      # browser. `bun run lint` is not gated yet (Prettier was never applied
+      # repo-wide).
+      - run: bunx vitest run --project server
+      - run: bun run build
+      # After build: the generated types include the built worker's module
+      # (GlobalProps.mainModule), so the check depends on the build output.
+      - run: bun run types:check
+
+  deploy-staging:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: staging
+    secrets: inherit

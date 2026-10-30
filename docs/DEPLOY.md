@@ -171,6 +171,23 @@ Rollback: remove the custom-domain routes (or delete them in the dashboard) and
 recreate the two A records pointing to 178.105.244.185. The Go web serves again
 right away.
 
+## CI/CD (GitHub Actions)
+
+- `ci.yml`: every PR and push to `main` runs `check`, `types:check`, the
+  server vitest project and `build`. A green push to `main` then deploys the
+  **staging** Worker through `deploy.yml`.
+- `deploy.yml`: production is manual, like the rest of Norviq:
+  `gh workflow run deploy.yml -f environment=production`. To gate it further,
+  add required reviewers to the `production` environment in the repo settings.
+- One repository secret: `CLOUDFLARE_API_TOKEN` (Cloudflare dashboard → My
+  Profile → API Tokens → template "Edit Cloudflare Workers", account = this
+  one, zone = `norviq.org`, which the custom domains need). `account_id` is in
+  `wrangler.jsonc`. The Worker's runtime secrets stay on Cloudflare; a deploy
+  never touches them.
+- Each deploy is tagged with the commit (`wrangler deployments list`), and
+  rollback is `bunx wrangler rollback [version-id]` (add `--env staging` for
+  staging).
+
 ## Commands
 
 ```bash
