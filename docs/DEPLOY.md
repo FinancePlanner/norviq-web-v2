@@ -124,6 +124,14 @@ quiet time, and enable DNSSEC in Cloudflare only after the zone is Active.
 
 ## Production cutover checklist
 
+**Done 2026-10-30 09:53 UTC.** `norviq.org` and `www.norviq.org` are custom
+domains of the `norviq-web` Worker (version 29adf7c4). The backend went first:
+api.norviq.org → norviq-backend-v2 (infra #499/#500, 09:18 UTC). The Go web
+stays deployed in namespace `norviq` until at least 2026-11-06 for rollback.
+To attach the domains, the old `@`/`www` A records had to be deleted first
+(error 100117); outage window ~20 s.
+
+
 Preconditions, in order:
 
 - [ ] Backend v2 serves `/v1/auth` in production with `EDGE_CLIENT_IP_KEY`
