@@ -2,6 +2,8 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	// Norviq web (SvelteKit) on Cloudflare Workers. See docs/DEPLOY.md.
 	"name": "norviq-web",
+	// Lets CI deploy with only CLOUDFLARE_API_TOKEN (not a secret).
+	"account_id": "a1140e077254a0b458a463c8af1247b0",
 	"compatibility_date": "2026-10-28",
 	"compatibility_flags": ["nodejs_als"],
 	"main": ".svelte-kit/cloudflare/_worker.js",
