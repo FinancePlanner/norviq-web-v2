@@ -127,7 +127,10 @@ quiet time, and enable DNSSEC in Cloudflare only after the zone is Active.
 **Done 2026-10-30 09:53 UTC.** `norviq.org` and `www.norviq.org` are custom
 domains of the `norviq-web` Worker (version 29adf7c4). The backend went first:
 api.norviq.org → norviq-backend-v2 (infra #499/#500, 09:18 UTC). The Go web
-stays deployed in namespace `norviq` until at least 2026-11-06 for rollback.
+was retired in production at 10:18 UTC the same day (infra #506 adds the Argo
+finalizer, #507 removes the Application). Rollback now means reverting #507,
+removing the Worker's custom domains and recreating A `@`/`www` →
+178.105.244.185. DNSSEC re-enabled 10:12 UTC (Cloudflare-signed, DS 2371).
 To attach the domains, the old `@`/`www` A records had to be deleted first
 (error 100117); outage window ~20 s.
 
