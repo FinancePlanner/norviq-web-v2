@@ -2,7 +2,6 @@
 // sparkline for YoY growth rates. Rendered by GrowthSparkline.svelte (SSR);
 // growthSparklineSVG() returns the exact Go markup as a string.
 import { formatFloat } from '../format.js';
-import { colorTint } from './palette.js';
 
 export interface GrowthSparklinePoint {
 	label: string;
@@ -51,7 +50,9 @@ export function growthSparklineGeometry(
 	);
 	const linePath = 'M ' + coords.join(' L ');
 	const areaPath = `${linePath} L ${f2(padX + (values.length - 1) * xStep)},${f2(height - padY)} L ${f2(padX)},${f2(height - padY)} Z`;
-	const stroke = tone === 'negative' ? '#f85149' : colorTint;
+	// A CSS variable rather than a hex so the line follows light/dark; the
+	// component applies it through style:, where var() is valid.
+	const stroke = tone === 'negative' ? 'var(--color-loss)' : 'var(--color-gain)';
 	const zeroY = padY + ((maxV - 0) / rangeV) * plotH;
 	return {
 		viewBox: `0 0 ${formatFloat(width, 0)} ${formatFloat(height, 0)}`,
@@ -71,10 +72,10 @@ export function growthSparklineSVG(points: readonly GrowthSparklinePoint[], tone
 	const g = growthSparklineGeometry(points, tone);
 	if (!g) return '';
 	let out = `<svg class="fin-growth-sparkline-svg" viewBox="${g.viewBox}" role="img" aria-hidden="true">`;
-	out += `<defs><linearGradient id="${g.fillID}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${g.stroke}" stop-opacity="0.35"/><stop offset="100%" stop-color="${g.stroke}" stop-opacity="0"/></linearGradient></defs>`;
+	out += `<defs><linearGradient id="${g.fillID}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:${g.stroke}" stop-opacity="0.35"/><stop offset="100%" style="stop-color:${g.stroke}" stop-opacity="0"/></linearGradient></defs>`;
 	if (g.zeroLine)
 		out += `<line class="fin-growth-sparkline-zero" x1="${g.zeroLine.x1}" y1="${g.zeroLine.y1}" x2="${g.zeroLine.x2}" y2="${g.zeroLine.y2}"/>`;
 	out += `<path class="fin-growth-sparkline-area" fill="url(#${g.fillID})" d="${g.areaPath}"/>`;
-	out += `<polyline class="fin-growth-sparkline-line" fill="none" stroke="${g.stroke}" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" points="${g.points}"/>`;
+	out += `<polyline class="fin-growth-sparkline-line" fill="none" style="stroke:${g.stroke}" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" points="${g.points}"/>`;
 	return out + '</svg>';
 }

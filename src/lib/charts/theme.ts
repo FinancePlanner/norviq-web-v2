@@ -36,6 +36,7 @@ export interface ChartPalette {
 	grid: string;
 	line: string;
 	lineAlt: string;
+	up: string;
 	down: string;
 	tooltipBg: string;
 	tooltipBorder: string;
@@ -45,41 +46,64 @@ export interface ChartPalette {
 	emphasisBorder: string;
 }
 
-/** Fiscal.ai (light) / TradingView (dark) palettes, overridable through theme.css. */
+/**
+ * Precision palettes (docs/precision-identity.md), overridable through theme.css.
+ * The fallbacks are the token values, so an unstyled environment still renders
+ * on-brand; they only apply when the CSS variable is missing.
+ */
 export function getChartPalette(env: ThemeEnv): ChartPalette {
 	const v = env.cssVar;
 	if (env.dark) {
 		return {
-			axis: v('--chart-axis', '#787b86'),
-			grid: v('--chart-grid', '#2a2e39'),
-			line: v('--chart-line', '#2962ff'),
-			lineAlt: v('--chart-line-alt', '#26a69a'),
-			down: v('--chart-down', '#f23645'),
-			tooltipBg: v('--chart-tooltip-bg', '#1e222d'),
-			tooltipBorder: v('--chart-tooltip-border', '#363a45'),
-			tooltipText: v('--chart-tooltip-text', '#d1d4dc'),
-			areaOpacity: Number(v('--chart-area-opacity', '0.22')),
-			pointer: v('--chart-pointer', '#787b86'),
-			emphasisBorder: v('--chart-emphasis-border', '#d1d4dc')
+			axis: v('--chart-axis', '#9da9b8'),
+			grid: v('--chart-grid', '#344258'),
+			line: v('--chart-line', '#d8b477'),
+			lineAlt: v('--chart-line-alt', '#9da9b8'),
+			up: v('--chart-up', '#42b894'),
+			down: v('--chart-down', '#e16d75'),
+			tooltipBg: v('--chart-tooltip-bg', '#1b2940'),
+			tooltipBorder: v('--chart-tooltip-border', '#344258'),
+			tooltipText: v('--chart-tooltip-text', '#e9e9e5'),
+			areaOpacity: Number(v('--chart-area-opacity', '0.18')),
+			pointer: v('--chart-pointer', '#9da9b8'),
+			emphasisBorder: v('--chart-emphasis-border', '#111b2b')
 		};
 	}
 	return {
-		axis: v('--chart-axis', '#64748b'),
-		grid: v('--chart-grid', '#e2e8f0'),
-		line: v('--chart-line', '#2563eb'),
-		lineAlt: v('--chart-line-alt', '#0d9488'),
-		down: v('--chart-down', '#dc2626'),
+		axis: v('--chart-axis', '#4a5568'),
+		grid: v('--chart-grid', '#e6e1d7'),
+		line: v('--chart-line', '#80612a'),
+		lineAlt: v('--chart-line-alt', '#4a5568'),
+		up: v('--chart-up', '#1b6e51'),
+		down: v('--chart-down', '#ab3640'),
 		tooltipBg: v('--chart-tooltip-bg', '#ffffff'),
-		tooltipBorder: v('--chart-tooltip-border', '#e2e8f0'),
-		tooltipText: v('--chart-tooltip-text', '#0f172a'),
-		areaOpacity: Number(v('--chart-area-opacity', '0.14')),
-		pointer: v('--chart-pointer', '#94a3b8'),
+		tooltipBorder: v('--chart-tooltip-border', '#e2dcd0'),
+		tooltipText: v('--chart-tooltip-text', '#111b2b'),
+		areaOpacity: Number(v('--chart-area-opacity', '0.16')),
+		pointer: v('--chart-pointer', '#57626e'),
 		emphasisBorder: v('--chart-emphasis-border', '#ffffff')
 	};
 }
 
-const DOWN_COLORS = new Set(['#f85149', '#ff3b30', '#f23645', '#dc2626', '#ef5350']);
+// A builder marks direction by colouring a series with one of these; the patch
+// swaps it for the live --chart-up / --chart-down. The first entry of each is
+// palette.ts colorUp / colorDown; the rest are older literals still produced
+// by some builders and stored options.
+const UP_COLORS = new Set(['#42b894', '#22c55e']);
+const DOWN_COLORS = new Set([
+	'#e16d75',
+	'#f85149',
+	'#ff3b30',
+	'#f23645',
+	'#dc2626',
+	'#ef5350',
+	'#ef4444'
+]);
 const ALT_LINE_COLORS = new Set(['#26a69a', '#59d1cc', '#0d9488', '#32ade6', '#089981']);
+
+export function isUpColor(color: unknown): boolean {
+	return typeof color === 'string' && UP_COLORS.has(color.toLowerCase());
+}
 
 export function isDownColor(color: unknown): boolean {
 	return typeof color === 'string' && DOWN_COLORS.has(color.toLowerCase());
@@ -115,24 +139,27 @@ const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : [v]);
 export function pillarColor(series: unknown, env: ThemeEnv): string {
 	const item = series && typeof series === 'object' ? (series as Obj) : { name: series };
 	if (item.colorVar)
-		return env.cssVar(String(item.colorVar), env.cssVar('--muted-foreground', '#8D8371'));
+		return env.cssVar(String(item.colorVar), env.cssVar('--muted-foreground', '#57626e'));
 	switch (String(item.name || '').toLowerCase()) {
 		case 'fundamentals':
-			return env.cssVar('--color-pillar-fundamentals', '#0f766e');
+			return env.cssVar('--color-pillar-fundamentals', '#80612a');
 		case 'future you':
 		case 'futureyou':
 			return env.cssVar('--color-pillar-future-you', '#5856d6');
 		case 'fun':
-			return env.cssVar('--color-pillar-fun', '#0d9488');
+			return env.cssVar('--color-pillar-fun', '#4f78a8');
 		default:
-			return env.cssVar('--muted-foreground', '#8D8371');
+			return env.cssVar('--muted-foreground', '#57626e');
 	}
 }
 
 /** Density ramp for the activity calendar: one hue (live --color-tint), stepped by alpha. */
 export function activityRamp(env: ThemeEnv): string[] {
-	const rgb = parseHex(env.cssVar('--color-tint', '#0f766e'));
-	if (!rgb) return ['rgba(15,118,110,0.15)', 'rgba(15,118,110,1)'];
+	// --color-tint is OKLCH in theme.css, which parseHex cannot read, so in the
+	// browser this almost always falls through to the per-appearance gold below
+	// (champagne #D8B477 dark, deep gold #80612A light).
+	const rgb =
+		parseHex(env.cssVar('--color-tint', '')) ?? (env.dark ? [216, 180, 119] : [138, 106, 46]);
 	const [r, g, b] = rgb;
 	return [0.14, 0.38, 0.68, 1].map((a) => `rgba(${r},${g},${b},${a})`);
 }
@@ -211,6 +238,7 @@ export function resolveLineColor(
 	if (kind === 'spending' || chartID.includes('spending') || chartID.includes('expenses-year'))
 		return palette.lineAlt;
 	if (isDownColor(existingColor)) return palette.down;
+	if (isUpColor(existingColor)) return palette.up;
 	if (isAltLineColor(existingColor)) return palette.lineAlt;
 	return palette.line;
 }
@@ -282,6 +310,29 @@ export function patchSeriesList(
 				borderWidth: 2
 			};
 			next.emphasis = { ...obj(item.emphasis), focus: 'series' };
+		}
+
+		// Gain/loss bars colour each data point; repaint only the direction colours.
+		if (item.type === 'bar' && Array.isArray(item.data)) {
+			next.data = item.data.map((d) => {
+				const style = obj(obj(d).itemStyle);
+				const color = isUpColor(style.color)
+					? palette.up
+					: isDownColor(style.color)
+						? palette.down
+						: null;
+				return color ? { ...obj(d), itemStyle: { ...style, color } } : d;
+			});
+		}
+
+		if (item.type === 'candlestick') {
+			next.itemStyle = {
+				...obj(item.itemStyle),
+				color: palette.up,
+				color0: palette.down,
+				borderColor: palette.up,
+				borderColor0: palette.down
+			};
 		}
 
 		if (item.type === 'heatmap') {
@@ -380,7 +431,7 @@ export function themedOptionPatch(current: Obj, chartID: string, env: ThemeEnv):
 		tooltip: buildTooltipOption(current, palette, triggerOn, env, formatter),
 		xAxis: skipAxes ? current.xAxis : patchAxisList(current.xAxis, palette),
 		yAxis: skipAxes ? current.yAxis : patchAxisList(current.yAxis, palette),
-		animationDuration: env.reducedMotion ? 0 : 420,
+		animationDuration: env.reducedMotion ? 0 : 320,
 		animationEasing: 'cubicOut',
 		series: patchSeriesList(current.series, palette, chartID, kind, env)
 	};
@@ -389,6 +440,15 @@ export function themedOptionPatch(current: Obj, chartID: string, env: ThemeEnv):
 	if (visualMap) next.visualMap = visualMap;
 	const calendar = patchCalendar(current, palette, env);
 	if (calendar) next.calendar = calendar;
+	// Legend text wears the axis ink: a builder's fixed hex cannot clear 4.5:1 on
+	// both the white and the navy surface.
+	if (current.legend) {
+		const ink = (l: unknown) => ({
+			...obj(l),
+			textStyle: { ...obj(obj(l).textStyle), color: palette.axis }
+		});
+		next.legend = Array.isArray(current.legend) ? current.legend.map(ink) : ink(current.legend);
+	}
 	return next;
 }
 

@@ -89,6 +89,8 @@
 				<NativeButton type="submit" class="assistant-send" disabled={sending}>Send</NativeButton>
 			</div>
 		</form>
-		<p class="muse-privacy">Encrypted · retained 30 days</p>
+		<p class="muse-privacy">
+			AI-generated · not verified financial data · Encrypted · retained 30 days
+		</p>
 	</div>
 </main>

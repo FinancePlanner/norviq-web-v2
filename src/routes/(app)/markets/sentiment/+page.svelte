@@ -36,8 +36,8 @@
 									<span
 										class={[
 											'text-xs tabular-nums',
-											row.deltaUp && 'text-emerald-500',
-											!row.deltaUp && 'text-rose-500'
+											row.deltaUp && 'text-[var(--color-gain)]',
+											!row.deltaUp && 'text-[var(--color-loss)]'
 										]}
 									>
 										{row.deltaLabel}

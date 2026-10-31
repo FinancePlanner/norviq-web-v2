@@ -1,6 +1,6 @@
 <!--
 	YoY growth sparkline (port of charts.GrowthSparklineSVG). Pure SVG, SSRs.
-	tone="negative" draws red; anything else the brand tint. Fewer than two
+	tone="negative" draws the loss colour; anything else the gain colour. Fewer than two
 	points renders nothing.
 -->
 <script lang="ts">
@@ -16,8 +16,8 @@
 	<svg class="fin-growth-sparkline-svg" viewBox={g.viewBox} role="img" aria-hidden="true">
 		<defs>
 			<linearGradient id={g.fillID} x1="0" y1="0" x2="0" y2="1">
-				<stop offset="0%" stop-color={g.stroke} stop-opacity="0.35" />
-				<stop offset="100%" stop-color={g.stroke} stop-opacity="0" />
+				<stop offset="0%" style:stop-color={g.stroke} stop-opacity="0.35" />
+				<stop offset="100%" style:stop-color={g.stroke} stop-opacity="0" />
 			</linearGradient>
 		</defs>
 		{#if g.zeroLine}
@@ -33,7 +33,7 @@
 		<polyline
 			class="fin-growth-sparkline-line"
 			fill="none"
-			stroke={g.stroke}
+			style:stroke={g.stroke}
 			stroke-width="1.75"
 			stroke-linejoin="round"
 			stroke-linecap="round"

@@ -100,4 +100,11 @@ CSS selectors keep matching. Use the same id the Go handler used.
 `__fixtures__/go-charts.json` is the option JSON (functions as `"__fn__"`) and
 SVG markup produced by running the Go builders themselves; `charts.spec.ts`
 checks every builder deep-equals it. `theme.spec.ts` covers the theme patch.
+
+The goldens' **colour values** were rewritten on 2026-10-30 for the Precision
+rebrand (docs/precision-identity.md); everything else in them is still the Go
+output. The rewrite walked each golden alongside the port's output and failed on
+any difference that was not a colour, so structure parity still holds. The Go
+web is archived, so to change a colour now: update palette.ts, then update the
+matching hex in the fixture by hand (a reviewable, colour-only diff).
 Dev gallery with every builder in both appearances: `/__dev/charts`.

@@ -1,8 +1,9 @@
 // Port of norviq-web internal/sharecard (sharecard.go, brief.go): the
 // articles' and the market brief's social images, the 1200×630 og:image and
-// the 1080×1350 portrait card for Instagram. Same layout, sizes, colours,
-// fonts (Go Regular / Go Bold) and text fitting as Go; pixels differ only by
-// rasteriser anti-aliasing and PNG compression.
+// the 1080×1350 portrait card for Instagram. Same layout, sizes, fonts (Go
+// Regular / Go Bold) and text fitting as Go; pixels differ by rasteriser
+// anti-aliasing and PNG compression, and the colours by the 2026-10-30
+// Precision palette below.
 import regularTTF from './fonts/go-regular.ttf?inline';
 import boldTTF from './fonts/go-bold.ttf?inline';
 import { Canvas, type RGB } from './raster.js';
@@ -37,14 +38,16 @@ function loadFonts() {
 }
 const face = (f: TTFont, size: number) => new Face(f, size);
 
-const background: RGB = [0x0b, 0x12, 0x20];
-const foreground: RGB = [0xf8, 0xfa, 0xfc];
-const muted: RGB = [0x94, 0xa3, 0xb8];
-const accent: RGB = [0x34, 0xd3, 0x99];
-const upColor: RGB = [0x34, 0xd3, 0x99];
-const downColor: RGB = [0xf8, 0x71, 0x71];
-const rule: RGB = [0x1e, 0x29, 0x3b];
-const regionBG: RGB = [0x16, 0x20, 0x33];
+// Precision identity (docs/precision-identity.md), dark scope. Gold is the
+// brand accent only; direction keeps its own gain/loss pair and its arrow.
+const background: RGB = [0x0a, 0x10, 0x1a]; // Obsidian
+const foreground: RGB = [0xe9, 0xe9, 0xe5]; // Platinum
+const muted: RGB = [0x9d, 0xa9, 0xb8]; // Muted Silver
+const accent: RGB = [0xd8, 0xb4, 0x77]; // Champagne Gold
+const upColor: RGB = [0x42, 0xb8, 0x94]; // gain
+const downColor: RGB = [0xe1, 0x6d, 0x75]; // loss
+const rule: RGB = [0x34, 0x42, 0x58]; // Steel Slate
+const regionBG: RGB = [0x1b, 0x29, 0x40]; // Armor Blue
 
 const maxTitleRunes = 200;
 const maxBulletRunes = 300;

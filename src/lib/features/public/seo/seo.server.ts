@@ -110,7 +110,7 @@ export function llmsTxt(event: Pick<RequestEvent, 'url' | 'request'>): Response 
 	const appStore = config().iosAppStoreURL || DEFAULT_IOS_APP_STORE_URL;
 	let b = '# Norviq\n\n';
 	b +=
-		'Norviq is a private financial guardian for iPhone and the web. It keeps the vigil over wealth, spending, and the signals between: portfolio tracking, budgets, and AI-powered insights with MCP integrations.\n\n';
+		'Norviq is professional stock planning and portfolio intelligence for disciplined investors, on iPhone and the web: portfolio tracking, position sizing, budgets, and AI-assisted insights with MCP integrations.\n\n';
 	b += '- Website: ' + base + '/\n';
 	b += '- Sign up: ' + base + '/signup\n';
 	b += '- App Store: ' + appStore + '\n';

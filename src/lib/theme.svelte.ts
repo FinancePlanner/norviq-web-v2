@@ -12,7 +12,7 @@ export type ThemeMode = 'system' | 'light' | 'dark';
 const VALID_THEMES = new Set<ThemeMode>(['system', 'light', 'dark']);
 
 /** KEEP IN SYNC with --color-page-bg in legacy theme.css and the theme-color metas in app.html. */
-export const THEME_COLORS = { 'vigil-light': '#f3f8fa', 'vigil-dark': '#050809' } as const;
+export const THEME_COLORS = { 'vigil-light': '#f7f4ee', 'vigil-dark': '#0a101a' } as const;
 
 export function getStoredTheme(): ThemeMode {
 	if (!browser) return 'system';

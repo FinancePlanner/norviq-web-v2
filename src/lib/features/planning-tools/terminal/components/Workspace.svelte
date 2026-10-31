@@ -40,12 +40,20 @@
 					<th scope="col">Shares outstanding</th>
 					<th scope="col">Terminal share count</th>
 					<th scope="col">Terminal market cap</th>
-					<th scope="col">Terminal share price</th>
+					<th scope="col" class="terminal-calc"
+						>Terminal share price<span class="sr-only"> (calculated)</span></th
+					>
 					<th scope="col">Value wanted</th>
-					<th scope="col">Shares needed</th>
+					<th scope="col" class="terminal-calc"
+						>Shares needed<span class="sr-only"> (calculated)</span></th
+					>
 					<th scope="col">Owned</th>
-					<th scope="col">Progress</th>
-					<th scope="col">Still needed</th>
+					<th scope="col" class="terminal-calc"
+						>Progress<span class="sr-only"> (calculated)</span></th
+					>
+					<th scope="col" class="terminal-calc"
+						>Still needed<span class="sr-only"> (calculated)</span></th
+					>
 					<th scope="col"><span class="sr-only">Actions</span></th>
 				</tr>
 			</thead>
@@ -61,6 +69,12 @@
 				/>
 			{/each}
 		</vigil.DataTable>
+		<!-- Assumptions vs results: inputs keep their field borders, results sit on a
+		     shaded read-only surface. Nothing here changes how a value is computed. -->
+		<p class="terminal-calc-legend text-footnote text-muted-foreground">
+			<span class="terminal-calc-swatch" aria-hidden="true"></span>
+			Shaded columns are calculated from your inputs.
+		</p>
 		{#if vm.rows.length === 0 && !vm.showSample}
 			<p class="text-subhead text-muted-foreground">
 				No scenarios yet. Add one to see how many shares your target takes.
@@ -69,3 +83,27 @@
 		<Footer vm={footer} />
 	</section>
 {/if}
+
+<style>
+	/* :global because the cells live in TerminalRow / SampleRow. Scoped to the
+	   terminal table so no other DataTable picks the shading up. */
+	:global(.terminal-table .terminal-calc) {
+		background: color-mix(in srgb, var(--color-elevated-card) 70%, transparent);
+	}
+	:global(.terminal-table th.terminal-calc) {
+		color: var(--muted-foreground);
+	}
+	.terminal-calc-legend {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+	}
+	/* A flat bar, not a bordered square: a square read as a checkbox. */
+	.terminal-calc-swatch {
+		width: 1.25rem;
+		height: 0.625rem;
+		flex: none;
+		border-radius: 0.125rem;
+		background: var(--color-elevated-card);
+	}
+</style>

@@ -16,13 +16,10 @@
 	import { capture } from '#lib/analytics/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { initScrollTaste } from '#lib/motion.js';
-	import HeroWallCard from './HeroWallCard.svelte';
 	import {
 		DiscordURL,
 		OGImagePath,
 		absoluteURL,
-		heroBackSlots,
-		heroFrontSlots,
 		structuredData,
 		type LandingVM
 	} from './landing.js';
@@ -37,8 +34,6 @@
 	// literal string as the JSON-LD. v2 deliberately serves the intended graph
 	// (approved 2026-10-29; see docs/parity/public.md).
 	const jsonLD = $derived(structuredData(vm));
-	const backSlots = heroBackSlots();
-	const frontSlots = heroFrontSlots();
 
 	let main: HTMLElement;
 
@@ -74,10 +69,10 @@
 </script>
 
 <svelte:head>
-	<title>Norviq — nothing slips past.</title>
+	<title>Norviq — Clarity in every position.</title>
 	<meta
 		name="description"
-		content="Norviq - nothing slips past. Portfolio, spending, and AI-powered signals in one private financial guardian, with MCP integrations."
+		content="Norviq - clarity in every position. Professional stock planning, portfolio intelligence, and spending in one private workspace, with MCP integrations."
 	/>
 	<meta
 		name="keywords"
@@ -94,25 +89,25 @@
 	<meta property="og:site_name" content="Norviq" />
 	<meta property="og:locale" content="en_US" />
 	<meta property="og:url" content={canonical} />
-	<meta property="og:title" content="Norviq — nothing slips past." />
+	<meta property="og:title" content="Norviq — Clarity in every position." />
 	<meta
 		property="og:description"
-		content="Norviq keeps the vigil: wealth, spending, and the signals between."
+		content="Professional stock planning and portfolio intelligence for disciplined investors."
 	/>
 	<meta property="og:image" content={ogImage} />
 	<meta property="og:image:type" content="image/png" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
-	<meta property="og:image:alt" content="Norviq — nothing slips past." />
+	<meta property="og:image:alt" content="Norviq. Discipline creates freedom." />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@NorviqPlanner" />
-	<meta name="twitter:title" content="Norviq — nothing slips past." />
+	<meta name="twitter:title" content="Norviq — Clarity in every position." />
 	<meta
 		name="twitter:description"
-		content="Norviq keeps the vigil: wealth, spending, and the signals between."
+		content="Professional stock planning and portfolio intelligence for disciplined investors."
 	/>
 	<meta name="twitter:image" content={ogImage} />
-	<meta name="twitter:image:alt" content="Norviq — nothing slips past." />
+	<meta name="twitter:image:alt" content="Norviq. Discipline creates freedom." />
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- Go-style escaped JSON (<, >, & as \u00XX) -->
 	{@html '<script type="application/ld+json">' + jsonLD + '</scr' + 'ipt>'}
 </svelte:head>
@@ -214,45 +209,42 @@
 		</nav>
 	</header>
 	<section class="landing-hero-v3" data-landing-section="hero">
-		<div class="hero-glow" aria-hidden="true"></div>
-		<div class="hero-copy">
-			<a href="#eu-tax" class="hero-pill">
-				<span class="hero-pill-dot" aria-hidden="true"></span>
-				Built for EU investors
-				<span class="hero-pill-arrow" aria-hidden="true">&rarr;</span>
-			</a>
-			<h1 class="hero-title">
-				<span>Nothing slips past.</span>
-				<span class="hero-title-muted">Every angle of your money.</span>
-			</h1>
-			<p class="hero-subtitle">
-				Norviq keeps the vigil &mdash; wealth, spending, and the signals between.
-			</p>
-			<div class="hero-store-row">
-				<StoreBadges appStoreURL={vm.appStoreURL} googlePlayURL={vm.googlePlayURL} />
+		<div class="hero-layout">
+			<div class="hero-copy">
+				<a href="#eu-tax" class="hero-pill">
+					<span class="hero-pill-dot" aria-hidden="true"></span>
+					Built for EU investors
+					<span class="hero-pill-arrow" aria-hidden="true">&rarr;</span>
+				</a>
+				<h1 class="hero-title">
+					<span>Clarity in Every Position.</span>
+				</h1>
+				<p class="hero-subtitle">
+					Professional stock planning and portfolio intelligence for disciplined investors.
+				</p>
+				<div class="hero-store-row">
+					<StoreBadges appStoreURL={vm.appStoreURL} googlePlayURL={vm.googlePlayURL} />
+				</div>
+				<p class="hero-web-cta">
+					<span>Or on the web:</span>
+					<a href="/signup" class="hero-web-link"
+						>Create a free account <span aria-hidden="true">&rarr;</span></a
+					>
+				</p>
 			</div>
-			<p class="hero-web-cta">
-				<span>Or on the web:</span>
-				<a href="/signup" class="hero-web-link"
-					>Create a free account <span aria-hidden="true">&rarr;</span></a
-				>
-			</p>
-		</div>
-		<!-- heroCardWall: decorative only (aria-hidden, nothing focusable). -->
-		<div class="hero-wall" aria-hidden="true">
-			{#each backSlots as slot, i (i)}
-				<div class="hero-wall-slot hero-wall-back" style={slot.style}>
-					<HeroWallCard c={slot.card} />
-				</div>
-			{/each}
-			{#each frontSlots as slot, i (i)}
-				<div
-					class={'hero-wall-slot hero-wall-front' + (slot.class ? ' ' + slot.class : '')}
-					style={slot.style}
-				>
-					<HeroWallCard c={slot.card} />
-				</div>
-			{/each}
+			<!-- Raster crop of the approved artwork, cut clear of its ticker and chart
+			     panels (their numbers are invented). Never wider than half the source. -->
+			<figure class="hero-portrait">
+				<img
+					src="/static/brand/precision/vig-thinking.webp"
+					srcset="/static/brand/precision/vig-thinking-280.webp 222w, /static/brand/precision/vig-thinking.webp 445w"
+					sizes="(min-width: 1024px) 222px, 140px"
+					width="445"
+					height="560"
+					alt="Vig, the Norviq lynx, studying a plan with a hand at the chin"
+					fetchpriority="high"
+				/>
+			</figure>
 		</div>
 	</section>
 	<!-- Today's market brief, the same card signed-in users get on the dashboard.
@@ -337,10 +329,9 @@
 		<div class="landing-vault-grid">
 			<div>
 				<p class="landing-eyebrow">Private by design</p>
-				<h2 class="landing-section-title mt-3">The gate holds.</h2>
+				<h2 class="landing-section-title mt-3">Your data stays in your control.</h2>
 				<p class="landing-section-lead">
-					A guardian that answers to you alone: secure account access, passkeys, exports, and
-					account deletion are first-class flows.
+					Secure account access, passkeys, exports, and account deletion are first-class flows.
 				</p>
 			</div>
 			<div class="landing-spec-list">
@@ -440,7 +431,7 @@
 			>
 		</div>
 		<p class="landing-footer-copy mt-4 text-center text-footnote">
-			&copy; 2026 Norviq. Nothing slips past.
+			&copy; 2026 Norviq. Discipline creates freedom.
 		</p>
 	</footer>
 </main>

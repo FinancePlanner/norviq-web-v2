@@ -13,7 +13,7 @@ export interface PillarSlice {
 }
 
 /** Neutral placeholder; theme.ts resolves colorVar against the live appearance. */
-export const pillarSeriesColor = '#8D8371';
+export const pillarSeriesColor = '#7A8597';
 
 export function pillarTooltip(info: {
 	value?: unknown;
@@ -68,7 +68,7 @@ export function spendPillarBar(chartID: string, slices: readonly PillarSlice[]):
 }
 
 /** One hue, light to dark; theme.ts re-derives it per appearance. These are the light-mode steps. */
-export const activityRamp: readonly string[] = ['#F0E9DC', '#E0C89A', '#C97A2B', '#8A4F16'];
+export const activityRamp: readonly string[] = ['#F3ECDD', '#E2CB9F', '#B07C1E', '#7A5414'];
 
 export function heatmapTooltip(info: { value?: unknown }): string {
 	const v = (info.value || []) as unknown[];

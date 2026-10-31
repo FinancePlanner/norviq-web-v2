@@ -189,6 +189,16 @@ body {
   overflow-x: clip;
 }
 
+/* Precision identity: any number that can sit above or beside another number
+ * uses tabular figures, so columns of prices and P&L line up digit for digit.
+ * Tables get it globally; standalone metrics still opt in with .tabular-nums. */
+table,
+time,
+output,
+[data-numeric] {
+  font-variant-numeric: tabular-nums;
+}
+
 /* .font-display is the only survivor of the old .type-* utility family; the
  * other thirteen selectors had zero uses in any template. */
 .skip-link {
@@ -639,6 +649,8 @@ html .assistant-main.muse-main {
 
 .muse-message.user .muse-time {
   text-align: right;
+  /* On the gold bubble 60% fails (3.2:1 light, 3.9:1 dark); 90% clears 5:1. */
+  opacity: 0.9;
 }
 
 /* Cards inside an agent bubble use the contract's 16px card radius. */
@@ -1152,11 +1164,11 @@ html .muse-composer textarea:focus-visible {
   border-radius: 9999px;
   background: linear-gradient(
     90deg,
-    #f23645 0%,
-    color-mix(in srgb, #f23645 35%, var(--color-elevated-card)) 32%,
+    var(--color-loss) 0%,
+    color-mix(in srgb, var(--color-loss) 35%, var(--color-elevated-card)) 32%,
     var(--color-elevated-card) 50%,
-    color-mix(in srgb, var(--color-success) 35%, var(--color-elevated-card)) 68%,
-    var(--color-success) 100%
+    color-mix(in srgb, var(--color-gain) 35%, var(--color-elevated-card)) 68%,
+    var(--color-gain) 100%
   );
 }
 
@@ -1252,6 +1264,30 @@ html .muse-composer textarea:focus-visible {
   @apply flex flex-1 flex-col items-center justify-center p-8 text-center lg:p-12;
 }
 
+/* Precision identity: the tagline sits under the lockup as live text, and Vig
+ * (framed, scene backdrop) observes from below. Decorative: the panel is
+ * aria-hidden. */
+.auth-brand-tagline {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-brand-panel .auth-brand-tagline {
+  margin-top: 0.75rem;
+}
+
+.auth-brand-portrait {
+  width: 13.875rem;
+  height: auto;
+  margin-top: 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--panel-shadow);
+}
+
 /* Grid item, not a flex item: .vigil-auth-shell caps this track at 28rem/448px,
  * so the old lg:max-w-[520px] could never bind and lg:flex-shrink-0 meant
  * nothing. Both were dropped rather than "fixed" — the 28rem track is what
@@ -1281,12 +1317,10 @@ html.dark .splash-gradient {
   background: var(--color-page-bg);
 }
 
+/* Flat gold. This was tint -> secondary tint, and the secondary tint is now
+ * the gain green: a gold-to-green "premium" wash would read as profit. */
 .premium-gradient {
-  background: linear-gradient(
-    135deg,
-    var(--color-tint) 0%,
-    var(--color-secondary-tint) 100%
-  );
+  background: var(--color-tint);
 }
 
 .app-topbar {
@@ -1977,12 +2011,10 @@ html.dark .landing-cta-panel {
 }
 
 .pro-badge {
-  @apply inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold text-white;
-  background: linear-gradient(
-    135deg,
-    var(--color-tint) 0%,
-    var(--color-secondary-tint) 100%
-  );
+  @apply inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold;
+  /* primary-foreground, not white: white on champagne gold is 1.96:1. */
+  color: var(--primary-foreground);
+  background: var(--color-tint);
 }
 
 .pro-badge-sm {
@@ -2124,7 +2156,7 @@ html.dark .pines-segment-btn-active {
 }
 
 .overview-subheader-spending {
-  --overview-subheader-color: var(--color-secondary-tint);
+  --overview-subheader-color: var(--color-info);
 }
 
 .overview-subheader-eyebrow {
@@ -2628,9 +2660,9 @@ html.dark .overview-header-search .pines-search-input-wrap {
   --overview-text: var(--foreground);
   --overview-muted: var(--muted-foreground);
   --overview-primary: var(--color-tint);
-  --overview-primary-strong: var(--color-secondary-tint);
-  --overview-success: #15803d;
-  --overview-warning: #a16207;
+  --overview-primary-strong: var(--color-ember);
+  --overview-success: var(--color-gain);
+  --overview-warning: var(--color-warning);
   --overview-shadow: 0 14px 32px color-mix(in srgb, var(--foreground) 8%, transparent);
   color: var(--overview-text);
   padding-bottom: 1.5rem;
@@ -2644,8 +2676,8 @@ html.dark .overview-modern-page {
   --overview-muted: var(--muted-foreground);
   --overview-primary: var(--color-tint);
   --overview-primary-strong: var(--color-ember);
-  --overview-success: #4ade80;
-  --overview-warning: #fbbf24;
+  --overview-success: var(--color-gain);
+  --overview-warning: var(--color-warning);
   /* Was `none` — every panel on /dashboard read as a flat, borderless
    * rectangle in dark mode because this overrides .dash-panel's own
    * (non-zero) box-shadow. Mirrors the light-mode shadow's proportions,
@@ -2912,12 +2944,12 @@ html.dark .overview-modern-page {
 }
 
 html.dark .overview-modern-page .overview-change-positive {
-  background: rgba(34, 197, 94, 0.14);
+  background: color-mix(in srgb, var(--color-gain) 14%, transparent);
 }
 
 html.dark .overview-modern-page .overview-change-negative {
-  background: rgba(248, 113, 113, 0.14);
-  color: #fca5a5;
+  background: color-mix(in srgb, var(--color-loss) 14%, transparent);
+  color: var(--color-loss);
 }
 
 .overview-modern-page .overview-wealth-chart {
@@ -3067,7 +3099,7 @@ html.dark .overview-modern-page .dash-kpi-detail {
   background: conic-gradient(
     from 270deg at 50% 100%,
     var(--health-ring-color) 0 var(--health-gauge-angle),
-    #e2e8f0 var(--health-gauge-angle) 180deg,
+    var(--color-elevated-card) var(--health-gauge-angle) 180deg,
     transparent 180deg 360deg
   );
 }
@@ -3767,8 +3799,8 @@ html.dark .health-gauge-arc {
   background: linear-gradient(
     90deg,
     color-mix(in srgb, var(--color-danger) 55%, transparent) 0%,
-    color-mix(in srgb, var(--color-tint) 45%, transparent) 50%,
-    color-mix(in srgb, var(--color-success) 55%, transparent) 100%
+    color-mix(in srgb, var(--color-flat) 35%, transparent) 50%,
+    color-mix(in srgb, var(--color-gain) 55%, transparent) 100%
   );
 }
 
@@ -4230,22 +4262,8 @@ form.htmx-request button[type='submit'] {
   color: var(--color-tint);
 }
 
-/* Pro badge — iridescent shimmer */
-.pro-badge {
-  background: linear-gradient(135deg, var(--color-bronze) 0%, var(--color-ember) 50%, var(--color-tint) 100%);
-  background-size: 200% 200%;
-  animation: pro-shimmer 3s ease-in-out infinite;
-  box-shadow: 0 1px 0 rgb(255 255 255 / 25%) inset;
-}
-@keyframes pro-shimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
+/* Pro badge: no shimmer. An infinite animation on a label carries no
+ * information and competes with financial values (docs/precision-identity.md). */
 html.dark .pro-badge {
   box-shadow: 0 1px 0 rgb(255 255 255 / 12%) inset;
 }
@@ -4636,7 +4654,7 @@ html.dark .pro-badge {
 
 html.dark .theme-toggle-btn-active {
   box-shadow: none;
-  color: #82b1ff;
+  color: var(--color-tint);
 }
 
 .theme-toggle-compact-wrap {
@@ -4877,11 +4895,8 @@ html.dark .theme-toggle-btn-active {
   position: absolute;
   inset: -30% 10% auto;
   height: 70%;
-  background: radial-gradient(
-    ellipse at center,
-    color-mix(in srgb, var(--color-tint) 20%, transparent),
-    transparent 70%
-  );
+  /* Was a tinted radial glow; decorative, so retired. */
+  background: none;
   pointer-events: none;
 }
 
@@ -5232,13 +5247,9 @@ html.dark .theme-toggle-btn-active {
   border: 1px solid var(--allocation-line);
   border-radius: 12px;
   color: var(--allocation-text);
-  background:
-    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--allocation-accent) 14%, transparent), transparent 26rem),
-    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--allocation-primary) 10%, transparent), transparent 24rem),
-    linear-gradient(var(--allocation-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--allocation-line) 1px, transparent 1px),
-    var(--allocation-bg);
-  background-size: auto, auto, 34px 34px, 34px 34px, auto;
+  /* Flat surface: the radial glows and 34px graph-paper grid were decoration
+   * behind real allocation data. */
+  background: var(--allocation-bg);
   box-shadow: inset 0 1px var(--allocation-inner-highlight);
 }
 
@@ -6206,9 +6217,9 @@ html.dark .allocation-modern-page {
 
 .allocation-modern-page .allocation-action-primary {
   border-color: color-mix(in srgb, var(--allocation-primary) 78%, var(--allocation-line));
-  background: linear-gradient(180deg, var(--allocation-primary), var(--color-bronze));
-  color: #ffffff;
-  box-shadow: 0 10px 22px color-mix(in srgb, var(--allocation-primary) 24%, transparent);
+  background: var(--allocation-primary);
+  color: var(--color-ink-on-gold);
+  box-shadow: var(--panel-shadow);
 }
 
 html.dark .allocation-modern-page .allocation-action {

@@ -192,7 +192,7 @@
 				onchange={cell('terminalMarketCap')}
 			/>
 		</td>
-		<td class="tabular-nums">
+		<td class="terminal-calc tabular-nums">
 			<span id={`tp-${id}-derived-terminalSharePrice`}>{calc.terminalSharePrice}</span>
 		</td>
 		<td>
@@ -206,7 +206,7 @@
 				onchange={cell('valueWanted')}
 			/>
 		</td>
-		<td class="tabular-nums">
+		<td class="terminal-calc tabular-nums">
 			<span id={`tp-${id}-derived-sharesNeeded`}>
 				<ShareCount full={calc.sharesNeeded} whole={calc.sharesNeededWhole} />
 			</span>
@@ -227,12 +227,12 @@
 				/>
 			</div>
 		</td>
-		<td>
+		<td class="terminal-calc">
 			<div id={`tp-${id}-derived-progress`}>
 				<Progress pct={calc.progressPct} label={calc.progressLabel} valid={calc.valid} />
 			</div>
 		</td>
-		<td class="tabular-nums">
+		<td class="terminal-calc tabular-nums">
 			<div id={`tp-${id}-derived-stillNeeded`}>
 				<ShareCount full={calc.stillNeeded} whole={calc.stillNeededWhole} />
 				{#if calc.valid}

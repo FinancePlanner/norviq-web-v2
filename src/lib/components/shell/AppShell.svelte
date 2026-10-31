@@ -206,7 +206,7 @@
 							<p class="truncate text-subhead font-semibold text-sidebar-foreground">
 								{username || 'Account'}
 							</p>
-							{#if email}<span class="block truncate text-caption text-sidebar-foreground/60"
+							{#if email}<span class="block truncate text-caption text-muted-foreground"
 									>{email}</span
 								>{/if}
 						</div>

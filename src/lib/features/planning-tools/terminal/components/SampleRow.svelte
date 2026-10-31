@@ -26,16 +26,16 @@
 		<td class="text-muted-foreground tabular-nums">{row.sharesOutstandingCompact}</td>
 		<td class="tabular-nums">{row.terminalShareCountCompact}</td>
 		<td class="tabular-nums">{row.terminalMarketCapCompact}</td>
-		<td class="tabular-nums">{row.terminalSharePrice}</td>
+		<td class="terminal-calc tabular-nums">{row.terminalSharePrice}</td>
 		<td class="tabular-nums">{row.valueWantedCompact}</td>
-		<td class="tabular-nums">
+		<td class="terminal-calc tabular-nums">
 			<ShareCount full={row.sharesNeeded} whole={row.sharesNeededWhole} />
 		</td>
 		<td class="tabular-nums">{row.sharesOwned}</td>
-		<td>
+		<td class="terminal-calc">
 			<Progress pct={row.progressPct} label={row.progressLabel} valid={row.valid} />
 		</td>
-		<td class="tabular-nums">
+		<td class="terminal-calc tabular-nums">
 			<ShareCount full={row.stillNeeded} whole={row.stillNeededWhole} />
 		</td>
 		<td>

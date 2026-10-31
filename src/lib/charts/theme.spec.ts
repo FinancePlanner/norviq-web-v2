@@ -39,10 +39,12 @@ describe('chartKind', () => {
 
 describe('palette', () => {
 	it('falls back per appearance and reads overrides', () => {
-		expect(getChartPalette(env(false)).line).toBe('#2563eb');
-		expect(getChartPalette(env(true)).line).toBe('#2962ff');
+		expect(getChartPalette(env(false)).line).toBe('#80612a');
+		expect(getChartPalette(env(true)).line).toBe('#d8b477');
+		expect(getChartPalette(env(false)).up).toBe('#1b6e51');
+		expect(getChartPalette(env(true)).down).toBe('#e16d75');
 		expect(getChartPalette(env(false, { '--chart-line': '#123456' })).line).toBe('#123456');
-		expect(getChartPalette(env(true)).areaOpacity).toBe(0.22);
+		expect(getChartPalette(env(true)).areaOpacity).toBe(0.18);
 	});
 	it('ramps one hue from --color-tint', () => {
 		expect(parseHex('#abc')).toEqual([170, 187, 204]);
@@ -53,12 +55,18 @@ describe('palette', () => {
 			'rgba(15,118,110,0.68)',
 			'rgba(15,118,110,1)'
 		]);
-		expect(activityRamp(env(false, { '--color-tint': 'oklch(1 0 0)' }))).toHaveLength(2);
+		// theme.css declares the tint in OKLCH, so the ramp falls back to the gold.
+		expect(activityRamp(env(false, { '--color-tint': 'oklch(1 0 0)' }))[3]).toBe(
+			'rgba(138,106,46,1)'
+		);
+		expect(activityRamp(env(true, { '--color-tint': 'oklch(1 0 0)' }))[3]).toBe(
+			'rgba(216,180,119,1)'
+		);
 	});
 	it('resolves pillar colors from colorVar, then the name', () => {
 		expect(pillarColor({ colorVar: '--x' }, env(false, { '--x': '#111111' }))).toBe('#111111');
-		expect(pillarColor({ name: 'Fun' }, env(false))).toBe('#0d9488');
-		expect(pillarColor({ name: 'Other' }, env(false))).toBe('#8D8371');
+		expect(pillarColor({ name: 'Fun' }, env(false))).toBe('#4f78a8');
+		expect(pillarColor({ name: 'Other' }, env(false))).toBe('#57626e');
 	});
 });
 
@@ -73,19 +81,19 @@ describe('themedOptionPatch', () => {
 	it('recolours a wealth line and installs the currency tooltip', () => {
 		const next = themedOptionPatch(wealth, 'wealth_chart', env(true)) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 		expect(next.tooltip).toMatchObject({
-			backgroundColor: '#1e222d',
+			backgroundColor: '#1b2940',
 			confine: true,
 			triggerOn: 'mousemove|click',
 			transitionDuration: 0.12
 		});
 		expect(next.tooltip.formatter).toBe(wealthTooltipFormatter);
-		expect(next.xAxis[0].axisLabel.color).toBe('#787b86');
+		expect(next.xAxis[0].axisLabel.color).toBe('#9da9b8');
 		expect(next.xAxis[0].axisPointer).toEqual({ show: true, snap: true });
-		expect(next.yAxis[0].splitLine.lineStyle).toEqual({ color: '#2a2e39', type: 'dashed' });
-		expect(next.series[0].lineStyle.color).toBe('#2962ff');
-		expect(next.series[0].areaStyle).toEqual({ opacity: 0.22, color: '#2962ff' });
+		expect(next.yAxis[0].splitLine.lineStyle).toEqual({ color: '#344258', type: 'dashed' });
+		expect(next.series[0].lineStyle.color).toBe('#d8b477');
+		expect(next.series[0].areaStyle).toEqual({ opacity: 0.18, color: '#d8b477' });
 		expect(next.series[0].showSymbol).toBe(false);
-		expect(next.animationDuration).toBe(420);
+		expect(next.animationDuration).toBe(320);
 		expect(next.visualMap).toBeUndefined();
 	});
 
@@ -96,13 +104,13 @@ describe('themedOptionPatch', () => {
 			'spark_x',
 			env(false, {}, { coarsePointer: true, reducedMotion: true })
 		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-		expect(next.series[0].lineStyle.color).toBe('#dc2626');
+		expect(next.series[0].lineStyle.color).toBe('#ab3640');
 		expect(next.tooltip.triggerOn).toBe('click');
 		expect(next.tooltip.transitionDuration).toBe(0);
 		expect(next.animationDuration).toBe(0);
 		expect(next.xAxis).toBe(down.xAxis); // spark: axes untouched
 		const spending = themedOptionPatch(wealth, 'spending_chart', env(false)) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-		expect(spending.series[0].lineStyle.color).toBe('#0d9488');
+		expect(spending.series[0].lineStyle.color).toBe('#4a5568');
 	});
 
 	it('themes the activity calendar and visualMap', () => {
@@ -118,9 +126,62 @@ describe('themedOptionPatch', () => {
 			env(false, { '--color-card-bg': '#fafafa' })
 		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 		expect(next.visualMap[0].inRange.color).toHaveLength(4); // hex --color-tint fallback: four alpha steps
-		expect(next.calendar[0].dayLabel).toEqual({ firstDay: 1, color: '#64748b' });
+		expect(next.calendar[0].dayLabel).toEqual({ firstDay: 1, color: '#4a5568' });
 		expect(next.calendar[0].itemStyle).toEqual({ borderColor: '#fafafa', borderWidth: 2 });
 		expect(next.series[0].itemStyle).toEqual({ borderColor: '#fafafa', borderWidth: 2 });
+	});
+
+	it('paints direction with the gain/loss tokens, never the brand tint', () => {
+		const up = themedOptionPatch(
+			{ series: [{ type: 'line', lineStyle: { color: '#42B894' } }] },
+			'spark_x',
+			env(true)
+		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+		expect(up.series[0].lineStyle.color).toBe('#42b894');
+		const bars = themedOptionPatch(
+			{
+				series: [
+					{
+						type: 'bar',
+						data: [
+							{ value: 4, itemStyle: { color: '#42B894' } },
+							{ value: -3, itemStyle: { color: '#E16D75' } },
+							7
+						]
+					}
+				]
+			},
+			'sector_gains_chart',
+			env(false)
+		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+		expect(bars.series[0].data).toEqual([
+			{ value: 4, itemStyle: { color: '#1b6e51' } },
+			{ value: -3, itemStyle: { color: '#ab3640' } },
+			7
+		]);
+		const candle = themedOptionPatch(
+			{ series: [{ type: 'candlestick', itemStyle: {} }] },
+			'x',
+			env(false)
+		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+		expect(candle.series[0].itemStyle).toEqual({
+			color: '#1b6e51',
+			color0: '#ab3640',
+			borderColor: '#1b6e51',
+			borderColor0: '#ab3640'
+		});
+	});
+
+	it('inks legends with the axis colour and keeps their shape', () => {
+		const one = themedOptionPatch(
+			{ legend: { show: true, textStyle: { fontSize: 11 } } },
+			'x',
+			env(true)
+		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+		expect(one.legend).toEqual({ show: true, textStyle: { fontSize: 11, color: '#9da9b8' } });
+		const many = themedOptionPatch({ legend: [{}] }, 'x', env(false)) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+		expect(many.legend).toEqual([{ textStyle: { color: '#4a5568' } }]);
+		expect(themedOptionPatch({}, 'x', env(false)).legend).toBeUndefined();
 	});
 
 	it('gives pies a theme-aware shadow', () => {

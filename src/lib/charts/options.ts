@@ -11,9 +11,10 @@ import type { EChartsOption } from 'echarts';
 import {
 	allocationColors,
 	colorCyan,
-	colorGreen,
+	colorDown,
 	colorMuted,
 	colorTint,
+	colorUp,
 	goEchartsDefaultColors
 } from './palette.js';
 import type { ChartSpec, OptionObject } from './types.js';
@@ -181,7 +182,7 @@ export function sectorGainsBar(
 				type: 'bar',
 				data: gains.map((value) => ({
 					value,
-					itemStyle: { color: value < 0 ? '#f23645' : colorGreen }
+					itemStyle: { color: value < 0 ? colorDown : colorUp }
 				})),
 				label: { show: false }
 			}
@@ -201,7 +202,8 @@ export function sectorGainsBar(
 export function sparkline(chartID: string, closes: readonly number[]): ChartSpec | null {
 	const id = normalizeChartID(chartID || `spark_${closes.length}`);
 	if (closes.length < 2) return null;
-	const lineColor = closes[closes.length - 1] >= closes[0] ? colorTint : '#f23645';
+	// Direction, not brand: a rising close is the gain colour, never gold.
+	const lineColor = closes[closes.length - 1] >= closes[0] ? colorUp : colorDown;
 	return spec(id, '72px', '28px', {
 		backgroundColor: 'transparent',
 		color: [lineColor],
@@ -244,10 +246,10 @@ export function candlestick(
 					value: ohlc.length >= 4 ? [ohlc[0], ohlc[1], ohlc[2], ohlc[3]] : null
 				})),
 				itemStyle: {
-					color: '#22c55e',
-					color0: '#ef4444',
-					borderColor: '#22c55e',
-					borderColor0: '#ef4444'
+					color: colorUp,
+					color0: colorDown,
+					borderColor: colorUp,
+					borderColor0: colorDown
 				}
 			}
 		],
@@ -282,7 +284,7 @@ export function sentimentHistoryLine(
 ): ChartSpec | null {
 	const id = normalizeChartID(chartID || 'sentiment_history');
 	if (scores.length < 2) return null;
-	const lineColor = scores[scores.length - 1] >= 0 ? colorTint : '#f23645';
+	const lineColor = scores[scores.length - 1] >= 0 ? colorUp : colorDown;
 	return spec(id, '100%', '180px', {
 		backgroundColor: 'transparent',
 		color: [lineColor],

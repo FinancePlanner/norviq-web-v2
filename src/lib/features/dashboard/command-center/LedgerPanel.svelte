@@ -84,7 +84,7 @@
 			/>
 		{:else if vm.ledger.length === 0}
 			<EmptyStateInline
-				title="The ledger is quiet."
+				title="No activity in this window."
 				description="No portfolio or spending activity in this window. Log your first expense, or try a wider range."
 				actionLabel="Log an expense"
 				actionHref={Path.Expenses}

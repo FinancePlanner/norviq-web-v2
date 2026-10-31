@@ -31,7 +31,7 @@
 				<SectionCard title="Expenses in this pillar">
 					{#if data.expenses.length === 0}
 						<EmptyState
-							title="The ledger is quiet"
+							title="No expenses in this pillar yet"
 							description="Recorded spending in this pillar will show up here."
 						/>
 					{:else}

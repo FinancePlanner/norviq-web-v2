@@ -7,6 +7,7 @@
 	import {
 		directionKey,
 		directionMarker,
+		directionToneClass,
 		itemMarker,
 		type MarketBriefItemVM,
 		type MarketBriefVM
@@ -44,7 +45,9 @@
 	<section class="mt-4" data-group={group.id}>
 		<h3 class="text-subhead font-semibold">
 			{group.title}
-			<span aria-hidden="true">{directionMarker(group.tone)}</span>
+			<span aria-hidden="true" class={directionToneClass(group.tone)}
+				>{directionMarker(group.tone)}</span
+			>
 			<span class="sr-only">({t(directionKey(group.tone))})</span>
 		</h3>
 		<vigil.InsetList class="market-brief-quotes">

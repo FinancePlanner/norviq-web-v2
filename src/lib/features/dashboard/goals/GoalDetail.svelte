@@ -78,12 +78,12 @@
 				></polyline><polyline
 					points={trajectoryPoints(item.progress.trajectory, true)}
 					fill="none"
-					stroke="#10b981"
+					stroke="var(--color-tint)"
 					stroke-width="5"
 				></polyline></svg
 			>
 			<div class="flex gap-5 text-xs text-muted-foreground">
-				<span>— — Planned</span><span class="text-success">—— Projected</span>
+				<span>— — Planned</span><span class="text-[var(--color-tint)]">—— Projected</span>
 			</div>
 		</div>
 	</div>
