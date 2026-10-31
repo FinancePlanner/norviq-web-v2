@@ -1,5 +1,5 @@
 // Port of norviq-web internal/guide: the guided-start rules shared by the
-// dashboard card and the step layer. Contract: norviq-shared/docs/guided-start.md.
+// dashboard card and the step layer. Contract: norviq-ios Packages/StockPlanShared/docs/guided-start.md.
 // Isomorphic (no server imports).
 
 export type Step = 'add_holding' | 'set_budget' | 'set_goal';
