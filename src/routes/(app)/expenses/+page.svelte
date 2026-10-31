@@ -896,7 +896,7 @@
 			<CardHeader title="Recent activity" />
 			{#if vm.activity.length === 0}
 				<EmptyState
-					title="The ledger is quiet"
+					title="No expenses logged yet"
 					description="Record a purchase or set up your budget pillars to get started."
 					actionLabel="Record spend"
 					actionHref="#"

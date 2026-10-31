@@ -44,13 +44,13 @@ export interface WatchlistSearchResult {
 
 /** trading.TradingChangeClass */
 export function tradingChangeClass(positive: boolean): string {
-	return positive ? 'text-emerald-400' : 'text-rose-400';
+	return positive ? 'text-[var(--color-gain)]' : 'text-[var(--color-loss)]';
 }
 
 /** trading.TradingChangeClassForString (Go oddity kept: anything not starting with '-' is green). */
 export function tradingChangeClassForString(ch: string): string {
-	if (ch.length > 0 && (ch[0] === '+' || ch[0] !== '-')) return 'text-emerald-400';
-	return 'text-rose-400';
+	if (ch.length > 0 && (ch[0] === '+' || ch[0] !== '-')) return 'text-[var(--color-gain)]';
+	return 'text-[var(--color-loss)]';
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

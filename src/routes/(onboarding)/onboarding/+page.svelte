@@ -16,8 +16,8 @@
 		</div>
 		<h1 class="onboarding-title mt-6">One app. Every angle.</h1>
 		<p class="onboarding-lead mx-auto mt-4 max-w-lg">
-			The vigil begins in a few minutes - import holdings or add them manually, then outline your
-			monthly budget. Wealth, spending, and the signals between.
+			Setup takes a few minutes - import holdings or add them manually, then outline your monthly
+			budget. Discipline creates freedom.
 		</p>
 		<PrimaryButton href="/onboarding/import" class="onboarding-cta mt-8 inline-flex px-8"
 			>Get started</PrimaryButton

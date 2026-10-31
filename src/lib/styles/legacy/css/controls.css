@@ -5,8 +5,8 @@
 	@apply inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition;
 	background: var(--color-tint);
 	/* Not text-white. --primary-foreground already inverts per scope because the
-   * dark tint (#00F2FF) is far too bright to carry white: that combination
-   * measures 1.39:1, below even the 3:1 large-text floor. */
+   * dark gold tint (#D8B477) is far too bright to carry white: that combination
+   * measures 1.96:1, below even the 3:1 large-text floor. */
 	color: var(--primary-foreground);
 }
 
@@ -26,8 +26,8 @@
 [data-nq-btn='primary'] {
 	@apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition;
 	background: var(--color-tint);
-	/* Same reason as .btn-primary above: white on the dark-mode tint (#00F2FF) is
-   * 1.39:1. --primary-foreground already inverts per scope. */
+	/* Same reason as .btn-primary above: white on the dark-mode tint (#D8B477) is
+   * 1.96:1. --primary-foreground already inverts per scope. */
 	color: var(--primary-foreground);
 }
 

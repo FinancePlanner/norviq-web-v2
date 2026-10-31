@@ -21,17 +21,17 @@ export function sentimentBadgeClass(label: string): string {
 	switch (label.trim().toLowerCase()) {
 		case 'bullish':
 		case 'positive':
-			return 'bg-emerald-500/15 text-emerald-500';
+			return 'bg-[color-mix(in_oklab,var(--color-gain)_8%,transparent)] text-[var(--color-gain)]';
 		case 'bearish':
 		case 'negative':
-			return 'bg-rose-500/15 text-rose-500';
+			return 'bg-[color-mix(in_oklab,var(--color-loss)_8%,transparent)] text-[var(--color-loss)]';
 		default:
-			return 'bg-slate-500/15 text-slate-400';
+			return 'bg-[color-mix(in_oklab,var(--color-flat)_8%,transparent)] text-[var(--color-flat)]';
 	}
 }
 
 export function sentimentNoDataClass(): string {
-	return 'bg-transparent text-muted-foreground/60 border border-dashed border-border';
+	return 'bg-transparent text-muted-foreground border border-dashed border-border';
 }
 
 export function sentimentPostCountLabel(count: number): string {

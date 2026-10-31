@@ -63,10 +63,22 @@ export function marketBriefTitleKey(slot: string): string {
 	return 'Market brief';
 }
 
+/**
+ * Shape-coded, not colour-coded: ▲ and ▼ stay distinct for colour-blind readers
+ * and in grayscale, where the old 🟢/🔴 dots differed only by hue. Screen readers
+ * get directionKey() instead, so callers keep the glyph aria-hidden.
+ */
 export function directionMarker(direction: string): string {
-	if (direction === Up) return '🟢';
-	if (direction === Down) return '🔴';
-	return '⚪️';
+	if (direction === Up) return '▲';
+	if (direction === Down) return '▼';
+	return '–';
+}
+
+/** The gain/loss/flat text class for a direction (theme tokens, never brand gold). */
+export function directionToneClass(direction: string): string {
+	if (direction === Up) return 'text-[var(--color-gain)]';
+	if (direction === Down) return 'text-[var(--color-loss)]';
+	return 'text-[var(--color-flat)]';
 }
 
 export function directionKey(direction: string): string {

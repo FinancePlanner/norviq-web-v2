@@ -1072,10 +1072,14 @@ html .app-sidebar-group-label {
    * on top of the collapsed icon rail. Opacity is the utility's to own. */
 }
 
+/* Precision: a 2px gold leading rule over a faint wash, not a filled pill. The
+ * rule is an inset shadow so the row does not shift by a pixel when it becomes
+ * active, and the gold text keeps "where am I" readable without the rule. */
 html .app-sidebar-link-active,
 html a.app-sidebar-link[aria-current='page'] {
 	color: var(--color-tint);
-	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+	background: color-mix(in srgb, var(--color-tint) 6%, transparent);
+	box-shadow: inset 2px 0 0 var(--color-tint);
 }
 
 /* ---------- Command center chrome ---------- */
@@ -1271,7 +1275,7 @@ html .mcp-status-list .mcp-state {
 }
 
 html .mcp-state.is-live {
-	color: var(--color-secondary-tint);
+	color: var(--color-gain);
 }
 
 html .mcp-state.is-ready {
@@ -1366,8 +1370,8 @@ html .why-moved-chip:hover {
 }
 
 html .why-moved-sentiment-bullish {
-	color: var(--color-secondary-tint);
-	background: color-mix(in srgb, var(--color-secondary-tint) 14%, transparent);
+	color: var(--color-gain);
+	background: color-mix(in srgb, var(--color-gain) 14%, transparent);
 }
 
 html .why-moved-sentiment-bearish {
@@ -1435,7 +1439,7 @@ html .mcp-tool-log-line {
 }
 
 html .mcp-tool-log-ts {
-	color: var(--color-secondary-tint);
+	color: var(--muted-foreground);
 }
 .stock-thesis-drift-panel .mcp-status-cta {
 	display: inline-flex;
@@ -1536,8 +1540,8 @@ html .mcp-token-table-wrap {
 }
 
 html.dark:root .mcp-active-scopes {
-	border-color: color-mix(in srgb, var(--color-secondary-tint) 42%, var(--border));
-	background: color-mix(in srgb, var(--color-secondary-tint) 6%, transparent);
+	border-color: color-mix(in srgb, var(--color-tint) 42%, var(--border));
+	background: color-mix(in srgb, var(--color-tint) 6%, transparent);
 }
 
 html .mcp-token-table {
@@ -1748,9 +1752,11 @@ html .assistant-conversation.active {
 	border-color: color-mix(in srgb, var(--color-tint) 45%, transparent);
 }
 
+/* Muted by colour, not opacity: 65% opacity on the dark rail measured 3.7:1. */
 html .assistant-conversation time {
 	font-variant-numeric: tabular-nums;
-	opacity: 0.65;
+	color: var(--muted-foreground);
+	opacity: 1;
 }
 
 html .assistant-tools-rail {
@@ -1843,7 +1849,8 @@ html .expenses-dca-gauge-fill {
 	position: absolute;
 	inset: auto 0 0;
 	height: var(--dca-pct, 50%);
-	background: linear-gradient(180deg, var(--color-secondary-tint), var(--color-tint));
+	/* Progress, not profit: brand gold, flat. */
+	background: var(--color-tint);
 	opacity: 0.55;
 }
 
@@ -1902,8 +1909,8 @@ html .pro-gate-card {
 }
 
 html .trial-banner {
-	border-color: color-mix(in srgb, var(--color-secondary-tint) 40%, transparent);
-	background: color-mix(in srgb, var(--color-secondary-tint) 10%, transparent);
+	border-color: color-mix(in srgb, var(--color-tint) 40%, transparent);
+	background: color-mix(in srgb, var(--color-tint) 10%, transparent);
 }
 
 html .pro-gate-eyebrow,

@@ -14,9 +14,14 @@
 		title={vm.tooltip}
 	>
 		<span>{vm.label}</span>
-		<span class="opacity-70">{vm.scoreLabel}</span>
+		<span class="font-normal">{vm.scoreLabel}</span>
 		{#if vm.hasDelta}
-			<span class={['text-[10px]', vm.deltaUp ? 'text-emerald-500' : 'text-rose-500']}>
+			<span
+				class={[
+					'text-[10px]',
+					vm.deltaUp ? 'text-[var(--color-gain)]' : 'text-[var(--color-loss)]'
+				]}
+			>
 				{vm.deltaLabel}
 			</span>
 		{/if}

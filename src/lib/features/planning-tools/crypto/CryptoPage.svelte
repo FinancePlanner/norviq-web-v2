@@ -134,7 +134,7 @@
 				<div id="crypto-holdings-body" class="mt-4">
 					{#if vm.holdings.length === 0}
 						<EmptyState
-							title="Nothing under watch yet"
+							title="No digital assets yet"
 							description="Add your first digital asset to track cost basis and portfolio value."
 						/>
 					{:else}

@@ -7,7 +7,7 @@
 		"theme": "white",
 		"option": {
 			"backgroundColor": "transparent",
-			"color": ["#C97A2B"],
+			"color": ["#D8B477"],
 			"grid": [
 				{
 					"left": "0%",
@@ -36,11 +36,11 @@
 						"focus": "series"
 					},
 					"lineStyle": {
-						"color": "#C97A2B",
+						"color": "#D8B477",
 						"width": 2.5
 					},
 					"areaStyle": {
-						"color": "#C97A2B",
+						"color": "#D8B477",
 						"opacity": 0.25
 					}
 				}
@@ -68,7 +68,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					},
 					"axisTick": {
@@ -93,7 +93,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					}
 				}
@@ -169,7 +169,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					},
 					"axisTick": {
@@ -194,7 +194,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					}
 				}
@@ -209,7 +209,7 @@
 		"theme": "white",
 		"option": {
 			"backgroundColor": "transparent",
-			"color": ["#C97A2B"],
+			"color": ["#D8B477"],
 			"grid": [
 				{
 					"left": "0%",
@@ -238,11 +238,11 @@
 						"focus": "series"
 					},
 					"lineStyle": {
-						"color": "#C97A2B",
+						"color": "#D8B477",
 						"width": 2.5
 					},
 					"areaStyle": {
-						"color": "#C97A2B",
+						"color": "#D8B477",
 						"opacity": 0.18
 					}
 				}
@@ -270,7 +270,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					},
 					"axisTick": {
@@ -295,7 +295,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					}
 				}
@@ -311,15 +311,15 @@
 		"option": {
 			"backgroundColor": "transparent",
 			"color": [
-				"#C97A2B",
-				"#2563EB",
-				"#DB2777",
-				"#65A30D",
-				"#7C3AED",
-				"#0891B2",
-				"#E11D48",
-				"#0D9488",
-				"#B45309"
+				"#B07C1E",
+				"#AD53B5",
+				"#9D562B",
+				"#1689B0",
+				"#7D4DBE",
+				"#08A2AF",
+				"#565FC1",
+				"#B56A94",
+				"#2E91F2"
 			],
 			"legend": {
 				"show": false
@@ -372,15 +372,15 @@
 		"option": {
 			"backgroundColor": "transparent",
 			"color": [
-				"#C97A2B",
-				"#2563EB",
-				"#DB2777",
-				"#65A30D",
-				"#7C3AED",
-				"#0891B2",
-				"#E11D48",
-				"#0D9488",
-				"#B45309"
+				"#B07C1E",
+				"#AD53B5",
+				"#9D562B",
+				"#1689B0",
+				"#7D4DBE",
+				"#08A2AF",
+				"#565FC1",
+				"#B56A94",
+				"#2E91F2"
 			],
 			"legend": {
 				"show": false
@@ -448,13 +448,13 @@
 						{
 							"value": 40,
 							"itemStyle": {
-								"color": "#089981"
+								"color": "#42B894"
 							}
 						},
 						{
 							"value": -30,
 							"itemStyle": {
-								"color": "#f23645"
+								"color": "#E16D75"
 							}
 						}
 					],
@@ -496,7 +496,7 @@
 		"theme": "white",
 		"option": {
 			"backgroundColor": "transparent",
-			"color": ["#C97A2B"],
+			"color": ["#42B894"],
 			"grid": [
 				{
 					"left": "0",
@@ -527,7 +527,7 @@
 						}
 					],
 					"lineStyle": {
-						"color": "#C97A2B",
+						"color": "#42B894",
 						"width": 1.5
 					}
 				}
@@ -597,10 +597,10 @@
 						}
 					],
 					"itemStyle": {
-						"color": "#22c55e",
-						"color0": "#ef4444",
-						"borderColor": "#22c55e",
-						"borderColor0": "#ef4444"
+						"color": "#42B894",
+						"color0": "#E16D75",
+						"borderColor": "#42B894",
+						"borderColor0": "#E16D75"
 					}
 				}
 			],
@@ -622,7 +622,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 10
 					}
 				}
@@ -641,7 +641,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 10
 					}
 				}
@@ -656,7 +656,7 @@
 		"theme": "white",
 		"option": {
 			"backgroundColor": "transparent",
-			"color": ["#f23645"],
+			"color": ["#E16D75"],
 			"grid": [
 				{
 					"left": "8",
@@ -690,7 +690,7 @@
 						]
 					},
 					"lineStyle": {
-						"color": "#f23645",
+						"color": "#E16D75",
 						"width": 2
 					}
 				}
@@ -737,15 +737,15 @@
 		"option": {
 			"backgroundColor": "transparent",
 			"color": [
-				"#C97A2B",
-				"#2563EB",
-				"#DB2777",
-				"#65A30D",
-				"#7C3AED",
-				"#0891B2",
-				"#E11D48",
-				"#0D9488",
-				"#B45309"
+				"#B07C1E",
+				"#AD53B5",
+				"#9D562B",
+				"#1689B0",
+				"#7D4DBE",
+				"#08A2AF",
+				"#565FC1",
+				"#B56A94",
+				"#2E91F2"
 			],
 			"grid": [
 				{
@@ -762,7 +762,7 @@
 				"left": "center",
 				"top": "0",
 				"textStyle": {
-					"color": "#8D8371",
+					"color": "#7A8597",
 					"fontSize": 11
 				}
 			},
@@ -833,7 +833,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					},
 					"axisTick": {
@@ -855,7 +855,7 @@
 						"formatter": "__fn__",
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					}
 				}
@@ -871,15 +871,15 @@
 		"option": {
 			"backgroundColor": "transparent",
 			"color": [
-				"#C97A2B",
-				"#2563EB",
-				"#DB2777",
-				"#65A30D",
-				"#7C3AED",
-				"#0891B2",
-				"#E11D48",
-				"#0D9488",
-				"#B45309"
+				"#B07C1E",
+				"#AD53B5",
+				"#9D562B",
+				"#1689B0",
+				"#7D4DBE",
+				"#08A2AF",
+				"#565FC1",
+				"#B56A94",
+				"#2E91F2"
 			],
 			"grid": [
 				{
@@ -896,7 +896,7 @@
 				"left": "center",
 				"top": "0",
 				"textStyle": {
-					"color": "#8D8371",
+					"color": "#7A8597",
 					"fontSize": 11
 				}
 			},
@@ -940,7 +940,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					},
 					"axisTick": {
@@ -962,7 +962,7 @@
 						"formatter": "__fn__",
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					}
 				}
@@ -1161,7 +1161,7 @@
 				"itemWidth": 10,
 				"show": true,
 				"textStyle": {
-					"color": "#8D8371",
+					"color": "#7A8597",
 					"fontSize": 11
 				}
 			},
@@ -1175,7 +1175,7 @@
 					"itemStyle": {
 						"borderColor": "transparent",
 						"borderWidth": 2,
-						"color": "#8D8371"
+						"color": "#7A8597"
 					},
 					"name": "Fixed",
 					"stack": "spend",
@@ -1190,7 +1190,7 @@
 					"itemStyle": {
 						"borderColor": "transparent",
 						"borderWidth": 2,
-						"color": "#8D8371"
+						"color": "#7A8597"
 					},
 					"name": "Fun",
 					"stack": "spend",
@@ -1225,7 +1225,7 @@
 			"calendar": {
 				"cellSize": ["auto", 13],
 				"dayLabel": {
-					"color": "#8D8371",
+					"color": "#7A8597",
 					"firstDay": 1,
 					"fontSize": 10
 				},
@@ -1235,7 +1235,7 @@
 				},
 				"left": 20,
 				"monthLabel": {
-					"color": "#8D8371",
+					"color": "#7A8597",
 					"fontSize": 10
 				},
 				"range": ["2026-01-01", "2026-08-12"],
@@ -1261,7 +1261,7 @@
 			"visualMap": {
 				"bottom": 0,
 				"inRange": {
-					"color": ["#F0E9DC", "#E0C89A", "#C97A2B", "#8A4F16"]
+					"color": ["#F3ECDD", "#E2CB9F", "#B07C1E", "#7A5414"]
 				},
 				"itemHeight": 90,
 				"itemWidth": 10,
@@ -1271,7 +1271,7 @@
 				"orient": "horizontal",
 				"text": ["more", "less"],
 				"textStyle": {
-					"color": "#8D8371",
+					"color": "#7A8597",
 					"fontSize": 11
 				},
 				"type": "continuous"
@@ -1287,15 +1287,15 @@
 		"option": {
 			"backgroundColor": "transparent",
 			"color": [
-				"#C97A2B",
-				"#2563EB",
-				"#DB2777",
-				"#65A30D",
-				"#7C3AED",
-				"#0891B2",
-				"#E11D48",
-				"#0D9488",
-				"#B45309"
+				"#B07C1E",
+				"#AD53B5",
+				"#9D562B",
+				"#1689B0",
+				"#7D4DBE",
+				"#08A2AF",
+				"#565FC1",
+				"#B56A94",
+				"#2E91F2"
 			],
 			"grid": [
 				{
@@ -1312,7 +1312,7 @@
 				"left": "center",
 				"top": "0",
 				"textStyle": {
-					"color": "#8D8371",
+					"color": "#7A8597",
 					"fontSize": 11
 				}
 			},
@@ -1359,7 +1359,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					},
 					"axisTick": {
@@ -1381,7 +1381,7 @@
 						"formatter": "__fn__",
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					}
 				}
@@ -1397,15 +1397,15 @@
 		"option": {
 			"backgroundColor": "transparent",
 			"color": [
-				"#C97A2B",
-				"#2563EB",
-				"#DB2777",
-				"#65A30D",
-				"#7C3AED",
-				"#0891B2",
-				"#E11D48",
-				"#0D9488",
-				"#B45309"
+				"#B07C1E",
+				"#AD53B5",
+				"#9D562B",
+				"#1689B0",
+				"#7D4DBE",
+				"#08A2AF",
+				"#565FC1",
+				"#B56A94",
+				"#2E91F2"
 			],
 			"grid": [
 				{
@@ -1422,7 +1422,7 @@
 				"left": "center",
 				"top": "0",
 				"textStyle": {
-					"color": "#8D8371",
+					"color": "#7A8597",
 					"fontSize": 11
 				}
 			},
@@ -1472,7 +1472,7 @@
 					"axisLabel": {
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					},
 					"axisTick": {
@@ -1494,7 +1494,7 @@
 						"formatter": "__fn__",
 						"showMinLabel": null,
 						"showMaxLabel": null,
-						"color": "#8D8371",
+						"color": "#7A8597",
 						"fontSize": 11
 					}
 				}
@@ -1662,7 +1662,7 @@
 		"theme": "white",
 		"option": {
 			"backgroundColor": "transparent",
-			"color": ["#f23645"],
+			"color": ["#E16D75"],
 			"grid": [
 				{
 					"left": "0",
@@ -1687,7 +1687,7 @@
 						}
 					],
 					"lineStyle": {
-						"color": "#f23645",
+						"color": "#E16D75",
 						"width": 1.5
 					}
 				}
@@ -1714,12 +1714,12 @@
 		}
 	},
 	"donut": {
-		"svg": "<svg class=\"donut-chart\" viewBox=\"0 0 42 42\" role=\"img\" aria-label=\"Allocation: AAPL 60.0%, M&amp;S 30.0%, Other 10.0%\"><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#C97A2B\" stroke-width=\"6\" stroke-dasharray=\"60.000 40.000\" stroke-dashoffset=\"0.000\" transform=\"rotate(-90 21 21)\"><title>AAPL 60.0%</title></circle><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#2563EB\" stroke-width=\"6\" stroke-dasharray=\"30.000 70.000\" stroke-dashoffset=\"-60.000\" transform=\"rotate(-90 21 21)\"><title>M&amp;S 30.0%</title></circle><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#123456\" stroke-width=\"6\" stroke-dasharray=\"10.000 90.000\" stroke-dashoffset=\"-90.000\" transform=\"rotate(-90 21 21)\"><title>Other 10.0%</title></circle></svg>"
+		"svg": "<svg class=\"donut-chart\" viewBox=\"0 0 42 42\" role=\"img\" aria-label=\"Allocation: AAPL 60.0%, M&amp;S 30.0%, Other 10.0%\"><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#B07C1E\" stroke-width=\"6\" stroke-dasharray=\"60.000 40.000\" stroke-dashoffset=\"0.000\" transform=\"rotate(-90 21 21)\"><title>AAPL 60.0%</title></circle><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#AD53B5\" stroke-width=\"6\" stroke-dasharray=\"30.000 70.000\" stroke-dashoffset=\"-60.000\" transform=\"rotate(-90 21 21)\"><title>M&amp;S 30.0%</title></circle><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#123456\" stroke-width=\"6\" stroke-dasharray=\"10.000 90.000\" stroke-dashoffset=\"-90.000\" transform=\"rotate(-90 21 21)\"><title>Other 10.0%</title></circle></svg>"
 	},
 	"growth": {
-		"svg": "<svg class=\"fin-growth-sparkline-svg\" viewBox=\"0 0 220 52\" role=\"img\" aria-hidden=\"true\"><defs><linearGradient id=\"fin-growth-fill-positive\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C97A2B\" stop-opacity=\"0.35\"/><stop offset=\"100%\" stop-color=\"#C97A2B\" stop-opacity=\"0\"/></linearGradient></defs><line class=\"fin-growth-sparkline-zero\" x1=\"2.00\" y1=\"38.00\" x2=\"218.00\" y2=\"38.00\"/><path class=\"fin-growth-sparkline-area\" fill=\"url(#fin-growth-fill-positive)\" d=\"M 2.00,24.67 L 74.00,6.00 L 146.00,46.00 L 218.00,16.67 L 218.00,46.00 L 2.00,46.00 Z\"/><polyline class=\"fin-growth-sparkline-line\" fill=\"none\" stroke=\"#C97A2B\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"2.00,24.67 74.00,6.00 146.00,46.00 218.00,16.67\"/></svg>"
+		"svg": "<svg class=\"fin-growth-sparkline-svg\" viewBox=\"0 0 220 52\" role=\"img\" aria-hidden=\"true\"><defs><linearGradient id=\"fin-growth-fill-positive\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" style=\"stop-color:var(--color-gain)\" stop-opacity=\"0.35\"/><stop offset=\"100%\" style=\"stop-color:var(--color-gain)\" stop-opacity=\"0\"/></linearGradient></defs><line class=\"fin-growth-sparkline-zero\" x1=\"2.00\" y1=\"38.00\" x2=\"218.00\" y2=\"38.00\"/><path class=\"fin-growth-sparkline-area\" fill=\"url(#fin-growth-fill-positive)\" d=\"M 2.00,24.67 L 74.00,6.00 L 146.00,46.00 L 218.00,16.67 L 218.00,46.00 L 2.00,46.00 Z\"/><polyline class=\"fin-growth-sparkline-line\" fill=\"none\" style=\"stroke:var(--color-gain)\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"2.00,24.67 74.00,6.00 146.00,46.00 218.00,16.67\"/></svg>"
 	},
 	"growthneg": {
-		"svg": "<svg class=\"fin-growth-sparkline-svg\" viewBox=\"0 0 220 52\" role=\"img\" aria-hidden=\"true\"><defs><linearGradient id=\"fin-growth-fill-negative\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#f85149\" stop-opacity=\"0.35\"/><stop offset=\"100%\" stop-color=\"#f85149\" stop-opacity=\"0\"/></linearGradient></defs><path class=\"fin-growth-sparkline-area\" fill=\"url(#fin-growth-fill-negative)\" d=\"M 2.00,26.00 L 218.00,26.00 L 218.00,46.00 L 2.00,46.00 Z\"/><polyline class=\"fin-growth-sparkline-line\" fill=\"none\" stroke=\"#f85149\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"2.00,26.00 218.00,26.00\"/></svg>"
+		"svg": "<svg class=\"fin-growth-sparkline-svg\" viewBox=\"0 0 220 52\" role=\"img\" aria-hidden=\"true\"><defs><linearGradient id=\"fin-growth-fill-negative\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" style=\"stop-color:var(--color-loss)\" stop-opacity=\"0.35\"/><stop offset=\"100%\" style=\"stop-color:var(--color-loss)\" stop-opacity=\"0\"/></linearGradient></defs><path class=\"fin-growth-sparkline-area\" fill=\"url(#fin-growth-fill-negative)\" d=\"M 2.00,26.00 L 218.00,26.00 L 218.00,46.00 L 2.00,46.00 Z\"/><polyline class=\"fin-growth-sparkline-line\" fill=\"none\" style=\"stroke:var(--color-loss)\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"2.00,26.00 218.00,26.00\"/></svg>"
 	}
 }

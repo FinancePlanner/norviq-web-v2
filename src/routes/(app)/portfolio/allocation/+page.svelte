@@ -192,7 +192,7 @@
 		</section>
 	{:else}
 		<EmptyState
-			title="Nothing under watch yet"
+			title="No positions yet"
 			description="Add positions to your portfolio to see how your wealth is distributed."
 			actionLabel="Add position"
 			actionHref="/portfolio"

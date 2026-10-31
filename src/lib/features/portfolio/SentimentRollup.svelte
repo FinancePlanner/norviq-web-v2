@@ -20,8 +20,8 @@
 		<p
 			class={[
 				'mt-1 text-xs',
-				!vm.coverageThin && 'opacity-60',
-				vm.coverageThin && 'text-amber-500'
+				!vm.coverageThin && 'text-muted-foreground',
+				vm.coverageThin && 'text-[var(--color-warning)]'
 			]}
 		>
 			{#if vm.coverageThin}

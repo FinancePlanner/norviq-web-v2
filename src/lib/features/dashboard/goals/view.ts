@@ -45,11 +45,11 @@ export function driftLabel(state: string, months: number | null | undefined): st
 export function driftClass(state: string): string {
 	switch (state) {
 		case 'behind':
-			return 'text-amber-600 dark:text-amber-300';
+			return 'text-[var(--color-warning)]';
 		case 'ahead':
 		case 'complete':
 		case 'on_track':
-			return 'text-emerald-600 dark:text-emerald-300';
+			return 'text-[var(--color-success)]';
 		default:
 			return 'opacity-60';
 	}
