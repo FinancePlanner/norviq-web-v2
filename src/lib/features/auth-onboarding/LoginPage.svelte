@@ -36,8 +36,14 @@
 		mfa?: MFAModalState | null;
 	};
 
-	let { isSignup, errorMessage = '', infoMessage = '', mfaOpen = false, nextPath = '', mfa: mfaIn = null }: Props =
-		$props();
+	let {
+		isSignup,
+		errorMessage = '',
+		infoMessage = '',
+		mfaOpen = false,
+		nextPath = '',
+		mfa: mfaIn = null
+	}: Props = $props();
 
 	let showMfa = $state(untrack(() => mfaOpen || !!mfaIn));
 	// The modal always starts from MFAModal("", 0, "", ""), as in Go.
@@ -49,7 +55,8 @@
 	let formError = $state(untrack(() => errorMessage !== ''));
 	let password = $state('');
 
-	const switchHref = (base: string) => (nextPath ? `${base}?next=${encodeURIComponent(nextPath)}` : base);
+	const switchHref = (base: string) =>
+		nextPath ? `${base}?next=${encodeURIComponent(nextPath)}` : base;
 
 	async function showError(message: string) {
 		error = message;
@@ -102,8 +109,10 @@
 				</vigil.AuthBrandColumn>
 				<vigil.AuthFormColumn>
 					<div class="flex items-center justify-end">
-						<a href="/login" class="text-subhead text-muted-foreground hover:text-foreground" aria-label="Close sign up"
-							>✕</a
+						<a
+							href="/login"
+							class="text-subhead text-muted-foreground hover:text-foreground"
+							aria-label="Close sign up">✕</a
 						>
 					</div>
 					<AuthMobileBrand />
@@ -159,15 +168,18 @@
 								<div class="flex gap-1 pt-1">
 									{#each [1, 2, 3, 4] as i (i)}
 										<div
-											class="h-1 flex-1 rounded-full bg-black/10 dark:bg-white/10 transition-all {score() >= i
-												? 'bg-[var(--color-tint)] spring-pop'
+											class="h-1 flex-1 rounded-full bg-black/10 transition-all dark:bg-white/10 {score() >=
+											i
+												? 'spring-pop bg-[var(--color-tint)]'
 												: ''}"
 											style={score() >= i ? 'animation-delay: ' + i * 50 + 'ms' : ''}
 										></div>
 									{/each}
 								</div>
 								<p class="text-xs text-muted-foreground">
-									{t('At least 8 characters, with a capital letter, a small letter, a number and a symbol.')}
+									{t(
+										'At least 8 characters, with a capital letter, a small letter, a number and a symbol.'
+									)}
 								</p>
 							</div>
 							<PasswordField
@@ -191,7 +203,9 @@
 					</div>
 					<p class="text-center text-subhead text-muted-foreground lg:text-left">
 						{t('Already have an account?')}
-						<a href={switchHref('/login')} class="link-tint ml-1 font-semibold">{t('Log in instead')}</a>
+						<a href={switchHref('/login')} class="link-tint ml-1 font-semibold"
+							>{t('Log in instead')}</a
+						>
 					</p>
 					<ThemeToggleCompact />
 				</vigil.AuthFormColumn>
@@ -237,7 +251,9 @@
 								required
 							/>
 							<div class="flex justify-end">
-								<a href="/forgot-password" class="link-tint text-footnote font-semibold">{t('Forgot Password?')}</a>
+								<a href="/forgot-password" class="link-tint text-footnote font-semibold"
+									>{t('Forgot Password?')}</a
+								>
 							</div>
 							<SubmitButton fullWidth>{t('Sign in')}</SubmitButton>
 							<SocialAuthSection intentLabel="sign in" onerror={showError} />
@@ -245,7 +261,9 @@
 					</div>
 					<p class="text-center text-subhead text-muted-foreground lg:text-left">
 						{t("Don't have an account?")}
-						<a href={switchHref('/signup')} class="link-tint ml-1 font-semibold">{t('Create one')}</a>
+						<a href={switchHref('/signup')} class="link-tint ml-1 font-semibold"
+							>{t('Create one')}</a
+						>
 					</p>
 					<ThemeToggleCompact />
 				</vigil.AuthFormColumn>
@@ -261,7 +279,10 @@
 				if (e.target === e.currentTarget) showMfa = false;
 			}}
 		>
-			<div id="mfa-modal-content" class="vigil-modal-panel w-full max-w-md rounded-xl bg-[var(--color-card-bg)] p-6 shadow-2xl">
+			<div
+				id="mfa-modal-content"
+				class="vigil-modal-panel w-full max-w-md rounded-xl bg-[var(--color-card-bg)] p-6 shadow-2xl"
+			>
 				<MfaModal bind:mfa onclose={() => (showMfa = false)} />
 			</div>
 		</div>

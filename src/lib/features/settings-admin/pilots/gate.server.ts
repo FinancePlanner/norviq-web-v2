@@ -29,7 +29,9 @@ let inflight: Promise<ProbeResult> | null = null;
 
 async function probePilots(event: RequestEvent): Promise<ProbeResult> {
 	try {
-		await apiJSON<unknown[]>(event, 'GET', '/v1/pilots', undefined, { signal: AbortSignal.timeout(PILOTS_PROBE_TIMEOUT) });
+		await apiJSON<unknown[]>(event, 'GET', '/v1/pilots', undefined, {
+			signal: AbortSignal.timeout(PILOTS_PROBE_TIMEOUT)
+		});
 		return { enabled: true, ttl: PILOTS_PROBE_TTL };
 	} catch (err) {
 		if (isAPIError(err) && err.status === 404) return { enabled: false, ttl: PILOTS_PROBE_TTL };
@@ -84,7 +86,8 @@ export async function pilotLoadFailure(event: RequestEvent, status: number): Pro
 }
 
 /** Result of a pilots call: data on 2xx, else the HTTP status (0 when the call never completed) and body. */
-export type PilotsResult<T> = { ok: true; status: number; data: T } | { ok: false; status: number; body: unknown };
+export type PilotsResult<T> =
+	{ ok: true; status: number; data: T } | { ok: false; status: number; body: unknown };
 
 /**
  * One pilots API call through the session bearer. Mirrors the generated
@@ -106,7 +109,10 @@ export async function pilotsCall<T>(
 			body = JSON.stringify(input);
 			h['Content-Type'] = 'application/json';
 		}
-		res = await apiFetch(event, method, path, body, { headers: h, signal: AbortSignal.timeout(PILOTS_CLIENT_TIMEOUT) });
+		res = await apiFetch(event, method, path, body, {
+			headers: h,
+			signal: AbortSignal.timeout(PILOTS_CLIENT_TIMEOUT)
+		});
 	} catch (err) {
 		console.warn('pilots call', method, path, err);
 		return { ok: false, status: 0, body: undefined };

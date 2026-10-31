@@ -59,7 +59,7 @@ token.
   - Routes outside any group (e.g. `/logout`, `/api`, `/auth/oauth/.../callback`)
     do their own checks.
 - `(app)/+layout.server.ts` provides `username, email, isPro, billingUnknown,
-  trialExpired, features (key→bool), social, articles, sidebarItems` to every
+trialExpired, features (key→bool), social, articles, sidebarItems` to every
   page via `data` / `page.data`.
 - Pro/feature gates: `await requireFeature(event, Feature.X, 'Display name')`
   from `#lib/server/guards.js` in the page's `load` → 402 → `(app)/+error.svelte`
@@ -70,21 +70,21 @@ token.
 
 ### Mapping HTMX/Alpine idioms
 
-| Go web | v2 |
-|---|---|
-| full page `GET /x` (templ page) | `src/routes/(group)/x/+page.svelte` + `+page.server.ts` load, **same URL** |
-| `hx-get` fragment route (partial) | Svelte component; data from the page load, or TanStack Query on `/api/v1/...`, or a `+server.ts` JSON endpoint **only** if the Go handler aggregated several backend calls server-side. Fragment URLs need not survive; mark them in ROUTES.md as `→ component X` |
-| `hx-post` form | form action (`?/name`) on the page, or `+server.ts` at the **same path** when the URL is posted to from elsewhere |
-| `hx-trigger="every Ns"` | `createQuery({ refetchInterval })` |
-| `hx-boost` | native SvelteKit navigation |
-| Alpine `x-data` state | `$state` / `$derived` in the component |
-| templUI dialog/popover/select/tabs/toast JS | shadcn-svelte (`#lib/components/ui/*`, bits-ui) styled with the **same Norviq classes** |
-| `NorviqMotion.staggerReveal / animateValue / flashChange` | `#lib/motion.js` (Phase 1) |
-| ECharts via `echarts-slim.js` + `internal/charts` option builders | `#lib/charts/*` (Phase 1) |
-| SSE / streaming (`assistant_stream.go`) | `fetch('/api/v1/...')` stream reader in the browser |
-| `i18n.T(ctx, "Text")` | `t('Text')` from `#lib/i18n/context.svelte.js` (components) / `locals.t('Text')` (server). Keep the **exact English id** so pt-PT applies. |
-| CSRF token fields | not needed — SvelteKit rejects cross-origin form posts |
-| PostHog capture-once session flag (`posthogCaptureEvent`) | set the same flag; root layout fires it client-side (Phase 1) |
+| Go web                                                            | v2                                                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| full page `GET /x` (templ page)                                   | `src/routes/(group)/x/+page.svelte` + `+page.server.ts` load, **same URL**                                                                                                                                                                                        |
+| `hx-get` fragment route (partial)                                 | Svelte component; data from the page load, or TanStack Query on `/api/v1/...`, or a `+server.ts` JSON endpoint **only** if the Go handler aggregated several backend calls server-side. Fragment URLs need not survive; mark them in ROUTES.md as `→ component X` |
+| `hx-post` form                                                    | form action (`?/name`) on the page, or `+server.ts` at the **same path** when the URL is posted to from elsewhere                                                                                                                                                 |
+| `hx-trigger="every Ns"`                                           | `createQuery({ refetchInterval })`                                                                                                                                                                                                                                |
+| `hx-boost`                                                        | native SvelteKit navigation                                                                                                                                                                                                                                       |
+| Alpine `x-data` state                                             | `$state` / `$derived` in the component                                                                                                                                                                                                                            |
+| templUI dialog/popover/select/tabs/toast JS                       | shadcn-svelte (`#lib/components/ui/*`, bits-ui) styled with the **same Norviq classes**                                                                                                                                                                           |
+| `NorviqMotion.staggerReveal / animateValue / flashChange`         | `#lib/motion.js` (Phase 1)                                                                                                                                                                                                                                        |
+| ECharts via `echarts-slim.js` + `internal/charts` option builders | `#lib/charts/*` (Phase 1)                                                                                                                                                                                                                                         |
+| SSE / streaming (`assistant_stream.go`)                           | `fetch('/api/v1/...')` stream reader in the browser                                                                                                                                                                                                               |
+| `i18n.T(ctx, "Text")`                                             | `t('Text')` from `#lib/i18n/context.svelte.js` (components) / `locals.t('Text')` (server). Keep the **exact English id** so pt-PT applies.                                                                                                                        |
+| CSRF token fields                                                 | not needed — SvelteKit rejects cross-origin form posts                                                                                                                                                                                                            |
+| PostHog capture-once session flag (`posthogCaptureEvent`)         | set the same flag; root layout fires it client-side (Phase 1)                                                                                                                                                                                                     |
 
 ## Styling — visual parity
 

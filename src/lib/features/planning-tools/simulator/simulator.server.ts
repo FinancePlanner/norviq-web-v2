@@ -4,7 +4,11 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
 import { portfolioAPIErrorMessage } from '#lib/features/dashboard/goals/form.server.js';
-import type { PortfolioSimulation, PortfolioSimulationListResponse, PortfolioSimulationResult } from './types.js';
+import type {
+	PortfolioSimulation,
+	PortfolioSimulationListResponse,
+	PortfolioSimulationResult
+} from './types.js';
 import {
 	addLeg,
 	isOverAllocated,
@@ -37,7 +41,8 @@ export async function loadSimulatorViewModel(event: RequestEvent): Promise<PageV
 		apiJSON<{ items: { id: string; name: string }[] | null }>(event, 'GET', '/v1/portfolios')
 	]);
 	if (list.status === 'fulfilled') vm.saved = list.value?.items ?? [];
-	if (page.status === 'fulfilled') vm.portfolios = (page.value?.items ?? []).map((p) => ({ id: p.id, name: p.name }));
+	if (page.status === 'fulfilled')
+		vm.portfolios = (page.value?.items ?? []).map((p) => ({ id: p.id, name: p.name }));
 	vm.hasPositions = vm.portfolios.length > 0;
 	return vm;
 }
@@ -67,7 +72,12 @@ export async function simulatorPreview(event: RequestEvent): Promise<SimulatorAc
 	}
 
 	try {
-		const result = await apiJSON<PortfolioSimulationResult>(event, 'POST', simulationsBase + '/preview', simulatorUpsertRequest(vm.draft));
+		const result = await apiJSON<PortfolioSimulationResult>(
+			event,
+			'POST',
+			simulationsBase + '/preview',
+			simulatorUpsertRequest(vm.draft)
+		);
 		vm.result = simulatorResultViewModel(result, vm.draft);
 	} catch (err) {
 		vm.error = portfolioAPIErrorMessage(err, 'Could not run the simulation.');
@@ -86,7 +96,12 @@ export async function simulatorSave(event: RequestEvent): Promise<SimulatorActio
 	vm.draft = parsed.draft;
 	vm.selectedID = parsed.draft.sourcePortfolioId;
 	try {
-		const saved = await apiJSON<PortfolioSimulation>(event, 'POST', simulationsBase, simulatorUpsertRequest(vm.draft));
+		const saved = await apiJSON<PortfolioSimulation>(
+			event,
+			'POST',
+			simulationsBase,
+			simulatorUpsertRequest(vm.draft)
+		);
 		vm.notice = 'Saved "' + saved.name + '".';
 		vm.saved = [saved, ...vm.saved];
 	} catch (err) {

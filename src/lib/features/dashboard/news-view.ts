@@ -13,7 +13,9 @@ function escapePath(path: string): string {
 	let out = '';
 	for (const ch of path) {
 		if (/[A-Za-z0-9\-_.~!$&'()*+,;=:@[\]/%]/.test(ch)) out += ch;
-		else for (const byte of new TextEncoder().encode(ch)) out += '%' + byte.toString(16).toUpperCase().padStart(2, '0');
+		else
+			for (const byte of new TextEncoder().encode(ch))
+				out += '%' + byte.toString(16).toUpperCase().padStart(2, '0');
 	}
 	return out;
 }

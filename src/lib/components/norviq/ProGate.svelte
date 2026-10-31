@@ -4,7 +4,8 @@
 	import ProGateOverlay from './ProGateOverlay.svelte';
 	import ProGatePage from './ProGatePage.svelte';
 
-	let { featureName, variant = 'page' }: { featureName: string; variant?: 'page' | 'overlay' } = $props();
+	let { featureName, variant = 'page' }: { featureName: string; variant?: 'page' | 'overlay' } =
+		$props();
 </script>
 
 {#if variant === 'overlay'}

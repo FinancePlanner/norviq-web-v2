@@ -28,7 +28,14 @@
 </script>
 
 <form.ItemFlex class={wrapperClass}>
-	<Checkbox bind:checked id={cid || undefined} {name} class={className} data-nq-control="checkbox" {...rest} />
+	<Checkbox
+		bind:checked
+		id={cid || undefined}
+		{name}
+		class={className}
+		data-nq-control="checkbox"
+		{...rest}
+	/>
 	{#if label}
 		<form.Label for={cid || undefined}>
 			{label}

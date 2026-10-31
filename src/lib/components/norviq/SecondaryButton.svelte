@@ -5,7 +5,10 @@
 	import type { ComponentProps } from 'svelte';
 	import NorviqButton from './NorviqButton.svelte';
 
-	let { ref = $bindable(null), ...props }: Omit<ComponentProps<typeof NorviqButton>, 'kind' | 'submit'> = $props();
+	let {
+		ref = $bindable(null),
+		...props
+	}: Omit<ComponentProps<typeof NorviqButton>, 'kind' | 'submit'> = $props();
 </script>
 
 <NorviqButton bind:ref kind="secondary" {...props} />

@@ -25,7 +25,16 @@ async function get<T>(event: RequestEvent, path: string): Promise<T | null> {
 
 /** SmartScreens view model. */
 export async function loadScreensVM(event: RequestEvent): Promise<ScreensVM> {
-	const vm: ScreensVM = { lists: [], screens: [], catalog: [], evaluation: null, editing: null, history: [], historyScreenID: '', error: '' };
+	const vm: ScreensVM = {
+		lists: [],
+		screens: [],
+		catalog: [],
+		evaluation: null,
+		editing: null,
+		history: [],
+		historyScreenID: '',
+		error: ''
+	};
 	const q = event.url.searchParams;
 	const evaluated = q.get('evaluated') ?? '';
 	const evaluatedID = evaluated ? validUUID(evaluated) : null;
@@ -36,9 +45,13 @@ export async function loadScreensVM(event: RequestEvent): Promise<ScreensVM> {
 		get<WatchlistListResponse[]>(event, '/v1/watchlist/lists'),
 		get<WatchlistScreen[]>(event, '/v1/watchlist/screens'),
 		get<ScreenMetricDescriptor[]>(event, '/v1/watchlist/screens/catalog'),
-		evaluatedID ? get<WatchlistScreenEvaluation[]>(event, `/v1/watchlist/screens/${evaluatedID}/history`) : null,
+		evaluatedID
+			? get<WatchlistScreenEvaluation[]>(event, `/v1/watchlist/screens/${evaluatedID}/history`)
+			: null,
 		editID ? get<WatchlistScreen>(event, `/v1/watchlist/screens/${editID}`) : null,
-		historyID ? get<WatchlistScreenEvaluation[]>(event, `/v1/watchlist/screens/${historyID}/history`) : null
+		historyID
+			? get<WatchlistScreenEvaluation[]>(event, `/v1/watchlist/screens/${historyID}/history`)
+			: null
 	]);
 	if (lists) vm.lists = lists;
 	if (screens) vm.screens = screens;
@@ -65,7 +78,8 @@ export function screenRequestFromForm(form: FormData): WatchlistScreenUpsertRequ
 	const name = formString(form, 'name').trim();
 	if (name === '') throw new ScreenFormError('name is required');
 	let listIDs = formAll(form, 'list_ids');
-	if (listIDs.length === 0 && formString(form, 'list_id') !== '') listIDs = [formString(form, 'list_id')];
+	if (listIDs.length === 0 && formString(form, 'list_id') !== '')
+		listIDs = [formString(form, 'list_id')];
 	if (listIDs.length === 0) throw new ScreenFormError('choose at least one watchlist');
 	for (const id of listIDs) if (!validUUID(id)) throw new ScreenFormError('invalid watchlist');
 
@@ -82,7 +96,8 @@ export function screenRequestFromForm(form: FormData): WatchlistScreenUpsertRequ
 			throw new ScreenFormError('incomplete screen condition');
 		}
 		const groupIndex = /^[+-]?\d+$/.test(groupIndexes[index]) ? Number(groupIndexes[index]) : NaN;
-		if (!Number.isInteger(groupIndex) || groupIndex < 1 || groupIndex > 10) throw new ScreenFormError('invalid condition group');
+		if (!Number.isInteger(groupIndex) || groupIndex < 1 || groupIndex > 10)
+			throw new ScreenFormError('invalid condition group');
 		const period = periods[index];
 		if (!PERIODS.has(period)) throw new ScreenFormError('invalid condition period');
 		const comparison = comparisons[index];
@@ -123,11 +138,23 @@ export function screenRequestFromForm(form: FormData): WatchlistScreenUpsertRequ
 }
 
 /** Backend call that succeeds only on the exact status the Go client's JSON200/204 check expected. */
-export async function callExpect(event: RequestEvent, method: string, path: string, expect: number, body?: unknown): Promise<boolean> {
+export async function callExpect(
+	event: RequestEvent,
+	method: string,
+	path: string,
+	expect: number,
+	body?: unknown
+): Promise<boolean> {
 	try {
-		const res = await apiFetch(event, method, path, body === undefined ? null : JSON.stringify(body), {
-			headers: body === undefined ? {} : { 'Content-Type': 'application/json' }
-		});
+		const res = await apiFetch(
+			event,
+			method,
+			path,
+			body === undefined ? null : JSON.stringify(body),
+			{
+				headers: body === undefined ? {} : { 'Content-Type': 'application/json' }
+			}
+		);
 		await res.body?.cancel();
 		return res.status === expect;
 	} catch {

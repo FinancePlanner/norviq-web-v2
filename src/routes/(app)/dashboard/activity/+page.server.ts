@@ -1,5 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { activityPageLimit, loadActivityPage } from '#lib/features/dashboard/activity/load.server.js';
+import {
+	activityPageLimit,
+	loadActivityPage
+} from '#lib/features/dashboard/activity/load.server.js';
 
 // GET /dashboard/activity (handlers.DashboardActivity). `?limit=` is honoured
 // on the full page as in Go (activityPageLimitFromRequest).

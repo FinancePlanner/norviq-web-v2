@@ -15,7 +15,11 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<vigil.CanvasPage pageClass="expenses-year-page expenses-modern-page" title="Year overview" subtitle={String(data.year)}>
+<vigil.CanvasPage
+	pageClass="expenses-year-page expenses-modern-page"
+	title="Year overview"
+	subtitle={String(data.year)}
+>
 	<vigil.MetricStrip>
 		<vigil.Metric label="Total spent" value={data.totalSpent} />
 		<vigil.Metric label="Total planned" value={data.totalPlanned} />
@@ -44,8 +48,13 @@
 							<p class="month-heatmap-label">{month.label}</p>
 							<p class="month-heatmap-spent tabular-nums">{month.spent}</p>
 							<p class="month-heatmap-plan">Plan {month.planned}</p>
-							<div class="month-heatmap-bar mt-2 h-1 overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
-								<div class="pillar-progress-fill h-full rounded-full" style={`width:${formatFloat(month.heatPct, 0)}%`}></div>
+							<div
+								class="month-heatmap-bar mt-2 h-1 overflow-hidden rounded-full bg-black/5 dark:bg-white/10"
+							>
+								<div
+									class="pillar-progress-fill h-full rounded-full"
+									style={`width:${formatFloat(month.heatPct, 0)}%`}
+								></div>
 							</div>
 						</a>
 					{/each}

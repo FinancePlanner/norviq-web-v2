@@ -9,7 +9,12 @@ import { loadEconomyPulse, loadWhyMoved } from '#lib/features/dashboard/panels/l
 export const load: PageServerLoad = async (event) => {
 	const { username, isPro } = await event.parent();
 	const q = event.url.searchParams;
-	const vm = await loadCommandCenterViewModel(event, username ?? '', timerange.parse(q.get('range')), q.get('domain') ?? '');
+	const vm = await loadCommandCenterViewModel(
+		event,
+		username ?? '',
+		timerange.parse(q.get('range')),
+		q.get('domain') ?? ''
+	);
 	return {
 		vm,
 		whyMoved: loadWhyMoved(event, isPro),

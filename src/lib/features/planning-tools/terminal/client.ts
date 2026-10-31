@@ -3,7 +3,11 @@
 // the region's data back as JSON. Like htmx 4, a non-2xx answer changes
 // nothing on the page (the Go handlers answered every outcome as a 200).
 
-export async function terminalSend<T>(method: string, url: string, values: Record<string, string> | FormData = {}): Promise<T | null> {
+export async function terminalSend<T>(
+	method: string,
+	url: string,
+	values: Record<string, string> | FormData = {}
+): Promise<T | null> {
 	const body = new URLSearchParams();
 	if (values instanceof FormData) {
 		for (const [k, v] of values) if (typeof v === 'string') body.append(k, v);

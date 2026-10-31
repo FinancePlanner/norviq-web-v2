@@ -16,7 +16,10 @@ export function closeExpensePanel() {
 	window.dispatchEvent(new CustomEvent(PANEL_CLOSE_EVENT));
 }
 
-export function panelEnhance<T>(onVM: (vm: T) => void, onError?: (status: number, message: string) => void): SubmitFunction {
+export function panelEnhance<T>(
+	onVM: (vm: T) => void,
+	onError?: (status: number, message: string) => void
+): SubmitFunction {
 	return withSpinner(() => async ({ result }) => {
 		if (result.type === 'redirect') {
 			closeExpensePanel();
@@ -24,7 +27,11 @@ export function panelEnhance<T>(onVM: (vm: T) => void, onError?: (status: number
 		} else if (result.type === 'failure') {
 			const vm = (result.data as { vm?: T } | undefined)?.vm;
 			if (vm) onVM(vm);
-			else onError?.(result.status, String((result.data as { message?: string } | undefined)?.message ?? ''));
+			else
+				onError?.(
+					result.status,
+					String((result.data as { message?: string } | undefined)?.message ?? '')
+				);
 		} else if (result.type === 'error') {
 			const err = result.error as { message?: string; proGate?: string } | undefined;
 			onError?.(result.status ?? 500, err?.proGate ?? err?.message ?? '');

@@ -5,7 +5,11 @@ import {
 	loadCryptoViewModel,
 	requireCrypto
 } from '#lib/features/planning-tools/crypto/crypto.server.js';
-import { normalizeBubbleSize, normalizeCryptoMarketsView, normalizeCryptoTimeframe } from '#lib/features/planning-tools/crypto/markets.js';
+import {
+	normalizeBubbleSize,
+	normalizeCryptoMarketsView,
+	normalizeCryptoTimeframe
+} from '#lib/features/planning-tools/crypto/markets.js';
 
 // GET /crypto and GET /crypto/{tab} (appHandler.Crypto), behind
 // RequireFeature(FeatureCrypto, "Crypto"). Tabs: overview (also ""), market,

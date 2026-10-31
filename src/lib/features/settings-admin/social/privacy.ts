@@ -34,7 +34,9 @@ export const emptyPrivacySettings: SocialPrivacySettings = {
 };
 
 /** Keep only the fields Go's SocialPrivacySettings struct carries (what it PUTs back). */
-export function privacySettingsFrom(raw: Partial<SocialPrivacySettings> | null | undefined): SocialPrivacySettings {
+export function privacySettingsFrom(
+	raw: Partial<SocialPrivacySettings> | null | undefined
+): SocialPrivacySettings {
 	const out = { ...emptyPrivacySettings };
 	if (!raw) return out;
 	out.searchVisibility = typeof raw.searchVisibility === 'string' ? raw.searchVisibility : '';
@@ -76,10 +78,16 @@ export function privacyToggles(cfg: SocialConfig): PrivacyToggle[] {
 	const toggles: PrivacyToggle[] = [
 		{ key: 'showStreaks', label: 'Show my streaks' },
 		{ key: 'showXP', label: 'Show my XP and level' },
-		{ key: 'showReturnPercent', label: 'Show my return %', description: 'Off by default. Friends see a percentage, never an amount.' }
+		{
+			key: 'showReturnPercent',
+			label: 'Show my return %',
+			description: 'Off by default. Friends see a percentage, never an amount.'
+		}
 	];
-	if (leaderboardsOn(cfg)) toggles.push({ key: 'leaderboardOptIn', label: "Appear on friends' leaderboards" });
-	if (achievementsOn(cfg)) toggles.push({ key: 'showAchievements', label: 'Show achievements to friends' });
+	if (leaderboardsOn(cfg))
+		toggles.push({ key: 'leaderboardOptIn', label: "Appear on friends' leaderboards" });
+	if (achievementsOn(cfg))
+		toggles.push({ key: 'showAchievements', label: 'Show achievements to friends' });
 	if (cfg.contactsDiscovery) {
 		toggles.push({
 			key: 'discoverableByContacts',
@@ -87,7 +95,12 @@ export function privacyToggles(cfg: SocialConfig): PrivacyToggle[] {
 			description: 'People who have your email or phone number in their address book (iOS app).'
 		});
 	}
-	if (cfg.xImport) toggles.push({ key: 'discoverableByX', label: 'Find me from X', description: 'People who follow you on X.' });
+	if (cfg.xImport)
+		toggles.push({
+			key: 'discoverableByX',
+			label: 'Find me from X',
+			description: 'People who follow you on X.'
+		});
 	if (cfg.facebookImport) {
 		toggles.push({
 			key: 'discoverableByFacebook',
@@ -100,9 +113,21 @@ export function privacyToggles(cfg: SocialConfig): PrivacyToggle[] {
 
 export function searchVisibilityOptions(current: string) {
 	return [
-		{ value: SearchVisibility.Everyone, label: 'Everyone', selected: current === SearchVisibility.Everyone },
-		{ value: SearchVisibility.FriendsOfFriends, label: 'Friends of friends', selected: current === SearchVisibility.FriendsOfFriends },
-		{ value: SearchVisibility.Nobody, label: 'Nobody', selected: current === SearchVisibility.Nobody }
+		{
+			value: SearchVisibility.Everyone,
+			label: 'Everyone',
+			selected: current === SearchVisibility.Everyone
+		},
+		{
+			value: SearchVisibility.FriendsOfFriends,
+			label: 'Friends of friends',
+			selected: current === SearchVisibility.FriendsOfFriends
+		},
+		{
+			value: SearchVisibility.Nobody,
+			label: 'Nobody',
+			selected: current === SearchVisibility.Nobody
+		}
 	];
 }
 

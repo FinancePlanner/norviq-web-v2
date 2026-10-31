@@ -5,9 +5,17 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { getJSON } from '../fetch.server.js';
 import type { FocusPointVM, InsightsPageViewModel } from '../types.js';
-import { mapFinancialHealth, mapFocusPoints, mapInsightCards, type DashboardInsights, type Goal } from './mappers.js';
+import {
+	mapFinancialHealth,
+	mapFocusPoints,
+	mapInsightCards,
+	type DashboardInsights,
+	type Goal
+} from './mappers.js';
 
-export async function loadInsightsPage(event: RequestEvent): Promise<Omit<InsightsPageViewModel, 'isPro'>> {
+export async function loadInsightsPage(
+	event: RequestEvent
+): Promise<Omit<InsightsPageViewModel, 'isPro'>> {
 	const [insights, goals] = await Promise.all([
 		getJSON<DashboardInsights>(event, '/v1/dashboard/insights'),
 		getJSON<Goal[]>(event, '/v1/goals')

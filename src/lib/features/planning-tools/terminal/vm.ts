@@ -1,4 +1,14 @@
-import { DASH, compact, compactCurrency, currency, currencySymbol, inputNumber, number, percent, wholeShares } from '#lib/format.js';
+import {
+	DASH,
+	compact,
+	compactCurrency,
+	currency,
+	currencySymbol,
+	inputNumber,
+	number,
+	percent,
+	wholeShares
+} from '#lib/format.js';
 import {
 	Cadence,
 	SuggestionState,
@@ -22,8 +32,10 @@ import {
 // computed by the backend; this only formats. Client-safe (no server imports).
 
 export const TERMINAL_TITLE = 'Terminal position sizing';
-export const TERMINAL_SUBTITLE = 'Decide the future market cap and share count. Norviq tells you how many shares that target is.';
-export const TERMINAL_DISCLAIMER = 'Terminal prices are your assumptions, not forecasts. Not financial advice.';
+export const TERMINAL_SUBTITLE =
+	'Decide the future market cap and share count. Norviq tells you how many shares that target is.';
+export const TERMINAL_DISCLAIMER =
+	'Terminal prices are your assumptions, not forecasts. Not financial advice.';
 
 export const TERMINAL_UNAVAILABLE = 'Terminal sizing is unavailable right now. Try again shortly.';
 export const TERMINAL_SAVE_FAILED = 'Could not save that. Try again.';
@@ -160,7 +172,13 @@ export function terminalRowVM(p: TerminalPositionResponse, code: string, isPro: 
 		row.scenarioError = scenarioErrorCopy(p.scenarioError);
 		return markUncomputed(row);
 	}
-	if (p.terminalSharePrice == null || p.sharesNeeded == null || p.progress == null || p.sharesStillNeeded == null || p.gapValueAtTerminal == null) {
+	if (
+		p.terminalSharePrice == null ||
+		p.sharesNeeded == null ||
+		p.progress == null ||
+		p.sharesStillNeeded == null ||
+		p.gapValueAtTerminal == null
+	) {
 		row.scenarioError = scenarioErrorCopy('');
 		return markUncomputed(row);
 	}
@@ -173,13 +191,22 @@ export function terminalRowVM(p: TerminalPositionResponse, code: string, isPro: 
 	row.stillNeeded = number(p.sharesStillNeeded, 2);
 	row.stillNeededWhole = number(wholeShares(p.sharesStillNeeded), 0);
 	row.gapValueAtTerminal = currency(p.gapValueAtTerminal, code);
-	if (p.capitalAtTodayPrice != null) row.capitalAtTodayPrice = currency(p.capitalAtTodayPrice, code);
+	if (p.capitalAtTodayPrice != null)
+		row.capitalAtTodayPrice = currency(p.capitalAtTodayPrice, code);
 	return row;
 }
 
 /** terminalRowsVM formats the backend's rows, in the backend's order. */
-export function terminalRowsVM(positions: TerminalPositionResponse[], code: string, isPro: boolean): RowVM[] {
-	return positions.map((p, i) => ({ ...terminalRowVM(p, code, isPro), isFirst: i === 0, isLast: i === positions.length - 1 }));
+export function terminalRowsVM(
+	positions: TerminalPositionResponse[],
+	code: string,
+	isPro: boolean
+): RowVM[] {
+	return positions.map((p, i) => ({
+		...terminalRowVM(p, code, isPro),
+		isFirst: i === 0,
+		isLast: i === positions.length - 1
+	}));
 }
 
 /** terminalFooterVM formats the summary's three totals. */
@@ -199,7 +226,13 @@ export function terminalFooterVM(s: TerminalPositionsSummaryResponse): FooterVM 
 }
 
 /** The zero FooterVM Go renders when the summary failed (hidden). */
-export const emptyFooter: FooterVM = { visible: false, totalValueWanted: '', totalStillNeeded: '', totalCapitalToday: '', pricedNote: '' };
+export const emptyFooter: FooterVM = {
+	visible: false,
+	totalValueWanted: '',
+	totalStillNeeded: '',
+	totalCapitalToday: '',
+	pricedNote: ''
+};
 
 /** terminalSampleRow: the empty-state example, written out as copy. */
 export function terminalSampleRow(code: string): RowVM {
@@ -270,7 +303,16 @@ export function percentInput(ratio: number): string {
 }
 
 export function emptyAutobuyForm(): AutobuyFormVM {
-	return { id: '', label: '', ticker: '', amount: '', cadence: '', percent: '', idempotencyKey: '', error: '' };
+	return {
+		id: '',
+		label: '',
+		ticker: '',
+		amount: '',
+		cadence: '',
+		percent: '',
+		idempotencyKey: '',
+		error: ''
+	};
 }
 
 function terminalAutobuyVM(a: AutobuyResponse, code: string): AutobuyVM {
@@ -321,7 +363,15 @@ export const autobuysUnavailable = (): AutobuysVM => ({
 /** AutobuysVM.FormFor: the rejected values when that item's save failed, else the item as stored. */
 export function autobuyFormFor(vm: AutobuysVM, item: AutobuyVM): AutobuyFormVM {
 	if (vm.editingID === item.id && vm.editForm) return vm.editForm;
-	return { ...emptyAutobuyForm(), id: item.id, label: item.label, ticker: item.ticker, amount: item.amount, cadence: item.cadence, percent: item.percent };
+	return {
+		...emptyAutobuyForm(),
+		id: item.id,
+		label: item.label,
+		ticker: item.ticker,
+		amount: item.amount,
+		cadence: item.cadence,
+		percent: item.percent
+	};
 }
 
 export interface AutobuyChip {
@@ -336,8 +386,20 @@ export interface AutobuyChip {
 export function autobuyChips(symbol: string): AutobuyChip[] {
 	return [
 		{ label: '401k 4%', name: '401k', amount: '', cadence: Cadence.Percent, percent: '4' },
-		{ label: symbol + '50 weekly', name: 'Weekly buy', amount: '50', cadence: Cadence.Weekly, percent: '' },
-		{ label: symbol + '275 every two months', name: 'Every two months', amount: '275', cadence: Cadence.Bimonthly, percent: '' }
+		{
+			label: symbol + '50 weekly',
+			name: 'Weekly buy',
+			amount: '50',
+			cadence: Cadence.Weekly,
+			percent: ''
+		},
+		{
+			label: symbol + '275 every two months',
+			name: 'Every two months',
+			amount: '275',
+			cadence: Cadence.Bimonthly,
+			percent: ''
+		}
 	];
 }
 
@@ -357,7 +419,20 @@ export function autobuyFormID(id: string): string {
 // AI suggestions (terminal_ai.go)
 
 export function newSuggestion(rowID: string, kind: string, ticker: string): SuggestionVM {
-	return { rowID, kind, ticker, state: '', heading: '', lines: [], rationale: '', asOf: '', sources: [], acceptVals: null, notes: [], message: '' };
+	return {
+		rowID,
+		kind,
+		ticker,
+		state: '',
+		heading: '',
+		lines: [],
+		rationale: '',
+		asOf: '',
+		sources: [],
+		acceptVals: null,
+		notes: [],
+		message: ''
+	};
 }
 
 export function setSuggestionUnavailable(vm: SuggestionVM) {
@@ -367,7 +442,8 @@ export function setSuggestionUnavailable(vm: SuggestionVM) {
 
 export function setSuggestionUnusable(vm: SuggestionVM) {
 	vm.state = SuggestionState.Unusable;
-	vm.message = 'The AI lookup did not return usable numbers for ' + vm.ticker + '. Enter them yourself.';
+	vm.message =
+		'The AI lookup did not return usable numbers for ' + vm.ticker + '. Enter them yourself.';
 }
 
 /** currencyCode returns raw as an upper-case three-letter code, or "". */
@@ -394,7 +470,12 @@ export function httpsSources(input: string[] | null | undefined): string[] {
 	return out;
 }
 
-export function shareFactsSuggestionVM(vm: SuggestionVM, s: ShareFactsSuggestion, symbol: string, tableCurrency: string) {
+export function shareFactsSuggestionVM(
+	vm: SuggestionVM,
+	s: ShareFactsSuggestion,
+	symbol: string,
+	tableCurrency: string
+) {
 	let suggested = '';
 	if (s.currency && s.currency.trim() !== '') {
 		symbol = currencySymbol(s.currency);
@@ -403,12 +484,25 @@ export function shareFactsSuggestionVM(vm: SuggestionVM, s: ShareFactsSuggestion
 	const foreignPrice = suggested !== '' && tableCurrency !== '' && suggested !== tableCurrency;
 	const accept: Record<string, string> = {};
 	if (positiveFinite(s.sharesOutstanding)) {
-		vm.lines.push({ label: 'Shares outstanding', value: compact(s.sharesOutstanding) + ' (' + number(s.sharesOutstanding, 0) + ')' });
+		vm.lines.push({
+			label: 'Shares outstanding',
+			value: compact(s.sharesOutstanding) + ' (' + number(s.sharesOutstanding, 0) + ')'
+		});
 		accept.sharesOutstanding = inputNumber(s.sharesOutstanding);
 	}
 	if (positiveFinite(s.currentSharePrice)) {
-		vm.lines.push({ label: 'Current share price', value: symbol + currency(s.currentSharePrice, '') });
-		if (foreignPrice) vm.notes.push('Price found in ' + suggested + '; your table uses ' + tableCurrency + '. Enter it converted.');
+		vm.lines.push({
+			label: 'Current share price',
+			value: symbol + currency(s.currentSharePrice, '')
+		});
+		if (foreignPrice)
+			vm.notes.push(
+				'Price found in ' +
+					suggested +
+					'; your table uses ' +
+					tableCurrency +
+					'. Enter it converted.'
+			);
 		else accept.currentSharePrice = inputNumber(s.currentSharePrice);
 	}
 	if (vm.lines.length === 0) {
@@ -422,7 +516,11 @@ export function shareFactsSuggestionVM(vm: SuggestionVM, s: ShareFactsSuggestion
 	if (Object.keys(accept).length > 0) vm.acceptVals = accept;
 }
 
-export function scenarioSuggestionVM(vm: SuggestionVM, s: TerminalScenarioSuggestion, symbol: string) {
+export function scenarioSuggestionVM(
+	vm: SuggestionVM,
+	s: TerminalScenarioSuggestion,
+	symbol: string
+) {
 	if (!positiveFinite(s.terminalShareCount) || !positiveFinite(s.terminalMarketCap)) {
 		setSuggestionUnusable(vm);
 		return;

@@ -1,6 +1,10 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { parseSlugCode } from '#lib/features/public/articles/articles.js';
-import { boardsErrorText, requireArticles, voteArticle } from '#lib/features/public/articles/articles.server.js';
+import {
+	boardsErrorText,
+	requireArticles,
+	voteArticle
+} from '#lib/features/public/articles/articles.server.js';
 
 // POST /articles/{code}/vote → ArticlesHandler.Vote. Go returned the
 // VoteButton fragment; this returns {upvoteCount, voted} for VoteButton.svelte.

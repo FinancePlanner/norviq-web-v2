@@ -34,7 +34,11 @@
 	});
 </script>
 
-<AuthMeta title="Choose a new password - Norviq" keywords="Reset password" description="Choose a new Norviq password." />
+<AuthMeta
+	title="Choose a new password - Norviq"
+	keywords="Reset password"
+	description="Choose a new Norviq password."
+/>
 
 <div class="auth-container auth-container-wide">
 	<vigil.AuthShell>
@@ -42,10 +46,13 @@
 			<AuthBrandPanel />
 		</vigil.AuthBrandColumn>
 		<vigil.AuthFormColumn>
-			<div class="auth-form-card glass-card" {@attach staggerOnMount('header, .mt-8 > *, p.mt-6', 70)}>
+			<div
+				class="auth-form-card glass-card"
+				{@attach staggerOnMount('header, .mt-8 > *, p.mt-6', 70)}
+			>
 				<header class="auth-card-header auth-modern-header">
 					<h1 class="auth-modern-title">{t('Choose a new password')}</h1>
-					<p class="text-subhead text-muted-foreground mt-2">
+					<p class="mt-2 text-subhead text-muted-foreground">
 						{t('Enter the reset code from your email and your new password.')}
 					</p>
 				</header>

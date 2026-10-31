@@ -5,6 +5,9 @@
 
 <svelte:head>
 	<title>{title}</title>
-	<meta name="description" content="Chat groups with friends about the stocks, ETFs and topics you follow." />
+	<meta
+		name="description"
+		content="Chat groups with friends about the stocks, ETFs and topics you follow."
+	/>
 	<meta name="robots" content="noindex,nofollow" />
 </svelte:head>

@@ -2,7 +2,11 @@
 	// vigil.ModernPageHeader(title, subtitle, actions) — the page h1 (no eyebrow slot, on purpose).
 	import type { Snippet } from 'svelte';
 
-	let { title, subtitle = '', actions }: { title: string; subtitle?: string; actions?: Snippet } = $props();
+	let {
+		title,
+		subtitle = '',
+		actions
+	}: { title: string; subtitle?: string; actions?: Snippet } = $props();
 </script>
 
 <header class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

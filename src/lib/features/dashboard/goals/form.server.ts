@@ -3,12 +3,16 @@
 // plus the small shared helpers it borrows from other handler files
 // (parseBoundedFloat, defaultString and formChoice from scenarios.go /
 // portfolio_workspace.go, portfolioAPIErrorMessage, session.NoteGuidedAction).
-import { redirect, type RequestEvent } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { isAPIError } from '#lib/server/api.js';
 import type { GoalPlanInput } from './types.js';
 
 /** strconv.ParseFloat(strings.TrimSpace(v)) + the [min, max] bounds check. */
-export function parseBoundedFloat(value: FormDataEntryValue | null, minimum: number, maximum: number): number | null {
+export function parseBoundedFloat(
+	value: FormDataEntryValue | null,
+	minimum: number,
+	maximum: number
+): number | null {
 	const text = typeof value === 'string' ? value.trim() : '';
 	if (text === '' || !/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(text)) return null;
 	const parsed = Number(text);
@@ -30,10 +34,12 @@ export function formChoice(value: FormDataEntryValue | null, ...allowed: string[
 export function parseUUID(raw: string | null | undefined): string | null {
 	let text = (raw ?? '').trim();
 	if (text.length === 45 && text.toLowerCase().startsWith('urn:uuid:')) text = text.slice(9);
-	else if (text.length === 38 && text.startsWith('{') && text.endsWith('}')) text = text.slice(1, -1);
+	else if (text.length === 38 && text.startsWith('{') && text.endsWith('}'))
+		text = text.slice(1, -1);
 	let hex: string;
 	if (text.length === 36) {
-		if (!/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(text)) return null;
+		if (!/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(text))
+			return null;
 		hex = text.replaceAll('-', '');
 	} else if (text.length === 32 && /^[0-9a-fA-F]{32}$/.test(text)) {
 		hex = text;
@@ -111,12 +117,26 @@ const GOAL_TYPES = [
 ];
 
 /** financialGoalInputFromForm: the input, or a user-facing validation message. */
-export function financialGoalInputFromForm(form: FormData): { input: GoalPlanInput; message: '' } | { message: string } {
+export function financialGoalInputFromForm(
+	form: FormData
+): { input: GoalPlanInput; message: '' } | { message: string } {
 	const name = String(form.get('name') ?? '').trim();
 	const target = parseBoundedFloat(form.get('targetAmount'), 1, 1_000_000_000_000);
-	const starting = parseBoundedFloat(defaultString(form.get('startingCapital'), '0'), 0, 1_000_000_000_000);
-	const monthly = parseBoundedFloat(defaultString(form.get('monthlyContribution'), '0'), 0, 1_000_000_000);
-	const allocation = parseBoundedFloat(defaultString(form.get('allocationPercentage'), '100'), 0, 100);
+	const starting = parseBoundedFloat(
+		defaultString(form.get('startingCapital'), '0'),
+		0,
+		1_000_000_000_000
+	);
+	const monthly = parseBoundedFloat(
+		defaultString(form.get('monthlyContribution'), '0'),
+		0,
+		1_000_000_000
+	);
+	const allocation = parseBoundedFloat(
+		defaultString(form.get('allocationPercentage'), '100'),
+		0,
+		100
+	);
 	const portfolioID = parseUUID(String(form.get('portfolioId') ?? ''));
 	const date = form.get('targetDate');
 	const currency = String(form.get('baseCurrency') ?? '')
@@ -133,7 +153,9 @@ export function financialGoalInputFromForm(form: FormData): { input: GoalPlanInp
 		// Go's len() counts bytes.
 		new TextEncoder().encode(currency).length !== 3
 	) {
-		return { message: 'Complete the goal with a valid target, date, currency, contribution, and portfolio.' };
+		return {
+			message: 'Complete the goal with a valid target, date, currency, contribution, and portfolio.'
+		};
 	}
 	return {
 		message: '',

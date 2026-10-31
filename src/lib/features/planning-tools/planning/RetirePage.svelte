@@ -30,9 +30,12 @@
 		</div>
 	{/if}
 	{#if vm.noBudget}
-		<div class="mb-4 rounded-[var(--radius-control)] border border-border bg-muted/40 px-4 py-3 text-footnote" role="status">
-			There is no budget to read your cost of life from yet, so these figures start from a typical month rather than yours. Setting up
-			a budget makes this accurate.
+		<div
+			class="mb-4 rounded-[var(--radius-control)] border border-border bg-muted/40 px-4 py-3 text-footnote"
+			role="status"
+		>
+			There is no budget to read your cost of life from yet, so these figures start from a typical
+			month rather than yours. Setting up a budget makes this accurate.
 		</div>
 	{/if}
 	<div class="grid gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
@@ -52,9 +55,33 @@
 				)}
 			>
 				<div class="grid gap-4 sm:grid-cols-3">
-					<Field name="currentAge" label="Age now" type="number" value={vm.draft.currentAge} min="18" max="99" step="1" />
-					<Field name="retirementAge" label="Retire at" type="number" value={vm.draft.retirementAge} min="19" max="100" step="1" />
-					<Field name="longevityAge" label="Plan to" type="number" value={vm.draft.longevityAge} min="20" max="120" step="1" />
+					<Field
+						name="currentAge"
+						label="Age now"
+						type="number"
+						value={vm.draft.currentAge}
+						min="18"
+						max="99"
+						step="1"
+					/>
+					<Field
+						name="retirementAge"
+						label="Retire at"
+						type="number"
+						value={vm.draft.retirementAge}
+						min="19"
+						max="100"
+						step="1"
+					/>
+					<Field
+						name="longevityAge"
+						label="Plan to"
+						type="number"
+						value={vm.draft.longevityAge}
+						min="20"
+						max="120"
+						step="1"
+					/>
 				</div>
 				<Field
 					name="monthlyCost"
@@ -115,7 +142,15 @@
 					/>
 				</div>
 				<div class="grid gap-4 sm:grid-cols-3">
-					<Field name="returnPercent" label="Return (%)" type="number" value={vm.draft.returnPercent} min="-99" max="100" step="0.5" />
+					<Field
+						name="returnPercent"
+						label="Return (%)"
+						type="number"
+						value={vm.draft.returnPercent}
+						min="-99"
+						max="100"
+						step="0.5"
+					/>
 					<Field
 						name="inflationPercent"
 						label="Inflation (%)"

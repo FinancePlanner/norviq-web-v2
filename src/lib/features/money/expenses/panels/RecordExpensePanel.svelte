@@ -9,7 +9,12 @@
 	import SubmitButton from '#lib/components/norviq/SubmitButton.svelte';
 	import { ReceiptScan } from '../../receipt-scan.svelte.js';
 	import { panelEnhance } from '../panel.js';
-	import { categoryOptions, pillarOptions, splitModeOptions, type RecordExpenseFormVM } from '../vm.js';
+	import {
+		categoryOptions,
+		pillarOptions,
+		splitModeOptions,
+		type RecordExpenseFormVM
+	} from '../vm.js';
 	import PanelHeader from './PanelHeader.svelte';
 	import CancelButton from './CancelButton.svelte';
 
@@ -28,14 +33,25 @@
 	{/if}
 	<div class="mt-4">
 		<SecondaryButton fullWidth onclick={() => scan.start()}>Scan receipt QR</SecondaryButton>
-		<NativeInput type="file" class="hidden" accept="image/*" capture="environment" bind:ref={scan.photoInput} onchange={(e: Event) => scan.submitPhoto(e)} />
-		<SecondaryButton class="mt-2" fullWidth onclick={() => scan.photoInput?.click()}>Scan receipt photo</SecondaryButton>
+		<NativeInput
+			type="file"
+			class="hidden"
+			accept="image/*"
+			capture="environment"
+			bind:ref={scan.photoInput}
+			onchange={(e: Event) => scan.submitPhoto(e)}
+		/>
+		<SecondaryButton class="mt-2" fullWidth onclick={() => scan.photoInput?.click()}
+			>Scan receipt photo</SecondaryButton
+		>
 		{#if scan.open}
 			<div class="mt-3">
 				<!-- svelte-ignore a11y_media_has_caption -->
 				<video bind:this={scan.video} class="w-full rounded-lg bg-black" playsinline muted></video>
 				{#if scan.error}<p class="mt-2 text-sm text-danger">{scan.error}</p>{/if}
-				<SecondaryButton class="mt-2" fullWidth onclick={() => scan.stop()}>Cancel scan</SecondaryButton>
+				<SecondaryButton class="mt-2" fullWidth onclick={() => scan.stop()}
+					>Cancel scan</SecondaryButton
+				>
 			</div>
 		{/if}
 	</div>
@@ -50,9 +66,33 @@
 			)}
 		>
 			<input type="hidden" name="month" value={vm.monthQuery} />
-			<Field id="expense-title" name="title" label="Title" value={vm.title} required wrapperClass="space-y-2" />
-			<Field id="expense-amount" name="amount" label="Amount" type="number" value={vm.amount} required wrapperClass="space-y-2" min="0.01" step="0.01" />
-			<SelectField id="expense-pillar" name="pillar" label="Pillar" required wrapperClass="space-y-2" options={pillarOptions(vm.pillar)} />
+			<Field
+				id="expense-title"
+				name="title"
+				label="Title"
+				value={vm.title}
+				required
+				wrapperClass="space-y-2"
+			/>
+			<Field
+				id="expense-amount"
+				name="amount"
+				label="Amount"
+				type="number"
+				value={vm.amount}
+				required
+				wrapperClass="space-y-2"
+				min="0.01"
+				step="0.01"
+			/>
+			<SelectField
+				id="expense-pillar"
+				name="pillar"
+				label="Pillar"
+				required
+				wrapperClass="space-y-2"
+				options={pillarOptions(vm.pillar)}
+			/>
 			{#if vm.categories.length > 0}
 				<SelectField
 					id="expense-category"
@@ -62,7 +102,13 @@
 					options={categoryOptions(vm.categories, vm.selectedCategory)}
 				/>
 			{/if}
-			<Field id="expense-date" name="occurred_on" label="Date" type="date" wrapperClass="space-y-2" />
+			<Field
+				id="expense-date"
+				name="occurred_on"
+				label="Date"
+				type="date"
+				wrapperClass="space-y-2"
+			/>
 			<!-- Receipt provenance, filled by ReceiptScan when a scan succeeds. -->
 			<input type="hidden" id="receipt-source" name="receipt_source" value="" />
 			<input type="hidden" id="receipt-merchant" name="receipt_merchant" value="" />
@@ -72,7 +118,13 @@
 			<input type="hidden" id="receipt-vat-total" name="receipt_vat_total" value="" />
 			<input type="hidden" id="receipt-issued-on" name="receipt_issued_on" value="" />
 			{#if vm.hasPartner}
-				<SelectField id="expense-split" name="split_mode" label="Split" wrapperClass="space-y-2" options={splitModeOptions(vm.splitMode)} />
+				<SelectField
+					id="expense-split"
+					name="split_mode"
+					label="Split"
+					wrapperClass="space-y-2"
+					options={splitModeOptions(vm.splitMode)}
+				/>
 				<Field
 					id="expense-share"
 					name="user_share_percent"

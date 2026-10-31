@@ -34,5 +34,7 @@
 	<p class="mt-1 text-muted-foreground">
 		Trades here are simulated copies of disclosed trades. Stop following to edit by hand.
 	</p>
-	<a class="mt-2 inline-block font-medium hover:text-[var(--color-tint)]" href={vm.followHref}>View follow</a>
+	<a class="mt-2 inline-block font-medium hover:text-[var(--color-tint)]" href={vm.followHref}
+		>View follow</a
+	>
 </div>

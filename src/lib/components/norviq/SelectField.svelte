@@ -43,7 +43,8 @@
 	// <select multiple bind:value> needs an array; seed it from the options'
 	// `selected` flags when the caller does not bind one.
 	untrack(() => {
-		if (multiple && !Array.isArray(value)) value = options.filter((o) => o.selected).map((o) => o.value);
+		if (multiple && !Array.isArray(value))
+			value = options.filter((o) => o.selected).map((o) => o.value);
 	});
 </script>
 
@@ -52,8 +53,11 @@
 		<option value="">{placeholder}</option>
 	{/if}
 	{#each options as opt, i (i)}
-		<option value={opt.value} selected={opt.selected || undefined} disabled={opt.disabled || undefined} {...opt.attrs}
-			>{opt.label}</option
+		<option
+			value={opt.value}
+			selected={opt.selected || undefined}
+			disabled={opt.disabled || undefined}
+			{...opt.attrs}>{opt.label}</option
 		>
 	{/each}
 {/snippet}

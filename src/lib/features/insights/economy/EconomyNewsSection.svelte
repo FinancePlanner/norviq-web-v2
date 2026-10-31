@@ -4,7 +4,9 @@
 	// (Go LoadMarketHeadlines) and passes `items`; null/[] renders the empty state.
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import EmptyState from '#lib/components/norviq/EmptyState.svelte';
-	import NewsHeadlineList, { type NewsHeadlineVM } from '#lib/components/norviq/NewsHeadlineList.svelte';
+	import NewsHeadlineList, {
+		type NewsHeadlineVM
+	} from '#lib/components/norviq/NewsHeadlineList.svelte';
 
 	let { items }: { items: NewsHeadlineVM[] | null } = $props();
 </script>
@@ -16,7 +18,10 @@
 	</div>
 	{#if !items || items.length === 0}
 		<div class="mt-4">
-			<EmptyState title="No headlines right now" description="Market news refreshes every few minutes. Check back soon." />
+			<EmptyState
+				title="No headlines right now"
+				description="Market news refreshes every few minutes. Check back soon."
+			/>
 		</div>
 	{:else}
 		<div class="mt-2">

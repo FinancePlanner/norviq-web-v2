@@ -58,7 +58,13 @@ export interface BankInstitution {
 }
 
 export async function loadBanksVM(event: RequestEvent, isPro: boolean): Promise<BanksViewModel> {
-	const vm: BanksViewModel = { isPro, connections: [], suggestions: [], errorMessage: '', successMessage: '' };
+	const vm: BanksViewModel = {
+		isPro,
+		connections: [],
+		suggestions: [],
+		errorMessage: '',
+		successMessage: ''
+	};
 	if (!vm.isPro) return vm;
 
 	let connections: BankConnection[];
@@ -72,7 +78,10 @@ export async function loadBanksVM(event: RequestEvent, isPro: boolean): Promise<
 
 	let transactions: BankTransaction[];
 	try {
-		transactions = (await apiJSON<BankTransaction[]>(event, 'GET', '/v1/banks/transactions', undefined, { query: { status: 'suggested' } })) ?? [];
+		transactions =
+			(await apiJSON<BankTransaction[]>(event, 'GET', '/v1/banks/transactions', undefined, {
+				query: { status: 'suggested' }
+			})) ?? [];
 	} catch {
 		vm.errorMessage = 'Could not load synced transactions.';
 		return vm;

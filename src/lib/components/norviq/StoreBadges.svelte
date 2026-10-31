@@ -3,7 +3,10 @@
 	import AppStoreBadge from './AppStoreBadge.svelte';
 	import GooglePlayBadge from './GooglePlayBadge.svelte';
 
-	let { appStoreURL = '', googlePlayURL = '' }: { appStoreURL?: string | null; googlePlayURL?: string | null } = $props();
+	let {
+		appStoreURL = '',
+		googlePlayURL = ''
+	}: { appStoreURL?: string | null; googlePlayURL?: string | null } = $props();
 </script>
 
 <div class="landing-store-badges">

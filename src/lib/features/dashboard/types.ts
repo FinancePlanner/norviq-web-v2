@@ -101,4 +101,5 @@ export interface InsightsPageViewModel {
 }
 
 /** GET /dashboard/insights/ai: the consent prompt, or the three cards. */
-export type AIInsightsResult = { consentRequired: true; next: string } | { consentRequired: false; cards: AIInsightCardVM[] };
+export type AIInsightsResult =
+	{ consentRequired: true; next: string } | { consentRequired: false; cards: AIInsightCardVM[] };

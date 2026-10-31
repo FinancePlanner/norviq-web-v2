@@ -14,7 +14,22 @@
 		required?: boolean;
 	};
 
-	let { label, name, inputType = 'text', placeholder = '', value = $bindable(), required = false }: Props = $props();
+	let {
+		label,
+		name,
+		inputType = 'text',
+		placeholder = '',
+		value = $bindable(),
+		required = false
+	}: Props = $props();
 </script>
 
-<Field bind:value {name} {label} type={inputType} placeholder={placeholder || undefined} {required} wrapperClass="space-y-2" />
+<Field
+	bind:value
+	{name}
+	{label}
+	type={inputType}
+	placeholder={placeholder || undefined}
+	{required}
+	wrapperClass="space-y-2"
+/>

@@ -25,7 +25,10 @@ export function activityPageLimit(raw: string | null): number {
 	return n;
 }
 
-export async function loadActivityPage(event: RequestEvent, limit: number): Promise<ActivityPageViewModel> {
+export async function loadActivityPage(
+	event: RequestEvent,
+	limit: number
+): Promise<ActivityPageViewModel> {
 	limit = Math.min(Math.max(limit, activityPageDefaultLimit), activityPageMaxLimit);
 
 	const [activities, expenses, insights] = await Promise.all([

@@ -56,11 +56,18 @@
 	subtitle="Follow a politician or a fund. Norviq copies their disclosed trades into a simulation."
 >
 	{#if vm.notice}
-		<div class="mt-2 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm" role="status">{vm.notice}</div>
+		<div
+			class="mt-2 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm"
+			role="status"
+		>
+			{vm.notice}
+		</div>
 	{/if}
 	<p class="mt-4 max-w-2xl text-sm text-muted-foreground">{DISCLAIMER}</p>
 	{#if vm.loadError}
-		<p class="mt-4 text-sm text-muted-foreground">Pilots are unavailable right now. Try again shortly.</p>
+		<p class="mt-4 text-sm text-muted-foreground">
+			Pilots are unavailable right now. Try again shortly.
+		</p>
 	{:else}
 		{#if vm.follows.length > 0}
 			<vigil.Panel class="mt-6 p-5 md:p-6" titleID="pilots-following-title">
@@ -69,7 +76,9 @@
 					{#each vm.follows as row (row.id)}
 						<li class="flex items-center justify-between gap-3 py-3">
 							<div class="min-w-0">
-								<a class="font-medium hover:text-[var(--color-tint)]" href={row.href}>{row.pilotName}</a>
+								<a class="font-medium hover:text-[var(--color-tint)]" href={row.href}
+									>{row.pilotName}</a
+								>
 								<p class="text-xs text-muted-foreground">{row.targetLabel}</p>
 							</div>
 							<span class="text-xs text-muted-foreground">{row.statusLabel}</span>

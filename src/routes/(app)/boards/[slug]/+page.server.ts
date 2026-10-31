@@ -1,6 +1,17 @@
 import type { PageServerLoad } from './$types';
-import { boardCard, boardNotice, boardPostRow, queryEscape, stripNotice } from '#lib/features/social/boards/boards.js';
-import { boardsFailure, getBoard, listBoardPosts, loadBoardsViewer } from '#lib/features/social/boards/boards.server.js';
+import {
+	boardCard,
+	boardNotice,
+	boardPostRow,
+	queryEscape,
+	stripNotice
+} from '#lib/features/social/boards/boards.js';
+import {
+	boardsFailure,
+	getBoard,
+	listBoardPosts,
+	loadBoardsViewer
+} from '#lib/features/social/boards/boards.server.js';
 
 // GET /boards/{slug} (handlers.BoardsBoard): the board's posts with sort, kind
 // and tag filters.
@@ -21,7 +32,12 @@ export const load: PageServerLoad = async (event) => {
 	const tag = (query.get('tag') ?? '').trim().toLowerCase();
 	let page;
 	try {
-		page = await listBoardPosts(event, slug, { sort, kind, tag, cursor: query.get('cursor') ?? '' });
+		page = await listBoardPosts(event, slug, {
+			sort,
+			kind,
+			tag,
+			cursor: query.get('cursor') ?? ''
+		});
 	} catch (err) {
 		boardsFailure(err, 'board');
 	}

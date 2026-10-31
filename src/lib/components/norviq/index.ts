@@ -87,7 +87,13 @@ export { iconRegistry } from './tui/icon-registry.js';
 // helpers and types
 export * from './types.js';
 export { withSpinner } from './form-loading.js';
-export { buildShareLinks, shareTag, captureShare, type ShareLinks, type ShareInput } from './share-links.js';
+export {
+	buildShareLinks,
+	shareTag,
+	captureShare,
+	type ShareLinks,
+	type ShareInput
+} from './share-links.js';
 export type { ShareBarText } from './ShareBar.svelte';
 export * from './market-signals.js';
 export * from './sentiment.js';

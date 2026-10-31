@@ -15,7 +15,10 @@ export async function loadPilotFollowRows(event: RequestEvent): Promise<FollowRo
 }
 
 /** loadPilotDetail: the pilot and 200, or null and the status to answer with (502 when the call never completed). */
-export async function loadPilotDetail(event: RequestEvent, slug: string): Promise<{ detail: PilotDetail | null; status: number }> {
+export async function loadPilotDetail(
+	event: RequestEvent,
+	slug: string
+): Promise<{ detail: PilotDetail | null; status: number }> {
 	if (slug === '') return { detail: null, status: 404 };
 	const res = await pilotsCall<PilotDetail>(event, 'GET', '/v1/pilots/' + encodeURIComponent(slug));
 	if (res.status === 0) {

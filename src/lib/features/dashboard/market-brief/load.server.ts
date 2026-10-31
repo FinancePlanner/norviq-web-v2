@@ -47,7 +47,10 @@ const entries = new Map<string, Entry>();
 const inflight = new Map<string, Promise<Entry>>();
 
 /** parseMarketBriefQuery: both slot and date, or neither. null = 400. */
-export function parseMarketBriefQuery(params: URLSearchParams, now: Date): Omit<Key, 'lang'> | null {
+export function parseMarketBriefQuery(
+	params: URLSearchParams,
+	now: Date
+): Omit<Key, 'lang'> | null {
 	const slot = (params.get('slot') ?? '').trim();
 	const date = (params.get('date') ?? '').trim();
 	if (!slot && !date) return { slot: '', date: '' };
@@ -56,12 +59,42 @@ export function parseMarketBriefQuery(params: URLSearchParams, now: Date): Omit<
 	if (!m) return null;
 	const parsed = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
 	if (parsed.getUTCMonth() !== +m[2] - 1 || parsed.getUTCDate() !== +m[3]) return null;
-	if (parsed.getTime() > now.getTime() + 24 * 3600_000 || parsed.getTime() < now.getTime() - OLDEST_DATE_MS) return null;
+	if (
+		parsed.getTime() > now.getTime() + 24 * 3600_000 ||
+		parsed.getTime() < now.getTime() - OLDEST_DATE_MS
+	)
+		return null;
 	return { slot, date: parsed.toISOString().slice(0, 10) };
 }
 
-const PT_MONTHS = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
-const EN_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const PT_MONTHS = [
+	'jan.',
+	'fev.',
+	'mar.',
+	'abr.',
+	'mai.',
+	'jun.',
+	'jul.',
+	'ago.',
+	'set.',
+	'out.',
+	'nov.',
+	'dez.'
+];
+const EN_MONTHS = [
+	'Jan',
+	'Feb',
+	'Mar',
+	'Apr',
+	'May',
+	'Jun',
+	'Jul',
+	'Aug',
+	'Sep',
+	'Oct',
+	'Nov',
+	'Dec'
+];
 
 /** "15 Oct 2026" / "15 out. 2026". */
 function formatBriefDate(iso: string, lang: string): string {
@@ -70,7 +103,12 @@ function formatBriefDate(iso: string, lang: string): string {
 }
 
 function lisbonHHMM(t: Date): string {
-	return new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(t);
+	return new Intl.DateTimeFormat('en-GB', {
+		timeZone: 'Europe/Lisbon',
+		hour: '2-digit',
+		minute: '2-digit',
+		hourCycle: 'h23'
+	}).format(t);
 }
 
 const direction = (raw: string) => (raw === Up || raw === Down ? raw : Flat);
@@ -136,12 +174,23 @@ export function mapMarketBrief(resp: BriefResponse | null, lang: string): Market
 			change: row.changePercent.trim(),
 			direction: direction(row.direction)
 		}));
-		if (rows.length > 0) vm.groups.push({ id: group.id, title: group.title.trim(), tone: direction(group.tone), rows });
+		if (rows.length > 0)
+			vm.groups.push({
+				id: group.id,
+				title: group.title.trim(),
+				tone: direction(group.tone),
+				rows
+			});
 	}
 	for (const item of resp.items ?? []) {
 		const text = (item.text ?? '').trim();
 		if (!text) continue;
-		const mapped: MarketBriefItemVM = { kind: item.kind, text, tickers: tickers(item.tickers), sourceHost: sourceHost(item.sourceUrl) };
+		const mapped: MarketBriefItemVM = {
+			kind: item.kind,
+			text,
+			tickers: tickers(item.tickers),
+			sourceHost: sourceHost(item.sourceUrl)
+		};
 		if (mapped.kind === KindHighlight || mapped.kind === KindEarnings) vm.notes.push(mapped);
 		else if (mapped.kind === KindStory) vm.stories.push(mapped);
 	}
@@ -163,7 +212,11 @@ async function fetchBrief(event: RequestEvent, key: Key): Promise<Entry> {
 			query: { lang: key.lang, slot: key.slot || undefined, date: key.date || undefined },
 			signal: AbortSignal.timeout(FETCH_TIMEOUT)
 		});
-		if (res.status === 200) return { vm: mapMarketBrief((await res.json()) as BriefResponse, key.lang), expires: Date.now() + CACHE_TTL };
+		if (res.status === 200)
+			return {
+				vm: mapMarketBrief((await res.json()) as BriefResponse, key.lang),
+				expires: Date.now() + CACHE_TTL
+			};
 		await res.body?.cancel().catch(() => {});
 		if (res.status === 404 && key.slot) return { vm: null, expires: Date.now() + CACHE_TTL };
 		console.warn('load market brief', key, `market brief returned status ${res.status}`);
@@ -212,7 +265,10 @@ export async function loadMarketBriefCard(
 	if (!cached) return null;
 	const vm = { ...cached };
 	if (vm.previousSlot && vm.previousDate) {
-		vm.previousURL = basePath + '?' + new URLSearchParams({ date: vm.previousDate, slot: vm.previousSlot }).toString();
+		vm.previousURL =
+			basePath +
+			'?' +
+			new URLSearchParams({ date: vm.previousDate, slot: vm.previousSlot }).toString();
 	}
 	if (key.slot) vm.latestURL = basePath;
 	if (vm.slot && vm.tradingDateISO) {
@@ -220,7 +276,12 @@ export async function loadMarketBriefCard(
 		vm.shareURL = path + '#share';
 		vm.shareNativeURL = tag(config().publicBaseURL + path, 'native');
 		vm.shareTitle = event.locals.t(marketBriefTitleKey(vm.slot)) + ' — ' + vm.tradingDate;
-		vm.shareProps = JSON.stringify({ date: vm.tradingDateISO, lang, slot: vm.slot, surface: 'card' });
+		vm.shareProps = JSON.stringify({
+			date: vm.tradingDateISO,
+			lang,
+			slot: vm.slot,
+			surface: 'card'
+		});
 	}
 	return vm;
 }

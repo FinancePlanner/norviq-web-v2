@@ -13,16 +13,31 @@ export const load: PageServerLoad = async (event) => {
 	const code = q.get('code') ?? '';
 	const state = q.get('state') ?? '';
 	if (q.get('error')) return { matches: null, errorMessage: 'X import was canceled.' };
-	if (!flowID || !code || !state) return { matches: null, errorMessage: 'That X sign-in has expired. Start again from Friends.' };
+	if (!flowID || !code || !state)
+		return { matches: null, errorMessage: 'That X sign-in has expired. Start again from Friends.' };
 	try {
-		const matches = await socialDo<SocialXImportMatches>(event, 'POST', '/v1/social/discovery/x/exchange', {
-			flowId: flowID,
-			code,
-			state,
-			redirectURI
-		});
-		return { matches: { matches: matches?.matches ?? [], totalFollowingScanned: matches?.totalFollowingScanned ?? 0 }, errorMessage: '' };
+		const matches = await socialDo<SocialXImportMatches>(
+			event,
+			'POST',
+			'/v1/social/discovery/x/exchange',
+			{
+				flowId: flowID,
+				code,
+				state,
+				redirectURI
+			}
+		);
+		return {
+			matches: {
+				matches: matches?.matches ?? [],
+				totalFollowingScanned: matches?.totalFollowingScanned ?? 0
+			},
+			errorMessage: ''
+		};
 	} catch (err) {
-		return { matches: null, errorMessage: socialErrorMessage(err, 'Could not read who you follow on X.') };
+		return {
+			matches: null,
+			errorMessage: socialErrorMessage(err, 'Could not read who you follow on X.')
+		};
 	}
 };

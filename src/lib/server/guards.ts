@@ -7,7 +7,9 @@ import { loadBillingContext } from './app-context.js';
 export async function requireFeature(event: RequestEvent, featureKey: string, featureName: string) {
 	const billing = await loadBillingContext(event);
 	const ok = featureKey ? isFeatureAvailable(billing, featureKey) : isPro(billing);
-	if (!ok) error(402, { message: featureName || 'Norviq Pro', proGate: featureName || 'Norviq Pro' });
+	if (!ok)
+		error(402, { message: featureName || 'Norviq Pro', proGate: featureName || 'Norviq Pro' });
 }
 
-export const requirePro = (event: RequestEvent, featureName: string) => requireFeature(event, '', featureName);
+export const requirePro = (event: RequestEvent, featureName: string) =>
+	requireFeature(event, '', featureName);

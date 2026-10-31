@@ -8,7 +8,11 @@
 
 	let { data }: PageProps = $props();
 	const vm = $derived(data.vm);
-	const chart = $derived(vm.monthlyChart ? spendingLine('dividends-monthly-chart', vm.monthlyChart.labels, vm.monthlyChart.values) : null);
+	const chart = $derived(
+		vm.monthlyChart
+			? spendingLine('dividends-monthly-chart', vm.monthlyChart.labels, vm.monthlyChart.values)
+			: null
+	);
 </script>
 
 <svelte:head>
@@ -19,7 +23,10 @@
 
 <ProGateWrap isPro={data.isPro} featureName="Dividend tracking">
 	<div class="app-page-content vigil-canvas-page portfolio-dividends-page portfolio-modern-page">
-		<vigil.ModernPageHeader title="Dividend tracking" subtitle="Projected income from your holdings" />
+		<vigil.ModernPageHeader
+			title="Dividend tracking"
+			subtitle="Projected income from your holdings"
+		/>
 
 		{#if vm.loadError}
 			<div class="glass-card mt-6 p-6" role="alert">
@@ -32,7 +39,9 @@
 					<vigil.Panel class="p-6">
 						<h2 class="text-lg font-semibold">Annual projected income</h2>
 						{#if vm.annualProjectedIncome !== ''}
-							<p class="text-3xl font-semibold vigil-mono tabular-nums">{vm.annualProjectedIncome}</p>
+							<p class="vigil-mono text-3xl font-semibold tabular-nums">
+								{vm.annualProjectedIncome}
+							</p>
 						{:else}
 							<!-- Not "$0.00": an empty projection means the figure has not been computed. -->
 							<p class="text-sm text-muted-foreground">Not calculated yet</p>
@@ -50,20 +59,27 @@
 						{#if vm.upcoming.length > 0}
 							<ul class="vigil-dense-list mt-4">
 								{#each vm.upcoming as div, i (i)}
-									<div class="glass-card flex items-center justify-between gap-3 p-3 border border-[var(--color-border)]">
+									<div
+										class="glass-card flex items-center justify-between gap-3 border border-[var(--color-border)] p-3"
+									>
 										<div>
 											<span class="font-semibold">{div.symbol}</span>
 											<p class="mt-1 text-xs text-muted-foreground">Pay date: {div.paymentDate}</p>
 										</div>
 										<div class="text-right">
-											<span class="font-medium text-[var(--color-success)]">+{div.projectedTotal}</span>
+											<span class="font-medium text-[var(--color-success)]"
+												>+{div.projectedTotal}</span
+											>
 											<p class="mt-1 text-xs text-muted-foreground">{div.amountPerShare} / share</p>
 										</div>
 									</div>
 								{/each}
 							</ul>
 						{:else}
-							<EmptyState title="No upcoming dividends" description="Your current holdings have no projected dividend payouts scheduled." />
+							<EmptyState
+								title="No upcoming dividends"
+								description="Your current holdings have no projected dividend payouts scheduled."
+							/>
 						{/if}
 					</vigil.Panel>
 				</vigil.CommandSplitAside>

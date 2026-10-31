@@ -23,12 +23,12 @@
 	data-continue-url="/onboarding/paywall/continue"
 	{@attach billingPage()}
 >
-	<div class="onboarding-hero onboarding-step-card glass-card p-8 md:p-10 text-center">
+	<div class="onboarding-hero onboarding-step-card glass-card p-8 text-center md:p-10">
 		<BrandLogo variant="full-large" />
 		<h1 class="onboarding-title mt-6">Everything you need.</h1>
 		<p class="onboarding-lead mx-auto mt-3 max-w-lg">Cancel anytime.</p>
 	</div>
-	<div class="onboarding-step-card glass-card mt-6 p-6 md:p-8 text-left">
+	<div class="onboarding-step-card glass-card mt-6 p-6 text-left md:p-8">
 		<p class="text-footnote font-semibold text-muted-foreground">Wealth</p>
 		<ul class="mt-4 space-y-3 text-sm">
 			<li>Unlimited holdings, watchlists and alerts</li>
@@ -46,21 +46,33 @@
 		</ul>
 	</div>
 	<div class="onboarding-step-card glass-card mt-6 p-6 md:p-8">
-		<div id="billing-error" class="mb-4 text-sm text-[var(--color-danger)]" hidden role="alert"></div>
+		<div
+			id="billing-error"
+			class="mb-4 text-sm text-[var(--color-danger)]"
+			hidden
+			role="alert"
+		></div>
 		<div id="billing-status"></div>
 		{#if vm.canWebCheckout}
 			<SubscriptionPlanCards options={vm.planOptions} />
 		{:else}
 			<p class="text-sm text-muted-foreground">
-				Web checkout is not configured on this environment. You can still continue with the free tier, or subscribe on
-				iOS.
+				Web checkout is not configured on this environment. You can still continue with the free
+				tier, or subscribe on iOS.
 			</p>
 			{#if vm.appStoreURL}
-				<a href={vm.appStoreURL} class="btn-primary mt-4 inline-flex px-5" target="_blank" rel="noopener">Get Norviq on iOS</a>
+				<a
+					href={vm.appStoreURL}
+					class="btn-primary mt-4 inline-flex px-5"
+					target="_blank"
+					rel="noopener">Get Norviq on iOS</a
+				>
 			{/if}
 		{/if}
 		<form method="POST" action="/onboarding/paywall/continue" class="mt-6 text-center">
-			<NativeButton type="submit" class="onboarding-skip-link text-sm text-muted-foreground hover:opacity-100"
+			<NativeButton
+				type="submit"
+				class="onboarding-skip-link text-sm text-muted-foreground hover:opacity-100"
 				>Continue with limited Norviq</NativeButton
 			>
 		</form>

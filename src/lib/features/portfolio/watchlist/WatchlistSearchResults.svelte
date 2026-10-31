@@ -23,7 +23,12 @@
 						<p class="text-sm text-muted-foreground">{row.name}</p>
 					{/if}
 				</div>
-				<NativeButton type="submit" name="symbol" value={row.symbol} class="btn-secondary px-3 py-1.5 text-sm">Add</NativeButton>
+				<NativeButton
+					type="submit"
+					name="symbol"
+					value={row.symbol}
+					class="btn-secondary px-3 py-1.5 text-sm">Add</NativeButton
+				>
 			</li>
 		{/each}
 	</ul>

@@ -29,13 +29,13 @@
  * which also animated borders and layout and made the panel jitter (July 2026
  * motion audit). The backdrop animates its colour only. */
 dialog[data-tui-dialog-content] {
-  transition-property: opacity, transform;
-  transition-timing-function: var(--ease-standard, ease-out);
+	transition-property: opacity, transform;
+	transition-timing-function: var(--ease-standard, ease-out);
 }
 
 dialog[data-tui-dialog-content]::backdrop {
-  transition-property: background-color;
-  transition-duration: 200ms;
+	transition-property: background-color;
+	transition-duration: 200ms;
 }
 
 /* popover — scale from the trigger rather than from the content's own centre.
@@ -43,45 +43,45 @@ dialog[data-tui-dialog-content]::backdrop {
  * popover.templ; it is unnecessary because the component already emits
  * data-tui-popover-placement on the same element. */
 [data-tui-popover-content] {
-  transition-property: opacity, transform;
-  transition-duration: 150ms;
-  transition-timing-function: var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+	transition-property: opacity, transform;
+	transition-duration: 150ms;
+	transition-timing-function: var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
 }
 
 [data-tui-popover-content][data-tui-popover-open='false'] {
-  transform: scale(0.97);
+	transform: scale(0.97);
 }
 
 [data-tui-popover-content][data-tui-popover-placement^='top'] {
-  transform-origin: bottom;
+	transform-origin: bottom;
 }
 
 [data-tui-popover-content][data-tui-popover-placement^='bottom'] {
-  transform-origin: top;
+	transform-origin: top;
 }
 
 [data-tui-popover-content][data-tui-popover-placement^='left'] {
-  transform-origin: right;
+	transform-origin: right;
 }
 
 [data-tui-popover-content][data-tui-popover-placement^='right'] {
-  transform-origin: left;
+	transform-origin: left;
 }
 
 /* Was motion-reduce:data-[tui-popover-open=false]:scale-100 on the patched
  * component. */
 @media (prefers-reduced-motion: reduce) {
-  [data-tui-popover-content][data-tui-popover-open='false'] {
-    transform: none;
-  }
+	[data-tui-popover-content][data-tui-popover-open='false'] {
+		transform: none;
+	}
 }
 
 /* tabs — Norviq motion tokens instead of Tailwind's defaults, and
  * background-color included so the trigger's fill animates with its text. */
 [data-tui-tabs-trigger] {
-  transition-property: color, box-shadow, background-color;
-  transition-duration: 150ms;
-  transition-timing-function: var(--ease-standard, ease-out);
+	transition-property: color, box-shadow, background-color;
+	transition-duration: 150ms;
+	transition-timing-function: var(--ease-standard, ease-out);
 }
 
 /* toast — transition + @starting-style rather than a keyframe, so rapid-fire
@@ -97,20 +97,20 @@ dialog[data-tui-dialog-content]::backdrop {
  * `transform` free for motion. Exit is handled in toast.js — faster, same path
  * out. */
 [data-tui-toast] {
-  opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity var(--motion-med) var(--ease-decelerate),
-    transform var(--motion-med) var(--ease-decelerate);
+	opacity: 1;
+	transform: translateY(0);
+	transition:
+		opacity var(--motion-med) var(--ease-decelerate),
+		transform var(--motion-med) var(--ease-decelerate);
 }
 
 @starting-style {
-  [data-tui-toast] {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
+	[data-tui-toast] {
+		opacity: 0;
+		transform: translateY(1rem);
+	}
 
-  [data-tui-toast][data-position*='top'] {
-    transform: translateY(-1rem);
-  }
+	[data-tui-toast][data-position*='top'] {
+		transform: translateY(-1rem);
+	}
 }

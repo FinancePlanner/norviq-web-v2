@@ -113,7 +113,10 @@ function emptyResult(title: string): ResultViewModel {
 }
 
 /** financingRequest: returns the view model plus the simulation request when the form is valid. */
-export function financingRequest(form: FormData): { vm: ResultViewModel; request: FinancingSimulationRequest | null } {
+export function financingRequest(form: FormData): {
+	vm: ResultViewModel;
+	request: FinancingSimulationRequest | null;
+} {
 	const get = (k: string) => {
 		const v = form.get(k);
 		return typeof v === 'string' ? v : '';
@@ -142,7 +145,8 @@ export function financingRequest(form: FormData): { vm: ResultViewModel; request
 		(payment !== undefined || nominal !== undefined);
 	if (!valid) {
 		vm.cashFlowStatus = 'Check the offer terms';
-		vm.cashFlowMessage = 'Enter a title, price, term, first payment date, and either monthly payment or nominal rate.';
+		vm.cashFlowMessage =
+			'Enter a title, price, term, first payment date, and either monthly payment or nominal rate.';
 		return { vm, request: null };
 	}
 	const request: FinancingSimulationRequest = {

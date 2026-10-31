@@ -11,7 +11,9 @@
 			<a href={'/articles/ticker/' + t} class="hover:underline">{'$' + t}</a>
 		{/each}
 	</div>
-	<h2 class="mt-2 text-xl font-semibold leading-snug"><a href={c.url} class="hover:underline">{c.title}</a></h2>
+	<h2 class="mt-2 text-xl leading-snug font-semibold">
+		<a href={c.url} class="hover:underline">{c.title}</a>
+	</h2>
 	{#if c.firstBullet !== ''}
 		<p class="mt-2 text-muted-foreground">{c.firstBullet}</p>
 	{/if}

@@ -1,6 +1,11 @@
 import { redirect, type RequestHandler } from '@sveltejs/kit';
 import { requireGroups } from '#lib/features/social/gates.server.js';
-import { groupsID, groupsRedirectError, lastChannelKey, leaveGroup } from '#lib/features/social/groups/groups.server.js';
+import {
+	groupsID,
+	groupsRedirectError,
+	lastChannelKey,
+	leaveGroup
+} from '#lib/features/social/groups/groups.server.js';
 
 // GroupsLeave
 export const POST: RequestHandler = async (event) => {

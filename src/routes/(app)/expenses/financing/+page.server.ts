@@ -64,7 +64,8 @@ export const actions: Actions = {
 	},
 
 	save: async (event) => {
-		if (!isPro(await loadBillingContext(event))) return fail(403, { message: 'Norviq Pro required' });
+		if (!isPro(await loadBillingContext(event)))
+			return fail(403, { message: 'Norviq Pro required' });
 		const { vm, request } = financingRequest(await event.request.formData());
 		if (!request) return fail(422, { message: 'Invalid financing terms' });
 		try {
@@ -78,7 +79,8 @@ export const actions: Actions = {
 					terms: request.offers[0]
 				}
 			});
-			if (res.response.status !== 201 || !res.data) return fail(502, { message: 'Plan could not be saved' });
+			if (res.response.status !== 201 || !res.data)
+				return fail(502, { message: 'Plan could not be saved' });
 		} catch (err) {
 			console.warn('financing save failed', err);
 			return fail(502, { message: 'Plan could not be saved' });

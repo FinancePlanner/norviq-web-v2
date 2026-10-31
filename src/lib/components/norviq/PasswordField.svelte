@@ -17,8 +17,16 @@
 		id?: string;
 	};
 
-	let { label, name, placeholder = '', autocomplete, required = false, value = $bindable(), error = '', id }: Props =
-		$props();
+	let {
+		label,
+		name,
+		placeholder = '',
+		autocomplete,
+		required = false,
+		value = $bindable(),
+		error = '',
+		id
+	}: Props = $props();
 	let visible = $state(false);
 </script>
 

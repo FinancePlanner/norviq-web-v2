@@ -17,13 +17,18 @@
 	onMount(() => {
 		rememberTimezone();
 		const ctrl = new AbortController();
-		fetch('/xp/card', { headers: { accept: 'application/json', [FETCH_HEADER]: '1' }, signal: ctrl.signal })
+		fetch('/xp/card', {
+			headers: { accept: 'application/json', [FETCH_HEADER]: '1' },
+			signal: ctrl.signal
+		})
 			.then(async (res) => {
 				const body = (await res.json().catch(() => null)) as XPCardVM | null;
-				vm = body && 'today' in body ? body : { xp: null, streaks: null, today: '', errorMessage: '' };
+				vm =
+					body && 'today' in body ? body : { xp: null, streaks: null, today: '', errorMessage: '' };
 			})
 			.catch((err: unknown) => {
-				if ((err as Error)?.name !== 'AbortError') vm = { xp: null, streaks: null, today: '', errorMessage: '' };
+				if ((err as Error)?.name !== 'AbortError')
+					vm = { xp: null, streaks: null, today: '', errorMessage: '' };
 			});
 		return () => ctrl.abort();
 	});
@@ -47,11 +52,13 @@
 				{/snippet}
 			</vigil.PanelHeader>
 			{#if vm.errorMessage || !vm.xp}
-				<p class="mt-2 text-subhead text-muted-foreground">{vm.errorMessage || t('Could not load your XP right now.')}</p>
+				<p class="mt-2 text-subhead text-muted-foreground">
+					{vm.errorMessage || t('Could not load your XP right now.')}
+				</p>
 			{:else}
 				<div class="mt-2 flex items-baseline justify-between gap-3">
 					<span class="text-title3 font-semibold">{t('Level')} {vm.xp.level}</span>
-					<span class="text-subhead tabular-nums text-muted-foreground">{vm.xp.total} XP</span>
+					<span class="text-subhead text-muted-foreground tabular-nums">{vm.xp.total} XP</span>
 				</div>
 				<div
 					class="settings-badge-track mt-3"
@@ -61,7 +68,10 @@
 					aria-valuemax="100"
 					aria-valuenow={Number(progressValue(vm.xp.levelProgress))}
 				>
-					<div class="settings-badge-fill" style={'width: ' + progressPercent(vm.xp.levelProgress)}></div>
+					<div
+						class="settings-badge-fill"
+						style={'width: ' + progressPercent(vm.xp.levelProgress)}
+					></div>
 				</div>
 				<div class="mt-4 grid grid-cols-2 gap-4">
 					<div class="command-metric">

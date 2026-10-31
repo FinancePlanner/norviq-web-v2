@@ -3,7 +3,11 @@ import type { Actions, PageServerLoad } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
 import { isProRequest, requireProInline } from '#lib/features/money/expenses/gates.server.js';
-import { deleteRecurring, loadRecurringTemplateFormVM, submitRecurring } from '#lib/features/money/expenses/forms.server.js';
+import {
+	deleteRecurring,
+	loadRecurringTemplateFormVM,
+	submitRecurring
+} from '#lib/features/money/expenses/forms.server.js';
 
 // GET /expenses/recurring/{id}, PUT → ?/update, DELETE → ?/delete.
 //
@@ -14,7 +18,13 @@ import { deleteRecurring, loadRecurringTemplateFormVM, submitRecurring } from '#
 export const load: PageServerLoad = async (event) => {
 	await requireFeature(event, Feature.RecurringTemplates, 'Recurring templates');
 	await requireProInline(event, 'Recurring expenses');
-	return { vm: await loadRecurringTemplateFormVM(event, event.url.searchParams.get('month'), event.url.searchParams.get('id') ?? '') };
+	return {
+		vm: await loadRecurringTemplateFormVM(
+			event,
+			event.url.searchParams.get('month'),
+			event.url.searchParams.get('id') ?? ''
+		)
+	};
 };
 
 export const actions: Actions = {

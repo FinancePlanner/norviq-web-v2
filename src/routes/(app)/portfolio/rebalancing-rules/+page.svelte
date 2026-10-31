@@ -33,7 +33,10 @@
 </svelte:head>
 
 <div class="app-page-content vigil-deck-page automation-modern-page space-y-6">
-	<vigil.ModernPageHeader title="Rebalancing rules" subtitle="Draft trades are review-only and never execute automatically." />
+	<vigil.ModernPageHeader
+		title="Rebalancing rules"
+		subtitle="Draft trades are review-only and never execute automatically."
+	/>
 	{#if vm.error}
 		<div class="rounded-xl border border-danger p-4" role="alert">{vm.error}</div>
 	{/if}
@@ -111,14 +114,21 @@
 		<section class="glass-card p-5 md:p-6">
 			<h2 class="font-semibold">Review draft</h2>
 			<p class="text-sm text-muted-foreground">
-				{money(vm.preview.portfolioValue, vm.preview.currency)} · maximum drift {fixed(vm.preview.maximumDrift * 100, 1)}%
+				{money(vm.preview.portfolioValue, vm.preview.currency)} · maximum drift {fixed(
+					vm.preview.maximumDrift * 100,
+					1
+				)}%
 			</p>
 			{#each vm.preview.warnings ?? [] as warning, i (i)}
 				<p class="mt-2 rounded-lg border border-warning p-2 text-sm" role="status">{warning}</p>
 			{/each}
 			<div class="mt-4 overflow-x-auto">
 				<table class="w-full text-sm">
-					<thead><tr class="text-left"><th>Asset</th><th>Action</th><th>Current</th><th>Target</th><th>Amount</th></tr></thead>
+					<thead
+						><tr class="text-left"
+							><th>Asset</th><th>Action</th><th>Current</th><th>Target</th><th>Amount</th></tr
+						></thead
+					>
 					<tbody>
 						{#each vm.preview.trades ?? [] as trade, i (i)}
 							<tr class="border-t"
@@ -128,9 +138,9 @@
 									{:else}
 										Cash
 									{/if}
-								</td><td>{trade.action}</td><td>{fixed(trade.currentWeight * 100, 1)}%</td><td>{fixed(trade.targetWeight * 100, 1)}%</td><td
-									>{money(trade.amount, vm.preview.currency)}</td
-								></tr
+								</td><td>{trade.action}</td><td>{fixed(trade.currentWeight * 100, 1)}%</td><td
+									>{fixed(trade.targetWeight * 100, 1)}%</td
+								><td>{money(trade.amount, vm.preview.currency)}</td></tr
 							>
 						{/each}
 					</tbody>
@@ -143,22 +153,29 @@
 			<h2 class="font-semibold">Rebalance events</h2>
 			<div class="mt-3 space-y-3">
 				{#each vm.events as event, i (i)}
-					<article class="rounded-xl border border-black/5 p-4 dark:border-white/10 glass-card">
+					<article class="glass-card rounded-xl border border-black/5 p-4 dark:border-white/10">
 						<div class="flex flex-wrap items-start justify-between gap-3">
 							<div>
 								<p class="font-medium">{event.status}</p>
 								<p class="text-sm text-muted-foreground">
-									{event.createdAt} · {money(event.preview.portfolioValue, event.preview.currency)} · max drift {fixed(
-										event.preview.maximumDrift * 100,
-										1
-									)}%
+									{event.createdAt} · {money(event.preview.portfolioValue, event.preview.currency)} ·
+									max drift {fixed(event.preview.maximumDrift * 100, 1)}%
 								</p>
 							</div>
 							{#if event.status === 'pending'}
 								<div class="flex gap-2">
-									<form method="POST" action={eventAct(event.id, 'confirm')} use:enhance={withSpinner()}>
+									<form
+										method="POST"
+										action={eventAct(event.id, 'confirm')}
+										use:enhance={withSpinner()}
+									>
 										<SubmitButton class="btn-primary">Confirm reviewed</SubmitButton>
-									</form><form method="POST" action={eventAct(event.id, 'dismiss')} use:enhance={withSpinner()}>
+									</form>
+									<form
+										method="POST"
+										action={eventAct(event.id, 'dismiss')}
+										use:enhance={withSpinner()}
+									>
 										<SubmitButton>Dismiss</SubmitButton>
 									</form>
 								</div>

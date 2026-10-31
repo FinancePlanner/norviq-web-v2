@@ -9,7 +9,15 @@
 	import { onMount, tick, untrack } from 'svelte';
 	import { capture } from '#lib/analytics/index.js';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
-	import { SKIP_LABEL, pollDelayMs, stepLine, stepTarget, type LayerVM, type OutcomeVM, type PollResult } from './guide.js';
+	import {
+		SKIP_LABEL,
+		pollDelayMs,
+		stepLine,
+		stepTarget,
+		type LayerVM,
+		type OutcomeVM,
+		type PollResult
+	} from './guide.js';
 
 	let { layer }: { layer: LayerVM } = $props();
 
@@ -94,7 +102,9 @@
 			if (phase !== 'open') return;
 			let result: PollResult;
 			try {
-				const res = await fetch(`/guided-start/poll?attempt=${attempt}`, { headers: { Accept: 'application/json' } });
+				const res = await fetch(`/guided-start/poll?attempt=${attempt}`, {
+					headers: { Accept: 'application/json' }
+				});
 				result = (await res.json()) as PollResult;
 			} catch {
 				result = { state: 'pending' };
@@ -107,7 +117,10 @@
 
 	async function skip() {
 		try {
-			const res = await fetch('/guided-start/skip', { method: 'POST', headers: { Accept: 'application/json' } });
+			const res = await fetch('/guided-start/skip', {
+				method: 'POST',
+				headers: { Accept: 'application/json' }
+			});
 			end((await res.json()) as PollResult);
 		} catch {
 			/* hx-swap="none": nothing to show on failure */
@@ -156,7 +169,13 @@
 		{#if found}
 			<div class="guided-step-ring" style={ringStyle} aria-hidden="true"></div>
 		{/if}
-		<div class="guided-step-bubble" role="status" aria-live="polite" tabindex="-1" bind:this={bubble}>
+		<div
+			class="guided-step-bubble"
+			role="status"
+			aria-live="polite"
+			tabindex="-1"
+			bind:this={bubble}
+		>
 			<p class="text-sm font-semibold">{stepLine(layer.step)}</p>
 			<div class="mt-3 flex items-center justify-end">
 				<NativeButton class="dash-btn dash-btn-secondary" onclick={skip}>{SKIP_LABEL}</NativeButton>

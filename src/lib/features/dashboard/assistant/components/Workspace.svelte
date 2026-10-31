@@ -67,8 +67,15 @@
 		onfocusin={(e) => isComposer(e.target) && muse.listen()}
 		onfocusout={(e) => isComposer(e.target) && muse.unlisten()}
 	>
-		<p class="muse-composer-error" data-muse-error role="alert" hidden={errorText === ''}>{errorText}</p>
-		<form method="post" action={'/assistant/conversations/' + vm.id + '/stream'} data-conversation-id={vm.id} onsubmit={submit}>
+		<p class="muse-composer-error" data-muse-error role="alert" hidden={errorText === ''}>
+			{errorText}
+		</p>
+		<form
+			method="post"
+			action={'/assistant/conversations/' + vm.id + '/stream'}
+			data-conversation-id={vm.id}
+			onsubmit={submit}
+		>
 			<TextareaField
 				name="content"
 				bind:value={content}

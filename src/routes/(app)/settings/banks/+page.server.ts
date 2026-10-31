@@ -79,7 +79,10 @@ export const actions: Actions = {
 		const redirectURI = config().publicBaseURL + '/settings/banks';
 		let session: BankLinkSession;
 		try {
-			session = await apiJSON<BankLinkSession>(event, 'POST', '/v1/banks/link-session', { institutionId, redirectURI });
+			session = await apiJSON<BankLinkSession>(event, 'POST', '/v1/banks/link-session', {
+				institutionId,
+				redirectURI
+			});
 		} catch (err) {
 			console.error('bank hosted link', err);
 			redirect(303, '/settings/banks?bank=error');

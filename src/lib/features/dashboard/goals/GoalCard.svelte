@@ -15,7 +15,10 @@
 				<div>
 					<h3 class="font-semibold">{item.goal.name}</h3>
 					<p class="mt-1 text-sm text-muted-foreground">
-						{money(item.progress.currentValue, item.goal.baseCurrency)} of {money(item.goal.targetAmount, item.goal.baseCurrency)}
+						{money(item.progress.currentValue, item.goal.baseCurrency)} of {money(
+							item.goal.targetAmount,
+							item.goal.baseCurrency
+						)}
 					</p>
 				</div>
 				<span class={'text-sm font-semibold ' + driftClass(item.progress.driftState)}
@@ -23,10 +26,15 @@
 				>
 			</div>
 			<div class="mt-4 h-2 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
-				<div class="h-full rounded-full bg-success" style={fundedWidth(item.progress.percentComplete)}></div>
+				<div
+					class="h-full rounded-full bg-success"
+					style={fundedWidth(item.progress.percentComplete)}
+				></div>
 			</div>
 			<div class="mt-2 flex justify-between text-xs text-muted-foreground">
-				<span>{percent(item.progress.percentComplete)} funded</span><span>Target {item.goal.targetDate}</span>
+				<span>{percent(item.progress.percentComplete)} funded</span><span
+					>Target {item.goal.targetDate}</span
+				>
 			</div>
 		</a>
 	</div>

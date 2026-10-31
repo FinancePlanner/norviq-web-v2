@@ -23,7 +23,8 @@ export const load: PageServerLoad = async (event) => {
 	let providers = buildAIProviderRows([], new Date());
 	try {
 		const res = await api(event).GET('/v1/ai/credentials');
-		if (res.response.ok && res.data) providers = buildAIProviderRows(res.data.items ?? [], new Date());
+		if (res.response.ok && res.data)
+			providers = buildAIProviderRows(res.data.items ?? [], new Date());
 		else errorMessage = 'Could not load your provider keys.';
 	} catch (err) {
 		console.warn('list ai credentials failed', err);
@@ -43,7 +44,8 @@ export const actions: Actions = {
 		const apiKey = String(form.get('apiKey') ?? '').trim();
 		let label = String(form.get('label') ?? '').trim();
 		if (label === '') label = provider;
-		if (provider === '' || apiKey === '') return fail(400, { errorMessage: 'Choose a provider and paste a key.' });
+		if (provider === '' || apiKey === '')
+			return fail(400, { errorMessage: 'Choose a provider and paste a key.' });
 
 		const body: {
 			provider: UserAIProviderKind;
@@ -80,7 +82,9 @@ export const actions: Actions = {
 		if (!id) return fail(400, { errorMessage: 'Could not test this key.' });
 		try {
 			// Go ignores the status: only a transport failure is an error.
-			await api(event).POST('/v1/ai/credentials/{credentialId}/verify', { params: { path: { credentialId: id } } });
+			await api(event).POST('/v1/ai/credentials/{credentialId}/verify', {
+				params: { path: { credentialId: id } }
+			});
 		} catch (err) {
 			console.warn('verify ai credential failed', err);
 			return fail(502, { errorMessage: 'Could not reach the provider service.' });
@@ -93,7 +97,9 @@ export const actions: Actions = {
 		const id = parseCredentialID(String((await event.request.formData()).get('id') ?? ''));
 		if (!id) return fail(400, { errorMessage: 'Could not disconnect this key.' });
 		try {
-			await api(event).DELETE('/v1/ai/credentials/{credentialId}', { params: { path: { credentialId: id } } });
+			await api(event).DELETE('/v1/ai/credentials/{credentialId}', {
+				params: { path: { credentialId: id } }
+			});
 		} catch (err) {
 			console.warn('delete ai credential failed', err);
 			return fail(502, { errorMessage: 'Could not reach the provider service.' });

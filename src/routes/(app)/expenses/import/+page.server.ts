@@ -3,7 +3,10 @@ import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { requireFeature } from '#lib/server/guards.js';
 import { apiFetch, apiJSON, isAPIError } from '#lib/server/api.js';
 import { Feature } from '#lib/billing.js';
-import { aiConsentReturnPath, isAIConsentRequired } from '#lib/features/money/receipts/ai-consent.server.js';
+import {
+	aiConsentReturnPath,
+	isAIConsentRequired
+} from '#lib/features/money/receipts/ai-consent.server.js';
 import {
 	SPREADSHEET_NO_AI_NOTICE,
 	buildImportReviewVM,
@@ -33,7 +36,9 @@ const MAX_SPREADSHEET_UPLOAD_BYTES = 8 << 20;
 const UNAVAILABLE = 'The import service is unavailable right now. Try again shortly.';
 const UUID_RE = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
 
-const errorPanel = (message: string): { panel: ImportPanel } => ({ panel: { kind: 'error', message } });
+const errorPanel = (message: string): { panel: ImportPanel } => ({
+	panel: { kind: 'error', message }
+});
 
 function sessionIDFrom(form: FormData): string | null {
 	const raw = form.get('session_id');
@@ -64,7 +69,8 @@ export const actions: Actions = {
 		if (!form) return errorPanel(tooLarge);
 
 		const file = form.get('file');
-		if (!(file instanceof File) || file.name === '') return errorPanel('Choose an .xlsx file to upload.');
+		if (!(file instanceof File) || file.name === '')
+			return errorPanel('Choose an .xlsx file to upload.');
 		if (file.size > MAX_SPREADSHEET_UPLOAD_BYTES) return errorPanel(tooLarge);
 
 		let bytes: ArrayBuffer;
@@ -87,7 +93,9 @@ export const actions: Actions = {
 		if (res.status !== 200) {
 			const body = await res.text().catch(() => '');
 			if (isAIConsentRequired(res.status, body)) {
-				return { panel: { kind: 'consent', next: aiConsentReturnPath(event) } satisfies ImportPanel };
+				return {
+					panel: { kind: 'consent', next: aiConsentReturnPath(event) } satisfies ImportPanel
+				};
 			}
 			return errorPanel(spreadsheetImportErrorMessage(res.status));
 		}

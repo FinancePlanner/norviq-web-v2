@@ -46,8 +46,12 @@
 					<td class="py-1 font-medium">{row.symbol}</td>
 					<td class="py-1 text-right">{row.weight}</td>
 					<td class="py-1 text-right">{row.marketValue}</td>
-					<td class={['py-1 text-right', row.totalPositive ? 'text-success' : 'text-danger']}>{row.totalGLPct}</td>
-					<td class={['py-1 text-right', row.changePositive ? 'text-success' : 'text-danger']}>{row.chgPct}</td>
+					<td class={['py-1 text-right', row.totalPositive ? 'text-success' : 'text-danger']}
+						>{row.totalGLPct}</td
+					>
+					<td class={['py-1 text-right', row.changePositive ? 'text-success' : 'text-danger']}
+						>{row.chgPct}</td
+					>
 				</tr>
 			{/each}
 			{#if vm.other !== ''}

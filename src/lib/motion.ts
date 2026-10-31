@@ -20,7 +20,9 @@ import { animate } from 'motion';
 import type { Attachment } from 'svelte/attachments';
 
 export function prefersReducedMotion(): boolean {
-	return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	return (
+		typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+	);
 }
 
 function setText(el: HTMLElement, text: string) {
@@ -49,6 +51,7 @@ export function animateValue(
 	const target = parseFloat(String(to).replace(/[^0-9.-]/g, '')) || 0;
 	const fmt = el.dataset.format || '';
 	// Match the decimal precision of the target so cents never vanish mid-count.
+	// eslint-disable-next-line no-sparse-arrays -- [match, group] shape for the fallback
 	const decimals = (toText.match(/\.(\d+)/) || [, ''])[1]!.length;
 
 	const ease =
@@ -64,12 +67,22 @@ export function animateValue(
 		if (fmt.includes('$')) {
 			setText(
 				el,
-				'$' + val.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+				'$' +
+					val.toLocaleString(undefined, {
+						minimumFractionDigits: decimals,
+						maximumFractionDigits: decimals
+					})
 			);
 		} else if (fmt.includes('%')) {
 			setText(el, val.toFixed(Math.max(decimals, 1)) + '%');
 		} else {
-			setText(el, val.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }));
+			setText(
+				el,
+				val.toLocaleString(undefined, {
+					minimumFractionDigits: decimals,
+					maximumFractionDigits: decimals
+				})
+			);
 		}
 	};
 
@@ -130,7 +143,11 @@ export function flashChange(el: HTMLElement | null | undefined, positive?: boole
 }
 
 /** NorviqMotion.staggerReveal — fades/lifts the matching children in sequence (delay capped at 420ms). */
-export function staggerReveal(container: Element | null | undefined, selector = ':scope > *', baseDelay = 40) {
+export function staggerReveal(
+	container: Element | null | undefined,
+	selector = ':scope > *',
+	baseDelay = 40
+) {
 	if (!container || prefersReducedMotion()) return;
 	container.querySelectorAll<HTMLElement>(selector).forEach((el, i) => {
 		const delay = Math.min(i * baseDelay, 420);
@@ -163,7 +180,9 @@ const segResize = new WeakMap<Element, ResizeObserver>();
  */
 export function segmentClip(root: HTMLElement, value: string | number) {
 	const overlay = root.querySelector<HTMLElement>('.pines-segment-overlay');
-	const btn = root.querySelector<HTMLElement>(`.pines-segment-btn[data-seg-id="${CSS.escape(String(value))}"]`);
+	const btn = root.querySelector<HTMLElement>(
+		`.pines-segment-btn[data-seg-id="${CSS.escape(String(value))}"]`
+	);
 	if (!overlay || !btn) return;
 	const rootRect = root.getBoundingClientRect();
 	const btnRect = btn.getBoundingClientRect();
@@ -183,7 +202,8 @@ export function segmentClip(root: HTMLElement, value: string | number) {
 	}
 }
 
-const VALUE_SELECTOR = '.nq-hero-value, .overview-wealth-value, .dash-kpi-value, .portfolio-hero-value';
+const VALUE_SELECTOR =
+	'.nq-hero-value, .overview-wealth-value, .dash-kpi-value, .portfolio-hero-value';
 
 function countUpElement(el: HTMLElement) {
 	const val = (el.textContent || '').trim();
@@ -215,7 +235,9 @@ export function initScrollTaste(root: Element | Document = document): () => void
 	}
 	const cleanups: (() => void)[] = [];
 	revealItems.forEach((el) => cleanups.push(observeReveal(el)));
-	root.querySelectorAll<HTMLElement>('[data-scrub-text]').forEach((el) => cleanups.push(splitScrub(el)));
+	root
+		.querySelectorAll<HTMLElement>('[data-scrub-text]')
+		.forEach((el) => cleanups.push(splitScrub(el)));
 	return () => cleanups.forEach((fn) => fn());
 }
 

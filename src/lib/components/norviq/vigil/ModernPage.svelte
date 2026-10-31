@@ -9,7 +9,13 @@
 		subtitle = '',
 		actions,
 		children
-	}: { pageClass?: string; title: string; subtitle?: string; actions?: Snippet; children?: Snippet } = $props();
+	}: {
+		pageClass?: string;
+		title: string;
+		subtitle?: string;
+		actions?: Snippet;
+		children?: Snippet;
+	} = $props();
 </script>
 
 <div class={'app-page-content ' + pageClass}>

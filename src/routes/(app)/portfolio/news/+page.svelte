@@ -2,11 +2,20 @@
 	// pages/portfolio/subpages.templ NewsPage (newsBody and helpers) plus
 	// news_modals.templ NewsArticleModalShell.
 	import { enhance } from '$app/forms';
-	import { EmptyState, NativeButton, PrimaryButton, VigMark } from '#lib/components/norviq/index.js';
+	import {
+		EmptyState,
+		NativeButton,
+		PrimaryButton,
+		VigMark
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import * as dialog from '#lib/components/norviq/tui/dialog/index.js';
 	import NewsArticlePanel from '#lib/features/portfolio/analytics/NewsArticlePanel.svelte';
-	import { emptyNewsArticleForm, type NewsArticleFormVM, type NewsArticleVM } from '#lib/features/portfolio/analytics/types.js';
+	import {
+		emptyNewsArticleForm,
+		type NewsArticleFormVM,
+		type NewsArticleVM
+	} from '#lib/features/portfolio/analytics/types.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -27,12 +36,18 @@
 	let dismissed = $state<string[]>([]);
 	const articles = $derived(vm.articles.filter((a) => !dismissed.includes(a.id)));
 
-	const filterClass = (value: string) => (vm.filter === value ? 'filter-chip filter-chip-active' : 'filter-chip');
-	const severityClass = (severity: string) => (severity === 'HIGH' ? 'font-bold text-[var(--color-danger)]' : 'font-semibold');
+	const filterClass = (value: string) =>
+		vm.filter === value ? 'filter-chip filter-chip-active' : 'filter-chip';
+	const severityClass = (severity: string) =>
+		severity === 'HIGH' ? 'font-bold text-[var(--color-danger)]' : 'font-semibold';
 
 	/** newsArticleViewURL */
 	function viewURL(article: NewsArticleVM): string {
-		if (article.isThesisWatch) return `/portfolio/news/thesis-watch/${article.id}/open?` + new URLSearchParams({ url: article.url });
+		if (article.isThesisWatch)
+			return (
+				`/portfolio/news/thesis-watch/${article.id}/open?` +
+				new URLSearchParams({ url: article.url })
+			);
 		const values = new URLSearchParams({ headline: article.headline, url: article.url });
 		if (article.id !== '') values.set('id', article.id);
 		if (article.symbol !== '') values.set('symbol', article.symbol);
@@ -43,7 +58,8 @@
 	/** newsArticleRemoveURL, as an action. */
 	function removeAction(articleID: string): string {
 		let action = '?/deleteArticle&id=' + encodeURIComponent(articleID);
-		if (vm.filter !== '' && vm.filter !== 'all') action += '&filter=' + encodeURIComponent(vm.filter);
+		if (vm.filter !== '' && vm.filter !== 'all')
+			action += '&filter=' + encodeURIComponent(vm.filter);
 		return action;
 	}
 </script>
@@ -56,7 +72,7 @@
 
 {#snippet headerActions()}
 	<NativeButton
-		class="btn-primary w-auto px-5 py-2 text-sm shrink-0"
+		class="btn-primary w-auto shrink-0 px-5 py-2 text-sm"
 		data-tui-dialog-trigger=""
 		data-tui-dialog-target="news-action-dialog"
 		onclick={() => openArticleForm()}
@@ -86,9 +102,11 @@
 			<span>{article.timeAgo}</span>
 		{/if}
 	</div>
-	<h3 class="news-card-headline mt-2 text-base font-semibold leading-snug">{article.headline}</h3>
+	<h3 class="news-card-headline mt-2 text-base leading-snug font-semibold">{article.headline}</h3>
 	{#if article.summary !== ''}
-		<p class="news-card-summary mt-2 text-sm text-muted-foreground line-clamp-2">{article.summary}</p>
+		<p class="news-card-summary mt-2 line-clamp-2 text-sm text-muted-foreground">
+			{article.summary}
+		</p>
 	{/if}
 	{#if article.whyItMatters !== ''}
 		<div class="mt-3 rounded-lg bg-[var(--color-accent)]/10 p-3">
@@ -117,16 +135,31 @@
 		action={'?/feedback&id=' + encodeURIComponent(article.id)}
 		use:enhance={() =>
 			async ({ result, formData }) => {
-				if (result.type === 'success' && formData.get('signal') === 'not_relevant') dismissed = [...dismissed, article.id];
+				if (result.type === 'success' && formData.get('signal') === 'not_relevant')
+					dismissed = [...dismissed, article.id];
 			}}
 	>
-		<NativeButton type="submit" name="signal" value="relevant" class="btn-secondary px-3 py-1 text-xs">Relevant</NativeButton>
-		<NativeButton type="submit" name="signal" value="not_relevant" class="btn-secondary px-3 py-1 text-xs">Not relevant</NativeButton>
+		<NativeButton
+			type="submit"
+			name="signal"
+			value="relevant"
+			class="btn-secondary px-3 py-1 text-xs">Relevant</NativeButton
+		>
+		<NativeButton
+			type="submit"
+			name="signal"
+			value="not_relevant"
+			class="btn-secondary px-3 py-1 text-xs">Not relevant</NativeButton
+		>
 	</form>
 {/snippet}
 
 <div class="app-page-content vigil-deck-page portfolio-news-page portfolio-modern-page">
-	<vigil.ModernPageHeader title="Thesis Watch" subtitle="Market news ranked by your holdings and thesis" actions={headerActions} />
+	<vigil.ModernPageHeader
+		title="Thesis Watch"
+		subtitle="Market news ranked by your holdings and thesis"
+		actions={headerActions}
+	/>
 	<div class="filter-chips" role="group" aria-label="News filter">
 		<a href="/portfolio/news" class={filterClass('for_you')}>For you</a>
 		<a href="/portfolio/news?filter=holdings" class={filterClass('holdings')}>Holdings</a>
@@ -140,9 +173,13 @@
 			<div class="flex flex-wrap items-center justify-between gap-4">
 				<div>
 					<p class="font-semibold">Headlines are free. Portfolio impact is Pro.</p>
-					<p class="mt-1 text-sm text-muted-foreground">Unlock exposure ranking, thesis checks, and alerts for major events.</p>
+					<p class="mt-1 text-sm text-muted-foreground">
+						Unlock exposure ranking, thesis checks, and alerts for major events.
+					</p>
 				</div>
-				<PrimaryButton href="/settings/subscription" class="px-5 py-2 text-sm">Unlock Thesis Watch</PrimaryButton>
+				<PrimaryButton href="/settings/subscription" class="px-5 py-2 text-sm"
+					>Unlock Thesis Watch</PrimaryButton
+				>
 			</div>
 		</div>
 	{/if}
@@ -152,14 +189,19 @@
 			<p class="mt-2 text-sm text-muted-foreground">Try refreshing the page.</p>
 		</div>
 	{:else if articles.length > 0}
-		<div class="mt-6 vigil-dense-list">
+		<div class="vigil-dense-list mt-6">
 			{#each articles as article (article.id)}
 				<div id={'news-article-' + article.id} class="news-card-wrapper">
 					<div class="news-card glass-card p-5">
 						<div class="flex items-start gap-3">
 							<div class="min-w-0 flex-1">
 								{#if article.url !== ''}
-									<a href={viewURL(article)} class="block transition hover:brightness-[1.02]" target="_blank" rel="noopener noreferrer">
+									<a
+										href={viewURL(article)}
+										class="block transition hover:brightness-[1.02]"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
 										{@render articleInner(article)}
 									</a>
 								{:else}
@@ -181,7 +223,12 @@
 									</NativeButton>
 								{/if}
 								{#if article.id !== ''}
-									<form method="POST" action={removeAction(article.id)} use:enhance class="contents">
+									<form
+										method="POST"
+										action={removeAction(article.id)}
+										use:enhance
+										class="contents"
+									>
 										<NativeButton
 											type="submit"
 											class="btn-secondary px-2 py-1 text-xs text-[var(--color-danger)]"
@@ -216,12 +263,17 @@
 					</NativeButton>
 				</div>
 			{:else}
-				<EmptyState title="No headlines yet" description="Connect holdings or add watchlist symbols to personalize your feed." actionLabel="View holdings" actionHref="/portfolio" />
+				<EmptyState
+					title="No headlines yet"
+					description="Connect holdings or add watchlist symbols to personalize your feed."
+					actionLabel="View holdings"
+					actionHref="/portfolio"
+				/>
 			{/if}
 		</div>
 	{/if}
 	<dialog.Dialog id="news-action-dialog">
-		<dialog.Content class="glass-card vigil-modal-panel border-0 p-6 md:p-8 sm:max-w-2xl">
+		<dialog.Content class="glass-card vigil-modal-panel border-0 p-6 sm:max-w-2xl md:p-8">
 			<!-- The #news-action-loading skeleton only showed during the hx-get; the panel renders at once here. -->
 			{#key articleFormKey}
 				<NewsArticlePanel vm={articleForm} />

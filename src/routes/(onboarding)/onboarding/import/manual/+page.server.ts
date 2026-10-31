@@ -29,7 +29,8 @@ export const actions: Actions = {
 
 		if (form.get('action') === 'add_row') {
 			vm.rows.push({ symbol: '', shares: '', buyPrice: '' });
-			if (vm.rows.length > MAX_MANUAL_IMPORT_ROWS) vm.rows = vm.rows.slice(0, MAX_MANUAL_IMPORT_ROWS);
+			if (vm.rows.length > MAX_MANUAL_IMPORT_ROWS)
+				vm.rows = vm.rows.slice(0, MAX_MANUAL_IMPORT_ROWS);
 			return { vm };
 		}
 

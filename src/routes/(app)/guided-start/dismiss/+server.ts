@@ -16,5 +16,8 @@ export const POST: RequestHandler = async (event) => {
 	} catch (err) {
 		console.warn('guided start: dismiss', err);
 	}
-	return json({ ok: false, card: await guidedCardVM(event, await getOnboardingProgress(event), DISMISS_FAILED) });
+	return json({
+		ok: false,
+		card: await guidedCardVM(event, await getOnboardingProgress(event), DISMISS_FAILED)
+	});
 };

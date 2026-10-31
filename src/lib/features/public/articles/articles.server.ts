@@ -10,7 +10,17 @@ import { render as renderMarkdown } from '#lib/markdown.js';
 import { allowedSymbol } from '#lib/publicsymbols.js';
 import { queryEscape } from '#lib/sharelinks.js';
 import { buildShareLinks } from '#lib/components/norviq/share-links.js';
-import { BOARDS_BANNED, DISCLAIMER, articleCard, articlePath, cursorPattern, goJSON, goShortDate, noticeFor, rfc3339 } from './articles.js';
+import {
+	BOARDS_BANNED,
+	DISCLAIMER,
+	articleCard,
+	articlePath,
+	cursorPattern,
+	goJSON,
+	goShortDate,
+	noticeFor,
+	rfc3339
+} from './articles.js';
 import type {
 	ArticleDetail,
 	ArticleListQuery,
@@ -69,7 +79,12 @@ const articleRef = (ref: string, ...rest: string[]) =>
 export function listArticles(event: RequestEvent, q: ArticleListQuery, auth: Auth = 'public') {
 	return apiJSON<ArticlePage>(event, 'GET', '/v1/articles', undefined, {
 		auth,
-		query: { ticker: q.ticker, author: q.author, cursor: q.cursor, limit: q.limit && q.limit > 0 ? q.limit : undefined }
+		query: {
+			ticker: q.ticker,
+			author: q.author,
+			cursor: q.cursor,
+			limit: q.limit && q.limit > 0 ? q.limit : undefined
+		}
 	});
 }
 
@@ -77,7 +92,11 @@ export function getArticle(event: RequestEvent, ref: string, auth: Auth) {
 	return apiJSON<ArticleDetail>(event, 'GET', articleRef(ref), undefined, { auth });
 }
 
-export function createArticle(event: RequestEvent, req: ArticleWriteRequest, idempotencyKey: string) {
+export function createArticle(
+	event: RequestEvent,
+	req: ArticleWriteRequest,
+	idempotencyKey: string
+) {
 	return apiJSON<ArticleDetail>(event, 'POST', '/v1/articles', req, {
 		headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined
 	});
@@ -100,7 +119,12 @@ export function reportArticle(event: RequestEvent, ref: string, reason: string, 
 }
 
 export function setArticleVisibility(event: RequestEvent, ref: string, hidden: boolean) {
-	return apiJSON<void>(event, 'PUT', '/v1/admin/articles/' + encodeURIComponent(ref) + '/visibility', { hidden });
+	return apiJSON<void>(
+		event,
+		'PUT',
+		'/v1/admin/articles/' + encodeURIComponent(ref) + '/visibility',
+		{ hidden }
+	);
 }
 
 export function communityViewer(event: RequestEvent) {
@@ -129,7 +153,9 @@ export async function uploadArticleImage(event: RequestEvent, file: File): Promi
 
 /** FetchArticleImage: a cover's response, or a thrown APIError. */
 export async function fetchArticleImage(event: RequestEvent, id: string): Promise<Response> {
-	const res = await apiFetch(event, 'GET', '/v1/articles/images/' + encodeURIComponent(id), null, { auth: 'public' });
+	const res = await apiFetch(event, 'GET', '/v1/articles/images/' + encodeURIComponent(id), null, {
+		auth: 'public'
+	});
 	if (!res.ok) throw await boardsError(res);
 	return res;
 }
@@ -163,7 +189,8 @@ export function detailFailed(path: string, err: unknown): never {
 
 /** boardsErrorText: a 4xx reason, else a generic line. */
 export function boardsErrorText(err: unknown): string {
-	if (err instanceof APIError && err.status >= 400 && err.status < 500 && err.reason) return err.reason;
+	if (err instanceof APIError && err.status >= 400 && err.status < 500 && err.reason)
+		return err.reason;
 	return "That didn't work. Try again in a moment.";
 }
 
@@ -184,14 +211,20 @@ export async function viewerIsAdmin(event: RequestEvent): Promise<boolean> {
 	}
 }
 
-export async function detailVM(event: RequestEvent, d: ArticleDetail, personal: boolean): Promise<DetailVM> {
+export async function detailVM(
+	event: RequestEvent,
+	d: ArticleDetail,
+	personal: boolean
+): Promise<DetailVM> {
 	const a = d.article;
 	const path = articlePath(a.slug, a.code);
 	const canonical = base() + path;
 	const tickersRaw = a.tickers ?? [];
 	const bullets = a.bulletPoints ?? [];
 	const author = a.author?.username ? '@' + a.author.username : 'Unknown';
-	const authorURL = a.author?.username ? '/u/' + encodeURIComponent(a.author.username) + '/articles' : '/articles';
+	const authorURL = a.author?.username
+		? '/u/' + encodeURIComponent(a.author.username) + '/articles'
+		: '/articles';
 	const modified = a.editedAt ?? a.publishedAt;
 	const vm: DetailVM = {
 		code: a.code,
@@ -311,7 +344,9 @@ export const noticeFrom = (event: RequestEvent) => noticeFor(event.url.searchPar
 /** visitorKey: a daily-salted hash of the reader's IP, never the raw IP. */
 export async function visitorKey(event: RequestEvent): Promise<string> {
 	const day = new Date().toISOString().slice(0, 10);
-	const data = new TextEncoder().encode(clientIP(event) + '|' + day + '|' + config().publicAPIToken);
+	const data = new TextEncoder().encode(
+		clientIP(event) + '|' + day + '|' + config().publicAPIToken
+	);
 	const sum = new Uint8Array(await crypto.subtle.digest('SHA-256', data));
 	return Array.from(sum.slice(0, 16), (b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -365,10 +400,23 @@ export async function composeGate(event: RequestEvent, vm: ComposeVM): Promise<v
 }
 
 export function emptyForm(): ComposeForm {
-	return { title: '', tickers: '', bullets: ['', '', ''], body: '', disclosure: '', coverImageID: '', idempotencyKey: '' };
+	return {
+		title: '',
+		tickers: '',
+		bullets: ['', '', ''],
+		body: '',
+		disclosure: '',
+		coverImageID: '',
+		idempotencyKey: ''
+	};
 }
 
-export function composeVM(heading: string, action: string, submit: string, form: ComposeForm = emptyForm()): ComposeVM {
+export function composeVM(
+	heading: string,
+	action: string,
+	submit: string,
+	form: ComposeForm = emptyForm()
+): ComposeVM {
 	return { heading, action, submit, form, preview: '', error: '', blocked: false };
 }
 
@@ -385,7 +433,9 @@ const tooLarge = (reason: string) => new APIError(413, reason);
  * chosen. The form always carries what the person typed, so a failure can
  * re-render it.
  */
-export async function readComposeForm(event: RequestEvent): Promise<{ form: ComposeForm; err: unknown; raw: FormData | null }> {
+export async function readComposeForm(
+	event: RequestEvent
+): Promise<{ form: ComposeForm; err: unknown; raw: FormData | null }> {
 	let data: FormData | null = null;
 	try {
 		data = await event.request.formData();
@@ -405,10 +455,16 @@ export async function readComposeForm(event: RequestEvent): Promise<{ form: Comp
 		bullets: [val('bullet1'), val('bullet2'), val('bullet3')],
 		idempotencyKey: ''
 	};
-	if (!data) return { form, err: tooLarge("Couldn't read that upload. Covers can be up to 2 MB."), raw: null };
+	if (!data)
+		return {
+			form,
+			err: tooLarge("Couldn't read that upload. Covers can be up to 2 MB."),
+			raw: null
+		};
 	const file = data.get('cover');
 	if (!(file instanceof File) || file.size === 0) return { form, err: null, raw: data };
-	if (file.size > ARTICLE_COVER_MAX_BYTES) return { form, err: tooLarge('That cover is too large. Covers can be up to 2 MB.'), raw: data };
+	if (file.size > ARTICLE_COVER_MAX_BYTES)
+		return { form, err: tooLarge('That cover is too large. Covers can be up to 2 MB.'), raw: data };
 	try {
 		form.coverImageID = await uploadArticleImage(event, file);
 	} catch (err) {
@@ -436,7 +492,11 @@ export function articleWriteRequest(f: ComposeForm): ArticleWriteRequest {
  * token, so a hidden one still resolves for a moderator) with a notice, or to
  * the feed when it can't be loaded.
  */
-export async function afterActionLocation(event: RequestEvent, code: string, notice: string): Promise<string> {
+export async function afterActionLocation(
+	event: RequestEvent,
+	code: string,
+	notice: string
+): Promise<string> {
 	try {
 		const d = await getArticle(event, code, 'session');
 		return articlePath(d.article.slug, d.article.code) + '?notice=' + notice;

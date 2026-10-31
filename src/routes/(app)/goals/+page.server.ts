@@ -50,25 +50,33 @@ export const load: PageServerLoad = async (event) => {
 	};
 	const query = event.url.searchParams;
 	try {
-		vm.overview = (await apiJSON<PlanningGoalOverview>(event, 'GET', '/v1/financial-goals/overview')) ?? emptyOverview();
+		vm.overview =
+			(await apiJSON<PlanningGoalOverview>(event, 'GET', '/v1/financial-goals/overview')) ??
+			emptyOverview();
 	} catch (err) {
 		vm.errorMessage = portfolioAPIErrorMessage(err, 'Could not load financial goals.');
 	}
 	if (!vm.errorMessage) {
 		const [templates, portfolios] = await Promise.all([
-			apiJSON<PlanningGoalTemplate[]>(event, 'GET', '/v1/financial-goals/templates').catch(() => null),
+			apiJSON<PlanningGoalTemplate[]>(event, 'GET', '/v1/financial-goals/templates').catch(
+				() => null
+			),
 			apiJSON<{ id: string; name: string }[]>(event, 'GET', '/v1/portfolio/lists').catch(() => null)
 		]);
 		vm.templates = templates ?? [];
 		// uuid.UUID.String() in Go: the option values are lower-case.
-		vm.portfolios = (portfolios ?? []).map((p): PortfolioListSummary => ({ id: p.id.toLowerCase(), name: p.name }));
+		vm.portfolios = (portfolios ?? []).map((p): PortfolioListSummary => ({
+			id: p.id.toLowerCase(),
+			name: p.name
+		}));
 		const items = vm.overview.items ?? [];
 		let selectedID = query.get('goal') ?? '';
 		if (selectedID === '' && items.length > 0) selectedID = items[0].id;
 		vm.selected = items.find((item) => item.id === selectedID) ?? null;
 		if (vm.selected) {
 			const path = `/v1/financial-goals/${encodeURIComponent(vm.selected.id)}/suggestions`;
-			vm.suggestions = (await apiJSON<PlanningGoalSuggestion[]>(event, 'GET', path).catch(() => null)) ?? [];
+			vm.suggestions =
+				(await apiJSON<PlanningGoalSuggestion[]>(event, 'GET', path).catch(() => null)) ?? [];
 		}
 	}
 	// FinancialGoals
@@ -86,7 +94,10 @@ export const actions: Actions = {
 		try {
 			await apiJSON(event, 'POST', '/v1/financial-goals', parsed.input);
 		} catch (err) {
-			redirectFinancialGoals('', portfolioAPIErrorMessage(err, 'Could not create the financial goal.'));
+			redirectFinancialGoals(
+				'',
+				portfolioAPIErrorMessage(err, 'Could not create the financial goal.')
+			);
 		}
 		await noteGuidedAction(event, 'set_goal');
 		redirectFinancialGoals('Financial goal created.', '');
@@ -102,7 +113,10 @@ export const actions: Actions = {
 		try {
 			await apiJSON(event, 'PATCH', '/v1/financial-goals/bulk', request);
 		} catch (err) {
-			redirectFinancialGoals('', portfolioAPIErrorMessage(err, 'Could not update the selected goals.'));
+			redirectFinancialGoals(
+				'',
+				portfolioAPIErrorMessage(err, 'Could not update the selected goals.')
+			);
 		}
 		redirectFinancialGoals('Selected goals updated.', '');
 	},
@@ -117,10 +131,14 @@ export const actions: Actions = {
 		const id = parseUUID(String(form.get('goalId') ?? ''));
 		if (!id) return fail(400, { whatIfError: 'Invalid financial goal' });
 		const contribution = parseBoundedFloat(form.get('monthlyContribution'), 0, 1_000_000_000);
-		if (contribution === null) return fail(400, { whatIfError: 'Enter a valid monthly contribution' });
+		if (contribution === null)
+			return fail(400, { whatIfError: 'Enter a valid monthly contribution' });
 		const annualReturn = parseBoundedFloat(form.get('expectedAnnualReturn'), -50, 50);
 		if (annualReturn === null) return fail(400, { whatIfError: 'Enter a valid annual return' });
-		const request: PlanningGoalWhatIfRequest = { monthlyContribution: contribution, expectedAnnualReturn: annualReturn / 100 };
+		const request: PlanningGoalWhatIfRequest = {
+			monthlyContribution: contribution,
+			expectedAnnualReturn: annualReturn / 100
+		};
 		try {
 			const whatIf = await apiJSON<PlanningGoalWhatIfResponse>(
 				event,
@@ -130,7 +148,9 @@ export const actions: Actions = {
 			);
 			return { whatIf, whatIfGoalId: id };
 		} catch (err) {
-			return fail(502, { whatIfError: portfolioAPIErrorMessage(err, 'Could not calculate the scenario.') });
+			return fail(502, {
+				whatIfError: portfolioAPIErrorMessage(err, 'Could not calculate the scenario.')
+			});
 		}
 	},
 
@@ -144,8 +164,14 @@ export const actions: Actions = {
 		try {
 			await apiJSON<PlanningGoalAdjustmentDraft>(event, 'POST', path, {});
 		} catch (err) {
-			redirectFinancialGoals('', portfolioAPIErrorMessage(err, 'Could not prepare the adjustment draft.'));
+			redirectFinancialGoals(
+				'',
+				portfolioAPIErrorMessage(err, 'Could not prepare the adjustment draft.')
+			);
 		}
-		redirectFinancialGoals('Review draft created. No budget or portfolio changes were applied.', '');
+		redirectFinancialGoals(
+			'Review draft created. No budget or portfolio changes were applied.',
+			''
+		);
 	}
 };

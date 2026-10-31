@@ -24,7 +24,8 @@ function taxPackCheckoutURLs(raw: string): Record<number, string> {
 	return out;
 }
 
-export const DEFAULT_IOS_APP_STORE_URL = 'https://apps.apple.com/app/money-manager-norviq/id6765849578';
+export const DEFAULT_IOS_APP_STORE_URL =
+	'https://apps.apple.com/app/money-manager-norviq/id6765849578';
 // Empty while Norviq has no Play listing (same as config.go).
 export const DEFAULT_GOOGLE_PLAY_URL = '';
 
@@ -44,15 +45,17 @@ export function config() {
 		taxPackCheckoutURL: str('TAX_PACK_CHECKOUT_URL'),
 		taxPackCheckoutURLs: taxPackCheckoutURLs(str('TAX_PACK_CHECKOUT_URLS')),
 		sentryDSN: str('SENTRY_DSN'),
-		sentryEnvironment: str('SENTRY_ENVIRONMENT', str('GO_ENV') === 'production' ? 'production' : 'development'),
+		sentryEnvironment: str(
+			'SENTRY_ENVIRONMENT',
+			str('GO_ENV') === 'production' ? 'production' : 'development'
+		),
 		postHogProjectToken: str('POSTHOG_PROJECT_TOKEN'),
 		postHogHost: str('POSTHOG_HOST').replace(/\/+$/, ''),
 		publicAPIToken: str('PUBLIC_API_TOKEN'),
 		// Shared with norviq-backend-v2 (EDGE_CLIENT_IP_KEY). The backend trusts
 		// X-Norviq-Client-IP only when this key matches; see api.ts.
 		edgeClientIPKey: str('EDGE_CLIENT_IP_KEY'),
-		previewBasicAuth: str('PREVIEW_BASIC_AUTH'),
-
+		previewBasicAuth: str('PREVIEW_BASIC_AUTH')
 	};
 }
 

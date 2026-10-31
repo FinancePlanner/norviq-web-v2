@@ -10,8 +10,21 @@ import {
 	invitableFriends,
 	viewerID
 } from '#lib/features/social/groups/groups.server.js';
-import { card, channelItems, groupNotice, groupsError, inviteLinkRows, memberRows } from '#lib/features/social/groups/view.js';
-import type { FriendOption, GroupDetail, GroupForm, InviteLinkRow, MemberRow } from '#lib/features/social/groups/types.js';
+import {
+	card,
+	channelItems,
+	groupNotice,
+	groupsError,
+	inviteLinkRows,
+	memberRows
+} from '#lib/features/social/groups/view.js';
+import type {
+	FriendOption,
+	GroupDetail,
+	GroupForm,
+	InviteLinkRow,
+	MemberRow
+} from '#lib/features/social/groups/types.js';
 
 // GroupsSettings: notifications, invites, channels, members and the way out.
 // Each section shows only what the viewer's role allows.

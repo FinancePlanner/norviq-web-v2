@@ -15,7 +15,12 @@ export const GET: RequestHandler = async (event) => {
 	} catch {
 		parsed = null;
 	}
-	if (!parsed || parsed.host === '' || (parsed.protocol !== 'http:' && parsed.protocol !== 'https:')) error(400, 'Invalid article URL');
+	if (
+		!parsed ||
+		parsed.host === '' ||
+		(parsed.protocol !== 'http:' && parsed.protocol !== 'https:')
+	)
+		error(400, 'Invalid article URL');
 
 	try {
 		await apiJSON(event, 'POST', `/v1/news/thesis-watch/${storyID.toLowerCase()}/view`);

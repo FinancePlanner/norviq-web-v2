@@ -7,7 +7,10 @@
 
 	let { vm: initial }: { vm: ShareLinkVM } = $props();
 
+	// Seeded from the prop, then replaced by fetch responses; re-seeds when the
+	// prop changes.
 	// svelte-ignore state_referenced_locally
+	// eslint-disable-next-line svelte/prefer-writable-derived
 	let vm = $state(initial);
 	$effect.pre(() => {
 		vm = initial;
@@ -34,22 +37,35 @@
 
 <section id="share-panel" class="rounded-[var(--radius)] border p-4">
 	<h2 class="font-medium">Share</h2>
-	<p class="text-sm text-muted-foreground">People with the link see weights and returns only — never amounts.</p>
+	<p class="text-sm text-muted-foreground">
+		People with the link see weights and returns only — never amounts.
+	</p>
 	{#if vm.error !== ''}
 		<p class="mt-2 text-sm text-danger" role="alert">{vm.error}</p>
 	{/if}
 	{#if vm.url === ''}
 		<div class="mt-3">
-			<PrimaryButton onclick={() => request('POST', '/portfolio/one-page/share-link?portfolio=' + vm.scope)}>
+			<PrimaryButton
+				onclick={() => request('POST', '/portfolio/one-page/share-link?portfolio=' + vm.scope)}
+			>
 				Create public link
 			</PrimaryButton>
 		</div>
 	{:else}
-		<p class="mt-3 break-all rounded-[var(--radius-control)] border px-3 py-2 text-sm select-all" data-share-url>{vm.url}</p>
+		<p
+			class="mt-3 rounded-[var(--radius-control)] border px-3 py-2 text-sm break-all select-all"
+			data-share-url
+		>
+			{vm.url}
+		</p>
 		<div class="mt-3 flex flex-wrap gap-2">
-			<PrimaryButton data-share-url={vm.url} onclick={() => norviqShare(vm.url)}>Share</PrimaryButton>
+			<PrimaryButton data-share-url={vm.url} onclick={() => norviqShare(vm.url)}
+				>Share</PrimaryButton
+			>
 			<SecondaryButton href={vm.url} target="_blank" rel="noopener">Preview</SecondaryButton>
-			<SecondaryButton onclick={() => request('DELETE', '/portfolio/one-page/share-link?portfolio=' + vm.scope)}>
+			<SecondaryButton
+				onclick={() => request('DELETE', '/portfolio/one-page/share-link?portfolio=' + vm.scope)}
+			>
 				Stop sharing
 			</SecondaryButton>
 		</div>
@@ -59,9 +75,13 @@
 			<p class="text-sm text-muted-foreground">Also shared</p>
 			{#each vm.others as other (other.scope)}
 				<div class="mt-2 flex items-center justify-between gap-3">
-					<span class="min-w-0 break-all text-sm">{other.label} · {other.url}</span>
+					<span class="min-w-0 text-sm break-all">{other.label} · {other.url}</span>
 					<SecondaryButton
-						onclick={() => request('DELETE', '/portfolio/one-page/share-link?portfolio=' + vm.scope + '&revoke=' + other.scope)}
+						onclick={() =>
+							request(
+								'DELETE',
+								'/portfolio/one-page/share-link?portfolio=' + vm.scope + '&revoke=' + other.scope
+							)}
 					>
 						Stop
 					</SecondaryButton>

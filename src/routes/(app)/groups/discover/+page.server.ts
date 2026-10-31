@@ -1,7 +1,12 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { groupsPublicOn, requireGroups } from '#lib/features/social/gates.server.js';
-import { boardsErrorText, discoverGroups, groupsFailure, isServerFailure } from '#lib/features/social/groups/groups.server.js';
+import {
+	boardsErrorText,
+	discoverGroups,
+	groupsFailure,
+	isServerFailure
+} from '#lib/features/social/groups/groups.server.js';
 import { card } from '#lib/features/social/groups/view.js';
 import type { GroupCard } from '#lib/features/social/groups/types.js';
 

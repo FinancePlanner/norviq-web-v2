@@ -239,7 +239,8 @@ export interface PartnerFormVM {
 // ---- option builders (viewmodel.go) ----
 
 export function categoryOptionLabel(c: CategoryOptionVM): string {
-	if (c.pillarLabel !== '' && c.pillarLabel !== 'All pillars') return c.name + ' · ' + c.pillarLabel;
+	if (c.pillarLabel !== '' && c.pillarLabel !== 'All pillars')
+		return c.name + ' · ' + c.pillarLabel;
 	return c.name;
 }
 
@@ -263,15 +264,23 @@ export const frequencyOptions = (selected: string): Option[] => [
 
 export const categoryOptions = (categories: CategoryOptionVM[], selected: string): Option[] => [
 	{ value: '', label: 'None', selected: selected === '' },
-	...categories.map((c) => ({ value: c.id, label: categoryOptionLabel(c), selected: selected === c.id }))
+	...categories.map((c) => ({
+		value: c.id,
+		label: categoryOptionLabel(c),
+		selected: selected === c.id
+	}))
 ];
 
-export const destinationPortfolioOptions = (portfolios: { id: string; name: string }[]): Option[] => [
+export const destinationPortfolioOptions = (
+	portfolios: { id: string; name: string }[]
+): Option[] => [
 	{ value: '', label: 'General Investments bucket' },
 	...portfolios.map((p) => ({ value: p.id, label: p.name }))
 ];
 
-export const destinationGoalOptions = (goals: { id: string; name: string; portfolioID: string }[]): Option[] => [
+export const destinationGoalOptions = (
+	goals: { id: string; name: string; portfolioID: string }[]
+): Option[] => [
 	{ value: '', label: 'No linked goal' },
 	...goals.map((g) => ({ value: g.id, label: g.name, attrs: { 'data-portfolio': g.portfolioID } }))
 ];

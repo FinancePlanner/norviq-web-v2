@@ -29,7 +29,12 @@ export async function loadSocialConfig(event: RequestEvent): Promise<SocialConfi
 	let value = socialOff;
 	let ttl = OK_TTL;
 	try {
-		value = { ...socialOff, ...(await apiJSON<Partial<SocialConfig>>(event, 'GET', '/v1/social/config', undefined, { signal: AbortSignal.timeout(3000) })) };
+		value = {
+			...socialOff,
+			...(await apiJSON<Partial<SocialConfig>>(event, 'GET', '/v1/social/config', undefined, {
+				signal: AbortSignal.timeout(3000)
+			}))
+		};
 	} catch (err) {
 		console.debug('social config unavailable; friends features off', err);
 		ttl = FAIL_TTL;

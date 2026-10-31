@@ -11,10 +11,19 @@
 <div class="app-page-content vigil-document-page pro-gate-page settings-modern-page">
 	<ProGateHero {featureName} />
 	<div class="pro-gate-features mt-8 grid gap-3 sm:grid-cols-2">
-		<ProFeatureRow title="Research and statements" description="Fundamentals, chart builder, scenarios, and earnings" />
-		<ProFeatureRow title="Alerts and bank sync" description="Price targets plus read-only bank connections" />
+		<ProFeatureRow
+			title="Research and statements"
+			description="Fundamentals, chart builder, scenarios, and earnings"
+		/>
+		<ProFeatureRow
+			title="Alerts and bank sync"
+			description="Price targets plus read-only bank connections"
+		/>
 		<ProFeatureRow title="Q and MCP" description="In-app AI and external tool connections" />
-		<ProFeatureRow title="Tax and advanced reports" description="Tax strategy plus scheduled PDF and Excel reports" />
+		<ProFeatureRow
+			title="Tax and advanced reports"
+			description="Tax strategy plus scheduled PDF and Excel reports"
+		/>
 	</div>
 	<div class="pro-gate-plans glass-card mt-8 p-6 md:p-8">
 		<p class="field-label">Billing intervals</p>
@@ -29,10 +38,12 @@
 			</div>
 		</div>
 		<p class="pro-gate-terms mt-4">
-			Price, currency and any free-trial terms are shown on the subscription page before you buy. Nothing is charged
-			from this screen.
+			Price, currency and any free-trial terms are shown on the subscription page before you buy.
+			Nothing is charged from this screen.
 		</p>
 		<PrimaryButton href="/settings/subscription" class="mt-6">See plans and pricing</PrimaryButton>
-		<p class="mt-4 text-center text-xs text-muted-foreground">Restore purchases from subscription settings.</p>
+		<p class="mt-4 text-center text-xs text-muted-foreground">
+			Restore purchases from subscription settings.
+		</p>
 	</div>
 </div>

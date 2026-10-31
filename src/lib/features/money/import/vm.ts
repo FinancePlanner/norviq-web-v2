@@ -82,7 +82,16 @@ export type ImportPanel =
  * The roles a column can be reassigned to. `unknown` is deliberately absent:
  * it exists so older clients survive a backend addition.
  */
-export const SELECTABLE_FIELDS = ['date', 'title', 'amount', 'category', 'pillar', 'notes', 'currency', 'ignore'];
+export const SELECTABLE_FIELDS = [
+	'date',
+	'title',
+	'amount',
+	'category',
+	'pillar',
+	'notes',
+	'currency',
+	'ignore'
+];
 
 /** Shown when the backend matched columns without an AI model. */
 export const SPREADSHEET_NO_AI_NOTICE =

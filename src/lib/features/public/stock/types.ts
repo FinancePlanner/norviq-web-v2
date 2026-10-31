@@ -2,7 +2,12 @@
 // and the backend shapes its loader reads (internal/api models + the separate
 // recentearnings client). Client-safe: types only.
 
-import type { CongressVM, InsiderVM, InstitutionalVM, TechnicalsVM } from '#lib/components/norviq/market-signals.js';
+import type {
+	CongressVM,
+	InsiderVM,
+	InstitutionalVM,
+	TechnicalsVM
+} from '#lib/components/norviq/market-signals.js';
 import type { GrowthSparklinePoint } from '#lib/charts/growth-sparkline.js';
 
 export interface SentimentVM {
@@ -106,14 +111,16 @@ export interface TechnicalSignalsResponse {
 export interface InsiderActivityResponse {
 	clusterBuy?: { insiderCount: number; windowEnd: string; windowStart: string } | null;
 	summary: { buys: number; netShares: number; sells: number };
-	trades: {
-		date: string;
-		kind: string;
-		reporterName: string;
-		reporterTitle?: string | null;
-		shares: number;
-		value?: number | null;
-	}[] | null;
+	trades:
+		| {
+				date: string;
+				kind: string;
+				reporterName: string;
+				reporterTitle?: string | null;
+				shares: number;
+				value?: number | null;
+		  }[]
+		| null;
 	windowDays: number;
 }
 

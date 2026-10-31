@@ -27,7 +27,11 @@ async function send<T>(method: string, url: string, body?: FormData): Promise<Fr
 	// The 422 FormError fragment: htmx 4 discarded it (noSwap "4xx"), which left
 	// the validation message unseen. The templ clearly meant it to show, so v2
 	// renders it in the same target.
-	if (res.status === 422 && data && typeof (data as { formError?: unknown }).formError === 'string') {
+	if (
+		res.status === 422 &&
+		data &&
+		typeof (data as { formError?: unknown }).formError === 'string'
+	) {
 		return { kind: 'formError', message: (data as { formError: string }).formError };
 	}
 	if (!res.ok) return null;

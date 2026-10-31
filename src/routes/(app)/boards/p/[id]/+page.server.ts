@@ -15,6 +15,7 @@ export const load: PageServerLoad = async (event) => {
 	}
 	let target = '/boards/' + pathEscape(detail.post.boardSlug) + '/p/' + pathEscape(id);
 	const notice = event.url.searchParams.get('notice') ?? '';
-	if (Object.hasOwn(BOARD_NOTICES, notice) && BOARD_NOTICES[notice] !== '') target = withNotice(target, notice);
+	if (Object.hasOwn(BOARD_NOTICES, notice) && BOARD_NOTICES[notice] !== '')
+		target = withNotice(target, notice);
 	redirect(303, target);
 };

@@ -1,6 +1,10 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { createShareLink, revokeShareLink, shareScope } from '#lib/features/portfolio/holdings/holdings.server.js';
+import {
+	createShareLink,
+	revokeShareLink,
+	shareScope
+} from '#lib/features/portfolio/holdings/holdings.server.js';
 
 // POST / DELETE /portfolio/one-page/share-link — PortfolioShareLinkCreate /
 // PortfolioShareLinkRevoke. Go swapped SharePanel in place; this answers its data.

@@ -35,16 +35,24 @@
 </svelte:head>
 
 <div class="app-page-content vigil-document-page boards-page">
-	<a href={'/boards/' + pathEscape(post.boardSlug)} class="text-sm text-muted-foreground hover:underline">← /{post.boardSlug}</a>
+	<a
+		href={'/boards/' + pathEscape(post.boardSlug)}
+		class="text-sm text-muted-foreground hover:underline">← /{post.boardSlug}</a
+	>
 	<Banners {viewer} {notice} {errorText} />
 	<section class="glass-card dash-panel mt-3">
 		<PostRowView {post} {viewer} {backURL} />
 		{#if body}
-			<div class="whitespace-pre-line px-4 pb-4 pl-15 text-sm leading-relaxed">{body}</div>
+			<div class="px-4 pb-4 pl-15 text-sm leading-relaxed whitespace-pre-line">{body}</div>
 		{/if}
 	</section>
 	{#if viewer.canWrite}
-		<form method="post" action={'/boards/p/' + pathEscape(post.id) + '/comments'} class="mt-4 space-y-2" use:enhance={commentSubmit(post)}>
+		<form
+			method="post"
+			action={'/boards/p/' + pathEscape(post.id) + '/comments'}
+			class="mt-4 space-y-2"
+			use:enhance={commentSubmit(post)}
+		>
 			<TextareaField name="body" label="Add a comment" rows={3} required />
 			<SubmitButton>Comment</SubmitButton>
 		</form>

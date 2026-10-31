@@ -24,11 +24,27 @@
 			class="portfolio-form mt-6 space-y-6"
 			method="POST"
 			action="/expenses/category"
-			use:enhance={panelEnhance<CategoryFormVM>((next) => (vm = next), (_, msg) => (vm = { ...vm, error: msg || 'Could not save category.' }))}
+			use:enhance={panelEnhance<CategoryFormVM>(
+				(next) => (vm = next),
+				(_, msg) => (vm = { ...vm, error: msg || 'Could not save category.' })
+			)}
 		>
 			<input type="hidden" name="month" value={vm.monthQuery} />
-			<Field id="category-name" name="name" label="Name" value={vm.name} required wrapperClass="space-y-2" />
-			<SelectField id="category-pillar" name="pillar" label="Pillar (optional)" wrapperClass="space-y-2" options={pillarOptionsWithAll(vm.pillar)} />
+			<Field
+				id="category-name"
+				name="name"
+				label="Name"
+				value={vm.name}
+				required
+				wrapperClass="space-y-2"
+			/>
+			<SelectField
+				id="category-pillar"
+				name="pillar"
+				label="Pillar (optional)"
+				wrapperClass="space-y-2"
+				options={pillarOptionsWithAll(vm.pillar)}
+			/>
 			<div class="portfolio-form-actions">
 				<CancelButton />
 				<SubmitButton class="portfolio-form-save">Save category</SubmitButton>

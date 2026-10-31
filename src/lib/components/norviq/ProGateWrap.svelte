@@ -4,7 +4,8 @@
 	import type { Snippet } from 'svelte';
 	import ProGateOverlay from './ProGateOverlay.svelte';
 
-	let { isPro, featureName, children }: { isPro: boolean; featureName: string; children: Snippet } = $props();
+	let { isPro, featureName, children }: { isPro: boolean; featureName: string; children: Snippet } =
+		$props();
 </script>
 
 {#if isPro}

@@ -8,6 +8,7 @@ const inviteLinkCode = /(?:\/g\/)?([A-Za-z0-9]{6,32})\/?$/;
 export const GET: RequestHandler = async (event) => {
 	await requireGroups(event);
 	const match = inviteLinkCode.exec((event.url.searchParams.get('link') ?? '').trim());
-	if (!match) redirect(303, withQuery('/groups', 'error', "That doesn't look like a group invite link."));
+	if (!match)
+		redirect(303, withQuery('/groups', 'error', "That doesn't look like a group invite link."));
 	redirect(303, '/g/' + match[1]);
 };

@@ -21,7 +21,8 @@ export interface ThemeEnv {
 export function domThemeEnv(): ThemeEnv {
 	const root = document.documentElement;
 	const style = getComputedStyle(root);
-	const media = (q: string) => typeof window.matchMedia === 'function' && window.matchMedia(q).matches;
+	const media = (q: string) =>
+		typeof window.matchMedia === 'function' && window.matchMedia(q).matches;
 	return {
 		dark: root.classList.contains('dark'),
 		cssVar: (name, fallback) => style.getPropertyValue(name).trim() || fallback,
@@ -92,7 +93,12 @@ export function isAltLineColor(color: unknown): boolean {
 export function parseHex(hex: unknown): [number, number, number] | null {
 	const raw = String(hex || '').trim();
 	const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(raw);
-	if (short) return [short[1], short[2], short[3]].map((c) => parseInt(c + c, 16)) as [number, number, number];
+	if (short)
+		return [short[1], short[2], short[3]].map((c) => parseInt(c + c, 16)) as [
+			number,
+			number,
+			number
+		];
 	const full = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(raw);
 	if (!full) return null;
 	return [full[1], full[2], full[3]].map((c) => parseInt(c, 16)) as [number, number, number];
@@ -108,7 +114,8 @@ const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : [v]);
  */
 export function pillarColor(series: unknown, env: ThemeEnv): string {
 	const item = series && typeof series === 'object' ? (series as Obj) : { name: series };
-	if (item.colorVar) return env.cssVar(String(item.colorVar), env.cssVar('--muted-foreground', '#8D8371'));
+	if (item.colorVar)
+		return env.cssVar(String(item.colorVar), env.cssVar('--muted-foreground', '#8D8371'));
 	switch (String(item.name || '').toLowerCase()) {
 		case 'fundamentals':
 			return env.cssVar('--color-pillar-fundamentals', '#0f766e');
@@ -148,7 +155,11 @@ export function patchVisualMap(current: Obj, env: ThemeEnv): Obj[] | undefined {
 }
 
 /** Calendar day/month labels on the axis ink; the 2px cell gap in the surface color. */
-export function patchCalendar(current: Obj, palette: ChartPalette, env: ThemeEnv): Obj[] | undefined {
+export function patchCalendar(
+	current: Obj,
+	palette: ChartPalette,
+	env: ThemeEnv
+): Obj[] | undefined {
 	const calendar = current?.calendar;
 	if (!calendar) return undefined;
 	const items = list(calendar);
@@ -159,12 +170,17 @@ export function patchCalendar(current: Obj, palette: ChartPalette, env: ThemeEnv
 			...item,
 			dayLabel: { ...obj(item.dayLabel), color: palette.axis },
 			monthLabel: { ...obj(item.monthLabel), color: palette.axis },
-			itemStyle: { ...obj(item.itemStyle), borderColor: env.cssVar('--color-card-bg', '#ffffff'), borderWidth: 2 }
+			itemStyle: {
+				...obj(item.itemStyle),
+				borderColor: env.cssVar('--color-card-bg', '#ffffff'),
+				borderWidth: 2
+			}
 		};
 	});
 }
 
-export type ChartKind = 'spark' | 'density' | 'pillars' | 'allocation' | 'spending' | 'wealth' | 'other';
+export type ChartKind =
+	'spark' | 'density' | 'pillars' | 'allocation' | 'spending' | 'wealth' | 'other';
 
 /** Classifies a chart by its DOM id and first series, exactly as echarts-theme.js did. */
 export function chartKind(chartID: string, series: unknown): ChartKind {
@@ -175,13 +191,25 @@ export function chartKind(chartID: string, series: unknown): ChartKind {
 	if (first.type === 'bar' && first.stack === 'spend') return 'pillars';
 	if (first.type === 'pie') return 'allocation';
 	if (id.includes('spending') || id.includes('expenses-year')) return 'spending';
-	if (id.includes('allocation') || id.includes('donut') || id.includes('sector') || id.includes('cost-allocation')) return 'allocation';
+	if (
+		id.includes('allocation') ||
+		id.includes('donut') ||
+		id.includes('sector') ||
+		id.includes('cost-allocation')
+	)
+		return 'allocation';
 	if (first.type === 'line') return 'wealth';
 	return 'other';
 }
 
-export function resolveLineColor(existingColor: unknown, palette: ChartPalette, chartID: string, kind: ChartKind): string {
-	if (kind === 'spending' || chartID.includes('spending') || chartID.includes('expenses-year')) return palette.lineAlt;
+export function resolveLineColor(
+	existingColor: unknown,
+	palette: ChartPalette,
+	chartID: string,
+	kind: ChartKind
+): string {
+	if (kind === 'spending' || chartID.includes('spending') || chartID.includes('expenses-year'))
+		return palette.lineAlt;
 	if (isDownColor(existingColor)) return palette.down;
 	if (isAltLineColor(existingColor)) return palette.lineAlt;
 	return palette.line;
@@ -195,7 +223,9 @@ export function patchAxisList(axes: unknown, palette: ChartPalette): unknown {
 		return {
 			...axis,
 			axisLabel: { ...obj(axis.axisLabel), color: palette.axis },
-			axisPointer: axis.axisPointer ? { ...obj(axis.axisPointer), snap: true } : { show: true, snap: true },
+			axisPointer: axis.axisPointer
+				? { ...obj(axis.axisPointer), snap: true }
+				: { show: true, snap: true },
 			splitLine: splitLine
 				? {
 						...splitLine,
@@ -210,7 +240,13 @@ export function patchAxisList(axes: unknown, palette: ChartPalette): unknown {
 	});
 }
 
-export function patchSeriesList(series: unknown, palette: ChartPalette, chartID: string, kind: ChartKind, env: ThemeEnv): unknown {
+export function patchSeriesList(
+	series: unknown,
+	palette: ChartPalette,
+	chartID: string,
+	kind: ChartKind,
+	env: ThemeEnv
+): unknown {
 	if (!series) return series;
 	return list(series).map((raw) => {
 		const item = obj(raw);
@@ -219,14 +255,19 @@ export function patchSeriesList(series: unknown, palette: ChartPalette, chartID:
 		if (item.type === 'line') {
 			const lineColor = resolveLineColor(obj(item.lineStyle).color, palette, chartID, kind);
 			next.lineStyle = { ...obj(item.lineStyle), color: lineColor };
-			if (item.areaStyle) next.areaStyle = { ...obj(item.areaStyle), color: lineColor, opacity: palette.areaOpacity };
+			if (item.areaStyle)
+				next.areaStyle = { ...obj(item.areaStyle), color: lineColor, opacity: palette.areaOpacity };
 			if (kind === 'wealth' || kind === 'spending') {
 				const emphasis = obj(item.emphasis);
 				next.emphasis = {
 					...emphasis,
 					focus: 'series',
 					scale: true,
-					itemStyle: { ...obj(emphasis.itemStyle), borderColor: palette.emphasisBorder, borderWidth: 2 }
+					itemStyle: {
+						...obj(emphasis.itemStyle),
+						borderColor: palette.emphasisBorder,
+						borderWidth: 2
+					}
 				};
 				next.showSymbol = false;
 			}
@@ -244,7 +285,11 @@ export function patchSeriesList(series: unknown, palette: ChartPalette, chartID:
 		}
 
 		if (item.type === 'heatmap') {
-			next.itemStyle = { ...obj(item.itemStyle), borderColor: env.cssVar('--color-card-bg', '#ffffff'), borderWidth: 2 };
+			next.itemStyle = {
+				...obj(item.itemStyle),
+				borderColor: env.cssVar('--color-card-bg', '#ffffff'),
+				borderWidth: 2
+			};
 		}
 
 		if (item.type === 'pie') {
@@ -266,7 +311,13 @@ export function patchSeriesList(series: unknown, palette: ChartPalette, chartID:
 
 export type TooltipFormatter = (params: unknown) => string;
 
-export function buildTooltipOption(current: Obj, palette: ChartPalette, triggerOn: string, env: ThemeEnv, formatter?: TooltipFormatter): Obj {
+export function buildTooltipOption(
+	current: Obj,
+	palette: ChartPalette,
+	triggerOn: string,
+	env: ThemeEnv,
+	formatter?: TooltipFormatter
+): Obj {
 	const base = obj(Array.isArray(current.tooltip) ? current.tooltip[0] : current.tooltip);
 	const pointer = obj(base.axisPointer);
 	const tooltip: Obj = {
@@ -278,7 +329,8 @@ export function buildTooltipOption(current: Obj, palette: ChartPalette, triggerO
 		// ECharts' 0.4s default makes the tooltip float behind the pointer.
 		transitionDuration: env.reducedMotion ? 0 : 0.12,
 		padding: [8, 12],
-		extraCssText: 'border-radius: 10px; box-shadow: var(--panel-shadow-md); font-variant-numeric: tabular-nums;',
+		extraCssText:
+			'border-radius: 10px; box-shadow: var(--panel-shadow-md); font-variant-numeric: tabular-nums;',
 		textStyle: { ...obj(base.textStyle), color: palette.tooltipText },
 		axisPointer: {
 			...pointer,
@@ -294,7 +346,11 @@ export function buildTooltipOption(current: Obj, palette: ChartPalette, triggerO
 function formatUSD(value: unknown): string {
 	const n = Number(value);
 	if (!Number.isFinite(n)) return String(value ?? '');
-	return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+	return new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: 'USD',
+		maximumFractionDigits: 0
+	}).format(n);
 }
 
 /** Tooltip for wealth/spending lines: "<date><br/><strong>$12,345</strong>". */
@@ -337,4 +393,5 @@ export function themedOptionPatch(current: Obj, chartID: string, env: ThemeEnv):
 }
 
 /** Wrappers that fade the chart in on first render and on theme change (dashboard-charts.js). */
-export const FADE_WRAPPERS = '.overview-wealth-chart, .stock-chart-wrap, .overview-allocation-chart, .overview-watchlist-spark';
+export const FADE_WRAPPERS =
+	'.overview-wealth-chart, .stock-chart-wrap, .overview-allocation-chart, .overview-watchlist-spark';

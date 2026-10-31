@@ -77,7 +77,8 @@ function civil(m: RegExpExecArray | null): { y: number; mo: number; d: number } 
 	const mo = Number(m[2]);
 	const d = Number(m[3]);
 	const probe = new Date(Date.UTC(y, mo - 1, d));
-	if (probe.getUTCFullYear() !== y || probe.getUTCMonth() !== mo - 1 || probe.getUTCDate() !== d) return null;
+	if (probe.getUTCFullYear() !== y || probe.getUTCMonth() !== mo - 1 || probe.getUTCDate() !== d)
+		return null;
 	return { y, mo, d };
 }
 
@@ -118,7 +119,8 @@ export function pilotCardVM(p: PilotSummary, followingHref: string): PilotCardVM
 		followHref: '',
 		followingHref
 	};
-	if (p.updatedAt && p.updatedAt.trim() !== '') card.updatedLabel = 'Updated ' + formatPilotTimestamp(p.updatedAt);
+	if (p.updatedAt && p.updatedAt.trim() !== '')
+		card.updatedLabel = 'Updated ' + formatPilotTimestamp(p.updatedAt);
 	if (card.hasTrades) card.followHref = card.href + '/follow';
 	return card;
 }
@@ -310,7 +312,8 @@ function parsePilotCapital(raw: string): number | null {
 	// strconv.ParseFloat: a full decimal (or inf/nan, rejected below), not a prefix.
 	if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(cleaned)) return null;
 	const capital = Number(cleaned);
-	if (!Number.isFinite(capital) || capital <= 0 || capital > MAX_PILOT_STARTING_CAPITAL) return null;
+	if (!Number.isFinite(capital) || capital <= 0 || capital > MAX_PILOT_STARTING_CAPITAL)
+		return null;
 	return capital;
 }
 
@@ -326,11 +329,20 @@ export function pilotFollowErrorMessage(
 		case 403:
 			return pilotUpgradeMessage(upgrade);
 		case 404:
-			return { message: apiErrorMessage(body, 'That pilot or list no longer exists.'), showUpgrade: false };
+			return {
+				message: apiErrorMessage(body, 'That pilot or list no longer exists.'),
+				showUpgrade: false
+			};
 		case 409:
-			return { message: apiErrorMessage(body, 'This pilot has no disclosures yet. Try again later.'), showUpgrade: false };
+			return {
+				message: apiErrorMessage(body, 'This pilot has no disclosures yet. Try again later.'),
+				showUpgrade: false
+			};
 		case 422:
-			return { message: apiErrorMessage(body, 'Choose an empty watchlist, or let Norviq create one.'), showUpgrade: false };
+			return {
+				message: apiErrorMessage(body, 'Choose an empty watchlist, or let Norviq create one.'),
+				showUpgrade: false
+			};
 		default:
 			return { message: 'Could not start following. Try again shortly.', showUpgrade: false };
 	}
@@ -340,16 +352,25 @@ export function pilotFollowErrorMessage(
  * Reads the backend's upgrade body. A 403 without one is a missing scope, which
  * an upgrade would not fix. Decides by feature and limit, never by plan name.
  */
-function pilotUpgradeMessage(upgrade: BillingUpgradeRequiredResponse | null): { message: string; showUpgrade: boolean } {
+function pilotUpgradeMessage(upgrade: BillingUpgradeRequiredResponse | null): {
+	message: string;
+	showUpgrade: boolean;
+} {
 	if (!upgrade || upgrade.code !== 'upgrade_required') {
 		return { message: 'Your account cannot follow pilots right now.', showUpgrade: false };
 	}
 	if (upgrade.feature === 'portfolio_lists') {
-		return { message: 'You have reached 25 portfolios. Archive one, or follow into a watchlist.', showUpgrade: false };
+		return {
+			message: 'You have reached 25 portfolios. Archive one, or follow into a watchlist.',
+			showUpgrade: false
+		};
 	}
 	// "pilot_follows"
 	if (upgrade.limit == null) {
-		return { message: 'Following into a what-if portfolio needs Pro. Free includes one watchlist follow.', showUpgrade: true };
+		return {
+			message: 'Following into a what-if portfolio needs Pro. Free includes one watchlist follow.',
+			showUpgrade: true
+		};
 	}
 	if (upgrade.limit < PILOT_PRO_FOLLOW_LIMIT) {
 		return {
@@ -401,12 +422,17 @@ export function buildPilotFollowDetailVM(f: PilotFollowResponse): FollowDetailVM
 		vm.targetHref = '/portfolio/watchlist?list=' + uuidString(f.watchlistListId);
 		vm.targetLinkLabel = 'Open watchlist';
 	}
-	if (f.startingCapital != null) vm.startingCapital = formatPilotMoney(f.startingCapital, f.currency);
+	if (f.startingCapital != null)
+		vm.startingCapital = formatPilotMoney(f.startingCapital, f.currency);
 	return vm;
 }
 
 /** applyPilotSnapshots: the value strip and the chart data. The chart needs two points. */
-export function applyPilotSnapshots(vm: FollowDetailVM, f: PilotFollowResponse, snaps: PilotFollowSnapshotResponse[]) {
+export function applyPilotSnapshots(
+	vm: FollowDetailVM,
+	f: PilotFollowResponse,
+	snaps: PilotFollowSnapshotResponse[]
+) {
 	if (snaps.length === 0) {
 		vm.chartNote = 'No daily snapshot yet. Norviq records the simulated value once a day.';
 		return;

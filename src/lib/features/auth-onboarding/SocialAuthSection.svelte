@@ -7,7 +7,8 @@
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import { passkeyButton } from './passkey.js';
 
-	let { intentLabel, onerror }: { intentLabel: string; onerror: (message: string) => void } = $props();
+	let { intentLabel, onerror }: { intentLabel: string; onerror: (message: string) => void } =
+		$props();
 </script>
 
 <div class="space-y-4">
@@ -33,8 +34,20 @@
 			</svg>
 			<span>{t('Continue with X')}</span>
 		</a>
-		<NativeButton class="btn-social-passkey" id="passkey-sign-in" data-intent={intentLabel} {@attach passkeyButton(onerror)}>
-			<svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8">
+		<NativeButton
+			class="btn-social-passkey"
+			id="passkey-sign-in"
+			data-intent={intentLabel}
+			{@attach passkeyButton(onerror)}
+		>
+			<svg
+				viewBox="0 0 24 24"
+				class="h-5 w-5"
+				aria-hidden="true"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.8"
+			>
 				<path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
 				<rect x="5" y="11" width="14" height="10" rx="2"></rect>
 				<circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"></circle>

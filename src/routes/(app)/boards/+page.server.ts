@@ -1,6 +1,12 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { boardCard, boardNotice, boardPostRow, pathEscape, queryEscape } from '#lib/features/social/boards/boards.js';
+import {
+	boardCard,
+	boardNotice,
+	boardPostRow,
+	pathEscape,
+	queryEscape
+} from '#lib/features/social/boards/boards.js';
 import {
 	boardUnreadCount,
 	boardsErrorText,

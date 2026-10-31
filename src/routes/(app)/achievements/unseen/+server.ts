@@ -8,5 +8,8 @@ import { loadUnseenToast } from '#lib/features/achievements/achievements.server.
 // model as JSON ({toast: null} for nothing) and UnlockToast.svelte renders it.
 export const GET: RequestHandler = async (event) => {
 	await requireAchievements(event);
-	return json({ toast: await loadUnseenToast(event) }, { headers: { 'cache-control': 'no-store' } });
+	return json(
+		{ toast: await loadUnseenToast(event) },
+		{ headers: { 'cache-control': 'no-store' } }
+	);
 };

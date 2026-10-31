@@ -1,7 +1,12 @@
 <script lang="ts">
 	// groups.templ HomePage: invitations, then the viewer's groups by latest
 	// activity. Also the body of groupsFailure's 404 (Error set, no groups).
-	import { EmptyState, Field, SecondarySubmitButton, SubmitButton } from '#lib/components/norviq/index.js';
+	import {
+		EmptyState,
+		Field,
+		SecondarySubmitButton,
+		SubmitButton
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import GroupListRow from './GroupListRow.svelte';
 	import GroupTile from './GroupTile.svelte';
@@ -14,11 +19,20 @@
 		canDiscover = false,
 		notice = '',
 		error = ''
-	}: { groups?: GroupCard[]; invitations?: InvitationRow[]; canDiscover?: boolean; notice?: string; error?: string } = $props();
+	}: {
+		groups?: GroupCard[];
+		invitations?: InvitationRow[];
+		canDiscover?: boolean;
+		notice?: string;
+		error?: string;
+	} = $props();
 </script>
 
 <div class="app-page-content vigil-canvas-page groups-home-page">
-	<vigil.ModernPageHeader title="Groups" subtitle="Chat with friends about what you hold. Ideas and questions, not advice.">
+	<vigil.ModernPageHeader
+		title="Groups"
+		subtitle="Chat with friends about what you hold. Ideas and questions, not advice."
+	>
 		{#snippet actions()}
 			{#if canDiscover}
 				<a href="/groups/discover" class="btn-secondary px-4">Discover</a>
@@ -28,7 +42,11 @@
 	</vigil.ModernPageHeader>
 	<Notices {notice} {error} />
 	{#if invitations.length > 0}
-		<section class="glass-card dash-panel mb-6 divide-y divide-[var(--color-border)]" aria-label="Invitations" data-groups-invitations>
+		<section
+			class="glass-card dash-panel mb-6 divide-y divide-[var(--color-border)]"
+			aria-label="Invitations"
+			data-groups-invitations
+		>
 			{#each invitations as invitation (invitation.id)}
 				<div class="flex flex-wrap items-center gap-3 p-4">
 					<GroupTile group={invitation.group} size="size-10 text-lg" />
@@ -61,16 +79,28 @@
 			actionHref="/groups/new"
 		/>
 	{:else}
-		<section class="glass-card dash-panel divide-y divide-[var(--color-border)]" aria-label="Your groups">
+		<section
+			class="glass-card dash-panel divide-y divide-[var(--color-border)]"
+			aria-label="Your groups"
+		>
 			{#each groups as group (group.id)}
 				<GroupListRow {group} />
 			{/each}
 		</section>
 	{/if}
-	<section class="mt-6 glass-card dash-panel p-5" aria-label="Join with a link">
+	<section class="glass-card dash-panel mt-6 p-5" aria-label="Join with a link">
 		<h2 class="text-base font-semibold">Got an invite link?</h2>
-		<form method="get" action="/groups/join" class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
-			<Field name="link" label="Invite link or code" placeholder="norviq.org/g/…" wrapperClass="flex-1" />
+		<form
+			method="get"
+			action="/groups/join"
+			class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end"
+		>
+			<Field
+				name="link"
+				label="Invite link or code"
+				placeholder="norviq.org/g/…"
+				wrapperClass="flex-1"
+			/>
 			<SubmitButton class="px-5">Open</SubmitButton>
 		</form>
 	</section>

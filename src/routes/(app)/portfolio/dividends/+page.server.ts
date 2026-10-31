@@ -1,5 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { emptyDividendsViewModel, loadDividendsViewModel } from '#lib/features/portfolio/analytics/subpages.server.js';
+import {
+	emptyDividendsViewModel,
+	loadDividendsViewModel
+} from '#lib/features/portfolio/analytics/subpages.server.js';
 
 // GET /portfolio/dividends (handlers.PortfolioDividends).
 export const load: PageServerLoad = async (event) => {

@@ -6,7 +6,13 @@
 </script>
 
 {#if notice}
-	<p class="mb-4 rounded-[var(--radius)] border border-[var(--color-border)] px-4 py-3 text-sm" role="status" data-groups-notice>{notice}</p>
+	<p
+		class="mb-4 rounded-[var(--radius)] border border-[var(--color-border)] px-4 py-3 text-sm"
+		role="status"
+		data-groups-notice
+	>
+		{notice}
+	</p>
 {/if}
 {#if error}
 	<div class="mb-4">

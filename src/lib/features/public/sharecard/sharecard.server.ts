@@ -29,7 +29,10 @@ function dataURLBytes(url: string): Uint8Array {
 
 let fonts: { regular: TTFont; bold: TTFont } | null = null;
 function loadFonts() {
-	fonts ??= { regular: new TTFont(dataURLBytes(regularTTF)), bold: new TTFont(dataURLBytes(boldTTF)) };
+	fonts ??= {
+		regular: new TTFont(dataURLBytes(regularTTF)),
+		bold: new TTFont(dataURLBytes(boldTTF))
+	};
 	return fonts;
 }
 const face = (f: TTFont, size: number) => new Face(f, size);
@@ -102,7 +105,16 @@ interface BulletLine {
 	first: boolean;
 }
 
-function layoutBullets(f: Face, bullets: string[], width: number, y: number, limit: number, gap: number, step: number, maxLines: number): BulletLine[] {
+function layoutBullets(
+	f: Face,
+	bullets: string[],
+	width: number,
+	y: number,
+	limit: number,
+	gap: number,
+	step: number,
+	maxLines: number
+): BulletLine[] {
 	const out: BulletLine[] = [];
 	let cut = false;
 	outer: for (const b of bullets) {
@@ -169,7 +181,16 @@ export async function render(input: Card, f: Format): Promise<Uint8Array> {
 	if (f.bullets && c.bullets.length > 0) {
 		const bulletFace = face(regular, 38 * s);
 		const indent = px(44);
-		for (const l of layoutBullets(bulletFace, c.bullets, width - indent, y + px(30), footer - px(190), px(20), px(52), bulletTextLines)) {
+		for (const l of layoutBullets(
+			bulletFace,
+			c.bullets,
+			width - indent,
+			y + px(30),
+			footer - px(190),
+			px(20),
+			px(52),
+			bulletTextLines
+		)) {
 			if (l.first) img.drawText(bulletFace, pad, l.y, '•', accent);
 			img.drawText(bulletFace, pad + indent, l.y, l.text, foreground);
 		}
@@ -228,7 +249,10 @@ export function regionCode(flag: string): string {
 }
 
 const isVariationSelector = (cp: number) =>
-	(cp >= 0xfe00 && cp <= 0xfe0f) || (cp >= 0xe0100 && cp <= 0xe01ef) || (cp >= 0x180b && cp <= 0x180d) || cp === 0x180f;
+	(cp >= 0xfe00 && cp <= 0xfe0f) ||
+	(cp >= 0xe0100 && cp <= 0xe01ef) ||
+	(cp >= 0x180b && cp <= 0x180d) ||
+	cp === 0x180f;
 
 /** drawable: drops what the Go fonts cannot draw (emoji, mostly) and collapses the gaps. */
 function drawable(s: string): string {
@@ -303,25 +327,58 @@ interface BriefLayout {
 function layoutFor(f: Format): BriefLayout {
 	if (f.height > f.width) {
 		return {
-			pad: 72, brandSize: 32, dateSize: 30, titleSize: 64, titleLines: 2,
-			rowSize: 34, regionSize: 24, rowStep: 62,
-			itemSize: 33, itemStep: 45, itemGap: 26, itemLines: 3,
-			urlSize: 32, disclaimerSize: 24, disclaimerLines: 2, portrait: true,
-			columnGap: 0, leftColumnMin: 0
+			pad: 72,
+			brandSize: 32,
+			dateSize: 30,
+			titleSize: 64,
+			titleLines: 2,
+			rowSize: 34,
+			regionSize: 24,
+			rowStep: 62,
+			itemSize: 33,
+			itemStep: 45,
+			itemGap: 26,
+			itemLines: 3,
+			urlSize: 32,
+			disclaimerSize: 24,
+			disclaimerLines: 2,
+			portrait: true,
+			columnGap: 0,
+			leftColumnMin: 0
 		};
 	}
 	return {
-		pad: 60, brandSize: 26, dateSize: 26, titleSize: 50, titleLines: 1,
-		rowSize: 25, regionSize: 18, rowStep: 44,
-		itemSize: 24, itemStep: 31, itemGap: 14, itemLines: 3,
-		urlSize: 24, disclaimerSize: 19, disclaimerLines: 1, portrait: false,
-		columnGap: 44, leftColumnMin: 600
+		pad: 60,
+		brandSize: 26,
+		dateSize: 26,
+		titleSize: 50,
+		titleLines: 1,
+		rowSize: 25,
+		regionSize: 18,
+		rowStep: 44,
+		itemSize: 24,
+		itemStep: 31,
+		itemGap: 14,
+		itemLines: 3,
+		urlSize: 24,
+		disclaimerSize: 19,
+		disclaimerLines: 1,
+		portrait: false,
+		columnGap: 44,
+		leftColumnMin: 600
 	};
 }
 
 const int = Math.trunc;
 
-function drawBriefRows(img: Canvas, l: BriefLayout, rows: BriefRow[], x: number, y: number, width: number): number {
+function drawBriefRows(
+	img: Canvas,
+	l: BriefLayout,
+	rows: BriefRow[],
+	x: number,
+	y: number,
+	width: number
+): number {
 	const { regular, bold } = loadFonts();
 	const rowFace = face(regular, l.rowSize);
 	const boldRowFace = face(bold, l.rowSize);
@@ -348,16 +405,34 @@ function drawBriefRows(img: Canvas, l: BriefLayout, rows: BriefRow[], x: number,
 		const level = fit(rowFace, row.level, levelWidth);
 		img.drawText(rowFace, levelRight - rowFace.measure(level), y, level, muted);
 		const nameWidth = levelRight - levelWidth - gap - nameX;
-		if (nameWidth > 0) img.drawText(boldRowFace, nameX, y, fit(boldRowFace, row.name, nameWidth), foreground);
+		if (nameWidth > 0)
+			img.drawText(boldRowFace, nameX, y, fit(boldRowFace, row.name, nameWidth), foreground);
 	}
 	return y + int(l.rowSize * 0.4);
 }
 
-function drawBriefItems(img: Canvas, l: BriefLayout, items: string[], x: number, y: number, width: number, limit: number) {
+function drawBriefItems(
+	img: Canvas,
+	l: BriefLayout,
+	items: string[],
+	x: number,
+	y: number,
+	width: number,
+	limit: number
+) {
 	if (items.length === 0) return;
 	const itemFace = face(loadFonts().regular, l.itemSize);
 	const indent = int(l.itemSize * 1.1);
-	for (const line of layoutBullets(itemFace, items, width - indent, y, limit, l.itemGap, l.itemStep, l.itemLines)) {
+	for (const line of layoutBullets(
+		itemFace,
+		items,
+		width - indent,
+		y,
+		limit,
+		l.itemGap,
+		l.itemStep,
+		l.itemLines
+	)) {
 		if (line.first) img.drawText(itemFace, x, line.y, '•', accent);
 		img.drawText(itemFace, x + indent, line.y, line.text, foreground);
 	}
@@ -393,7 +468,9 @@ export async function renderBrief(input: BriefCard, f: Format): Promise<Uint8Arr
 	const disclaimer = wrap(disclaimerFace, c.disclaimer, width, l.disclaimerLines);
 	const lineStep = int(l.disclaimerSize * 1.3);
 	const footerY = f.height - l.pad - (disclaimer.length - 1) * lineStep;
-	disclaimer.forEach((line, i) => img.drawText(disclaimerFace, left, footerY + i * lineStep, line, muted));
+	disclaimer.forEach((line, i) =>
+		img.drawText(disclaimerFace, left, footerY + i * lineStep, line, muted)
+	);
 	const urlY = footerY - int(l.disclaimerSize * 1.9);
 	if (c.shortURL) {
 		const urlFace = face(bold, l.urlSize);
@@ -414,7 +491,13 @@ export async function renderBrief(input: BriefCard, f: Format): Promise<Uint8Arr
 		const leftWidth = Math.max(l.leftColumnMin, int((width * 55) / 100));
 		drawBriefRows(img, l, c.rows, left, contentTop, leftWidth);
 		const itemsX = left + leftWidth + l.columnGap;
-		img.fillRect(itemsX - int(l.columnGap / 2), contentTop + 12, 2, contentBottom - contentTop - 12, rule);
+		img.fillRect(
+			itemsX - int(l.columnGap / 2),
+			contentTop + 12,
+			2,
+			contentBottom - contentTop - 12,
+			rule
+		);
 		drawBriefItems(img, l, c.items, itemsX, contentTop, right - itemsX, contentBottom);
 	} else if (c.rows.length > 0) {
 		drawBriefRows(img, l, c.rows, left, contentTop, width);
@@ -432,7 +515,10 @@ const images = new Map<string, { png: Uint8Array; expires: number }>();
 const pending = new Map<string, Promise<Uint8Array>>();
 
 /** Do: the cached PNG for key, rendering it once however many callers wait. Errors are not cached. */
-export async function cachedImage(key: string, make: () => Promise<Uint8Array>): Promise<Uint8Array> {
+export async function cachedImage(
+	key: string,
+	make: () => Promise<Uint8Array>
+): Promise<Uint8Array> {
 	const hit = images.get(key);
 	if (hit && Date.now() < hit.expires) return hit.png;
 	let p = pending.get(key);
@@ -445,6 +531,7 @@ export async function cachedImage(key: string, make: () => Promise<Uint8Array>):
 		const now = Date.now();
 		for (const [k, e] of images) if (now >= e.expires) images.delete(k);
 	}
-	if (images.size < IMAGE_CACHE_MAX || images.has(key)) images.set(key, { png, expires: Date.now() + IMAGE_TTL });
+	if (images.size < IMAGE_CACHE_MAX || images.has(key))
+		images.set(key, { png, expires: Date.now() + IMAGE_TTL });
 	return png;
 }

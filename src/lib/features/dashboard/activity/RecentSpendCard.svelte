@@ -20,7 +20,8 @@
 		<InsetList class="recent-spend-list">
 			{#each items as item, i (i)}
 				<ListRow title={item.title} subtitle={item.date}>
-					{#snippet icon()}<span class="text-footnote font-semibold">{item.pillarBadge}</span>{/snippet}
+					{#snippet icon()}<span class="text-footnote font-semibold">{item.pillarBadge}</span
+						>{/snippet}
 					{#snippet trailing()}<RowTrailing value={item.amount} />{/snippet}
 				</ListRow>
 			{/each}

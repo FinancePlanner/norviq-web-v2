@@ -21,7 +21,9 @@
 	// svelte-ignore state_referenced_locally
 	let name = $state(vm.name);
 
-	const action = $derived(vm.isEdit ? `?/updateList&id=${encodeURIComponent(vm.listID)}` : '?/createList');
+	const action = $derived(
+		vm.isEdit ? `?/updateList&id=${encodeURIComponent(vm.listID)}` : '?/createList'
+	);
 	const close = () => closeDialog(DIALOG);
 </script>
 
@@ -32,7 +34,13 @@
 		{:else}
 			<h2 id="list-action-title" class="text-xl font-semibold">New portfolio list</h2>
 		{/if}
-		<NativeButton class="portfolio-form-close" data-tui-dialog-close="" data-tui-dialog-target={DIALOG} aria-label="Close" onclick={close}>
+		<NativeButton
+			class="portfolio-form-close"
+			data-tui-dialog-close=""
+			data-tui-dialog-target={DIALOG}
+			aria-label="Close"
+			onclick={close}
+		>
 			<span aria-hidden="true">×</span>
 		</NativeButton>
 	</div>
@@ -54,7 +62,14 @@
 			await update();
 		})}
 	>
-		<Field id="portfolio-list-name" name="name" label="Name" bind:value={name} required wrapperClass="space-y-2" />
+		<Field
+			id="portfolio-list-name"
+			name="name"
+			label="Name"
+			bind:value={name}
+			required
+			wrapperClass="space-y-2"
+		/>
 		{#if vm.isDefault}
 			<p class="text-sm text-muted-foreground">This is your default list and cannot be deleted.</p>
 		{/if}
@@ -78,7 +93,12 @@
 					Delete
 				</NativeButton>
 			{/if}
-			<NativeButton class="portfolio-form-cancel" data-tui-dialog-close="" data-tui-dialog-target={DIALOG} onclick={close}>Cancel</NativeButton>
+			<NativeButton
+				class="portfolio-form-cancel"
+				data-tui-dialog-close=""
+				data-tui-dialog-target={DIALOG}
+				onclick={close}>Cancel</NativeButton
+			>
 			<SubmitButton class="portfolio-form-save">Save list</SubmitButton>
 		</div>
 	</form>

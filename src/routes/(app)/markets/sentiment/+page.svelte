@@ -33,7 +33,13 @@
 							</div>
 							<div class="flex items-center gap-2">
 								{#if row.hasDelta}
-									<span class={['text-xs tabular-nums', row.deltaUp && 'text-emerald-500', !row.deltaUp && 'text-rose-500']}>
+									<span
+										class={[
+											'text-xs tabular-nums',
+											row.deltaUp && 'text-emerald-500',
+											!row.deltaUp && 'text-rose-500'
+										]}
+									>
 										{row.deltaLabel}
 									</span>
 								{/if}
@@ -63,13 +69,30 @@
 				</div>
 			{:else}
 				<div class="grid gap-4 md:grid-cols-2">
-					{@render sentimentCard('Most discussed', 'Loudest relative to their own normal volume.', vm.mostDiscussed)}
-					{@render sentimentCard('Biggest swings', 'Largest day-over-day change in tone.', vm.biggestSwings)}
-					{@render sentimentCard('Most bullish', 'Where the conversation leans positive.', vm.bullish)}
-					{@render sentimentCard('Most bearish', 'Where the conversation leans negative.', vm.bearish)}
+					{@render sentimentCard(
+						'Most discussed',
+						'Loudest relative to their own normal volume.',
+						vm.mostDiscussed
+					)}
+					{@render sentimentCard(
+						'Biggest swings',
+						'Largest day-over-day change in tone.',
+						vm.biggestSwings
+					)}
+					{@render sentimentCard(
+						'Most bullish',
+						'Where the conversation leans positive.',
+						vm.bullish
+					)}
+					{@render sentimentCard(
+						'Most bearish',
+						'Where the conversation leans negative.',
+						vm.bearish
+					)}
 				</div>
 				<p class="mt-6 text-xs text-muted-foreground">
-					Sentiment reflects what retail investors are posting, not whether they are right. It is not investment advice. Measured {vm.asOf}.
+					Sentiment reflects what retail investors are posting, not whether they are right. It is
+					not investment advice. Measured {vm.asOf}.
 				</p>
 			{/if}
 		{/await}

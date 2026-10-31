@@ -26,7 +26,9 @@ export const load: PageServerLoad = async (event) => {
 /** handlers.newsPageURL */
 function newsPageURL(filterRaw: string): string {
 	const filter = filterRaw.trim().toLowerCase();
-	return filter === 'portfolio' || filter === 'saved' ? '/portfolio/news?filter=' + filter : '/portfolio/news';
+	return filter === 'portfolio' || filter === 'saved'
+		? '/portfolio/news?filter=' + filter
+		: '/portfolio/news';
 }
 
 const FIELDS = ['symbol', 'headline', 'source', 'url', 'summary', 'published_at'] as const;
@@ -41,7 +43,8 @@ async function submitNewsArticle(event: RequestEvent, articleID: string) {
 	}
 	const values: Record<string, string> = {};
 	for (const key of FIELDS) values[key] = String(form.get(key) ?? '').trim();
-	const failWith = (status: number, articleError: string) => fail(status, { articleID, articleError, values });
+	const failWith = (status: number, articleError: string) =>
+		fail(status, { articleID, articleError, values });
 
 	const symbol = values.symbol.toUpperCase();
 	if (symbol === '') return failWith(400, 'Symbol is required.');
@@ -61,7 +64,12 @@ async function submitNewsArticle(event: RequestEvent, articleID: string) {
 	} else {
 		if (!isUUID(articleID)) return failWith(400, 'Invalid article.');
 		try {
-			await apiJSON<S['NewsItemResponse']>(event, 'PUT', `/v1/news/${articleID.toLowerCase()}`, body);
+			await apiJSON<S['NewsItemResponse']>(
+				event,
+				'PUT',
+				`/v1/news/${articleID.toLowerCase()}`,
+				body
+			);
 		} catch {
 			return failWith(502, 'Could not update article.');
 		}
@@ -69,7 +77,14 @@ async function submitNewsArticle(event: RequestEvent, articleID: string) {
 	redirect(303, newsPageURL('saved'));
 }
 
-const THESIS_WATCH_SIGNALS = new Set(['relevant', 'not_relevant', 'supports', 'challenges', 'neutral', 'clear']);
+const THESIS_WATCH_SIGNALS = new Set([
+	'relevant',
+	'not_relevant',
+	'supports',
+	'challenges',
+	'neutral',
+	'clear'
+]);
 
 export const actions: Actions = {
 	/** PortfolioNewsArticleCreate */
@@ -78,7 +93,8 @@ export const actions: Actions = {
 	/** PortfolioNewsArticleUpdate */
 	updateArticle: async (event) => {
 		const articleID = (event.url.searchParams.get('id') ?? '').trim();
-		if (articleID === '') return fail(400, { articleID, articleError: 'Missing article', values: {} });
+		if (articleID === '')
+			return fail(400, { articleID, articleError: 'Missing article', values: {} });
 		return submitNewsArticle(event, articleID);
 	},
 
@@ -101,9 +117,12 @@ export const actions: Actions = {
 		const form = await event.request.formData().catch(() => null);
 		if (!form) return fail(400, { feedbackError: 'Invalid feedback' });
 		const signal = String(form.get('signal') ?? '').trim();
-		if (!THESIS_WATCH_SIGNALS.has(signal)) return fail(400, { feedbackError: 'Invalid feedback signal' });
+		if (!THESIS_WATCH_SIGNALS.has(signal))
+			return fail(400, { feedbackError: 'Invalid feedback signal' });
 		try {
-			await apiJSON(event, 'POST', `/v1/news/thesis-watch/${storyID.toLowerCase()}/feedback`, { signal } as S['ThesisWatchFeedbackRequest']);
+			await apiJSON(event, 'POST', `/v1/news/thesis-watch/${storyID.toLowerCase()}/feedback`, {
+				signal
+			} as S['ThesisWatchFeedbackRequest']);
 		} catch (err) {
 			console.warn('thesis watch feedback failed', storyID, err);
 			return fail(502, { feedbackError: 'Could not save feedback' });

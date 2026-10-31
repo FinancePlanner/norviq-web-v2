@@ -8,12 +8,27 @@ import { Leaderboard, type LeaderboardBoard } from '#lib/features/social/friends
 export const load: PageServerLoad = async (event) => {
 	await requireLeaderboards(event);
 	const q = event.url.searchParams;
-	const metric = formChoice(q.get('metric') ?? '', Leaderboard.XP, Leaderboard.ReturnPercent, Leaderboard.CheckInStreak, Leaderboard.BudgetStreak);
+	const metric = formChoice(
+		q.get('metric') ?? '',
+		Leaderboard.XP,
+		Leaderboard.ReturnPercent,
+		Leaderboard.CheckInStreak,
+		Leaderboard.BudgetStreak
+	);
 	const period = formChoice(q.get('period') ?? '', Leaderboard.Week, Leaderboard.Month);
 	try {
-		const board = await socialDo<LeaderboardBoard>(event, 'GET', '/v1/social/leaderboards?' + new URLSearchParams({ metric, period }));
+		const board = await socialDo<LeaderboardBoard>(
+			event,
+			'GET',
+			'/v1/social/leaderboards?' + new URLSearchParams({ metric, period })
+		);
 		return { metric, period, board, errorMessage: '' };
 	} catch (err) {
-		return { metric, period, board: null, errorMessage: socialErrorMessage(err, "Couldn't load the leaderboard.") };
+		return {
+			metric,
+			period,
+			board: null,
+			errorMessage: socialErrorMessage(err, "Couldn't load the leaderboard.")
+		};
 	}
 };

@@ -12,10 +12,24 @@
 
 <GroupsMeta title="Discover groups - Norviq" />
 <div class="app-page-content vigil-canvas-page groups-discover-page">
-	<vigil.ModernPageHeader title="Discover groups" subtitle="Public groups anyone can join. Search a name, or $AAPL for a ticker." />
+	<vigil.ModernPageHeader
+		title="Discover groups"
+		subtitle="Public groups anyone can join. Search a name, or $AAPL for a ticker."
+	/>
 	<Notices error={data.error} />
-	<form method="get" action="/groups/discover" class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end" role="search">
-		<Field name="q" label="Search" value={data.query} placeholder="Dividends or $NVDA" wrapperClass="flex-1" />
+	<form
+		method="get"
+		action="/groups/discover"
+		class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end"
+		role="search"
+	>
+		<Field
+			name="q"
+			label="Search"
+			value={data.query}
+			placeholder="Dividends or $NVDA"
+			wrapperClass="flex-1"
+		/>
 		<SubmitButton class="px-5">Search</SubmitButton>
 	</form>
 	{#if data.results.length === 0}
@@ -35,7 +49,10 @@
 			/>
 		{/if}
 	{:else}
-		<section class="glass-card dash-panel divide-y divide-[var(--color-border)]" aria-label="Public groups">
+		<section
+			class="glass-card dash-panel divide-y divide-[var(--color-border)]"
+			aria-label="Public groups"
+		>
 			{#each data.results as group (group.id)}
 				<div class="flex items-center gap-3 p-4" data-discover-row>
 					<GroupTile {group} size="size-11 text-xl" />
@@ -64,7 +81,12 @@
 			{/each}
 		</section>
 		{#if data.next}
-			<div class="mt-4"><a class="btn-secondary px-4" href={'/groups/discover?q=' + data.query + '&cursor=' + data.next}>More</a></div>
+			<div class="mt-4">
+				<a
+					class="btn-secondary px-4"
+					href={'/groups/discover?q=' + data.query + '&cursor=' + data.next}>More</a
+				>
+			</div>
 		{/if}
 	{/if}
 </div>

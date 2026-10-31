@@ -45,7 +45,9 @@ export const POST: RequestHandler = async (event) => {
 	}
 	try {
 		const run = await queueRun(event, scenarioID, snapshotID, seed);
-		return json({ redirect: '/scenarios?run=' + uid(run.id) } satisfies RedirectResponse, { status: 201 });
+		return json({ redirect: '/scenarios?run=' + uid(run.id) } satisfies RedirectResponse, {
+			status: 201
+		});
 	} catch {
 		return formError('The saved scenario could not be queued.');
 	}

@@ -20,7 +20,10 @@
 		form.classList.add('htmx-request');
 		try {
 			const res = await postForm(form);
-			const body = (await res.json().catch(() => null)) as { result?: CheckInResponse; error?: string } | null;
+			const body = (await res.json().catch(() => null)) as {
+				result?: CheckInResponse;
+				error?: string;
+			} | null;
 			if (body?.result) result = body.result;
 			else errorMessage = body?.error || t('Could not check in. Try again.');
 		} catch {

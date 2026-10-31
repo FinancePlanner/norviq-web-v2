@@ -11,6 +11,10 @@
 	<p class="pro-gate-eyebrow">Pro feature</p>
 	<h2 class="pro-gate-title">{featureName}</h2>
 	<p class="pro-gate-desc">Subscribe to unlock this feature.</p>
-	<p class="pro-gate-terms">Price and trial terms are shown on the subscription page, before any purchase.</p>
-	<PrimaryButton href="/settings/subscription" class="pro-gate-cta mt-6 inline-flex px-8">See plans</PrimaryButton>
+	<p class="pro-gate-terms">
+		Price and trial terms are shown on the subscription page, before any purchase.
+	</p>
+	<PrimaryButton href="/settings/subscription" class="pro-gate-cta mt-6 inline-flex px-8"
+		>See plans</PrimaryButton
+	>
 </div>

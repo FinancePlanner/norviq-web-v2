@@ -15,7 +15,10 @@ import {
 	listPersonalAccessTokens,
 	revokePersonalAccessToken
 } from '#lib/features/settings-admin/api-access/tokens.server.js';
-import { formatMonthDayYear, formatRelativeTime } from '#lib/features/settings-admin/api-access/time.js';
+import {
+	formatMonthDayYear,
+	formatRelativeTime
+} from '#lib/features/settings-admin/api-access/time.js';
 
 // Port of norviq-web Settings case "api-access" (LoadAPIAccessVM +
 // AttachConnectPanel) and SettingsAPIAccessCreate / SettingsAPIAccessRevoke.

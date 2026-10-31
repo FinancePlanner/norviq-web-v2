@@ -5,7 +5,12 @@
 	import GhostButton from '#lib/components/norviq/GhostButton.svelte';
 	import { SuggestionState, type SuggestionVM } from '../types.js';
 
-	let { vm, onaccept, ondismiss }: { vm: SuggestionVM; onaccept: (vals: Record<string, string>) => void; ondismiss: () => void } = $props();
+	let {
+		vm,
+		onaccept,
+		ondismiss
+	}: { vm: SuggestionVM; onaccept: (vals: Record<string, string>) => void; ondismiss: () => void } =
+		$props();
 </script>
 
 {#snippet dismissSuggestion()}
@@ -33,11 +38,17 @@
 		{#if vm.sources.length > 0}
 			<ul class="space-y-1 text-footnote">
 				{#each vm.sources as source, i (i)}
-					<li><a href={source} target="_blank" rel="noopener noreferrer" class="link-tint break-all">{source}</a></li>
+					<li>
+						<a href={source} target="_blank" rel="noopener noreferrer" class="link-tint break-all"
+							>{source}</a
+						>
+					</li>
 				{/each}
 			</ul>
 		{/if}
-		<p class="text-footnote text-muted-foreground">An AI suggestion. Check it against the sources before you accept it.</p>
+		<p class="text-footnote text-muted-foreground">
+			An AI suggestion. Check it against the sources before you accept it.
+		</p>
 		<div class="flex gap-2">
 			{#if vm.acceptVals}
 				{@const vals = vm.acceptVals}

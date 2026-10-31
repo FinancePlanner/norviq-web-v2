@@ -17,7 +17,14 @@
 	import Notices from './Notices.svelte';
 	import Rail from './Rail.svelte';
 	import { chatHref, sameID } from './view.js';
-	import type { ChannelPanelVM, ChatVM, MessageRow, RailItem, RailResponse, RowsResponse } from './types.js';
+	import type {
+		ChannelPanelVM,
+		ChatVM,
+		MessageRow,
+		RailItem,
+		RailResponse,
+		RowsResponse
+	} from './types.js';
 
 	let { vm }: { vm: ChatVM } = $props();
 
@@ -131,7 +138,8 @@
 		on('channel.created', () => refreshSidebars());
 		on('channel.updated', () => refreshSidebars());
 		on('channel.deleted', (data) => {
-			if (sameID(data.channelId, initial.channelId)) window.location.assign(`/groups/${initial.groupId}`);
+			if (sameID(data.channelId, initial.channelId))
+				window.location.assign(`/groups/${initial.groupId}`);
 			else refreshSidebars();
 		});
 		on('group.updated', () => refreshSidebars());
@@ -162,10 +170,16 @@
 		try {
 			do {
 				catchUpAgain = false;
-				const url = lastSeq > 0 ? `${base}/messages?after=${lastSeq}${modQuery('&')}` : `${base}/messages${modQuery('?')}`;
+				const url =
+					lastSeq > 0
+						? `${base}/messages?after=${lastSeq}${modQuery('&')}`
+						: `${base}/messages${modQuery('?')}`;
 				let response: Response;
 				try {
-					response = await fetch(url, { headers: { accept: 'application/json' }, credentials: 'same-origin' });
+					response = await fetch(url, {
+						headers: { accept: 'application/json' },
+						credentials: 'same-origin'
+					});
 				} catch {
 					return;
 				}
@@ -259,7 +273,9 @@
 		clearTimeout(refreshTimer);
 		refreshTimer = setTimeout(async () => {
 			const [railRes, panelRes] = await Promise.allSettled([
-				fetch(`/groups/rail?g=${encodeURIComponent(initial.groupId)}`, { headers: { accept: 'application/json' } }),
+				fetch(`/groups/rail?g=${encodeURIComponent(initial.groupId)}`, {
+					headers: { accept: 'application/json' }
+				}),
 				fetch(`${base}/panel`, { headers: { accept: 'application/json' } })
 			]);
 			if (railRes.status === 'fulfilled' && railRes.value.ok) {
@@ -282,7 +298,8 @@
 	}
 
 	function newClientId(): string {
-		if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+		if (window.crypto && typeof window.crypto.randomUUID === 'function')
+			return window.crypto.randomUUID();
 		return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 	}
 
@@ -370,9 +387,11 @@
 			readSeq = seq;
 			const data = new FormData();
 			data.set('seq', String(seq));
-			fetch(`${base}/read`, { method: 'POST', body: data, credentials: 'same-origin' }).catch(() => {
-				readSeq = 0;
-			});
+			fetch(`${base}/read`, { method: 'POST', body: data, credentials: 'same-origin' }).catch(
+				() => {
+					readSeq = 0;
+				}
+			);
 		}, 1000);
 	}
 </script>
@@ -419,7 +438,12 @@
 						<Icon name="user-plus" class="h-4 w-4" />
 					</a>
 				{/if}
-				<a href={'/groups/' + initial.groupId + '/settings'} class="groups-icon-button" aria-label="Group info" title="Group info">
+				<a
+					href={'/groups/' + initial.groupId + '/settings'}
+					class="groups-icon-button"
+					aria-label="Group info"
+					title="Group info"
+				>
 					<Icon name="info" class="h-4 w-4" />
 				</a>
 			</div>
@@ -449,7 +473,11 @@
 					<MessageRowView {row} chat={base} showDay={showDays[i]} ondeleted={deleted} />
 				{/each}
 				{#each pending as row (row.clientId)}
-					<li class={['groups-message groups-message-pending', row.failed && 'is-failed']} data-pending data-client-id={row.clientId}>
+					<li
+						class={['groups-message groups-message-pending', row.failed && 'is-failed']}
+						data-pending
+						data-client-id={row.clientId}
+					>
 						<div class="groups-message-body">
 							<p class="groups-message-text" data-pending-text>{row.body}</p>
 							<p class="groups-message-status text-xs text-muted-foreground" data-pending-status>
@@ -470,7 +498,13 @@
 			</ol>
 		</div>
 		{#if initial.canPost}
-			<form class="groups-composer" method="post" action={base + '/messages'} data-groups-composer onsubmit={send}>
+			<form
+				class="groups-composer"
+				method="post"
+				action={base + '/messages'}
+				data-groups-composer
+				onsubmit={send}
+			>
 				<TextareaField
 					name="body"
 					placeholder={'Message #' + initial.channelName}

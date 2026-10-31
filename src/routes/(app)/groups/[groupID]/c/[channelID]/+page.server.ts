@@ -12,8 +12,20 @@ import {
 	postBlockedReason,
 	rowOptions
 } from '#lib/features/social/groups/groups.server.js';
-import type { ChatVM, GroupDetail, GroupListResponse, GroupMessagePage } from '#lib/features/social/groups/types.js';
-import { buildRows, sameID, channelItems, groupNotice, groupsError, railItems } from '#lib/features/social/groups/view.js';
+import type {
+	ChatVM,
+	GroupDetail,
+	GroupListResponse,
+	GroupMessagePage
+} from '#lib/features/social/groups/types.js';
+import {
+	buildRows,
+	sameID,
+	channelItems,
+	groupNotice,
+	groupsError,
+	railItems
+} from '#lib/features/social/groups/view.js';
 
 // GroupsChat: a channel page with the rail, channels and the newest messages.
 export const load: PageServerLoad = async (event) => {
@@ -56,7 +68,11 @@ export const load: PageServerLoad = async (event) => {
 		rail: railItems(list.items ?? [], groupID),
 		channels: channelItems(detail, channelID),
 		invitations: list.pendingInvitationCount,
-		messages: buildRows(items, null, rowOptions(event, detail.permissions.canModerate, page.lastReadSeq)),
+		messages: buildRows(
+			items,
+			null,
+			rowOptions(event, detail.permissions.canModerate, page.lastReadSeq)
+		),
 		oldestSeq: items.length > 0 ? items[0].seq : 0,
 		lastSeq: items.length > 0 ? items[items.length - 1].seq : 0,
 		hasMoreBefore: page.hasMoreBefore,

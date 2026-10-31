@@ -2,7 +2,12 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { loadEconomyViewModel } from '#lib/features/insights/economy/load.server.js';
 import { loadEconomyPulse } from '#lib/features/dashboard/panels/load.server.js';
-import { economyTitle, normalizeMacroCountry, parseEconomySection, sectionBasePath } from '#lib/features/insights/economy/types.js';
+import {
+	economyTitle,
+	normalizeMacroCountry,
+	parseEconomySection,
+	sectionBasePath
+} from '#lib/features/insights/economy/types.js';
 
 // GET /economy and /economy/{section} — AppHandler.Economy (handlers/economy.go).
 // The Go /economy/news fragment (hx-trigger="load" on the inflation hub) is a

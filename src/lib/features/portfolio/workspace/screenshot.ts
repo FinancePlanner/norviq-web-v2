@@ -33,7 +33,10 @@ export interface ScreenshotImportVM {
 	needsMergeConfirm: boolean;
 }
 
-export function newScreenshotImportVM(provider: string, portfolioListID: string): ScreenshotImportVM {
+export function newScreenshotImportVM(
+	provider: string,
+	portfolioListID: string
+): ScreenshotImportVM {
 	return {
 		provider: provider.trim() || 'manual',
 		portfolioListID: portfolioListID.trim(),
@@ -74,7 +77,8 @@ export function kindLabel(vm: ScreenshotImportVM): string {
 }
 
 /** Worth a second look; deliberately generous. */
-export const lowConfidence = (row: ScreenshotImportRowVM) => row.confidence > 0 && row.confidence < 0.75;
+export const lowConfidence = (row: ScreenshotImportRowVM) =>
+	row.confidence > 0 && row.confidence < 0.75;
 
 export function screenshotImportSummary(inserted: number, updated: number): string {
 	if (inserted > 0 && updated > 0) return `Added ${inserted} position(s) and updated ${updated}.`;

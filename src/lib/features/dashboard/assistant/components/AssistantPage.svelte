@@ -20,8 +20,13 @@
 	onDestroy(() => muse.destroy());
 
 	/** What #assistant-workspace currently holds. */
-	type Slot = { kind: 'conversation'; vm: ConversationViewModel } | { kind: 'consent'; next: string } | { kind: 'empty' };
-	let slot = $derived<Slot>(vm.active ? { kind: 'conversation', vm: vm.active } : { kind: 'empty' });
+	type Slot =
+		| { kind: 'conversation'; vm: ConversationViewModel }
+		| { kind: 'consent'; next: string }
+		| { kind: 'empty' };
+	let slot = $derived<Slot>(
+		vm.active ? { kind: 'conversation', vm: vm.active } : { kind: 'empty' }
+	);
 
 	const suggestions = [
 		'Summarize my expenses this month',
@@ -33,12 +38,16 @@
 	/** hx-get /assistant/conversations/{id} → #assistant-workspace (outerHTML). */
 	async function loadWorkspace(id: string) {
 		try {
-			const res = await fetch(`/assistant/conversations/${id}`, { headers: { Accept: 'application/json' } });
+			const res = await fetch(`/assistant/conversations/${id}`, {
+				headers: { Accept: 'application/json' }
+			});
 			if (res.status === 403) {
 				// RenderAIConsentRequired gave an htmx swap the inline card.
 				const refusal = (await res.json().catch(() => null)) as AIConsentRefusal | null;
 				if (refusal?.reason === 'AI_CONSENT_REQUIRED') {
-					const next = new URL(refusal.consentUrl, window.location.href).searchParams.get('next') ?? '/assistant';
+					const next =
+						new URL(refusal.consentUrl, window.location.href).searchParams.get('next') ??
+						'/assistant';
 					slot = { kind: 'consent', next };
 					muse.rerender();
 				}
@@ -92,11 +101,14 @@
 					<div class="muse-transcript muse-empty">
 						<h2 class="assistant-title">Ask Q. Answers come from your data.</h2>
 						<p class="mt-3 text-sm text-muted-foreground">
-							Create a conversation to review spending, budgets, holdings, or goals. Your data stays on your account.
+							Create a conversation to review spending, budgets, holdings, or goals. Your data stays
+							on your account.
 						</p>
 						<form method="post" action="/assistant/conversations" class="assistant-suggestions">
 							{#each suggestions as message (message)}
-								<NativeButton type="submit" class="assistant-suggestion" name="seed" value={message}>{message}</NativeButton>
+								<NativeButton type="submit" class="assistant-suggestion" name="seed" value={message}
+									>{message}</NativeButton
+								>
 							{/each}
 						</form>
 					</div>

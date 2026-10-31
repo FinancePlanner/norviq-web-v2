@@ -36,14 +36,24 @@
 	{#if vm.gone}
 		<span class="text-subhead text-muted-foreground">{t('No longer available')}</span>
 	{:else if vm.done}
-		<SecondaryButton class="w-auto px-3" disabled aria-pressed="true" aria-label={t('Congratulated')}>
+		<SecondaryButton
+			class="w-auto px-3"
+			disabled
+			aria-pressed="true"
+			aria-label={t('Congratulated')}
+		>
 			<span aria-hidden="true">🎉</span>
 			<span>{vm.count}</span>
 		</SecondaryButton>
 	{:else}
 		<form method="post" action={'/friends/feed/' + vm.id + '/congrats'} {onsubmit}>
 			<input type="hidden" name="count" value={String(vm.count)} />
-			<SecondarySubmitButton class="w-auto px-3" disabled={busy} aria-pressed="false" aria-label={t('Congratulate')}>
+			<SecondarySubmitButton
+				class="w-auto px-3"
+				disabled={busy}
+				aria-pressed="false"
+				aria-label={t('Congratulate')}
+			>
 				<span aria-hidden="true">🎉</span>
 				<span>{vm.count}</span>
 			</SecondarySubmitButton>

@@ -3,7 +3,11 @@ import { APIError, apiFetch, type RawOptions } from '#lib/server/api.js';
 import { isPro as billingIsPro } from '#lib/billing.js';
 import { loadBillingContext } from '#lib/server/app-context.js';
 import { currencySymbol, ErrEmpty, parseAmount } from '#lib/format.js';
-import { aiConsentReturnPath, hasAIConsent, isAIConsentRequired } from '#lib/features/dashboard/ai-consent.server.js';
+import {
+	aiConsentReturnPath,
+	hasAIConsent,
+	isAIConsentRequired
+} from '#lib/features/dashboard/ai-consent.server.js';
 import {
 	Cadence,
 	SuggestionState,
@@ -78,7 +82,11 @@ async function call<T>(
 		headers['Content-Type'] = 'application/json';
 	}
 	try {
-		const res = await apiFetch(event, method, path, body, { ...opts, headers, signal: AbortSignal.timeout(opts.timeout ?? CLIENT_TIMEOUT_MS) });
+		const res = await apiFetch(event, method, path, body, {
+			...opts,
+			headers,
+			signal: AbortSignal.timeout(opts.timeout ?? CLIENT_TIMEOUT_MS)
+		});
 		const text = await res.text();
 		let parsed: unknown = text;
 		try {
@@ -93,10 +101,15 @@ async function call<T>(
 	}
 }
 
-const idempotency = (key: string): Record<string, string> => (key ? { 'Idempotency-Key': key } : {});
+const idempotency = (key: string): Record<string, string> =>
+	key ? { 'Idempotency-Key': key } : {};
 
 function reasonOf(body: unknown): string {
-	if (body && typeof body === 'object' && typeof (body as { reason?: unknown }).reason === 'string') {
+	if (
+		body &&
+		typeof body === 'object' &&
+		typeof (body as { reason?: unknown }).reason === 'string'
+	) {
 		return (body as { reason: string }).reason.trim();
 	}
 	return '';
@@ -104,7 +117,12 @@ function reasonOf(body: unknown): string {
 
 /** isUpgradeRequired: 403 with code "upgrade_required" (a bare 403 can be a missing scope). */
 function isUpgradeRequired(status: number, body: unknown): boolean {
-	return status === 403 && !!body && typeof body === 'object' && (body as { code?: unknown }).code === 'upgrade_required';
+	return (
+		status === 403 &&
+		!!body &&
+		typeof body === 'object' &&
+		(body as { code?: unknown }).code === 'upgrade_required'
+	);
 }
 
 /** terminalWriteProblem: the message for a write's status, "" when it got `want`. */
@@ -141,7 +159,11 @@ export async function terminalSessionExpired(event: RequestEvent): Promise<never
 }
 
 async function loadSummary(event: RequestEvent): Promise<TerminalPositionsSummaryResponse | null> {
-	const res = await call<TerminalPositionsSummaryResponse>(event, 'GET', '/v1/terminal-positions/summary');
+	const res = await call<TerminalPositionsSummaryResponse>(
+		event,
+		'GET',
+		'/v1/terminal-positions/summary'
+	);
 	if (!res.data) {
 		if (res.status) console.warn('terminal summary', res.status);
 		return null;
@@ -172,7 +194,11 @@ function emptyWorkspace(isPro: boolean, create: CreateFormVM): WorkspaceVM {
  * fillTerminalWorkspace: loads rows and footer totals. Returns the list call's
  * status (0 when it never completed) alongside the view model.
  */
-export async function loadWorkspace(event: RequestEvent, isPro: boolean, create: CreateFormVM): Promise<{ vm: WorkspaceVM; status: number }> {
+export async function loadWorkspace(
+	event: RequestEvent,
+	isPro: boolean,
+	create: CreateFormVM
+): Promise<{ vm: WorkspaceVM; status: number }> {
 	const vm = emptyWorkspace(isPro, create);
 	const res = await listPositions(event);
 	if (!res.data) {
@@ -222,7 +248,11 @@ const formGet = (form: FormData, name: string) => String(form.get(name) ?? '');
 // Rows
 
 /** parseTerminalCreateForm: validates the create form; zero/negative scenarios still save. */
-function parseCreateForm(form: FormData): { vm: CreateFormVM; body: Record<string, unknown>; problem: string } {
+function parseCreateForm(form: FormData): {
+	vm: CreateFormVM;
+	body: Record<string, unknown>;
+	problem: string;
+} {
 	const vm: CreateFormVM = {
 		open: false,
 		ticker: formGet(form, 'ticker').trim(),
@@ -242,7 +272,12 @@ function parseCreateForm(form: FormData): { vm: CreateFormVM; body: Record<strin
 	if (!cap.ok) return { vm, body: {}, problem: 'Terminal market cap needs a number.' };
 	const wanted = parseAmount(vm.valueWanted);
 	if (!wanted.ok) return { vm, body: {}, problem: 'Value wanted needs a number.' };
-	const body: Record<string, unknown> = { ticker, terminalShareCount: count.value, terminalMarketCap: cap.value, valueWanted: wanted.value };
+	const body: Record<string, unknown> = {
+		ticker,
+		terminalShareCount: count.value,
+		terminalMarketCap: cap.value,
+		valueWanted: wanted.value
+	};
 	if (vm.sharesOwned !== '') {
 		const owned = parseAmount(vm.sharesOwned);
 		if (!owned.ok) return { vm, body, problem: 'Shares owned needs a number.' };
@@ -257,8 +292,11 @@ export async function createPosition(event: RequestEvent) {
 	const parsed = parseCreateForm(form);
 	let problem = parsed.problem;
 	if (problem === '') {
-		const res = await call(event, 'POST', '/v1/terminal-positions', parsed.body, { headers: idempotency(parsed.vm.idempotencyKey) });
-		problem = res.status === 0 ? TERMINAL_SAVE_FAILED : terminalWriteProblem(res.status, res.body, 201);
+		const res = await call(event, 'POST', '/v1/terminal-positions', parsed.body, {
+			headers: idempotency(parsed.vm.idempotencyKey)
+		});
+		problem =
+			res.status === 0 ? TERMINAL_SAVE_FAILED : terminalWriteProblem(res.status, res.body, 201);
 	}
 	return workspaceAnswer(event, (vm) => {
 		if (problem !== '') vm.create = { ...parsed.vm, open: true, error: problem };
@@ -276,7 +314,8 @@ export async function duplicatePosition(event: RequestEvent, id: string) {
 /** DELETE /terminal/positions/{id}: a 404 is the outcome asked for. */
 export async function deletePosition(event: RequestEvent, id: string) {
 	const res = await call(event, 'DELETE', `/v1/terminal-positions/${id}`);
-	const notice = res.status === 204 || res.status === 404 ? '' : 'Could not delete that row. Try again.';
+	const notice =
+		res.status === 204 || res.status === 404 ? '' : 'Could not delete that row. Try again.';
 	if (notice) console.warn('delete terminal position', res.status);
 	return workspaceAnswer(event, (vm) => (vm.notice = notice));
 }
@@ -284,7 +323,8 @@ export async function deletePosition(event: RequestEvent, id: string) {
 /** moveIndex: items with i swapped one step up/down, or null at an edge or for a bad dir. */
 export function moveIndex<T>(items: T[], i: number, dir: string): T[] | null {
 	const j = dir === 'down' ? i + 1 : i - 1;
-	if ((dir !== 'up' && dir !== 'down') || i < 0 || i >= items.length || j < 0 || j >= items.length) return null;
+	if ((dir !== 'up' && dir !== 'down') || i < 0 || i >= items.length || j < 0 || j >= items.length)
+		return null;
 	const out = items.slice();
 	[out[i], out[j]] = [out[j], out[i]];
 	return out;
@@ -301,7 +341,11 @@ export async function movePosition(event: RequestEvent, id: string) {
 		notice = TERMINAL_MOVE_FAILED;
 	} else {
 		const ids = (list.data.positions ?? []).map((p) => p.id);
-		const order = moveIndex(ids, ids.findIndex((x) => String(x).toLowerCase() === id), dir);
+		const order = moveIndex(
+			ids,
+			ids.findIndex((x) => String(x).toLowerCase() === id),
+			dir
+		);
 		if (order) {
 			const put = await call(event, 'PUT', '/v1/terminal-positions/order', { ids: order });
 			if (put.status !== 200 || !put.data) {
@@ -361,7 +405,10 @@ function editedFields(form: FormData): string[] {
 }
 
 /** findTerminalPosition: re-read a row; `known` is false when the list call failed. */
-async function findPosition(event: RequestEvent, id: string): Promise<{ row: TerminalPositionResponse | null; currency: string; known: boolean }> {
+async function findPosition(
+	event: RequestEvent,
+	id: string
+): Promise<{ row: TerminalPositionResponse | null; currency: string; known: boolean }> {
 	const res = await listPositions(event);
 	if (!res.data) {
 		console.warn('terminal row re-read', res.status);
@@ -383,7 +430,12 @@ export async function updatePosition(event: RequestEvent, id: string) {
 	let problem = parseProblem;
 	let saved: TerminalPositionResponse | null = null;
 	if (problem === '') {
-		const res = await call<TerminalPositionResponse>(event, 'PATCH', `/v1/terminal-positions/${id}`, body);
+		const res = await call<TerminalPositionResponse>(
+			event,
+			'PATCH',
+			`/v1/terminal-positions/${id}`,
+			body
+		);
 		if (res.status === 0) problem = TERMINAL_SAVE_FAILED;
 		else if (res.status === 200 && res.data) saved = res.data;
 		else problem = terminalWriteProblem(res.status, res.body, 200);
@@ -431,7 +483,8 @@ export async function aiSuggest(event: RequestEvent, id: string, kind: 'facts' |
 	let symbol = formGet(form, 'symbol');
 	if ([...symbol].length > MAX_SYMBOL_RUNES) symbol = '';
 	const tableCurrency = currencyCode(formGet(form, 'currency'));
-	const consent = (): Response => json({ kind: 'consent', next: aiConsentReturnPath(event) } satisfies SuggestionResult);
+	const consent = (): Response =>
+		json({ kind: 'consent', next: aiConsentReturnPath(event) } satisfies SuggestionResult);
 
 	if (!valid) {
 		vm.state = SuggestionState.Invalid;
@@ -441,12 +494,22 @@ export async function aiSuggest(event: RequestEvent, id: string, kind: 'facts' |
 	} else if (!(await hasAIConsent(event))) {
 		return consent();
 	} else {
-		const path = kind === 'facts' ? '/v1/terminal-positions/ai/share-facts' : '/v1/terminal-positions/ai/scenario';
-		const res = await call<ShareFactsSuggestion | TerminalScenarioSuggestion>(event, 'POST', path, { ticker }, { timeout: AI_CLIENT_TIMEOUT_MS });
+		const path =
+			kind === 'facts'
+				? '/v1/terminal-positions/ai/share-facts'
+				: '/v1/terminal-positions/ai/scenario';
+		const res = await call<ShareFactsSuggestion | TerminalScenarioSuggestion>(
+			event,
+			'POST',
+			path,
+			{ ticker },
+			{ timeout: AI_CLIENT_TIMEOUT_MS }
+		);
 		if (res.status === 0) {
 			setSuggestionUnavailable(vm);
 		} else if (res.status === 200 && res.data) {
-			if (kind === 'facts') shareFactsSuggestionVM(vm, res.data as ShareFactsSuggestion, symbol, tableCurrency);
+			if (kind === 'facts')
+				shareFactsSuggestionVM(vm, res.data as ShareFactsSuggestion, symbol, tableCurrency);
 			else scenarioSuggestionVM(vm, res.data as TerminalScenarioSuggestion, symbol);
 		} else if (isAIConsentRequired(apiErrorFrom(res))) {
 			return consent();
@@ -462,7 +525,11 @@ export async function aiSuggest(event: RequestEvent, id: string, kind: 'facts' |
 }
 
 function apiErrorFrom(res: Answer<unknown>): APIError {
-	const b = (res.body && typeof res.body === 'object' ? res.body : {}) as { reason?: string; error?: unknown; code?: string };
+	const b = (res.body && typeof res.body === 'object' ? res.body : {}) as {
+		reason?: string;
+		error?: unknown;
+		code?: string;
+	};
 	const reason = (b.reason ?? (typeof b.error === 'string' ? b.error : '')).trim();
 	return new APIError(res.status, reason, b.code, res.body);
 }
@@ -481,7 +548,11 @@ interface AutobuyInput {
 }
 
 /** parseAutobuyForm: validates the add/edit form. */
-function parseAutobuyForm(form: FormData): { vm: AutobuyFormVM; input: AutobuyInput; problem: string } {
+function parseAutobuyForm(form: FormData): {
+	vm: AutobuyFormVM;
+	input: AutobuyInput;
+	problem: string;
+} {
 	const vm: AutobuyFormVM = {
 		...emptyAutobuyForm(),
 		label: formGet(form, 'label').trim(),
@@ -491,7 +562,13 @@ function parseAutobuyForm(form: FormData): { vm: AutobuyFormVM; input: AutobuyIn
 		percent: formGet(form, 'percent').trim(),
 		idempotencyKey: formGet(form, 'idempotency_key').trim()
 	};
-	const input: AutobuyInput = { label: vm.label, ticker: '', amount: 0, cadence: vm.cadence, percent: null };
+	const input: AutobuyInput = {
+		label: vm.label,
+		ticker: '',
+		amount: 0,
+		cadence: vm.cadence,
+		percent: null
+	};
 	if (input.label === '') return { vm, input, problem: 'Give this autobuy a name.' };
 	if (!isKnownCadence(input.cadence)) return { vm, input, problem: 'Pick how often it buys.' };
 	if (vm.ticker !== '') {
@@ -502,11 +579,13 @@ function parseAutobuyForm(form: FormData): { vm: AutobuyFormVM; input: AutobuyIn
 	const isPercent = input.cadence === Cadence.Percent;
 	const amount = parseAmount(vm.amount);
 	if (!amount.ok && amount.error === ErrEmpty && isPercent) input.amount = 0;
-	else if (!amount.ok || amount.value < 0) return { vm, input, problem: 'Enter an amount of zero or more.' };
+	else if (!amount.ok || amount.value < 0)
+		return { vm, input, problem: 'Enter an amount of zero or more.' };
 	else input.amount = amount.value;
 	if (isPercent) {
 		const pct = parseAmount(vm.percent.trim().replace(/%$/, ''));
-		if (!pct.ok || pct.value <= 0 || pct.value > PERCENT_MAX) return { vm, input, problem: 'Enter a percent between 0 and 100.' };
+		if (!pct.ok || pct.value <= 0 || pct.value > PERCENT_MAX)
+			return { vm, input, problem: 'Enter a percent between 0 and 100.' };
 		input.percent = pct.value / PERCENT_MAX;
 	}
 	return { vm, input, problem: '' };
@@ -525,11 +604,19 @@ export async function createAutobuy(event: RequestEvent) {
 	const { vm: formVM, input, problem: parseProblem } = parseAutobuyForm(form);
 	let problem = parseProblem;
 	if (problem === '') {
-		const body: Record<string, unknown> = { label: input.label, amount: input.amount, cadence: input.cadence, active: true };
+		const body: Record<string, unknown> = {
+			label: input.label,
+			amount: input.amount,
+			cadence: input.cadence,
+			active: true
+		};
 		if (input.percent != null) body.percent = input.percent;
 		if (input.ticker !== '') body.ticker = input.ticker;
-		const res = await call(event, 'POST', '/v1/autobuys', body, { headers: idempotency(formVM.idempotencyKey) });
-		problem = res.status === 0 ? TERMINAL_SAVE_FAILED : terminalWriteProblem(res.status, res.body, 201);
+		const res = await call(event, 'POST', '/v1/autobuys', body, {
+			headers: idempotency(formVM.idempotencyKey)
+		});
+		problem =
+			res.status === 0 ? TERMINAL_SAVE_FAILED : terminalWriteProblem(res.status, res.body, 201);
 	}
 	return autobuysAnswer(event, (vm) => {
 		if (problem !== '') vm.form = { ...formVM, error: problem };
@@ -543,7 +630,11 @@ export async function updateAutobuy(event: RequestEvent, id: string) {
 	formVM.id = id;
 	let problem = parseProblem;
 	if (problem === '') {
-		const body: Record<string, unknown> = { label: input.label, amount: input.amount, cadence: input.cadence };
+		const body: Record<string, unknown> = {
+			label: input.label,
+			amount: input.amount,
+			cadence: input.cadence
+		};
 		const cleared: string[] = [];
 		if (input.ticker !== '') body.ticker = input.ticker;
 		else cleared.push('ticker');
@@ -551,7 +642,8 @@ export async function updateAutobuy(event: RequestEvent, id: string) {
 		else cleared.push('percent');
 		if (cleared.length > 0) body.clear = cleared;
 		const res = await call(event, 'PATCH', `/v1/autobuys/${id}`, body);
-		problem = res.status === 0 ? TERMINAL_SAVE_FAILED : terminalWriteProblem(res.status, res.body, 200);
+		problem =
+			res.status === 0 ? TERMINAL_SAVE_FAILED : terminalWriteProblem(res.status, res.body, 200);
 	}
 	return autobuysAnswer(event, (vm) => {
 		if (problem !== '') {
@@ -566,7 +658,8 @@ export async function setAutobuyActive(event: RequestEvent, id: string) {
 	const form = await readForm(event);
 	const active = formGet(form, 'active') === 'true';
 	const res = await call(event, 'PATCH', `/v1/autobuys/${id}`, { active });
-	const notice = res.status === 0 ? TERMINAL_SAVE_FAILED : terminalWriteProblem(res.status, res.body, 200);
+	const notice =
+		res.status === 0 ? TERMINAL_SAVE_FAILED : terminalWriteProblem(res.status, res.body, 200);
 	if (notice) console.warn('set autobuy active', res.status);
 	return autobuysAnswer(event, (vm) => (vm.notice = notice));
 }
@@ -574,7 +667,8 @@ export async function setAutobuyActive(event: RequestEvent, id: string) {
 /** DELETE /terminal/autobuys/{id}: a 404 means it is already gone. */
 export async function deleteAutobuy(event: RequestEvent, id: string) {
 	const res = await call(event, 'DELETE', `/v1/autobuys/${id}`);
-	const notice = res.status === 204 || res.status === 404 ? '' : 'Could not delete that autobuy. Try again.';
+	const notice =
+		res.status === 204 || res.status === 404 ? '' : 'Could not delete that autobuy. Try again.';
 	if (notice) console.warn('delete autobuy', res.status);
 	return autobuysAnswer(event, (vm) => (vm.notice = notice));
 }

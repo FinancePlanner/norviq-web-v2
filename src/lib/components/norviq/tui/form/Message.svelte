@@ -9,7 +9,10 @@
 		variant,
 		children,
 		...rest
-	}: HTMLAttributes<HTMLParagraphElement> & { variant?: 'error' | 'info'; children?: Snippet } = $props();
+	}: HTMLAttributes<HTMLParagraphElement> & {
+		variant?: 'error' | 'info';
+		children?: Snippet;
+	} = $props();
 </script>
 
 <p

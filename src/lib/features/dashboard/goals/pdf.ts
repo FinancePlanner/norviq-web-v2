@@ -36,10 +36,33 @@ function charWidth(code: number): number {
 
 // Unicode → WinAnsiEncoding (cp1252) for 0x80..0x9F; 0xA0..0xFF map to themselves.
 const CP1252: Record<number, number> = {
-	0x20ac: 0x80, 0x201a: 0x82, 0x0192: 0x83, 0x201e: 0x84, 0x2026: 0x85, 0x2020: 0x86, 0x2021: 0x87,
-	0x02c6: 0x88, 0x2030: 0x89, 0x0160: 0x8a, 0x2039: 0x8b, 0x0152: 0x8c, 0x017d: 0x8e, 0x2018: 0x91,
-	0x2019: 0x92, 0x201c: 0x93, 0x201d: 0x94, 0x2022: 0x95, 0x2013: 0x96, 0x2014: 0x97, 0x02dc: 0x98,
-	0x2122: 0x99, 0x0161: 0x9a, 0x203a: 0x9b, 0x0153: 0x9c, 0x017e: 0x9e, 0x0178: 0x9f
+	0x20ac: 0x80,
+	0x201a: 0x82,
+	0x0192: 0x83,
+	0x201e: 0x84,
+	0x2026: 0x85,
+	0x2020: 0x86,
+	0x2021: 0x87,
+	0x02c6: 0x88,
+	0x2030: 0x89,
+	0x0160: 0x8a,
+	0x2039: 0x8b,
+	0x0152: 0x8c,
+	0x017d: 0x8e,
+	0x2018: 0x91,
+	0x2019: 0x92,
+	0x201c: 0x93,
+	0x201d: 0x94,
+	0x2022: 0x95,
+	0x2013: 0x96,
+	0x2014: 0x97,
+	0x02dc: 0x98,
+	0x2122: 0x99,
+	0x0161: 0x9a,
+	0x203a: 0x9b,
+	0x0153: 0x9c,
+	0x017e: 0x9e,
+	0x0178: 0x9f
 };
 
 /** Text as a string of WinAnsi bytes (each char code < 256). */
@@ -47,7 +70,8 @@ function winAnsi(text: string): string {
 	let out = '';
 	for (const ch of text) {
 		const cp = ch.codePointAt(0)!;
-		if (cp === 9 || cp === 10 || cp === 13 || (cp >= 32 && cp <= 126) || (cp >= 0xa0 && cp <= 0xff)) out += ch;
+		if (cp === 9 || cp === 10 || cp === 13 || (cp >= 32 && cp <= 126) || (cp >= 0xa0 && cp <= 0xff))
+			out += ch;
 		else if (CP1252[cp] !== undefined) out += String.fromCharCode(CP1252[cp]);
 		else out += '?';
 	}
@@ -138,7 +162,8 @@ class MiniPDF {
 		if (w === 0) w = PAGE_W - this.rMargin - this.x;
 		const k = K;
 		let s = '';
-		if (border === '1') s += `${f2(this.x * k)} ${f2((PAGE_H - this.y) * k)} ${f2(w * k)} ${f2(-h * k)} re S `;
+		if (border === '1')
+			s += `${f2(this.x * k)} ${f2((PAGE_H - this.y) * k)} ${f2(w * k)} ${f2(-h * k)} re S `;
 		if (text !== '') {
 			const tx = (this.x + this.cMargin) * k;
 			const ty = (PAGE_H - (this.y + 0.5 * h + 0.3 * this.fontSize)) * k;
@@ -199,8 +224,10 @@ class MiniPDF {
 		const pageIDs: number[] = [];
 		// 1 catalog, 2 pages, 3 Helvetica, 4 Helvetica-Bold, 5 info, then page/content pairs.
 		objects[1] = '<< /Type /Catalog /Pages 2 0 R >>';
-		objects[3] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
-		objects[4] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+		objects[3] =
+			'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+		objects[4] =
+			'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
 		objects[5] = `<< /Producer (Norviq) /CreationDate (D:${new Date()
 			.toISOString()
 			.replace(/[-:T]/g, '')
@@ -235,7 +262,10 @@ class MiniPDF {
 
 /** strings.Title: upper-case the first letter of each word. */
 function title(value: string): string {
-	return value.replace(/(^|[^\p{L}\p{N}_'])(\p{L})/gu, (_, sep: string, ch: string) => sep + ch.toUpperCase());
+	return value.replace(
+		/(^|[^\p{L}\p{N}_'])(\p{L})/gu,
+		(_, sep: string, ch: string) => sep + ch.toUpperCase()
+	);
 }
 
 const amount = (currency: string, value: number) => `${currency} ${formatFloat(value, 0)}`;
@@ -264,7 +294,13 @@ export function buildGoalProgressPDF(goal: GoalPlan, progress: PlanningGoalProgr
 	pdf.setFont('bold', 11);
 	pdf.cell(55, 8, 'Progress', '', 0);
 	pdf.setFont('regular', 11);
-	pdf.cell(0, 8, `${formatFloat(progress.percentComplete * 100, 0)}% · ${(progress.driftState ?? '').replaceAll('_', ' ')}`, '', 1);
+	pdf.cell(
+		0,
+		8,
+		`${formatFloat(progress.percentComplete * 100, 0)}% · ${(progress.driftState ?? '').replaceAll('_', ' ')}`,
+		'',
+		1
+	);
 	pdf.ln(5);
 	pdf.setFont('bold', 14);
 	pdf.cell(0, 8, 'Assumptions', '', 1);
@@ -283,7 +319,9 @@ export function buildGoalProgressPDF(goal: GoalPlan, progress: PlanningGoalProgr
 	pdf.cell(0, 8, 'Projection', '', 1);
 	pdf.setFont('bold', 9);
 	const widths = [32, 48, 48, 48];
-	['Date', 'Planned', 'Actual', 'Projected'].forEach((heading, index) => pdf.cell(widths[index], 7, heading, '1', 0));
+	['Date', 'Planned', 'Actual', 'Projected'].forEach((heading, index) =>
+		pdf.cell(widths[index], 7, heading, '1', 0)
+	);
 	pdf.ln(-1);
 	pdf.setFont('regular', 8);
 	const trajectory = progress.trajectory ?? [];
@@ -291,7 +329,9 @@ export function buildGoalProgressPDF(goal: GoalPlan, progress: PlanningGoalProgr
 	for (let index = 0; index < trajectory.length; index += step) {
 		const point = trajectory[index];
 		const actual =
-			point.actualValue !== null && point.actualValue !== undefined ? amount(goal.baseCurrency, point.actualValue) : '—';
+			point.actualValue !== null && point.actualValue !== undefined
+				? amount(goal.baseCurrency, point.actualValue)
+				: '—';
 		const values = [
 			point.date,
 			amount(goal.baseCurrency, point.plannedValue),
@@ -307,6 +347,8 @@ export function buildGoalProgressPDF(goal: GoalPlan, progress: PlanningGoalProgr
 
 /** safeGoalFilename */
 export function safeGoalFilename(value: string): string {
-	const mapped = Array.from((value ?? '').trim().toLowerCase(), (ch) => (/^[a-z0-9]$/.test(ch) ? ch : '-')).join('');
+	const mapped = Array.from((value ?? '').trim().toLowerCase(), (ch) =>
+		/^[a-z0-9]$/.test(ch) ? ch : '-'
+	).join('');
 	return mapped.replace(/^-+|-+$/g, '');
 }

@@ -69,6 +69,7 @@ it closes the dialog and runs `goto` with invalidation.
 - [~] GET /tax/reports/{id}/download → `tax/reports/[id]/download/+server.ts` (streams the file). Untested for the same reason.
 
 Deviations to review in /tax:
+
 - The Generate PDF/CSV buttons are `type="submit"`. Go rendered them as `type="button"`, so they never submitted.
 - Failed actions show a banner. On htmx 4xx responses, Go showed nothing.
 

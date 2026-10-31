@@ -1,6 +1,9 @@
 import type { Actions, PageServerLoad } from './$types';
 import { requireProInline } from '#lib/features/money/expenses/gates.server.js';
-import { loadRecordExpenseFormVM, submitRecordExpense } from '#lib/features/money/expenses/forms.server.js';
+import {
+	loadRecordExpenseFormVM,
+	submitRecordExpense
+} from '#lib/features/money/expenses/forms.server.js';
 
 // GET /expenses/record (ExpensesRecordForm, an htmx fragment in Go): the
 // Record spend panel. ?recurring=<id> pre-fills from a template (Pro).

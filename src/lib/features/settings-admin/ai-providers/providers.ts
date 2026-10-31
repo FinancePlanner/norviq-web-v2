@@ -36,8 +36,18 @@ export interface AIConsentVM {
 }
 
 const aiProviderCatalog = [
-	{ provider: 'anthropic', title: 'Anthropic', label: 'Claude models, billed to your Anthropic account.', requiresEndpoint: false },
-	{ provider: 'openai', title: 'OpenAI', label: 'GPT models, billed to your OpenAI account.', requiresEndpoint: false },
+	{
+		provider: 'anthropic',
+		title: 'Anthropic',
+		label: 'Claude models, billed to your Anthropic account.',
+		requiresEndpoint: false
+	},
+	{
+		provider: 'openai',
+		title: 'OpenAI',
+		label: 'GPT models, billed to your OpenAI account.',
+		requiresEndpoint: false
+	},
 	{
 		provider: 'compatible',
 		title: 'OpenAI-compatible',
@@ -83,7 +93,10 @@ function aiStatusText(status: string, errorCode: string): string {
 }
 
 /** buildAIProviderRows merges the catalog with whatever the backend has stored. */
-export function buildAIProviderRows(stored: UserAIProviderCredential[], now: Date): AIProviderRow[] {
+export function buildAIProviderRows(
+	stored: UserAIProviderCredential[],
+	now: Date
+): AIProviderRow[] {
 	const byProvider = new Map(stored.map((c) => [String(c.provider), c]));
 	return aiProviderCatalog.map((entry) => {
 		const row: AIProviderRow = {
@@ -113,7 +126,8 @@ export function buildAIProviderRows(stored: UserAIProviderCredential[], now: Dat
 			row.statusText = aiStatusText(status, cred.lastErrorCode ?? '');
 			row.baseURL = cred.baseURL ?? '';
 			row.defaultModel = cred.defaultModel ?? '';
-			if (cred.lastVerifiedAt) row.lastVerified = formatRelativeTime(new Date(cred.lastVerifiedAt), now);
+			if (cred.lastVerifiedAt)
+				row.lastVerified = formatRelativeTime(new Date(cred.lastVerifiedAt), now);
 			if (cred.lastUsedAt) row.lastUsed = formatRelativeTime(new Date(cred.lastUsedAt), now);
 		}
 		return row;

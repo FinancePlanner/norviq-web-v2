@@ -56,7 +56,12 @@
 	</div>
 {:else if outcome?.kind === 'watchResult'}
 	{@const vm = outcome.vm}
-	<div id={'assistant-action-' + vm.id} class="assistant-action muse-watch-card" data-watch-card data-watch-state={vm.state}>
+	<div
+		id={'assistant-action-' + vm.id}
+		class="assistant-action muse-watch-card"
+		data-watch-card
+		data-watch-state={vm.state}
+	>
 		<p class="muse-watch-kicker">Standing task</p>
 		{#if vm.title !== ''}
 			<p class="muse-watch-title">{vm.title}</p>
@@ -72,7 +77,13 @@
 	</div>
 {:else if outcome?.kind === 'watchCard'}
 	{@const card = outcome}
-	<WatchCard actionID={card.id} watch={card.watch} errorMessage={card.error} {busy} onanswer={(verb) => answer(verb, card.watch)} />
+	<WatchCard
+		actionID={card.id}
+		watch={card.watch}
+		errorMessage={card.error}
+		{busy}
+		onanswer={(verb) => answer(verb, card.watch)}
+	/>
 {:else if action.watch}
 	{@const watch = action.watch}
 	<WatchCard actionID={action.id} {watch} {busy} onanswer={(verb) => answer(verb, watch)} />
@@ -82,8 +93,12 @@
 		<p class="mt-2 text-sm font-semibold">{action.summary}</p>
 		<p class="mt-1 text-xs text-muted-foreground">Expires {action.expiresAt}</p>
 		<div class="assistant-action-controls">
-			<NativeButton class="assistant-confirm" onclick={() => answer('confirm', null)}>Confirm</NativeButton>
-			<NativeButton class="assistant-cancel" onclick={() => answer('cancel', null)}>Cancel</NativeButton>
+			<NativeButton class="assistant-confirm" onclick={() => answer('confirm', null)}
+				>Confirm</NativeButton
+			>
+			<NativeButton class="assistant-cancel" onclick={() => answer('cancel', null)}
+				>Cancel</NativeButton
+			>
 		</div>
 	</div>
 {/if}

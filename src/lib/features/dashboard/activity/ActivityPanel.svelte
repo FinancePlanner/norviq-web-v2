@@ -11,7 +11,10 @@
 	import ActivityFeedBody from './ActivityFeedBody.svelte';
 	import { activityFeedQueryKey, fetchActivityFeed } from './feed.js';
 
-	let { activities, error = false }: { activities: ActivityItemVM[] | null | undefined; error?: boolean } = $props();
+	let {
+		activities,
+		error = false
+	}: { activities: ActivityItemVM[] | null | undefined; error?: boolean } = $props();
 
 	const feed = createQuery(() => ({
 		queryKey: activityFeedQueryKey,
@@ -37,7 +40,9 @@
 			<p class="activity-panel-lead">{t('Portfolio moves and spending · refreshes every 60s')}</p>
 		</div>
 		<div class="flex items-center gap-3">
-			<NativeButton class="dash-panel-link" onclick={() => void feed.refetch()}>{t('Refresh')}</NativeButton>
+			<NativeButton class="dash-panel-link" onclick={() => void feed.refetch()}
+				>{t('Refresh')}</NativeButton
+			>
 			<a href="/dashboard/activity" class="dash-panel-link">{t('View all')}</a>
 		</div>
 	</div>

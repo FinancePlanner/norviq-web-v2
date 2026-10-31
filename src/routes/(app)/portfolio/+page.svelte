@@ -11,7 +11,13 @@
 		tableFeatures
 	} from '@tanstack/svelte-table';
 	import { onMount } from 'svelte';
-	import { NativeButton, PilotFollowingBanner, PrimaryButton, SecondaryButton, SelectField } from '#lib/components/norviq/index.js';
+	import {
+		NativeButton,
+		PilotFollowingBanner,
+		PrimaryButton,
+		SecondaryButton,
+		SelectField
+	} from '#lib/components/norviq/index.js';
 	import * as dialog from '#lib/components/norviq/tui/dialog/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { staggerOnMount } from '#lib/motion.js';
@@ -75,7 +81,8 @@
 			{
 				id: 'category',
 				accessorFn: (row: PositionRowVM) => row.category,
-				filterFn: (row: Row, _id: string, value: string) => categoryFilter(row.original.category, value)
+				filterFn: (row: Row, _id: string, value: string) =>
+					categoryFilter(row.original.category, value)
 			}
 		],
 		get data() {
@@ -83,7 +90,10 @@
 		},
 		getRowId: (row) => row.id,
 		get state() {
-			return { sorting: [{ id: sort, desc: false }], columnFilters: [{ id: 'category', value: filter }] };
+			return {
+				sorting: [{ id: sort, desc: false }],
+				columnFilters: [{ id: 'category', value: filter }]
+			};
 		}
 	});
 	const visibleRows = $derived(table.getRowModel().rows.map((r) => r.original));
@@ -110,7 +120,10 @@
 	const addForm = $derived(addOverride ?? vm.addPosition);
 	// svelte-ignore state_referenced_locally
 	let addOpen = $state(data.vm.showAddPosition);
-	let actionPanel = $state<Exclude<PositionActionResult, { redirect: string } | { panel: 'add' }> | null>(null);
+	let actionPanel = $state<Exclude<
+		PositionActionResult,
+		{ redirect: string } | { panel: 'add' }
+	> | null>(null);
 
 	async function apply(result: PositionActionResult | null) {
 		if (!result) return;
@@ -155,12 +168,20 @@
 			class="min-w-48"
 			options={scopeOptions}
 			aria-label="Portfolio"
-			onchange={(e) => (window.location.href = '/portfolio?portfolio=' + encodeURIComponent(e.currentTarget.value))}
+			onchange={(e) =>
+				(window.location.href =
+					'/portfolio?portfolio=' + encodeURIComponent(e.currentTarget.value))}
 		/>
 	{/if}
-	<SecondaryButton href={'/portfolio/one-page?portfolio=' + vm.selectedPortfolio}>One page</SecondaryButton>
+	<SecondaryButton href={'/portfolio/one-page?portfolio=' + vm.selectedPortfolio}
+		>One page</SecondaryButton
+	>
 	<SecondaryButton href="/portfolios">Manage</SecondaryButton>
-	<PrimaryButton class="portfolio-add-btn" data-guide="holding-add" onclick={() => dialog.openDialog('add-position-dialog')}>
+	<PrimaryButton
+		class="portfolio-add-btn"
+		data-guide="holding-add"
+		onclick={() => dialog.openDialog('add-position-dialog')}
+	>
 		Add position
 	</PrimaryButton>
 {/snippet}
@@ -220,12 +241,21 @@
 					<div class="portfolio-empty empty-state-inline">
 						<p class="empty-state-inline-title">No positions</p>
 						<p class="empty-state-inline-desc">Add your first holding or change your filter.</p>
-						<NativeButton class="btn-primary mt-4" onclick={() => dialog.openDialog('add-position-dialog')}>Add position</NativeButton>
+						<NativeButton
+							class="btn-primary mt-4"
+							onclick={() => dialog.openDialog('add-position-dialog')}>Add position</NativeButton
+						>
 					</div>
 				{:else}
 					{#each visibleRows as row (row.id)}
 						<div>
-							<PositionRow {row} quote={quotes.get(row.id)} isPro={vm.isPro} rangeKey={vm.selectedTimeRange} onaction={openAction} />
+							<PositionRow
+								{row}
+								quote={quotes.get(row.id)}
+								isPro={vm.isPro}
+								rangeKey={vm.selectedTimeRange}
+								onaction={openAction}
+							/>
 						</div>
 					{/each}
 				{/if}
@@ -233,7 +263,11 @@
 		</vigil.Panel>
 		<dialog.Dialog id="add-position-dialog" bind:open={addOpen}>
 			<dialog.Content class="glass-card vigil-modal-panel border-0 sm:max-w-2xl">
-				<AddPositionPanel form={addForm} onsubmit={async (form) => apply(await positionAction('/portfolio/positions', 'POST', form))} />
+				<AddPositionPanel
+					form={addForm}
+					onsubmit={async (form) =>
+						apply(await positionAction('/portfolio/positions', 'POST', form))}
+				/>
 			</dialog.Content>
 		</dialog.Dialog>
 		<dialog.Dialog id="position-action-dialog">

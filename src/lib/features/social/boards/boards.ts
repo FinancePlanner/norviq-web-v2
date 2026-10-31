@@ -229,7 +229,11 @@ export function boardNotice(raw: string | null): string {
  * and on group pages, whose guidelines prompt comes back through here.
  */
 export function boardReturnTo(raw: string, fallback: string): string {
-	if (raw.startsWith('/boards') || raw.startsWith('/admin/community') || raw.startsWith('/groups')) {
+	if (
+		raw.startsWith('/boards') ||
+		raw.startsWith('/admin/community') ||
+		raw.startsWith('/groups')
+	) {
 		if (!raw.startsWith('//') && !raw.includes('\\')) return raw;
 	}
 	return fallback;
@@ -318,7 +322,11 @@ export function boardPostRow(post: BoardPostSummary, viewer: Viewer, now = new D
  * under its parent. A reply whose parent is missing (deleted with its account)
  * is shown at the top level rather than lost.
  */
-export function boardCommentRows(comments: BoardComment[], viewer: Viewer, now = new Date()): CommentRow[] {
+export function boardCommentRows(
+	comments: BoardComment[],
+	viewer: Viewer,
+	now = new Date()
+): CommentRow[] {
 	const known = new Set(comments.map((c) => c.id));
 	const children = new Map<string, BoardComment[]>();
 	const roots: BoardComment[] = [];
@@ -377,7 +385,8 @@ export const voteClass = (voted: boolean) =>
 		? 'rounded p-1 text-[var(--color-accent)] hover:bg-black/5 dark:hover:bg-white/10'
 		: 'rounded p-1 hover:bg-black/5 dark:hover:bg-white/10';
 
-export const reasonOptions = (): Option[] => REPORT_REASONS.map((r) => ({ value: r.value, label: r.label }));
+export const reasonOptions = (): Option[] =>
+	REPORT_REASONS.map((r) => ({ value: r.value, label: r.label }));
 
 export function kindOptions(selected: string): Option[] {
 	const sel = selected || 'link';

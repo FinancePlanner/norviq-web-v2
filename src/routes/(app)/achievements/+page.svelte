@@ -18,12 +18,17 @@
 <div class="app-page-content vigil-document-page achievements-page">
 	<vigil.ModernPageHeader
 		title={t('Achievements')}
-		subtitle={t('Milestones you earn by planning, saving and learning. Counts only, never amounts.')}
+		subtitle={t(
+			'Milestones you earn by planning, saving and learning. Counts only, never amounts.'
+		)}
 	/>
 	<ToastBanner message={vm.notice ? t(vm.notice) : ''} />
 	<FormErrorBanner message={vm.errorMessage ? t(vm.errorMessage) : ''} />
 	{#if vm.loadFailed}
-		<EmptyState title={t('Could not load achievements')} description={t('Try again in a moment.')} />
+		<EmptyState
+			title={t('Could not load achievements')}
+			description={t('Try again in a moment.')}
+		/>
 	{:else}
 		<vigil.MetricStrip>
 			<vigil.Metric label={t('Unlocked')} value="{vm.summary.unlocked} / {vm.summary.total}" />

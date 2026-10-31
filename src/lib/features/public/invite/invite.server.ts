@@ -60,7 +60,11 @@ export async function loadInvite(event: RequestEvent): Promise<InviteVM> {
 	const authed = event.locals.session.isAuthenticated;
 	if (authed && (await loadSocialConfig(event)).enabled) {
 		try {
-			const inviter = await apiJSON<SocialUserSummary>(event, 'GET', '/v1/social/invites/' + pathEscape(code));
+			const inviter = await apiJSON<SocialUserSummary>(
+				event,
+				'GET',
+				'/v1/social/invites/' + pathEscape(code)
+			);
 			if (inviter.id.toLowerCase() === (event.locals.session.auth?.userId ?? '').toLowerCase()) {
 				vm.inviteError = 'This is your own invite link. Share it with a friend.';
 			} else {
@@ -85,7 +89,13 @@ export async function loadInvite(event: RequestEvent): Promise<InviteVM> {
 
 interface GroupInvitePreview {
 	code: string;
-	group: { id: string; name: string; iconEmoji: string | null; ticker: string | null; memberCount: number };
+	group: {
+		id: string;
+		name: string;
+		iconEmoji: string | null;
+		ticker: string | null;
+		memberCount: number;
+	};
 	inviterUsername: string | null;
 	alreadyMember: boolean;
 }
@@ -118,7 +128,11 @@ export async function loadGroupInvite(event: RequestEvent): Promise<GroupInviteV
 
 	if (event.locals.session.isAuthenticated && groupsOn(await loadSocialConfig(event))) {
 		try {
-			const preview = await apiJSON<GroupInvitePreview>(event, 'GET', '/v1/group-invites/' + pathEscape(code));
+			const preview = await apiJSON<GroupInvitePreview>(
+				event,
+				'GET',
+				'/v1/group-invites/' + pathEscape(code)
+			);
 			vm.groupName = preview.group.name;
 			vm.members = preview.group.memberCount;
 			vm.groupEmoji = preview.group.iconEmoji ?? '';

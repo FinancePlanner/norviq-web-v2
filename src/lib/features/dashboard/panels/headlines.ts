@@ -25,7 +25,8 @@ function parseHeadlineDate(raw: string): Date | null {
 	if ((m = s.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/))) {
 		return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]));
 	}
-	if ((m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/))) return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+	if ((m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/)))
+		return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
 	return null;
 }
 
@@ -51,7 +52,10 @@ export interface NewsTickerVM {
 }
 
 /** LoadNewsTicker's mapping. Items without a link are dropped. */
-export function mapNewsTicker(resp: components['schemas']['NewsTickerResponse'], now = new Date()): NewsTickerVM {
+export function mapNewsTicker(
+	resp: components['schemas']['NewsTickerResponse'],
+	now = new Date()
+): NewsTickerVM {
 	const vm: NewsTickerVM = { enabled: resp.enabled, stale: resp.stale, items: [] };
 	for (const item of resp.items ?? []) {
 		const title = (item.title ?? '').trim();
@@ -61,7 +65,9 @@ export function mapNewsTicker(resp: components['schemas']['NewsTickerResponse'],
 			title,
 			url: item.url,
 			source: (item.source ?? '').trim(),
-			timeAgo: Number.isNaN(published.getTime()) ? '' : headlineTimeAgo(published.toISOString().replace(/\.\d{3}Z$/, 'Z'), now)
+			timeAgo: Number.isNaN(published.getTime())
+				? ''
+				: headlineTimeAgo(published.toISOString().replace(/\.\d{3}Z$/, 'Z'), now)
 		});
 	}
 	return vm;

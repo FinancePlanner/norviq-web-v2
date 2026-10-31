@@ -33,12 +33,16 @@ export const load: PageServerLoad = async (event) => {
 	const client = api(event);
 
 	const [reportRes, expensesRes] = await Promise.all([
-		client.GET('/v1/reports/expenses', { params: { query: { from, to, granularity: 'month' } } }).catch(() => null),
+		client
+			.GET('/v1/reports/expenses', { params: { query: { from, to, granularity: 'month' } } })
+			.catch(() => null),
 		client.GET('/v1/expenses', { params: { query: { from, to } } }).catch(() => null)
 	]);
 	const summaryRows = reportRes?.response.ok ? reportRes.data : undefined;
 	const summary =
-		Array.isArray(summaryRows) && summaryRows.length > 0 && 'monthStart' in summaryRows[0] ? summaryRows[0] : null;
+		Array.isArray(summaryRows) && summaryRows.length > 0 && 'monthStart' in summaryRows[0]
+			? summaryRows[0]
+			: null;
 	const rows = (expensesRes?.response.ok ? expensesRes.data : undefined) ?? [];
 
 	const planned = summary?.pillarPlans?.[def.key] ?? 0;
@@ -47,7 +51,12 @@ export const load: PageServerLoad = async (event) => {
 	const expenses: CategoryExpenseVM[] = [];
 	for (const row of rows) {
 		if (row.pillar.trim().toLowerCase() !== def.key.toLowerCase()) continue;
-		expenses.push({ id: row.id, title: row.title, amount: formatCurrency(row.amount), date: shortDate(row.occurredOn) });
+		expenses.push({
+			id: row.id,
+			title: row.title,
+			amount: formatCurrency(row.amount),
+			date: shortDate(row.occurredOn)
+		});
 	}
 
 	return {

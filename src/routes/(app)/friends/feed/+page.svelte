@@ -1,13 +1,26 @@
 <script lang="ts">
 	// Port of feed.templ FeedPage / FeedRows / FeedLoadMore.
-	import { EmptyState, FormErrorBanner, SecondaryButton, ToastBanner } from '#lib/components/norviq/index.js';
+	import {
+		EmptyState,
+		FormErrorBanner,
+		SecondaryButton,
+		ToastBanner
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import AchievementIcon from '#lib/features/social/friends/AchievementIcon.svelte';
 	import CongratsButton from '#lib/features/social/friends/CongratsButton.svelte';
 	import InviteButton from '#lib/features/social/friends/InviteButton.svelte';
 	import SectionTabs from '#lib/features/social/friends/SectionTabs.svelte';
-	import { feedPath, formatDate, initials, isoDate, tierLabelID, userTitle, type SocialFeedItem } from '#lib/features/social/friends/types.js';
+	import {
+		feedPath,
+		formatDate,
+		initials,
+		isoDate,
+		tierLabelID,
+		userTitle,
+		type SocialFeedItem
+	} from '#lib/features/social/friends/types.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -31,7 +44,11 @@
 		try {
 			const res = await fetch(feedPath(cursor), { headers: { accept: 'application/json' } });
 			if (!res.ok) throw new Error(String(res.status));
-			const page = (await res.json()) as { items: SocialFeedItem[]; nextCursor: string; loadMoreFailed: boolean };
+			const page = (await res.json()) as {
+				items: SocialFeedItem[];
+				nextCursor: string;
+				loadMoreFailed: boolean;
+			};
 			more = [...more, ...page.items];
 			cursor = page.nextCursor;
 			failed = page.loadMoreFailed;
@@ -49,7 +66,10 @@
 </svelte:head>
 
 <div class="app-page-content vigil-document-page friends-page">
-	<vigil.ModernPageHeader title={t('Friends')} subtitle={t('See what your friends have unlocked and cheer them on.')}>
+	<vigil.ModernPageHeader
+		title={t('Friends')}
+		subtitle={t('See what your friends have unlocked and cheer them on.')}
+	>
 		{#snippet actions()}<InviteButton />{/snippet}
 	</vigil.ModernPageHeader>
 	<SectionTabs activePath="/friends/feed" />
@@ -69,30 +89,46 @@
 			<ul id="feed-list" class="divide-y divide-border">
 				{#each items as item (item.id)}
 					<li class="flex items-start gap-3 py-3">
-						<span class="nq-row-icon text-subhead font-semibold" aria-hidden="true">{initials(item.actor)}</span>
-						<span class="achievement-icon" aria-hidden="true"><AchievementIcon iconKey={item.achievement.iconKey} class="h-5 w-5" /></span>
+						<span class="nq-row-icon text-subhead font-semibold" aria-hidden="true"
+							>{initials(item.actor)}</span
+						>
+						<span class="achievement-icon" aria-hidden="true"
+							><AchievementIcon iconKey={item.achievement.iconKey} class="h-5 w-5" /></span
+						>
 						<div class="min-w-0 flex-1">
 							<p class="text-body">
-								<a class="font-semibold" href={'/friends/u/' + item.actor.id}>{userTitle(item.actor)}</a>
+								<a class="font-semibold" href={'/friends/u/' + item.actor.id}
+									>{userTitle(item.actor)}</a
+								>
 								{' ' + t('unlocked') + ' '}
 								<span class="font-semibold">{item.achievement.title}</span>
 								{#if item.achievement.tier}
-									<span class="text-muted-foreground">{' (' + t(tierLabelID(item.achievement.tier)) + ')'}</span>
+									<span class="text-muted-foreground"
+										>{' (' + t(tierLabelID(item.achievement.tier)) + ')'}</span
+									>
 								{/if}
 							</p>
-							<time class="text-subhead text-muted-foreground" datetime={isoDate(item.createdAt)}>{formatDate(item.createdAt)}</time>
+							<time class="text-subhead text-muted-foreground" datetime={isoDate(item.createdAt)}
+								>{formatDate(item.createdAt)}</time
+							>
 						</div>
-						<CongratsButton vm={{ id: item.id, count: item.congratsCount, done: item.viewerCongratulated }} />
+						<CongratsButton
+							vm={{ id: item.id, count: item.congratsCount, done: item.viewerCongratulated }}
+						/>
 					</li>
 				{/each}
 			</ul>
 		</vigil.Panel>
 		<div id="feed-more" class={['mt-4', loading && 'htmx-request']}>
 			{#if failed}
-				<p class="mb-2 text-subhead text-danger" role="alert">{t("Couldn't load more. Try again.")}</p>
+				<p class="mb-2 text-subhead text-danger" role="alert">
+					{t("Couldn't load more. Try again.")}
+				</p>
 			{/if}
 			{#if cursor}
-				<SecondaryButton href={feedPath(cursor)} class="w-auto px-4" onclick={loadMore}>{t('Load more')}</SecondaryButton>
+				<SecondaryButton href={feedPath(cursor)} class="w-auto px-4" onclick={loadMore}
+					>{t('Load more')}</SecondaryButton
+				>
 			{/if}
 		</div>
 	{/if}

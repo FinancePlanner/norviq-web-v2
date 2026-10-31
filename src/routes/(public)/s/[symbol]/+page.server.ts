@@ -2,7 +2,10 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { config, publicPagesEnabled } from '#lib/server/env.js';
 import { allowedSymbol } from '#lib/publicsymbols.js';
-import { cachedPublicStock, normalizePublicSymbol } from '#lib/features/public/stock/load.server.js';
+import {
+	cachedPublicStock,
+	normalizePublicSymbol
+} from '#lib/features/public/stock/load.server.js';
 
 // GET /s/{symbol} — handlers.PublicStockHandler.Page.
 export const load: PageServerLoad = async (event) => {
@@ -27,7 +30,9 @@ export const load: PageServerLoad = async (event) => {
 	// gets the same max-age as a private response (deviation, see
 	// docs/parity/public.md).
 	event.setHeaders({
-		'Cache-Control': event.locals.session.isAuthenticated ? 'private, max-age=900' : 'public, max-age=900'
+		'Cache-Control': event.locals.session.isAuthenticated
+			? 'private, max-age=900'
+			: 'public, max-age=900'
 	});
 	return { vm };
 };

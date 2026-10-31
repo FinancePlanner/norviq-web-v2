@@ -2,7 +2,13 @@
 	// expenses.BulkTargetsPage (internal/pages/expenses/bulk.templ). A plain
 	// full-page POST, as in Go (no htmx on this form).
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
-	import { CheckboxField, EmptyState, Field, SelectField, SubmitButton } from '#lib/components/norviq/index.js';
+	import {
+		CheckboxField,
+		EmptyState,
+		Field,
+		SelectField,
+		SubmitButton
+	} from '#lib/components/norviq/index.js';
 	import type { Option } from '#lib/components/norviq/types.js';
 	import { formatFloat } from '#lib/format.js';
 
@@ -47,8 +53,13 @@
 						<input type="hidden" name="month" value={data.monthQuery} />
 						<div class="space-y-3">
 							{#each data.planItems as item (item.id)}
-								<div class="grid items-center gap-3 rounded-lg bg-black/5 p-4 md:grid-cols-[1fr_9rem_9rem_8rem_8rem_11rem] dark:bg-white/5">
-									<div><p class="font-semibold">{item.title}</p><p class="text-xs text-muted-foreground">{item.pillar}</p></div>
+								<div
+									class="grid items-center gap-3 rounded-lg bg-black/5 p-4 md:grid-cols-[1fr_9rem_9rem_8rem_8rem_11rem] dark:bg-white/5"
+								>
+									<div>
+										<p class="font-semibold">{item.title}</p>
+										<p class="text-xs text-muted-foreground">{item.pillar}</p>
+									</div>
 									<Field
 										name={'amount_' + item.id}
 										label="Monthly target"
@@ -106,7 +117,9 @@
 			<vigil.CommandSplitAside>
 				<vigil.Panel class="rounded-lg p-5" titleID="bulk-help-panel">
 					<p class="command-metric-label">Bulk editing</p>
-					<p class="mt-3 text-sm text-muted-foreground">Adjust every pillar target in one pass. Changes apply to the current month snapshot.</p>
+					<p class="mt-3 text-sm text-muted-foreground">
+						Adjust every pillar target in one pass. Changes apply to the current month snapshot.
+					</p>
 					<p class="mt-4 text-xs text-muted-foreground">{data.planItems.length} line items</p>
 				</vigil.Panel>
 			</vigil.CommandSplitAside>

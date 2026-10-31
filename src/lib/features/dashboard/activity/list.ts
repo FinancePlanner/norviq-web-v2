@@ -6,7 +6,12 @@
 // ActivityListSection did (it never checked ActivitiesError).
 
 import type { ActivityItemVM } from '../types.js';
-import { activityPageMaxLimit, activityPageStep, mapActivities, type UserActivity } from './mappers.js';
+import {
+	activityPageMaxLimit,
+	activityPageStep,
+	mapActivities,
+	type UserActivity
+} from './mappers.js';
 
 export interface ActivityListState {
 	activities: ActivityItemVM[];
@@ -15,12 +20,15 @@ export interface ActivityListState {
 }
 
 /** activityLoadMoreURL's limit: +20, capped at 100. */
-export const nextActivityLimit = (current: number) => Math.min(current + activityPageStep, activityPageMaxLimit);
+export const nextActivityLimit = (current: number) =>
+	Math.min(current + activityPageStep, activityPageMaxLimit);
 
 export async function fetchActivityList(limit: number): Promise<ActivityListState> {
 	let items: UserActivity[] = [];
 	try {
-		const res = await fetch(`/api/v1/activities?limit=${limit}`, { headers: { accept: 'application/json' } });
+		const res = await fetch(`/api/v1/activities?limit=${limit}`, {
+			headers: { accept: 'application/json' }
+		});
 		if (res.ok) items = ((await res.json().catch(() => null)) as UserActivity[] | null) ?? [];
 	} catch (err) {
 		console.warn('activity list fetch failed', err);

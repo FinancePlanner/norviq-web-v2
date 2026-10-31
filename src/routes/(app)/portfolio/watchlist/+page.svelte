@@ -16,7 +16,11 @@
 	import WatchlistListPanel from '#lib/features/portfolio/watchlist/WatchlistListPanel.svelte';
 	import WatchlistRowsPanel from '#lib/features/portfolio/watchlist/WatchlistRowsPanel.svelte';
 	import WatchlistSearchResults from '#lib/features/portfolio/watchlist/WatchlistSearchResults.svelte';
-	import { WATCHLIST_SORT_KEY, parseWatchlistSort, type WatchlistSort } from '#lib/features/portfolio/watchlist/sort.js';
+	import {
+		WATCHLIST_SORT_KEY,
+		parseWatchlistSort,
+		type WatchlistSort
+	} from '#lib/features/portfolio/watchlist/sort.js';
 	import {
 		emptyCSVImportVM,
 		watchlistListForm,
@@ -56,9 +60,12 @@
 	const quotesQuery = createQuery(() => ({
 		queryKey: ['portfolio-watchlist-quotes', vm.selectedListID],
 		queryFn: async (): Promise<WatchlistQuotesResponse | null> => {
-			const res = await fetch('/portfolio/watchlist/quotes?list=' + encodeURIComponent(vm.selectedListID), {
-				headers: { accept: 'application/json' }
-			});
+			const res = await fetch(
+				'/portfolio/watchlist/quotes?list=' + encodeURIComponent(vm.selectedListID),
+				{
+					headers: { accept: 'application/json' }
+				}
+			);
 			if (!res.ok) return null;
 			return (await res.json()) as WatchlistQuotesResponse;
 		},
@@ -66,7 +73,9 @@
 		refetchOnWindowFocus: true,
 		staleTime: 0
 	}));
-	const quotes = $derived(new Map<string, WatchlistQuoteVM>((quotesQuery.data?.rows ?? []).map((q) => [q.id, q])));
+	const quotes = $derived(
+		new Map<string, WatchlistQuoteVM>((quotesQuery.data?.rows ?? []).map((q) => [q.id, q]))
+	);
 	const updatedAt = $derived(quotesQuery.data?.updatedAt ?? '');
 
 	// Add dialog: market search (Go: GET /portfolio/watchlist/search → /v1/assets/search?limit=8).
@@ -83,7 +92,11 @@
 			if (!res.ok) return [];
 			const items = (await res.json()) as { symbol?: string; name?: string; exchange?: string }[];
 			return (items ?? [])
-				.map((r) => ({ symbol: (r.symbol ?? '').trim(), name: (r.name ?? '').trim(), exchange: (r.exchange ?? '').trim() }))
+				.map((r) => ({
+					symbol: (r.symbol ?? '').trim(),
+					name: (r.name ?? '').trim(),
+					exchange: (r.exchange ?? '').trim()
+				}))
 				.filter((r) => r.symbol !== '');
 		}
 	}));
@@ -99,7 +112,9 @@
 	// DELETE /portfolio/watchlist/items/{id} → backend DELETE /v1/watchlist/{id}.
 	async function removeRow(row: WatchlistRowVM) {
 		if (!confirm('Remove ' + row.symbol + ' from watchlist?')) return;
-		const res = await fetch('/api/v1/watchlist/' + encodeURIComponent(row.id), { method: 'DELETE' }).catch(() => null);
+		const res = await fetch('/api/v1/watchlist/' + encodeURIComponent(row.id), {
+			method: 'DELETE'
+		}).catch(() => null);
 		if (!res || (res.status !== 204 && res.status !== 200)) return;
 		removed = new Set([...removed, row.id]);
 		await invalidateAll();
@@ -149,8 +164,9 @@
 						<li class="flex items-center gap-1">
 							<a
 								href={list.href}
-								class={(list.active ? 'watchlist-list-btn watchlist-list-btn-active block w-full text-left' : 'watchlist-list-btn block w-full text-left') +
-									' min-w-0 flex-1'}
+								class={(list.active
+									? 'watchlist-list-btn watchlist-list-btn-active block w-full text-left'
+									: 'watchlist-list-btn block w-full text-left') + ' min-w-0 flex-1'}
 							>
 								{list.name}
 							</a>
@@ -159,7 +175,8 @@
 								aria-label={'Import CSV into theme ' + list.name}
 								data-tui-dialog-trigger=""
 								data-tui-dialog-target="list-action-dialog"
-								onclick={() => openListAction({ kind: 'csv', listID: list.id })}>Import</NativeButton
+								onclick={() => openListAction({ kind: 'csv', listID: list.id })}
+								>Import</NativeButton
 							>
 							<NativeButton
 								class="btn-secondary shrink-0 px-2 py-1 text-xs"
@@ -215,19 +232,28 @@
 					}}
 			>
 				<input type="hidden" name="list_id" value={vm.selectedListID} />
-				<PinesSearchField resultsId="watchlist-search-results" bind:query onsearch={(q) => (searched = q.trim())}>
+				<PinesSearchField
+					resultsId="watchlist-search-results"
+					bind:query
+					onsearch={(q) => (searched = q.trim())}
+				>
 					{#snippet results()}
-						<WatchlistSearchResults results={searched === '' ? [] : (searchQuery.data ?? [])} query={searched} />
+						<WatchlistSearchResults
+							results={searched === '' ? [] : (searchQuery.data ?? [])}
+							query={searched}
+						/>
 					{/snippet}
 				</PinesSearchField>
-				<p class="text-sm text-muted-foreground">Pick a symbol from search results to add it to this list.</p>
+				<p class="text-sm text-muted-foreground">
+					Pick a symbol from search results to add it to this list.
+				</p>
 			</form>
 		</dialog.Content>
 	</dialog.Dialog>
 
 	<!-- watchlistEditModal -->
 	<dialog.Dialog id="watchlist-edit-dialog" bind:open={editOpen}>
-		<dialog.Content class="glass-card vigil-modal-panel border-0 p-6 md:p-8 sm:max-w-2xl">
+		<dialog.Content class="glass-card vigil-modal-panel border-0 p-6 sm:max-w-2xl md:p-8">
 			<div id="watchlist-edit-panel">
 				{#if editVM}
 					{#key editVM}
@@ -240,13 +266,15 @@
 
 	<!-- listActionModal -->
 	<dialog.Dialog id="list-action-dialog" bind:open={listOpen}>
-		<dialog.Content class="glass-card vigil-modal-panel border-0 p-6 md:p-8 sm:max-w-2xl">
+		<dialog.Content class="glass-card vigil-modal-panel border-0 p-6 sm:max-w-2xl md:p-8">
 			<div id="list-action-panel">
 				{#key listActionKey}
 					{#if listAction?.kind === 'list'}
 						<WatchlistListPanel vm={watchlistListForm(vm.lists, listAction.listID)} />
 					{:else if listAction?.kind === 'csv'}
-						<WatchlistCSVImportPanel vm={emptyCSVImportVM(listAction.listID, csvListName(listAction.listID))} />
+						<WatchlistCSVImportPanel
+							vm={emptyCSVImportVM(listAction.listID, csvListName(listAction.listID))}
+						/>
 					{/if}
 				{/key}
 			</div>

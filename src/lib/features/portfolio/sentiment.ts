@@ -1,4 +1,8 @@
-import { buildSentimentBadge, sentimentCoverageLabel, type SentimentBadgeVM } from '#lib/components/norviq/sentiment.js';
+import {
+	buildSentimentBadge,
+	sentimentCoverageLabel,
+	type SentimentBadgeVM
+} from '#lib/components/norviq/sentiment.js';
 
 // pages/portfolio/sentiment_rollup.go — retail sentiment across a whole
 // portfolio or watchlist. Coverage is always shown with the score.
@@ -28,7 +32,15 @@ export function buildSentimentRollup(
 	asOf: string
 ): SentimentRollupVM {
 	if (total === 0) {
-		return { show: false, badge: buildSentimentBadge('', null, null, 0), coverageLabel: '', coverageThin: false, mostBullish: '', mostBearish: '', asOf: '' };
+		return {
+			show: false,
+			badge: buildSentimentBadge('', null, null, 0),
+			coverageLabel: '',
+			coverageThin: false,
+			mostBullish: '',
+			mostBearish: '',
+			asOf: ''
+		};
 	}
 	return {
 		show: true,

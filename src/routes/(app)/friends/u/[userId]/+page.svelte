@@ -18,7 +18,11 @@
 	import AchievementIcon from '#lib/features/social/friends/AchievementIcon.svelte';
 	import FriendButton from '#lib/features/social/friends/FriendButton.svelte';
 	import { boostedForm } from '#lib/features/social/friends/client.js';
-	import { achievementsOn, activityFeedOn, type SocialFlags } from '#lib/features/social/friends/flags.js';
+	import {
+		achievementsOn,
+		activityFeedOn,
+		type SocialFlags
+	} from '#lib/features/social/friends/flags.js';
 	import {
 		count,
 		formatDate,
@@ -38,8 +42,14 @@
 	const status = $derived(userStatus(user));
 	const cfg = $derived(data.social as SocialFlags);
 	const showcase = $derived((data.profile.showcase ?? []).slice(0, 3));
-	const reasonOptions = $derived<Option[]>(SocialReportReasons.map((r) => ({ value: r, label: t(reportReasonLabel(r)) })));
-	const hidden = $derived(data.profile.xpLevel == null && data.profile.streakDays == null && data.profile.badgeCount == null);
+	const reasonOptions = $derived<Option[]>(
+		SocialReportReasons.map((r) => ({ value: r, label: t(reportReasonLabel(r)) }))
+	);
+	const hidden = $derived(
+		data.profile.xpLevel == null &&
+			data.profile.streakDays == null &&
+			data.profile.badgeCount == null
+	);
 </script>
 
 <svelte:head>
@@ -82,13 +92,19 @@
 			{/if}
 		</div>
 		{#if hidden}
-			<p class="mt-3 text-subhead text-muted-foreground">{t('They keep their progress private.')}</p>
+			<p class="mt-3 text-subhead text-muted-foreground">
+				{t('They keep their progress private.')}
+			</p>
 		{/if}
 		{#if achievementsOn(cfg) && showcase.length > 0}
 			<ul class="mt-4 flex flex-wrap gap-2" aria-label={t('Showcase')}>
 				{#each showcase as entry (entry.key + entry.tier)}
-					<li class="achievement-chip inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-subhead">
-						<span aria-hidden="true"><AchievementIcon iconKey={entry.iconKey} class="h-4 w-4" /></span>
+					<li
+						class="achievement-chip inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-subhead"
+					>
+						<span aria-hidden="true"
+							><AchievementIcon iconKey={entry.iconKey} class="h-4 w-4" /></span
+						>
 						<span>{entry.title}</span>
 						{#if entry.tier}
 							<span class="text-muted-foreground">{t(tierLabelID(entry.tier))}</span>
@@ -97,8 +113,9 @@
 				{/each}
 			</ul>
 			{#if activityFeedOn(cfg)}
-				<a class="mt-3 inline-block text-subhead font-medium underline underline-offset-4" href={'/friends/u/' + user.id + '/achievements'}
-					>{t('See all')}</a
+				<a
+					class="mt-3 inline-block text-subhead font-medium underline underline-offset-4"
+					href={'/friends/u/' + user.id + '/achievements'}>{t('See all')}</a
 				>
 			{/if}
 		{/if}
@@ -108,7 +125,11 @@
 			<vigil.PanelHeader id="profile-manage-title" title={t('More')} />
 			<div class="mt-3 flex flex-wrap gap-2">
 				{#if status === Friendship.Friends}
-					<form method="post" action={'/friends/u/' + user.id + '/unfriend'} {@attach boostedForm(t('Remove this friend?'))}>
+					<form
+						method="post"
+						action={'/friends/u/' + user.id + '/unfriend'}
+						{@attach boostedForm(t('Remove this friend?'))}
+					>
 						<SecondarySubmitButton class="w-auto px-4">
 							<UserMinus class="h-4 w-4" />
 							{t('Remove friend')}
@@ -119,7 +140,9 @@
 					method="post"
 					action={'/friends/u/' + user.id + '/block'}
 					{@attach boostedForm(
-						t("Block them? They won't be able to find you, message you or see your progress. They aren't told you blocked them.")
+						t(
+							"Block them? They won't be able to find you, message you or see your progress. They aren't told you blocked them."
+						)
 					)}
 				>
 					<SecondarySubmitButton class="w-auto px-4">
@@ -130,11 +153,37 @@
 			</div>
 		</vigil.Panel>
 		<vigil.Panel class="mt-6" titleID="profile-report-title">
-			<vigil.PanelHeader id="profile-report-title" title={t('Report')} desc={t('Thanks. We review every report within 24 hours.')} />
-			<form method="post" action={'/friends/u/' + user.id + '/report'} class="mt-3 space-y-4" {@attach boostedForm()}>
-				<SelectField id="report-reason" name="reason" label={t('Why are you reporting them?')} options={reasonOptions} required />
-				<TextareaField id="report-note" name="note" label={t('Details (optional)')} rows={3} maxlength={1000} />
-				<CheckboxField id="report-also-block" name="alsoBlock" value="1" label={t('Also block') + ' @' + user.username} />
+			<vigil.PanelHeader
+				id="profile-report-title"
+				title={t('Report')}
+				desc={t('Thanks. We review every report within 24 hours.')}
+			/>
+			<form
+				method="post"
+				action={'/friends/u/' + user.id + '/report'}
+				class="mt-3 space-y-4"
+				{@attach boostedForm()}
+			>
+				<SelectField
+					id="report-reason"
+					name="reason"
+					label={t('Why are you reporting them?')}
+					options={reasonOptions}
+					required
+				/>
+				<TextareaField
+					id="report-note"
+					name="note"
+					label={t('Details (optional)')}
+					rows={3}
+					maxlength={1000}
+				/>
+				<CheckboxField
+					id="report-also-block"
+					name="alsoBlock"
+					value="1"
+					label={t('Also block') + ' @' + user.username}
+				/>
 				<SubmitButton class="w-auto px-4">
 					<Flag class="h-4 w-4" />
 					{t('Send report')}

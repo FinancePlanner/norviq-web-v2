@@ -1,6 +1,10 @@
 import { error, redirect, type RequestHandler } from '@sveltejs/kit';
 import { parseSlugCode } from '#lib/features/public/articles/articles.js';
-import { afterActionLocation, reportArticle, requireArticles } from '#lib/features/public/articles/articles.server.js';
+import {
+	afterActionLocation,
+	reportArticle,
+	requireArticles
+} from '#lib/features/public/articles/articles.server.js';
 
 // POST /articles/{code}/report → ArticlesHandler.Report
 export const POST: RequestHandler = async (event) => {

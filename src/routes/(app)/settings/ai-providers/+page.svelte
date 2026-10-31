@@ -1,7 +1,12 @@
 <script lang="ts">
 	// settings.AIProvidersPage (internal/pages/settings/ai_providers.templ).
 	import { enhance } from '$app/forms';
-	import { Field, FormErrorBanner, SubmitButton, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		Field,
+		FormErrorBanner,
+		SubmitButton,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import AIConsentSettingsCard from '#lib/features/settings-admin/ai-providers/AIConsentSettingsCard.svelte';
@@ -13,7 +18,8 @@
 	const errorMessage = $derived(form?.errorMessage ?? data.errorMessage);
 
 	const confirmDisconnect = withSpinner(({ cancel }) => {
-		if (!confirm(t("Disconnect this key? The assistant will go back to using Norviq's key."))) cancel();
+		if (!confirm(t("Disconnect this key? The assistant will go back to using Norviq's key.")))
+			cancel();
 	});
 </script>
 
@@ -27,7 +33,9 @@
 		backHref="/settings"
 		backLabel={t('← Settings')}
 		title={t('AI providers')}
-		subtitle={t('Use your own Anthropic or OpenAI key. Norviq stores it encrypted and never shows it again.')}
+		subtitle={t(
+			'Use your own Anthropic or OpenAI key. Norviq stores it encrypted and never shows it again.'
+		)}
 	>
 		<AIConsentSettingsCard vm={data.consent} />
 		<div id="ai-providers-feedback">
@@ -49,7 +57,7 @@
 				<div class="ai-provider-head">
 					<div>
 						<h2 class="text-lg leading-none font-semibold tracking-tight">{row.title}</h2>
-						<p class="text-sm leading-relaxed text-muted-foreground mt-1">{row.label}</p>
+						<p class="mt-1 text-sm leading-relaxed text-muted-foreground">{row.label}</p>
 					</div>
 					<span class="ai-provider-status ai-provider-status-{row.statusTone}">
 						{#if row.connected}
@@ -59,11 +67,16 @@
 						{/if}
 					</span>
 				</div>
-				<p class="text-xs mt-2 text-muted-foreground">{row.statusText}</p>
+				<p class="mt-2 text-xs text-muted-foreground">{row.statusText}</p>
 				{#if row.connected && row.lastUsed !== ''}
 					<p class="text-xs text-muted-foreground">{t('Last used')} · {row.lastUsed}</p>
 				{/if}
-				<form class="ai-provider-form mt-4 space-y-3" method="POST" action="?/connect" use:enhance={withSpinner()}>
+				<form
+					class="ai-provider-form mt-4 space-y-3"
+					method="POST"
+					action="?/connect"
+					use:enhance={withSpinner()}
+				>
 					<input type="hidden" name="provider" value={row.provider} />
 					<Field
 						id={'ai-key-' + row.provider}

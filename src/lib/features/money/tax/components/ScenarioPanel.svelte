@@ -17,7 +17,10 @@
 <section class="glass-card p-6">
 	<h3 class="text-xl font-semibold">Harvest now vs hold</h3>
 	<div class="mt-4 grid gap-4 sm:grid-cols-3">
-		<vigil.Metric label="Hold · current year" value={money(s.baseline.currentYearTax)} /><vigil.Metric
+		<vigil.Metric
+			label="Hold · current year"
+			value={money(s.baseline.currentYearTax)}
+		/><vigil.Metric
 			label="Harvest · current year"
 			value={money(s.harvestNow.currentYearTax)}
 		/><vigil.Metric label="Estimated net benefit" value={money(s.estimatedNetBenefit)} />
@@ -48,17 +51,25 @@
 				<div class="rounded-lg border border-current/10 p-4">
 					<div class="flex flex-wrap items-center justify-between gap-2">
 						<h4 class="font-semibold">Allocation before and after</h4>
-						<span class="text-xs text-muted-foreground">Largest change {sprintfFixed(impact.maximumWeightChange * 100, 2)}%</span>
+						<span class="text-xs text-muted-foreground"
+							>Largest change {sprintfFixed(impact.maximumWeightChange * 100, 2)}%</span
+						>
 					</div>
 					<div class="mt-3 overflow-x-auto">
 						<table.Table class="w-full text-left text-sm">
-							<thead><tr class="border-b border-current/10"><th class="py-2">Holding</th><th>Before</th><th>After</th><th>Change</th></tr></thead>
+							<thead
+								><tr class="border-b border-current/10"
+									><th class="py-2">Holding</th><th>Before</th><th>After</th><th>Change</th></tr
+								></thead
+							>
 							<tbody>
 								{#each impact.changes as change, j (j)}
 									<tr class="border-b border-current/5"
-										><td class="py-2 font-medium">{change.symbol}</td><td>{sprintfFixed(change.beforeWeight * 100, 2)}%</td><td
-											>{sprintfFixed(change.afterWeight * 100, 2)}%</td
-										><td>{signedPct((change.afterWeight - change.beforeWeight) * 100)}</td></tr
+										><td class="py-2 font-medium">{change.symbol}</td><td
+											>{sprintfFixed(change.beforeWeight * 100, 2)}%</td
+										><td>{sprintfFixed(change.afterWeight * 100, 2)}%</td><td
+											>{signedPct((change.afterWeight - change.beforeWeight) * 100)}</td
+										></tr
 									>
 								{/each}
 							</tbody>
@@ -72,6 +83,8 @@
 		<p class="mt-2 text-sm text-warning">{warning}</p>
 	{/each}
 	<form class="mt-5" method="POST" action="/tax?/actionPlans" use:enhance={submit}>
-		<input type="hidden" name="scenarioId" value={s.id} /><SubmitButton>Create action plan</SubmitButton>
+		<input type="hidden" name="scenarioId" value={s.id} /><SubmitButton
+			>Create action plan</SubmitButton
+		>
 	</form>
 </section>

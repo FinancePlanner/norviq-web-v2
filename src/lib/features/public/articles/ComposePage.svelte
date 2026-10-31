@@ -57,16 +57,32 @@
 
 <div class="mx-auto w-full max-w-3xl px-6 py-8">
 	<h1 class="text-2xl font-semibold">{vm.heading}</h1>
-	<p class="mt-1 text-sm text-muted-foreground">Your article is public and shows on each ticker's page. {DISCLAIMER}</p>
+	<p class="mt-1 text-sm text-muted-foreground">
+		Your article is public and shows on each ticker's page. {DISCLAIMER}
+	</p>
 	{#if vm.error !== ''}
-		<p role="alert" class="mt-4 rounded-lg border border-[var(--color-danger)] p-3 text-sm">{vm.error}</p>
+		<p role="alert" class="mt-4 rounded-lg border border-[var(--color-danger)] p-3 text-sm">
+			{vm.error}
+		</p>
 	{/if}
 	{#if !vm.blocked}
-		<form method="post" action={vm.action} enctype="multipart/form-data" class="mt-6 space-y-5" use:enhance={submit}>
+		<form
+			method="post"
+			action={vm.action}
+			enctype="multipart/form-data"
+			class="mt-6 space-y-5"
+			use:enhance={submit}
+		>
 			{#if vm.form.idempotencyKey !== ''}
 				<input type="hidden" name="idempotency_key" value={vm.form.idempotencyKey} />
 			{/if}
-			<Field name="title" label="Title" value={vm.form.title} required placeholder="Why 2027 could reprice NextDecade" />
+			<Field
+				name="title"
+				label="Title"
+				value={vm.form.title}
+				required
+				placeholder="Why 2027 could reprice NextDecade"
+			/>
 			<Field
 				name="tickers"
 				label="Tickers"
@@ -77,7 +93,9 @@
 			/>
 			<fieldset class="space-y-2">
 				<legend class="text-sm font-medium">Key points</legend>
-				<p class="text-xs text-muted-foreground">One to three one-line takeaways. They lead the article and the share card.</p>
+				<p class="text-xs text-muted-foreground">
+					One to three one-line takeaways. They lead the article and the share card.
+				</p>
 				{#each vm.form.bullets as b, i (i)}
 					<Field
 						name={'bullet' + (i + 1)}
@@ -113,10 +131,17 @@
 				placeholder="I hold a position in $NEXT."
 				description={'Required. For example: "No position", "I hold shares", "I may trade within 72 hours".'}
 			/>
-			<Field name="cover" label="Cover image (optional)" type="file" accept="image/jpeg,image/png,image/webp" />
+			<Field
+				name="cover"
+				label="Cover image (optional)"
+				type="file"
+				accept="image/jpeg,image/png,image/webp"
+			/>
 			{#if vm.form.coverImageID !== ''}
 				<input type="hidden" name="cover_image_id" value={vm.form.coverImageID} />
-				<p class="text-xs text-muted-foreground">The current cover stays unless you choose a new one.</p>
+				<p class="text-xs text-muted-foreground">
+					The current cover stays unless you choose a new one.
+				</p>
 			{/if}
 			<SubmitButton>{vm.submit}</SubmitButton>
 		</form>

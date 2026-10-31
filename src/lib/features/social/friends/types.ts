@@ -76,7 +76,15 @@ export interface SocialInviteRedeem {
 }
 
 /** api.SocialReportReasons, in display order. */
-export const SocialReportReasons = ['spam', 'harassment', 'hate', 'scam', 'impersonation', 'inappropriate', 'other'];
+export const SocialReportReasons = [
+	'spam',
+	'harassment',
+	'hate',
+	'scam',
+	'impersonation',
+	'inappropriate',
+	'other'
+];
 
 export interface SocialXImportStartResponse {
 	flowId: string;
@@ -205,7 +213,9 @@ export interface CongratsVM {
 // ---- viewmodel.go helpers ----
 
 export function checkedInToday(vm: Pick<XPCardVM, 'today' | 'streaks'>): boolean {
-	return !!vm.today && !!vm.streaks?.lastCheckInDate && vm.streaks.lastCheckInDate.startsWith(vm.today);
+	return (
+		!!vm.today && !!vm.streaks?.lastCheckInDate && vm.streaks.lastCheckInDate.startsWith(vm.today)
+	);
 }
 
 export function feedPath(cursor: string): string {
@@ -216,7 +226,12 @@ export function xpHistoryPath(cursor: string): string {
 	return cursor ? '/xp?' + new URLSearchParams({ cursor }).toString() : '/xp';
 }
 
-export const LeaderboardMetrics = [Leaderboard.XP, Leaderboard.CheckInStreak, Leaderboard.BudgetStreak, Leaderboard.ReturnPercent];
+export const LeaderboardMetrics = [
+	Leaderboard.XP,
+	Leaderboard.CheckInStreak,
+	Leaderboard.BudgetStreak,
+	Leaderboard.ReturnPercent
+];
 export const LeaderboardPeriods = [Leaderboard.Week, Leaderboard.Month];
 
 export function metricLabel(metric: string): string {

@@ -2,7 +2,11 @@ import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
-import { confirmAction, formOf, parseUUID } from '#lib/features/dashboard/assistant/assistant.server.js';
+import {
+	confirmAction,
+	formOf,
+	parseUUID
+} from '#lib/features/dashboard/assistant/assistant.server.js';
 
 // POST /assistant/actions/{id}/confirm (handlers.AssistantConfirmAction).
 // Go swapped the answered card into #assistant-action-{id}; this answers the

@@ -2,7 +2,11 @@
 	// Port of friends.templ FacebookImportPage + facebookDisconnectForm.
 	// Facebook only shares friends who also connected, so an empty list is the
 	// common case and says why.
-	import { EmptyStateInline, FormErrorBanner, SecondarySubmitButton } from '#lib/components/norviq/index.js';
+	import {
+		EmptyStateInline,
+		FormErrorBanner,
+		SecondarySubmitButton
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import FriendButton from '#lib/features/social/friends/FriendButton.svelte';
@@ -23,7 +27,9 @@
 	backHref="/friends"
 	backLabel={t('← Friends')}
 	title={t('Find friends from Facebook')}
-	subtitle={t('Only friends who also connected Facebook to Norviq appear. Nothing is posted to Facebook.')}
+	subtitle={t(
+		'Only friends who also connected Facebook to Norviq appear. Nothing is posted to Facebook.'
+	)}
 >
 	<FormErrorBanner message={data.errorMessage ? t(data.errorMessage) : ''} />
 	{#if data.matches}
@@ -32,14 +38,18 @@
 			{#if data.matches.matches.length === 0 && data.matches.friendsGranted === 0}
 				<EmptyStateInline
 					title={t("Facebook didn't share your friends list")}
-					description={t('Connect Facebook again and allow access to your friends list, or invite friends with a link.')}
+					description={t(
+						'Connect Facebook again and allow access to your friends list, or invite friends with a link.'
+					)}
 					actionLabel={t('Invite friends')}
 					actionHref="/friends/invite"
 				/>
 			{:else if data.matches.matches.length === 0}
 				<EmptyStateInline
 					title={t('No Facebook friends here yet')}
-					description={t('Only friends who also connected Facebook to Norviq appear. Nothing is posted to Facebook.')}
+					description={t(
+						'Only friends who also connected Facebook to Norviq appear. Nothing is posted to Facebook.'
+					)}
 					actionLabel={t('Invite friends')}
 					actionHref="/friends/invite"
 				/>

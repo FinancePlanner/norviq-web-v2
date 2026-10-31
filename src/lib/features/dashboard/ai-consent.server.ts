@@ -30,7 +30,11 @@ export async function hasAIConsent(event: RequestEvent): Promise<boolean> {
 
 /** api.IsAIConsentRequired: the backend's 403 AI_CONSENT_REQUIRED refusal. */
 export function isAIConsentRequired(err: unknown): boolean {
-	return isAPIError(err) && err.status === 403 && (err.reason === AI_CONSENT_REQUIRED || err.code === AI_CONSENT_REQUIRED);
+	return (
+		isAPIError(err) &&
+		err.status === 403 &&
+		(err.reason === AI_CONSENT_REQUIRED || err.code === AI_CONSENT_REQUIRED)
+	);
 }
 
 /** SafeLocalPath: reduce an absolute URL on this host, or a path, to a same-site path + query. */
@@ -70,7 +74,8 @@ export function safeLocalPath(raw: string | null | undefined, host: string): str
 export function aiConsentReturnPath(event: RequestEvent, opts: { self?: boolean } = {}): string {
 	const host = event.url.host;
 	const candidates: (string | null)[] = [];
-	if ((opts.self ?? event.request.method === 'GET')) candidates.push(event.url.pathname + event.url.search);
+	if (opts.self ?? event.request.method === 'GET')
+		candidates.push(event.url.pathname + event.url.search);
 	candidates.push(event.request.headers.get('referer'));
 	for (const c of candidates) {
 		const path = safeLocalPath(c, host);
@@ -81,5 +86,9 @@ export function aiConsentReturnPath(event: RequestEvent, opts: { self?: boolean 
 
 /** The JSON shape RenderAIConsentRequired gives script (non-HTML) callers. */
 export function aiConsentRequiredJSON(next: string) {
-	return { error: true, reason: AI_CONSENT_REQUIRED, consentUrl: '/ai-consent?next=' + encodeURIComponent(next) };
+	return {
+		error: true,
+		reason: AI_CONSENT_REQUIRED,
+		consentUrl: '/ai-consent?next=' + encodeURIComponent(next)
+	};
 }

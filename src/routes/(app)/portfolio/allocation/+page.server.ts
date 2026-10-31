@@ -2,7 +2,10 @@ import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import type { components } from '#lib/api/schema.js';
 import { apiJSON } from '#lib/server/api.js';
-import { isUUID, loadAllocationViewModel } from '#lib/features/portfolio/analytics/allocation.server.js';
+import {
+	isUUID,
+	loadAllocationViewModel
+} from '#lib/features/portfolio/analytics/allocation.server.js';
 
 // GET /portfolio/allocation (handlers.PortfolioAllocation) plus the portfolio
 // list fragments and mutations (handlers/portfolio_lists.go):
@@ -41,7 +44,12 @@ async function submitPortfolioList(event: RequestEvent, listID: string) {
 	} else {
 		if (!isUUID(listID)) return fail(400, { listID, listError: 'Invalid list.', name });
 		try {
-			await apiJSON<S['PortfolioListResponse']>(event, 'PATCH', `/v1/portfolio/lists/${listID.toLowerCase()}`, body);
+			await apiJSON<S['PortfolioListResponse']>(
+				event,
+				'PATCH',
+				`/v1/portfolio/lists/${listID.toLowerCase()}`,
+				body
+			);
 		} catch {
 			return fail(502, { listID, listError: 'Could not update list.', name });
 		}

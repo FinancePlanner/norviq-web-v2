@@ -12,12 +12,28 @@ export const DISMISS_FAILED = "Couldn't hide that just now — try again in a mo
 export const STEP_TIMEOUT_MS = 5 * 60 * 1000;
 
 export const progressLabel = (done: number) => `${done} of ${STEPS.length}`;
-export const isStep = (s: unknown): s is Step => s === 'add_holding' || s === 'set_budget' || s === 'set_goal';
+export const isStep = (s: unknown): s is Step =>
+	s === 'add_holding' || s === 'set_budget' || s === 'set_goal';
 
 const META: Record<Step, { title: string; line: string; target: string; path: string }> = {
-	add_holding: { title: 'Add a holding', line: 'Add one stock or ETF you own.', target: 'holding-add', path: '/portfolio' },
-	set_budget: { title: 'Set your budget', line: 'Enter your monthly take-home pay.', target: 'budget-salary', path: '/expenses' },
-	set_goal: { title: 'Set a goal', line: "Pick one thing you're saving for.", target: 'goal-create', path: '/goals' }
+	add_holding: {
+		title: 'Add a holding',
+		line: 'Add one stock or ETF you own.',
+		target: 'holding-add',
+		path: '/portfolio'
+	},
+	set_budget: {
+		title: 'Set your budget',
+		line: 'Enter your monthly take-home pay.',
+		target: 'budget-salary',
+		path: '/expenses'
+	},
+	set_goal: {
+		title: 'Set a goal',
+		line: "Pick one thing you're saving for.",
+		target: 'goal-create',
+		path: '/goals'
+	}
 };
 
 export const stepTitle = (s: Step) => META[s].title;
@@ -56,7 +72,11 @@ export interface Progress {
 export const allDone = (p: Progress) => p.next === '';
 
 export function progressOf(p: GuideProgressInput | null): Progress {
-	const out: Progress = { done: { add_holding: false, set_budget: false, set_goal: false }, next: '', count: 0 };
+	const out: Progress = {
+		done: { add_holding: false, set_budget: false, set_goal: false },
+		next: '',
+		count: 0
+	};
 	for (const step of STEPS) {
 		const done = !!p && stepDone(step, p);
 		out.done[step] = done;

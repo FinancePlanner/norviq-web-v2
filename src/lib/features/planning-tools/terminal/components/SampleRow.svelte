@@ -23,7 +23,7 @@
 			<span class="font-semibold">{row.ticker}</span>
 			<span class="ml-1 rounded bg-muted px-1.5 py-0.5 text-[0.65rem] font-semibold">Sample</span>
 		</td>
-		<td class="tabular-nums text-muted-foreground">{row.sharesOutstandingCompact}</td>
+		<td class="text-muted-foreground tabular-nums">{row.sharesOutstandingCompact}</td>
 		<td class="tabular-nums">{row.terminalShareCountCompact}</td>
 		<td class="tabular-nums">{row.terminalMarketCapCompact}</td>
 		<td class="tabular-nums">{row.terminalSharePrice}</td>
@@ -40,8 +40,15 @@
 		</td>
 		<td>
 			<div class="flex flex-wrap gap-1">
-				<PrimaryButton aria-label="Use this row" onclick={() => action('/terminal/positions', SAMPLE_CREATE_VALS)}>Use this row</PrimaryButton>
-				<GhostButton aria-label="Dismiss the sample" onclick={() => action('/terminal/sample/dismiss')}>Dismiss</GhostButton>
+				<PrimaryButton
+					aria-label="Use this row"
+					onclick={() => action('/terminal/positions', SAMPLE_CREATE_VALS)}
+					>Use this row</PrimaryButton
+				>
+				<GhostButton
+					aria-label="Dismiss the sample"
+					onclick={() => action('/terminal/sample/dismiss')}>Dismiss</GhostButton
+				>
 			</div>
 		</td>
 	</tr>

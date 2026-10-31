@@ -58,14 +58,19 @@ export function cardLabel(id: string): string {
 /** CardMatchesTab mirrors iOS cardMatchesSelectedTab. */
 export function cardMatchesTab(cardID: string, tab: string): boolean {
 	const t = normalizeReportTab(tab);
-	return cardCatalog().find((c) => c.id === cardID)?.tabs.includes(t) ?? false;
+	return (
+		cardCatalog()
+			.find((c) => c.id === cardID)
+			?.tabs.includes(t) ?? false
+	);
 }
 
 export function isWideCard(cardID: string): boolean {
 	return cardCatalog().find((c) => c.id === cardID)?.wide ?? false;
 }
 
-export const reportCardSlotClass = (wide: boolean) => (wide ? 'report-card-slot report-card-wide' : 'report-card-slot');
+export const reportCardSlotClass = (wide: boolean) =>
+	wide ? 'report-card-slot report-card-wide' : 'report-card-slot';
 
 /** reportTabs: the segmented control on every /reports page. */
 export function reportTabs(): SegmentItem[] {
@@ -80,4 +85,5 @@ export function reportTabs(): SegmentItem[] {
 }
 
 /** reportChangeClass */
-export const reportChangeClass = (positive: boolean) => (positive ? 'report-change report-change-positive' : 'report-change report-change-negative');
+export const reportChangeClass = (positive: boolean) =>
+	positive ? 'report-change report-change-positive' : 'report-change report-change-negative';

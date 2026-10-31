@@ -11,7 +11,8 @@ export const POST: RequestHandler = async (event) => {
 	const form = await readForm(event);
 	const raw = String(form.get('seq') ?? '');
 	const seq = /^[+-]?\d+$/.test(raw) ? Number(raw) : NaN;
-	if (!channelID || !Number.isSafeInteger(seq) || seq <= 0) return text('bad request', { status: 400 });
+	if (!channelID || !Number.isSafeInteger(seq) || seq <= 0)
+		return text('bad request', { status: 400 });
 	try {
 		await markGroupChannelRead(event, channelID, seq);
 	} catch {

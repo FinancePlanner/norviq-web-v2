@@ -3,7 +3,10 @@ import type { Actions, PageServerLoad } from './$types';
 import { loadBillingContext } from '#lib/server/app-context.js';
 import { isPro as billingIsPro } from '#lib/billing.js';
 import { pilotsCall, requirePilots } from '#lib/features/settings-admin/pilots/gate.server.js';
-import { pilotForForm, pilotWatchlistOptions } from '#lib/features/settings-admin/pilots/data.server.js';
+import {
+	pilotForForm,
+	pilotWatchlistOptions
+} from '#lib/features/settings-admin/pilots/data.server.js';
 import {
 	DEFAULT_PILOT_STARTING_CAPITAL,
 	TARGET_NEW_WATCHLIST,
@@ -13,7 +16,11 @@ import {
 	pilotFollowErrorMessage,
 	uuidString
 } from '#lib/features/settings-admin/pilots/vm.js';
-import type { BillingUpgradeRequiredResponse, FollowFormVM, PilotFollowResponse } from '#lib/features/settings-admin/pilots/types.js';
+import type {
+	BillingUpgradeRequiredResponse,
+	FollowFormVM,
+	PilotFollowResponse
+} from '#lib/features/settings-admin/pilots/types.js';
 
 // handlers.PilotFollowForm: the follow form for one pilot.
 export const load: PageServerLoad = async (event) => {
@@ -75,7 +82,11 @@ export const actions: Actions = {
 			vm.watchlists = await pilotWatchlistOptions(event);
 			return formError(vm);
 		}
-		const notice = 'Now following ' + res.data.pilot.displayName + '. Every trade here is simulated.';
-		redirect(303, '/pilot-follows/' + uuidString(res.data.id) + '?' + new URLSearchParams({ notice }).toString());
+		const notice =
+			'Now following ' + res.data.pilot.displayName + '. Every trade here is simulated.';
+		redirect(
+			303,
+			'/pilot-follows/' + uuidString(res.data.id) + '?' + new URLSearchParams({ notice }).toString()
+		);
 	}
 };

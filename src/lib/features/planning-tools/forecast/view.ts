@@ -6,12 +6,23 @@ import type { ForecastVM } from './types.js';
 export const money = (value: number, currency: string) => `${currency} ${formatFloat(value, 2)}`;
 
 /** decimal: "%.2f", or "" for nil. */
-export const decimal = (value: number | null | undefined) => (value == null ? '' : formatFloat(value, 2));
+export const decimal = (value: number | null | undefined) =>
+	value == null ? '' : formatFloat(value, 2);
 
 /** percentValue: "%.2f" of value*100. */
 export const percentValue = (value: number) => formatFloat(value * 100, 2);
 
-type Field = 'name' | 'baseCurrency' | 'horizon' | 'pathCount' | 'income' | 'spending' | 'target' | 'incomeGrowth' | 'spendingGrowth' | 'inflation';
+type Field =
+	| 'name'
+	| 'baseCurrency'
+	| 'horizon'
+	| 'pathCount'
+	| 'income'
+	| 'spending'
+	| 'target'
+	| 'incomeGrowth'
+	| 'spendingGrowth'
+	| 'inflation';
 
 /** forecastValue(vm, field) */
 export function forecastValue(vm: ForecastVM, field: Field): string {
@@ -58,5 +69,7 @@ export function forecastValue(vm: ForecastVM, field: Field): string {
 	return '';
 }
 
-export const forecastAction = (vm: ForecastVM) => (vm.editing ? '/forecast/' + vm.editing.id : '/forecast');
-export const forecastSubmitLabel = (vm: ForecastVM) => (vm.editing ? 'Update forecast' : 'Save forecast');
+export const forecastAction = (vm: ForecastVM) =>
+	vm.editing ? '/forecast/' + vm.editing.id : '/forecast';
+export const forecastSubmitLabel = (vm: ForecastVM) =>
+	vm.editing ? 'Update forecast' : 'Save forecast';

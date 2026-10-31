@@ -17,5 +17,7 @@
 </script>
 
 {#if (query.data ?? 0) > 0}
-	<span class="nav-unread-badge" aria-label="{query.data} unread">{(query.data ?? 0) > 99 ? '99+' : query.data}</span>
+	<span class="nav-unread-badge" aria-label="{query.data} unread"
+		>{(query.data ?? 0) > 99 ? '99+' : query.data}</span
+	>
 {/if}

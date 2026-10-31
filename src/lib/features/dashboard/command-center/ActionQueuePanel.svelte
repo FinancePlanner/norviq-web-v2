@@ -16,7 +16,10 @@
 	async function markRead(item: ActionItemVM) {
 		pending = item.id;
 		try {
-			const res = await fetch(item.readHref, { method: 'POST', headers: { accept: 'application/json' } });
+			const res = await fetch(item.readHref, {
+				method: 'POST',
+				headers: { accept: 'application/json' }
+			});
 			if (res.ok) refreshed = (await res.json()) as ActionQueueVM;
 		} finally {
 			pending = '';

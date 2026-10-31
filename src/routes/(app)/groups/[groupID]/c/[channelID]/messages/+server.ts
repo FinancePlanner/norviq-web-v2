@@ -12,7 +12,11 @@ import {
 	readForm
 } from '#lib/features/social/groups/groups.server.js';
 import { buildRows, chatHref } from '#lib/features/social/groups/view.js';
-import type { GroupMessage, GroupMessagePage, RowsResponse } from '#lib/features/social/groups/types.js';
+import type {
+	GroupMessage,
+	GroupMessagePage,
+	RowsResponse
+} from '#lib/features/social/groups/types.js';
 
 // GroupsMessages: the rows (Go: MessageRows fragment, here JSON for
 // GroupChat). ?before= pages back for the older sentinel, ?after= catches up
@@ -67,8 +71,10 @@ export const POST: RequestHandler = async (event) => {
 	try {
 		message = await sendGroupMessage(event, channelID, clientID, body);
 	} catch (err) {
-		if (isAPIError(err) && err.status === 429) return text("You're sending messages too fast. Wait a moment.", { status: 429 });
-		if (isAPIError(err) && err.status >= 400 && err.status < 500) return text(boardsErrorText(err), { status: err.status });
+		if (isAPIError(err) && err.status === 429)
+			return text("You're sending messages too fast. Wait a moment.", { status: 429 });
+		if (isAPIError(err) && err.status >= 400 && err.status < 500)
+			return text(boardsErrorText(err), { status: err.status });
 		console.error('group message send failed', err);
 		return text("Couldn't send. Try again.", { status: 502 });
 	}

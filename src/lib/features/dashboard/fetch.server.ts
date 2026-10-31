@@ -37,7 +37,11 @@ export async function fetchJSON<T>(
 			return { data: null, status: res.status, failed: false };
 		}
 		const text = await res.text();
-		return { data: (text ? JSON.parse(text) : null) as T | null, status: res.status, failed: false };
+		return {
+			data: (text ? JSON.parse(text) : null) as T | null,
+			status: res.status,
+			failed: false
+		};
 	} catch (err) {
 		console.warn('backend fetch failed', method, path, err);
 		return { data: null, status: 0, failed: true };

@@ -155,7 +155,13 @@ export interface WorkspaceVM {
 
 /** One cell edit (or AI Accept): RowEditVM, as data instead of oob slots. */
 export type RowEditResult =
-	| { kind: 'edit'; row: RowVM; fields: string[]; clearSuggestion: boolean; footer: FooterVM | null }
+	| {
+			kind: 'edit';
+			row: RowVM;
+			fields: string[];
+			clearSuggestion: boolean;
+			footer: FooterVM | null;
+	  }
 	// Confirmed absent (deleted elsewhere): the row is removed.
 	| { kind: 'gone' }
 	// The re-read failed: nothing changes (HX-Reswap: none, empty body).
@@ -191,7 +197,8 @@ export interface SuggestionVM {
 }
 
 /** An AI lookup answer: a suggestion, or the in-place AI consent card. */
-export type SuggestionResult = { kind: 'suggestion'; vm: SuggestionVM } | { kind: 'consent'; next: string };
+export type SuggestionResult =
+	{ kind: 'suggestion'; vm: SuggestionVM } | { kind: 'consent'; next: string };
 
 export const Cadence = {
 	Weekly: 'weekly',

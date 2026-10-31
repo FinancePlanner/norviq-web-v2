@@ -2,7 +2,11 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
-import { aiConsentRequiredJSON, aiConsentReturnPath, isAIConsentRequired } from '#lib/features/dashboard/ai-consent.server.js';
+import {
+	aiConsentRequiredJSON,
+	aiConsentReturnPath,
+	isAIConsentRequired
+} from '#lib/features/dashboard/ai-consent.server.js';
 import { bookmarkMemo, parseUUID } from '#lib/features/planning-tools/research/research.server.js';
 
 // POST /research/memos/{id}/bookmark (handlers.ResearchMemoBookmark),
@@ -21,7 +25,8 @@ export const POST: RequestHandler = async (event) => {
 	try {
 		return json(await bookmarkMemo(event, id, bookmarked));
 	} catch (err) {
-		if (isAIConsentRequired(err)) return json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
+		if (isAIConsentRequired(err))
+			return json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
 		return new Response('Memo could not be saved\n', { status: 502 });
 	}
 };

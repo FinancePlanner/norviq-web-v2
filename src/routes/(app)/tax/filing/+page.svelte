@@ -2,7 +2,13 @@
 	// Port of norviq-web internal/pages/tax/filing.templ (tax.FilingPage).
 	import { enhance } from '$app/forms';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
-	import { EmptyState, NativeButton, ProGateOverlay, SelectField, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		EmptyState,
+		NativeButton,
+		ProGateOverlay,
+		SelectField,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import { filingMoney, filingTone, yearOptions } from '#lib/features/money/tax/helpers.js';
 
 	let { data } = $props();
@@ -39,9 +45,13 @@
 			{#if vm.taxPackURL !== ''}
 				<p class="mt-4 text-sm text-muted-foreground">
 					Not ready for Pro? Buy just the {vm.taxYear} pack:
-					<a href={vm.taxPackURL} rel="noopener" target="_blank" class="ml-1 underline underline-offset-2"
-						>Buy the {vm.taxYear} filing pack</a
-					>. It unlocks this page and the PDF/CSV for that year only; the app refreshes once the purchase is confirmed.
+					<a
+						href={vm.taxPackURL}
+						rel="noopener"
+						target="_blank"
+						class="ml-1 underline underline-offset-2">Buy the {vm.taxYear} filing pack</a
+					>. It unlocks this page and the PDF/CSV for that year only; the app refreshes once the
+					purchase is confirmed.
 				</p>
 			{/if}
 		</div>
@@ -65,19 +75,28 @@
 		{@const preview = vm.preview}
 		<section class="mt-8" aria-labelledby="filing-summary">
 			<h2 id="filing-summary" class="sr-only">Summary</h2>
-			<p class="text-sm text-muted-foreground">{preview.formName} · {preview.jurisdiction} · rule pack {preview.rulePackVersion}</p>
+			<p class="text-sm text-muted-foreground">
+				{preview.formName} · {preview.jurisdiction} · rule pack {preview.rulePackVersion}
+			</p>
 			<div class="mt-4 grid gap-4 sm:grid-cols-3">
 				<vigil.Metric
 					label="Realised gain"
 					value={filingMoney(preview.summary['totalGain'], preview.reportingCurrency)}
 					sentiment={filingTone(preview.summary['totalGain'])}
 				/>
-				<vigil.Metric label="Dividends (gross)" value={filingMoney(preview.summary['totalDividendsGross'], preview.reportingCurrency)} />
-				<vigil.Metric label="Tax withheld abroad" value={filingMoney(preview.summary['totalWithholding'], preview.reportingCurrency)} />
+				<vigil.Metric
+					label="Dividends (gross)"
+					value={filingMoney(preview.summary['totalDividendsGross'], preview.reportingCurrency)}
+				/>
+				<vigil.Metric
+					label="Tax withheld abroad"
+					value={filingMoney(preview.summary['totalWithholding'], preview.reportingCurrency)}
+				/>
 			</div>
 			{#if vm.provisional}
 				<p class="mt-4 text-sm text-muted-foreground" role="status">
-					Provisional: {vm.taxYear} is not closed yet. The numbers grow as you import trades and dividends; file from the final pack next spring.
+					Provisional: {vm.taxYear} is not closed yet. The numbers grow as you import trades and dividends;
+					file from the final pack next spring.
 				</p>
 			{/if}
 			{#if preview.unsupportedCount > 0}
@@ -97,7 +116,9 @@
 							<thead>
 								<tr>
 									{#each section.columns as column, i (i)}
-										<th scope="col" class="px-2 py-1 text-left font-medium text-muted-foreground">{column}</th>
+										<th scope="col" class="px-2 py-1 text-left font-medium text-muted-foreground"
+											>{column}</th
+										>
 									{/each}
 								</tr>
 							</thead>
@@ -137,7 +158,9 @@
 				</form>
 			</div>
 			<p class="mt-4 max-w-2xl text-xs text-muted-foreground">{preview.disclaimer}</p>
-			<p class="mt-1 text-xs text-muted-foreground">Generated files appear under Workpapers on the tax page.</p>
+			<p class="mt-1 text-xs text-muted-foreground">
+				Generated files appear under Workpapers on the tax page.
+			</p>
 		</section>
 	{/if}
 </vigil.DocumentPage>

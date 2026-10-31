@@ -5,7 +5,9 @@
 	import type { OverviewViewModel } from './types.js';
 
 	let { vm }: { vm: OverviewViewModel } = $props();
-	const chart = $derived(vm.wealthChart ? wealthLine('wealth-chart', vm.wealthChart.labels, vm.wealthChart.values) : null);
+	const chart = $derived(
+		vm.wealthChart ? wealthLine('wealth-chart', vm.wealthChart.labels, vm.wealthChart.values) : null
+	);
 </script>
 
 {#snippet message(text: string)}

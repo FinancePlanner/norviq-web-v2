@@ -33,7 +33,8 @@ export interface BulkPlanItemVM {
 	reallocationEligible: boolean;
 }
 
-const optionalFloat = (v: number | null | undefined) => (v === null || v === undefined ? '' : formatFloat(v, -1));
+const optionalFloat = (v: number | null | undefined) =>
+	v === null || v === undefined ? '' : formatFloat(v, -1);
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -62,9 +63,12 @@ export const load: PageServerLoad = async (event) => {
 	let drift: { snapshotID: string; revision: number } | null = null;
 	if (snapshot) {
 		const res = await client
-			.GET('/v1/budget/snapshots/{snapshotId}/drift', { params: { path: { snapshotId: snapshot.id } } })
+			.GET('/v1/budget/snapshots/{snapshotId}/drift', {
+				params: { path: { snapshotId: snapshot.id } }
+			})
 			.catch(() => null);
-		if (res?.response.ok && res.data) drift = { snapshotID: res.data.snapshotId, revision: res.data.revision };
+		if (res?.response.ok && res.data)
+			drift = { snapshotID: res.data.snapshotId, revision: res.data.revision };
 	}
 
 	const planItems: BulkPlanItemVM[] = [];

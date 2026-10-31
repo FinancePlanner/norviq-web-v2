@@ -24,7 +24,9 @@ export function optionalFloat(value: number | null | undefined): string {
 }
 
 export function workpaperDescription(isPro: boolean): string {
-	return isPro ? 'Generate advisor-review PDF or CSV exports.' : 'Preview report history. Pro unlocks generation and downloads.';
+	return isPro
+		? 'Generate advisor-review PDF or CSV exports.'
+		: 'Preview report history. Pro unlocks generation and downloads.';
 }
 
 export function marketInstruments(vm: TaxPageViewModel): TaxInstrumentMarketOption[] {
@@ -57,7 +59,9 @@ export function lossCategory(value: TaxLossCarryforwardBalanceResponse): string 
 }
 
 export function lossExpiry(value: TaxLossCarryforwardBalanceResponse): string {
-	return value.expiresAfterTaxYear >= 9999 ? 'No statutory expiry' : `Expires after ${value.expiresAfterTaxYear}`;
+	return value.expiresAfterTaxYear >= 9999
+		? 'No statutory expiry'
+		: `Expires after ${value.expiresAfterTaxYear}`;
 }
 
 export function taxationMode(vm: TaxPageViewModel): string {
@@ -88,11 +92,17 @@ export function profileValue(vm: TaxPageViewModel, field: string): string {
 		case 'marginal':
 			return p.marginalIncomeTaxRate != null ? sprintfFixed(p.marginalIncomeTaxRate * 100, 2) : '';
 		case 'short':
-			return p.shortTermCapitalGainsRate != null ? sprintfFixed(p.shortTermCapitalGainsRate * 100, 2) : '';
+			return p.shortTermCapitalGainsRate != null
+				? sprintfFixed(p.shortTermCapitalGainsRate * 100, 2)
+				: '';
 		case 'long':
-			return p.longTermCapitalGainsRate != null ? sprintfFixed(p.longTermCapitalGainsRate * 100, 2) : '';
+			return p.longTermCapitalGainsRate != null
+				? sprintfFixed(p.longTermCapitalGainsRate * 100, 2)
+				: '';
 		case 'remainingAllowance':
-			return p.remainingCapitalIncomeAllowance != null ? sprintfFixed(p.remainingCapitalIncomeAllowance, 2) : '';
+			return p.remainingCapitalIncomeAllowance != null
+				? sprintfFixed(p.remainingCapitalIncomeAllowance, 2)
+				: '';
 		case 'churchTax':
 			return p.churchTaxRate != null ? sprintfFixed(p.churchTaxRate * 100, 2) : '';
 		case 'shortLoss':
@@ -118,14 +128,25 @@ export function valueOptions(values: string[], selected: string, blankLabel: str
 	return opts;
 }
 
-export function labelledOptions(values: string[], labels: string[], selected: string, blankLabel: string): Option[] {
+export function labelledOptions(
+	values: string[],
+	labels: string[],
+	selected: string,
+	blankLabel: string
+): Option[] {
 	const opts: Option[] = [];
 	if (blankLabel) opts.push({ value: '', label: blankLabel, selected: selected === '' });
-	values.forEach((v, i) => opts.push({ value: v, label: i < labels.length ? labels[i] : v, selected: v === selected }));
+	values.forEach((v, i) =>
+		opts.push({ value: v, label: i < labels.length ? labels[i] : v, selected: v === selected })
+	);
 	return opts;
 }
 
-export function accountOptions(vm: TaxPageViewModel, selected: string, blankLabel: string): Option[] {
+export function accountOptions(
+	vm: TaxPageViewModel,
+	selected: string,
+	blankLabel: string
+): Option[] {
 	return labelledOptions(
 		vm.context.accounts.map((a) => a.id),
 		vm.context.accounts.map((a) => a.displayName),
@@ -172,7 +193,8 @@ export function fundLotGroups(vm: TaxPageViewModel): FundLotGroup[] {
 		accountCurrencies.set(account.id, account.baseCurrency);
 	}
 	const symbols = new Map<string, string>();
-	for (const instrument of vm.context.instruments ?? []) symbols.set(instrument.id, instrument.symbol);
+	for (const instrument of vm.context.instruments ?? [])
+		symbols.set(instrument.id, instrument.symbol);
 
 	const groups: FundLotGroup[] = [];
 	const indices = new Map<string, number>();
@@ -275,7 +297,9 @@ export function defaultFilingTaxYear(now: Date): number {
 export function appUserID(raw: string | null | undefined): string {
 	const trimmed = (raw ?? '').trim();
 	if (!trimmed) return '';
-	return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed) ? trimmed.toUpperCase() : trimmed;
+	return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed)
+		? trimmed.toUpperCase()
+		: trimmed;
 }
 
 /**
@@ -302,7 +326,10 @@ export function taxPackCheckoutURL(
 
 /** url.PathEscape */
 function goPathEscape(s: string): string {
-	return encodeURIComponent(s).replace(/[!'()*]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+	return encodeURIComponent(s).replace(
+		/[!'()*]/g,
+		(c) => '%' + c.charCodeAt(0).toString(16).toUpperCase()
+	);
 }
 
 export function taxRedirectTarget(jurisdiction: string, year: number): string {

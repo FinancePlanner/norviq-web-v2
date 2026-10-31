@@ -13,11 +13,18 @@ import {
 // which is Go's BoardsError.
 
 export async function adminListSanctions(event: RequestEvent): Promise<UserSanction[]> {
-	const out = await apiJSON<{ items?: UserSanction[] | null }>(event, 'GET', '/v1/admin/community/sanctions');
+	const out = await apiJSON<{ items?: UserSanction[] | null }>(
+		event,
+		'GET',
+		'/v1/admin/community/sanctions'
+	);
 	return out?.items ?? [];
 }
 
-export function adminCreateSanction(event: RequestEvent, req: CreateSanctionRequest): Promise<UserSanction> {
+export function adminCreateSanction(
+	event: RequestEvent,
+	req: CreateSanctionRequest
+): Promise<UserSanction> {
 	return apiJSON<UserSanction>(event, 'POST', '/v1/admin/community/sanctions', req);
 }
 
@@ -26,12 +33,20 @@ export async function adminRevokeSanction(event: RequestEvent, id: string): Prom
 }
 
 export async function adminListBoardReports(event: RequestEvent): Promise<BoardReportItem[]> {
-	const out = await apiJSON<{ items?: BoardReportItem[] | null }>(event, 'GET', '/v1/admin/community/reports');
+	const out = await apiJSON<{ items?: BoardReportItem[] | null }>(
+		event,
+		'GET',
+		'/v1/admin/community/reports'
+	);
 	return out?.items ?? [];
 }
 
 export async function adminResolveBoardReport(event: RequestEvent, id: string): Promise<void> {
-	await apiJSON(event, 'POST', '/v1/admin/community/reports/' + encodeURIComponent(id) + '/resolve');
+	await apiJSON(
+		event,
+		'POST',
+		'/v1/admin/community/reports/' + encodeURIComponent(id) + '/resolve'
+	);
 }
 
 /**

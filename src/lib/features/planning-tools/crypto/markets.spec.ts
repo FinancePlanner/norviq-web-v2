@@ -1,7 +1,13 @@
 // Ports of norviq-web internal/handlers/crypto_markets_test.go and
 // crypto_data_test.go (the view-model and formatting expectations).
 import { describe, expect, it } from 'vitest';
-import { buildCryptoMarketsVM, cryptoChangePercent, formatCryptoPrice, formatMultiple, normalizeCryptoTimeframe } from './markets.js';
+import {
+	buildCryptoMarketsVM,
+	cryptoChangePercent,
+	formatCryptoPrice,
+	formatMultiple,
+	normalizeCryptoTimeframe
+} from './markets.js';
 import type { CryptoMarketsResponse } from './types.js';
 
 const fixture: CryptoMarketsResponse = {
@@ -15,15 +21,73 @@ const fixture: CryptoMarketsResponse = {
 	attribution: 'Data provided by CoinGecko',
 	summary: { totalMarketCap: 3100000000000, btcDominancePct: 57.2, advancers: 2, decliners: 1 },
 	coins: [
-		{ id: 'bitcoin', symbol: 'BTC', fmpSymbol: 'BTCUSD', name: 'Bitcoin', sector: 'Layer 1', price: 84377, marketCap: 1.7e12, changePct: 4.2, athChangePct: -33, sparkline7d: [1, 2, 3] },
-		{ id: 'solana', symbol: 'SOL', fmpSymbol: 'SOLUSD', name: 'Solana', sector: 'Layer 1', price: 150, marketCap: 8e10, changePct: 9.5, sparkline7d: [] },
-		{ id: 'pepe', symbol: 'PEPE', name: 'Pepe', sector: 'Meme', price: 0.0000091, marketCap: 4e9, changePct: -6.1, sparkline7d: [] }
+		{
+			id: 'bitcoin',
+			symbol: 'BTC',
+			fmpSymbol: 'BTCUSD',
+			name: 'Bitcoin',
+			sector: 'Layer 1',
+			price: 84377,
+			marketCap: 1.7e12,
+			changePct: 4.2,
+			athChangePct: -33,
+			sparkline7d: [1, 2, 3]
+		},
+		{
+			id: 'solana',
+			symbol: 'SOL',
+			fmpSymbol: 'SOLUSD',
+			name: 'Solana',
+			sector: 'Layer 1',
+			price: 150,
+			marketCap: 8e10,
+			changePct: 9.5,
+			sparkline7d: []
+		},
+		{
+			id: 'pepe',
+			symbol: 'PEPE',
+			name: 'Pepe',
+			sector: 'Meme',
+			price: 0.0000091,
+			marketCap: 4e9,
+			changePct: -6.1,
+			sparkline7d: []
+		}
 	],
 	gainers: [
-		{ id: 'solana', symbol: 'SOL', fmpSymbol: 'SOLUSD', name: 'Solana', sector: 'Layer 1', price: 150, changePct: 9.5, sparkline7d: [] },
-		{ id: 'bitcoin', symbol: 'BTC', fmpSymbol: 'BTCUSD', name: 'Bitcoin', sector: 'Layer 1', price: 84377, changePct: 4.2, sparkline7d: [] }
+		{
+			id: 'solana',
+			symbol: 'SOL',
+			fmpSymbol: 'SOLUSD',
+			name: 'Solana',
+			sector: 'Layer 1',
+			price: 150,
+			changePct: 9.5,
+			sparkline7d: []
+		},
+		{
+			id: 'bitcoin',
+			symbol: 'BTC',
+			fmpSymbol: 'BTCUSD',
+			name: 'Bitcoin',
+			sector: 'Layer 1',
+			price: 84377,
+			changePct: 4.2,
+			sparkline7d: []
+		}
 	],
-	losers: [{ id: 'pepe', symbol: 'PEPE', name: 'Pepe', sector: 'Meme', price: 0.0000091, changePct: -6.1, sparkline7d: [] }],
+	losers: [
+		{
+			id: 'pepe',
+			symbol: 'PEPE',
+			name: 'Pepe',
+			sector: 'Meme',
+			price: 0.0000091,
+			changePct: -6.1,
+			sparkline7d: []
+		}
+	],
 	athBoard: {
 		recentAths: [],
 		nearAth: [
@@ -56,7 +120,11 @@ describe('crypto markets view model', () => {
 		expect(vm.losers[0].change).toBe('-6.10%');
 		expect(vm.losers[0].price).toBe('$0.0000091');
 		expect(vm.heatmap?.tiles).toHaveLength(3);
-		expect(vm.nearAth[0]).toMatchObject({ fromATH: '-33.0%', athDate: 'High Oct 6, 2025', sinceATL: '1,244x' });
+		expect(vm.nearAth[0]).toMatchObject({
+			fromATH: '-33.0%',
+			athDate: 'High Oct 6, 2025',
+			sinceATL: '1,244x'
+		});
 		expect(vm.attribution).toBe('Data provided by CoinGecko');
 		expect(vm.asOf).toBe('Oct 1, 12:00 UTC');
 		expect(vm.btcDominance).toBe('57.2%');
@@ -68,7 +136,10 @@ describe('crypto markets view model', () => {
 		expect(vm.heatmap).toBeNull();
 		expect(vm.bubbles?.sizeBy).toBe('change');
 		expect(vm.bubbles?.nodes.find((n) => n.symbol === 'PEPE')?.href).toBe('');
-		expect(vm.sizeOptions.map((o) => o.pushURL)).toEqual(['/crypto/bubbles?size=cap&tf=1w', '/crypto/bubbles?size=change&tf=1w']);
+		expect(vm.sizeOptions.map((o) => o.pushURL)).toEqual([
+			'/crypto/bubbles?size=cap&tf=1w',
+			'/crypto/bubbles?size=change&tf=1w'
+		]);
 	});
 
 	it('falls back to one day on a bad timeframe', () => {

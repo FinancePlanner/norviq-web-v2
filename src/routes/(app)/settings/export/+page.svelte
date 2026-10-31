@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { EmptyState, FormErrorBanner, SelectField, SubmitButton, ToastBanner, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		EmptyState,
+		FormErrorBanner,
+		SelectField,
+		SubmitButton,
+		ToastBanner,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import type { PageProps } from './$types';
 
@@ -29,7 +36,12 @@
 </svelte:head>
 
 <div class="app-page-content vigil-document-page settings-export settings-modern-page">
-	<vigil.SettingsShell backHref="/settings" backLabel="← Settings" title="Data export" subtitle="Download a copy of your portfolio, transactions, or watchlist.">
+	<vigil.SettingsShell
+		backHref="/settings"
+		backLabel="← Settings"
+		title="Data export"
+		subtitle="Download a copy of your portfolio, transactions, or watchlist."
+	>
 		<div id="export-feedback">
 			<ToastBanner message={successMessage} />
 			<FormErrorBanner message={errorMessage} />
@@ -49,7 +61,10 @@
 		<div class="mt-6 space-y-3">
 			<h2 class="font-semibold">Recent exports</h2>
 			{#if data.exports.length === 0}
-				<EmptyState title="No exports yet" description="Request an export above. Files stay available for a limited time." />
+				<EmptyState
+					title="No exports yet"
+					description="Request an export above. Files stay available for a limited time."
+				/>
 			{/if}
 			{#each data.exports as row (row.id)}
 				<article class="glass-card flex flex-wrap items-center justify-between gap-3 p-4">
@@ -63,7 +78,11 @@
 					<div class="flex items-center gap-3">
 						<span class="settings-status-pill capitalize">{row.status}</span>
 						{#if row.canDownload}
-							<a href="/settings/export/{row.id}/download" class="btn-secondary px-4 py-2 text-sm" data-sveltekit-reload>Download</a>
+							<a
+								href="/settings/export/{row.id}/download"
+								class="btn-secondary px-4 py-2 text-sm"
+								data-sveltekit-reload>Download</a
+							>
 						{/if}
 					</div>
 				</article>

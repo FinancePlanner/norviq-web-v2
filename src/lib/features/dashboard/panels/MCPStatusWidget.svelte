@@ -22,7 +22,9 @@
 </script>
 
 {#snippet badgeText(state: string)}
-	<MCPStateBadge {state}>{state === 'live' ? 'Live' : state === 'ready' ? 'Ready' : 'Off'}</MCPStateBadge>
+	<MCPStateBadge {state}
+		>{state === 'live' ? 'Live' : state === 'ready' ? 'Ready' : 'Off'}</MCPStateBadge
+	>
 {/snippet}
 {#snippet readyBadge()}{@render badgeText('ready')}{/snippet}
 {#snippet manageLink()}<a href="/settings/api-access">Manage</a>{/snippet}
@@ -33,7 +35,11 @@
 
 {#if !vm}
 	<div id="mcp-status-panel">
-		<section class="glass-card dash-panel mcp-status-panel" aria-busy="true" aria-labelledby="mcp-status-title">
+		<section
+			class="glass-card dash-panel mcp-status-panel"
+			aria-busy="true"
+			aria-labelledby="mcp-status-title"
+		>
 			<vigil.PanelHeader id="mcp-status-title" title="MCP status" trailing={manageLink} />
 			<vigil.InsetList class="mcp-status-list">
 				<vigil.ListRow title="Connecting" trailing={readyBadge} />
@@ -41,20 +47,35 @@
 		</section>
 	</div>
 {:else}
-	<section class="glass-card dash-panel mcp-status-panel" id="mcp-status-panel" aria-labelledby="mcp-status-title">
+	<section
+		class="glass-card dash-panel mcp-status-panel"
+		id="mcp-status-panel"
+		aria-labelledby="mcp-status-title"
+	>
 		{#if vm.loadError}
 			<vigil.PanelHeader id="mcp-status-title" title="MCP status" trailing={openAPILink} />
 			<p class="text-subhead text-muted-foreground">Could not load connection state.</p>
 		{:else if vm.needsPro}
 			<vigil.PanelHeader id="mcp-status-title" title="MCP status" trailing={plansLink} />
-			<p class="text-subhead text-muted-foreground">Pro unlocks personal access tokens for Claude, Cursor, and Hermes.</p>
+			<p class="text-subhead text-muted-foreground">
+				Pro unlocks personal access tokens for Claude, Cursor, and Hermes.
+			</p>
 		{:else if vm.empty}
 			<vigil.PanelHeader id="mcp-status-title" title="MCP status" trailing={mintLink} />
 			<vigil.InsetList class="mcp-status-list">
-				<vigil.ListRow title="No tokens yet" subtitle="Mint one to connect Claude, Cursor or Hermes." trailing={readyBadge} />
+				<vigil.ListRow
+					title="No tokens yet"
+					subtitle="Mint one to connect Claude, Cursor or Hermes."
+					trailing={readyBadge}
+				/>
 			</vigil.InsetList>
 		{:else}
-			<vigil.PanelHeader id="mcp-status-title" title="MCP status" desc={summary(vm)} trailing={manageTokensLink} />
+			<vigil.PanelHeader
+				id="mcp-status-title"
+				title="MCP status"
+				desc={summary(vm)}
+				trailing={manageTokensLink}
+			/>
 			<vigil.InsetList class="mcp-status-list">
 				{#each vm.scopes as scope (scope.label)}
 					{#snippet scopeBadge()}{@render badgeText(scope.state)}{/snippet}
@@ -65,7 +86,9 @@
 				<p class="mt-4 mb-1 text-footnote font-semibold text-muted-foreground">Connected tokens</p>
 				<vigil.InsetList class="mcp-agent-list">
 					{#each vm.agents.slice(0, 4) as agent, i (i)}
-						{#snippet agentBadge()}<MCPStateBadge state={agentState(agent)}>{agent.status}</MCPStateBadge>{/snippet}
+						{#snippet agentBadge()}<MCPStateBadge state={agentState(agent)}
+								>{agent.status}</MCPStateBadge
+							>{/snippet}
 						<vigil.ListRow title={agent.name} trailing={agentBadge} />
 					{/each}
 				</vigil.InsetList>

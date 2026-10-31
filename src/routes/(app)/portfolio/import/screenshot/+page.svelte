@@ -7,12 +7,18 @@
 
 	let { data, form }: PageProps = $props();
 
-	const preview = $derived(form && 'screenshot' in form && form.screenshot ? form.screenshot : data.vm);
+	const preview = $derived(
+		form && 'screenshot' in form && form.screenshot ? form.screenshot : data.vm
+	);
 	const consentNext = $derived(form && 'consentCard' in form ? (form.consentCard ?? '') : '');
 </script>
 
 <svelte:head>
-	<title>{data.consentRequired ? 'Allow AI features - Norviq' : 'Import from screenshots - Norviq'}</title>
+	<title
+		>{data.consentRequired
+			? 'Allow AI features - Norviq'
+			: 'Import from screenshots - Norviq'}</title
+	>
 </svelte:head>
 
 {#if data.consentRequired}

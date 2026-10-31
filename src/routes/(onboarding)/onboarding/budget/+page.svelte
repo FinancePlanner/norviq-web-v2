@@ -10,14 +10,20 @@
 
 	let { data, form }: PageProps = $props();
 	const vm = $derived(form?.vm ?? data.vm);
-	const submit = withSpinner(() => async ({ update }) => update({ reset: false }));
+	const submit = withSpinner(
+		() =>
+			async ({ update }) =>
+				update({ reset: false })
+	);
 </script>
 
 <svelte:head><title>Budget setup - Norviq</title></svelte:head>
 
 <div class="onboarding-page onboarding-modern-page">
 	<h1 class="onboarding-title">Monthly budget</h1>
-	<p class="onboarding-lead mt-2">Split your net salary across pillars. You can refine this later in Expenses.</p>
+	<p class="onboarding-lead mt-2">
+		Split your net salary across pillars. You can refine this later in Expenses.
+	</p>
 	<div class="onboarding-step-card glass-card mt-8 p-6 md:p-8">
 		<form method="POST" action="/onboarding/budget" id="budget-form" use:enhance={submit}>
 			<FormErrorBanner message={vm.error} />
@@ -32,19 +38,29 @@
 								<p class="text-sm text-muted-foreground">{p.hint}</p>
 							</div>
 							<div class="w-24">
-								<input type="text" name="share_{p.key}" class="field-input text-right" placeholder="%" inputmode="decimal" />
+								<input
+									type="text"
+									name="share_{p.key}"
+									class="field-input text-right"
+									placeholder="%"
+									inputmode="decimal"
+								/>
 							</div>
 						</div>
 					</div>
 				{/each}
 			</div>
-			<p class="mt-4 text-xs text-muted-foreground">Enter percentage for each pillar (should total 100%).</p>
+			<p class="mt-4 text-xs text-muted-foreground">
+				Enter percentage for each pillar (should total 100%).
+			</p>
 			<SubmitButton class="mt-6 w-auto px-6">Save budget</SubmitButton>
 		</form>
 	</div>
 	<form method="POST" action="/onboarding/skip" class="mt-6 text-center">
 		<input type="hidden" name="step" value="budget" />
-		<NativeButton type="submit" class="onboarding-skip-link text-sm text-muted-foreground hover:opacity-100"
+		<NativeButton
+			type="submit"
+			class="onboarding-skip-link text-sm text-muted-foreground hover:opacity-100"
 			>Skip budget setup</NativeButton
 		>
 	</form>

@@ -7,7 +7,9 @@
 
 {#if message}
 	<div class="error-banner" role="alert" aria-live="assertive">
-		<span class="error-banner-icon" aria-hidden="true"><CircleAlert class="h-4 w-4" data-lucide="icon" /></span>
+		<span class="error-banner-icon" aria-hidden="true"
+			><CircleAlert class="h-4 w-4" data-lucide="icon" /></span
+		>
 		<span class="error-banner-text">{message}</span>
 	</div>
 {/if}

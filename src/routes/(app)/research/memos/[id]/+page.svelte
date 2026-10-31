@@ -29,7 +29,9 @@
 		<div class="mt-4 flex flex-wrap items-center gap-3">
 			<MemoSaveButton id={vm.id} bookmarked={vm.bookmarked} />
 			<form method="POST" action={'/research/memos/' + vm.id + '/delete'} onsubmit={postAndFollow}>
-				<SecondarySubmitButton class="px-3 py-1 text-xs text-[var(--color-danger)]">Delete</SecondarySubmitButton>
+				<SecondarySubmitButton class="px-3 py-1 text-xs text-[var(--color-danger)]"
+					>Delete</SecondarySubmitButton
+				>
 			</form>
 			<a href="/research" class="btn-secondary px-4">All research</a>
 		</div>
@@ -69,7 +71,12 @@
 						{#each vm.sources as source, i (i)}
 							<li>
 								{#if source.url}
-									<a href={source.url} target="_blank" rel="noopener noreferrer nofollow" class="underline">{source.label}</a>
+									<a
+										href={source.url}
+										target="_blank"
+										rel="noopener noreferrer nofollow"
+										class="underline">{source.label}</a
+									>
 								{:else}
 									<span>{source.label}</span>
 								{/if}

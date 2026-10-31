@@ -29,7 +29,11 @@ async function fetchCard(event: RequestEvent, path: string): Promise<Fetched> {
 		const res = await apiFetch(event, 'GET', path);
 		const text = await res.text();
 		if (res.status === 200) {
-			return { card: (text ? JSON.parse(text) : null) as AIInsightCard | null, consentRequired: false, failed: false };
+			return {
+				card: (text ? JSON.parse(text) : null) as AIInsightCard | null,
+				consentRequired: false,
+				failed: false
+			};
 		}
 		// api.IsAIConsentRequired: a 403 whose body's reason is AI_CONSENT_REQUIRED.
 		let reason = '';
@@ -49,7 +53,14 @@ async function fetchCard(event: RequestEvent, path: string): Promise<Fetched> {
 
 /** loadAIInsightCard */
 function toCard(label: string, f: Fetched): AIInsightCardVM {
-	const vm: AIInsightCardVM = { kindLabel: label, title: '', body: '', disclaimer: '', highlights: [], error: '' };
+	const vm: AIInsightCardVM = {
+		kindLabel: label,
+		title: '',
+		body: '',
+		disclaimer: '',
+		highlights: [],
+		error: ''
+	};
 	if (f.failed) {
 		vm.error = 'Could not load this insight.';
 		return vm;
@@ -61,7 +72,10 @@ function toCard(label: string, f: Fetched): AIInsightCardVM {
 	vm.title = (f.card.title ?? '').trim();
 	vm.body = (f.card.body ?? '').trim();
 	vm.disclaimer = (f.card.disclaimer ?? '').trim();
-	vm.highlights = (f.card.highlights ?? []).map((h) => ({ label: (h.label ?? '').trim(), value: (h.value ?? '').trim() }));
+	vm.highlights = (f.card.highlights ?? []).map((h) => ({
+		label: (h.label ?? '').trim(),
+		value: (h.value ?? '').trim()
+	}));
 	return vm;
 }
 

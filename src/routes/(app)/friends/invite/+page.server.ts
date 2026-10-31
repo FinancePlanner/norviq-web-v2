@@ -11,6 +11,9 @@ export const load: PageServerLoad = async (event) => {
 		const link = await socialDo<SocialInviteLink>(event, 'POST', '/v1/social/invites', {});
 		return { link, errorMessage: '' };
 	} catch (err) {
-		return { link: null, errorMessage: socialErrorMessage(err, 'Could not create your invite link.') };
+		return {
+			link: null,
+			errorMessage: socialErrorMessage(err, 'Could not create your invite link.')
+		};
 	}
 };

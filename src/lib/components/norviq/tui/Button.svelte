@@ -1,7 +1,8 @@
 <script lang="ts" module>
 	import { cn } from '#lib/utils.js';
 
-	export type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+	export type ButtonVariant =
+		'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 	export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
 	export type ButtonType = 'button' | 'submit' | 'reset';
 
@@ -38,9 +39,14 @@
 		fullWidth = false,
 		extra?: string | null
 	): string {
-		return cn(...base, variants[variant] ?? variants.default, sizes[size] ?? sizes.default, fullWidth && 'w-full', extra);
+		return cn(
+			...base,
+			variants[variant] ?? variants.default,
+			sizes[size] ?? sizes.default,
+			fullWidth && 'w-full',
+			extra
+		);
 	}
-
 </script>
 
 <script lang="ts">
@@ -87,7 +93,11 @@
 </script>
 
 {#if href && !disabled}
-	<a bind:this={ref} {href} {target} class={cls} {...rest as unknown as HTMLAnchorAttributes}>{@render children?.()}</a>
+	<a bind:this={ref} {href} {target} class={cls} {...rest as unknown as HTMLAnchorAttributes}
+		>{@render children?.()}</a
+	>
 {:else}
-	<button bind:this={ref} class={cls} {type} {form} {disabled} {...rest as HTMLButtonAttributes}>{@render children?.()}</button>
+	<button bind:this={ref} class={cls} {type} {form} {disabled} {...rest as HTMLButtonAttributes}
+		>{@render children?.()}</button
+	>
 {/if}

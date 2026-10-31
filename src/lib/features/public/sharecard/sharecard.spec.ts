@@ -10,9 +10,14 @@ const size = (b: Uint8Array) => {
 describe('sharecard', () => {
 	it('draws the article card in both formats', async () => {
 		const card = {
-			title: 'Why the market shrugged off the Fed and what it means for long-duration tech names this quarter',
+			title:
+				'Why the market shrugged off the Fed and what it means for long-duration tech names this quarter',
 			tickers: ['NVDA', 'MSFT'],
-			bullets: ['Rates held steady, as expected.', 'Guidance was the surprise: fewer cuts next year.', 'Long-duration tech sold off, then recovered.'],
+			bullets: [
+				'Rates held steady, as expected.',
+				'Guidance was the surprise: fewer cuts next year.',
+				'Long-duration tech sold off, then recovered.'
+			],
 			author: '@norviq',
 			date: 'Oct 28, 2026',
 			shortURL: 'norviq.org/a/abcd1234'
@@ -31,7 +36,14 @@ describe('sharecard', () => {
 
 	it('draws a brief with emoji dropped', async () => {
 		const png = await renderBrief(
-			{ title: 'Morning brief', date: '29 Oct 2026', rows: [{ region: 'DE', name: 'DAX 🚀', level: '25,704', change: '+0.44%', direction: Up }], items: ['📌 One'], shortURL: 'norviq.org/brief/2026-10-29/morning', disclaimer: 'AI-written.' },
+			{
+				title: 'Morning brief',
+				date: '29 Oct 2026',
+				rows: [{ region: 'DE', name: 'DAX 🚀', level: '25,704', change: '+0.44%', direction: Up }],
+				items: ['📌 One'],
+				shortURL: 'norviq.org/brief/2026-10-29/morning',
+				disclaimer: 'AI-written.'
+			},
 			OG
 		);
 		expect(isPNG(png)).toBe(true);

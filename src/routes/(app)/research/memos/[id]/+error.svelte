@@ -7,7 +7,13 @@
 </script>
 
 <svelte:head>
-	<title>{page.status === 402 && page.error?.proGate ? `${page.error.proGate} - Pro required - Norviq` : page.status === 404 ? 'Memo - Norviq' : 'Norviq'}</title>
+	<title
+		>{page.status === 402 && page.error?.proGate
+			? `${page.error.proGate} - Pro required - Norviq`
+			: page.status === 404
+				? 'Memo - Norviq'
+				: 'Norviq'}</title
+	>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -15,7 +21,12 @@
 	<ProGate featureName={page.error.proGate} />
 {:else if page.status === 404}
 	<div class="app-page-content vigil-canvas-page research-page research-modern-page">
-		<EmptyState title="Memo not found" description="It may have been deleted. Ask Q for a new DD, for example /dd GRAB." actionLabel="Open Q" actionHref="/assistant" />
+		<EmptyState
+			title="Memo not found"
+			description="It may have been deleted. Ask Q for a new DD, for example /dd GRAB."
+			actionLabel="Open Q"
+			actionHref="/assistant"
+		/>
 	</div>
 {:else}
 	<div class="app-page-content mx-auto max-w-xl py-16 text-center">

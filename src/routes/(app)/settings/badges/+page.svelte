@@ -38,7 +38,12 @@
 			</div>
 			<div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 				{#each vm.badges as badge, i (i)}
-					<div class={['badge-card glass-card p-5 text-center', badge.unlocked ? 'badge-card-unlocked' : 'opacity-80']}>
+					<div
+						class={[
+							'badge-card glass-card p-5 text-center',
+							badge.unlocked ? 'badge-card-unlocked' : 'opacity-80'
+						]}
+					>
 						<span class="badge-icon" aria-hidden="true">
 							<Icon name={badge.unlocked ? 'badge-check' : 'circle-dashed'} class="h-7 w-7" />
 						</span>

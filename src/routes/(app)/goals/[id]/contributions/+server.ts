@@ -27,7 +27,12 @@ export const POST: RequestHandler = async (event) => {
 	const note = String(form.get('note') ?? '').trim();
 	if (note) request.note = note;
 	try {
-		await apiJSON(event, 'POST', `/v1/financial-goals/${encodeURIComponent(id)}/contributions`, request);
+		await apiJSON(
+			event,
+			'POST',
+			`/v1/financial-goals/${encodeURIComponent(id)}/contributions`,
+			request
+		);
 	} catch (err) {
 		redirectFinancialGoals('', portfolioAPIErrorMessage(err, 'Could not record the contribution.'));
 	}

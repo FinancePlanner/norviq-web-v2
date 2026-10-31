@@ -2,7 +2,10 @@ import type { PageServerLoad } from './$types';
 import { isPro } from '#lib/billing.js';
 import { loadBillingContext } from '#lib/server/app-context.js';
 import { pilotFollowingFor } from '#lib/components/norviq/PilotFollowingBanner.svelte';
-import { loadHoldingsViewModel, loadPortfolioOptions } from '#lib/features/portfolio/holdings/holdings.server.js';
+import {
+	loadHoldingsViewModel,
+	loadPortfolioOptions
+} from '#lib/features/portfolio/holdings/holdings.server.js';
 import { pilotFollowingByPortfolio } from '#lib/features/portfolio/workspace/pilots.server.js';
 
 // GET /portfolio — appHandler.PortfolioHoldings

@@ -7,6 +7,14 @@ export const load: PageServerLoad = async (event) => {
 	const { isPro } = await event.parent();
 	const vm = isPro
 		? await loadSectorGainsViewModel(event)
-		: { subtitle: 'Unrealized P/L grouped by sector', totalUnrealizedPnl: '', totalMarketValue: '', rows: [], chart: null, hasData: false, loadError: false };
+		: {
+				subtitle: 'Unrealized P/L grouped by sector',
+				totalUnrealizedPnl: '',
+				totalMarketValue: '',
+				rows: [],
+				chart: null,
+				hasData: false,
+				loadError: false
+			};
 	return { isPro, vm };
 };

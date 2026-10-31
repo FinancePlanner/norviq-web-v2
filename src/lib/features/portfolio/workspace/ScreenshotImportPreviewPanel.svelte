@@ -8,7 +8,14 @@
 	// (the upload page drops the image files from that submission).
 	import { FormErrorBanner, SubmitButton } from '#lib/components/norviq/index.js';
 	import * as table from '#lib/components/norviq/tui/table/index.js';
-	import { conflictSymbols, hasCostBasis, kindLabel, lowConfidence, screenshotImportSummary, type ScreenshotImportVM } from './screenshot.js';
+	import {
+		conflictSymbols,
+		hasCostBasis,
+		kindLabel,
+		lowConfidence,
+		screenshotImportSummary,
+		type ScreenshotImportVM
+	} from './screenshot.js';
 
 	let { vm }: { vm: ScreenshotImportVM } = $props();
 	const conflicts = $derived(conflictSymbols(vm));
@@ -46,8 +53,8 @@
 		</div>
 		{#if !hasCostBasis(vm)}
 			<p class="rounded-lg border border-[var(--color-warning)]/30 p-3 text-sm">
-				A holdings screen shows what you own now, not what you paid. Purchase prices were left blank rather than guessed —
-				fill them in if you want accurate gains.
+				A holdings screen shows what you own now, not what you paid. Purchase prices were left blank
+				rather than guessed — fill them in if you want accurate gains.
 			</p>
 		{/if}
 		<div class="overflow-x-auto">
@@ -114,7 +121,13 @@
 								{/if}
 							</td>
 							<td>
-								<input type="checkbox" name={'row_keep_' + i} value="1" checked aria-label={'Import ' + row.symbol} />
+								<input
+									type="checkbox"
+									name={'row_keep_' + i}
+									value="1"
+									checked
+									aria-label={'Import ' + row.symbol}
+								/>
 							</td>
 						</tr>
 					{/each}
@@ -127,7 +140,13 @@
 				<label
 					class="mb-3 flex items-start gap-2 rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/5 p-3 text-sm"
 				>
-					<input type="checkbox" name="confirm_merge_existing" value="1" class="mt-0.5" checked={vm.needsMergeConfirm} />
+					<input
+						type="checkbox"
+						name="confirm_merge_existing"
+						value="1"
+						class="mt-0.5"
+						checked={vm.needsMergeConfirm}
+					/>
 					<span>
 						Replace positions you already hold in
 						{conflicts.join(', ')}
@@ -135,7 +154,9 @@
 					</span>
 				</label>
 			{/if}
-			<SubmitButton class="portfolio-form-save" formaction="?/commit" formnovalidate>Import checked positions</SubmitButton>
+			<SubmitButton class="portfolio-form-save" formaction="?/commit" formnovalidate
+				>Import checked positions</SubmitButton
+			>
 		</div>
 	</div>
 {/if}

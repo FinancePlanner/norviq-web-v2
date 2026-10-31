@@ -4,7 +4,10 @@
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import { cn } from '#lib/utils.js';
 
-	type Props = Omit<HTMLInputAttributes, 'type'> & { checked?: boolean; ref?: HTMLInputElement | null };
+	type Props = Omit<HTMLInputAttributes, 'type'> & {
+		checked?: boolean;
+		ref?: HTMLInputElement | null;
+	};
 
 	const uid = $props.id();
 	let {
@@ -20,7 +23,10 @@
 	const inputId = $derived(id || uid);
 </script>
 
-<label for={inputId} class={cn('inline-flex cursor-pointer items-center gap-2', disabled && 'cursor-not-allowed')}>
+<label
+	for={inputId}
+	class={cn('inline-flex cursor-pointer items-center gap-2', disabled && 'cursor-not-allowed')}
+>
 	<input
 		bind:this={ref}
 		id={inputId}
@@ -39,7 +45,7 @@
 			'transition-colors',
 			'bg-input',
 			'peer-checked:bg-primary',
-			'peer-focus-visible:outline-none peer-focus-visible:ring-2',
+			'peer-focus-visible:ring-2 peer-focus-visible:outline-none',
 			'peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2',
 			'peer-focus-visible:ring-offset-background',
 			'peer-disabled:cursor-not-allowed peer-disabled:opacity-50',

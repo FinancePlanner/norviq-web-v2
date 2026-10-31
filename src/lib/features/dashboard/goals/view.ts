@@ -55,9 +55,13 @@ export function driftClass(state: string): string {
 	}
 }
 
-export function trajectoryPoints(points: PlanningGoalTrajectoryPoint[] | null | undefined, projected: boolean): string {
+export function trajectoryPoints(
+	points: PlanningGoalTrajectoryPoint[] | null | undefined,
+	projected: boolean
+): string {
 	if (!points || points.length === 0) return '';
-	const valueOf = (p: PlanningGoalTrajectoryPoint) => (projected ? p.projectedValue : p.plannedValue);
+	const valueOf = (p: PlanningGoalTrajectoryPoint) =>
+		projected ? p.projectedValue : p.plannedValue;
 	let maximum = 1.0;
 	for (const point of points) maximum = Math.max(maximum, valueOf(point));
 	const span = Math.max(1, points.length - 1);
@@ -70,7 +74,9 @@ export function trajectoryPoints(points: PlanningGoalTrajectoryPoint[] | null | 
 		.join(' ');
 }
 
-export function sampled(points: PlanningGoalTrajectoryPoint[] | null | undefined): PlanningGoalTrajectoryPoint[] {
+export function sampled(
+	points: PlanningGoalTrajectoryPoint[] | null | undefined
+): PlanningGoalTrajectoryPoint[] {
 	const all = points ?? [];
 	if (all.length <= 24) return all;
 	const step = Math.max(1, Math.trunc(all.length / 24));

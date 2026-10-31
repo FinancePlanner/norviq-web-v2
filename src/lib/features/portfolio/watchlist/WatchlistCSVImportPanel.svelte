@@ -24,7 +24,13 @@
 <div id="list-action-panel">
 	<div class="portfolio-form-header">
 		<h2 id="list-action-title" class="text-xl font-semibold">Import watchlist CSV</h2>
-		<NativeButton class="portfolio-form-close" data-tui-dialog-close="" data-tui-dialog-target={DIALOG} aria-label="Close" onclick={close}>
+		<NativeButton
+			class="portfolio-form-close"
+			data-tui-dialog-close=""
+			data-tui-dialog-target={DIALOG}
+			aria-label="Close"
+			onclick={close}
+		>
 			<span aria-hidden="true">×</span>
 		</NativeButton>
 	</div>
@@ -42,13 +48,22 @@
 			return async ({ result }) => {
 				formElement.classList.remove('htmx-request');
 				// Swap the preview block only; never reset the chosen file.
-				if (result.type === 'success' && result.data?.csv) vm = result.data.csv as WatchlistCSVImportVM;
+				if (result.type === 'success' && result.data?.csv)
+					vm = result.data.csv as WatchlistCSVImportVM;
 			};
 		}}
 	>
 		<input type="hidden" name="list_id" value={initial.listID} />
 		<WatchlistCSVImportFormatHint />
-		<Field id="watchlist-csv-file" name="file" label="CSV file" type="file" required wrapperClass="space-y-2" accept=".csv,text/csv" />
+		<Field
+			id="watchlist-csv-file"
+			name="file"
+			label="CSV file"
+			type="file"
+			required
+			wrapperClass="space-y-2"
+			accept=".csv,text/csv"
+		/>
 		<div id="watchlist-csv-preview">
 			{#if vm.error !== ''}
 				<FormErrorBanner message={vm.error} />
@@ -63,7 +78,9 @@
 			{#if vm.committed}
 				<div class="rounded-lg border border-[var(--color-success)]/30 p-4">
 					<p class="font-semibold text-[var(--color-success)]">Import complete</p>
-					<p class="mt-1 text-sm text-muted-foreground">{watchlistImportSummary(vm.inserted, vm.updated, vm.listName)}</p>
+					<p class="mt-1 text-sm text-muted-foreground">
+						{watchlistImportSummary(vm.inserted, vm.updated, vm.listName)}
+					</p>
 				</div>
 			{:else if vm.rows.length > 0}
 				<div class="overflow-x-auto">
@@ -90,13 +107,27 @@
 				</div>
 			{/if}
 			<div class="portfolio-form-actions">
-				<NativeButton class="portfolio-form-cancel" data-tui-dialog-close="" data-tui-dialog-target={DIALOG} onclick={close}>Cancel</NativeButton>
+				<NativeButton
+					class="portfolio-form-cancel"
+					data-tui-dialog-close=""
+					data-tui-dialog-target={DIALOG}
+					onclick={close}>Cancel</NativeButton
+				>
 				{#if vm.rows.length > 0 && !vm.committed}
-					<NativeButton type="submit" class="btn-primary portfolio-form-save" form="watchlist-csv-form" formaction="?/csvCommit">
+					<NativeButton
+						type="submit"
+						class="btn-primary portfolio-form-save"
+						form="watchlist-csv-form"
+						formaction="?/csvCommit"
+					>
 						Import {vm.rows.length} symbols
 					</NativeButton>
 				{:else if !vm.committed}
-					<NativeButton type="submit" class="btn-primary portfolio-form-save" form="watchlist-csv-form">Preview import</NativeButton>
+					<NativeButton
+						type="submit"
+						class="btn-primary portfolio-form-save"
+						form="watchlist-csv-form">Preview import</NativeButton
+					>
 				{/if}
 			</div>
 		</div>

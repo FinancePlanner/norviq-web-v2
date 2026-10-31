@@ -6,24 +6,42 @@
 	import { formatFloat } from '#lib/format.js';
 	import { benchmarkTitle, money, showGuidanceBand, type ResultViewModel } from './financing.js';
 
-	let { vm, isPro, onsave }: { vm: ResultViewModel; isPro: boolean; onsave: SubmitFunction } = $props();
+	let { vm, isPro, onsave }: { vm: ResultViewModel; isPro: boolean; onsave: SubmitFunction } =
+		$props();
 </script>
 
-<vigil.Panel class="rounded-lg p-7 space-y-5" titleID="financing-result-panel">
+<vigil.Panel class="space-y-5 rounded-lg p-7" titleID="financing-result-panel">
 	{#if vm.saved}
-		<p class="rounded-lg bg-success/10 p-4 font-semibold text-success">Plan saved. Future installments now appear in Expenses.</p>
+		<p class="rounded-lg bg-success/10 p-4 font-semibold text-success">
+			Plan saved. Future installments now appear in Expenses.
+		</p>
 	{/if}
-	<div><p class="command-metric-label">Projection</p><h2 class="mt-2 text-2xl font-semibold">{vm.title}</h2></div>
-	<div class="grid grid-cols-2 gap-3"><div class="rounded-lg border border-black/5 p-4"><p class="text-xs text-muted-foreground">Monthly</p><p class="mt-1 text-xl font-semibold tabular-nums">{money(vm.monthlyPayment, vm.currency)}</p></div><div class="rounded-lg border border-black/5 p-4"><p class="text-xs text-muted-foreground">Total paid</p><p class="mt-1 text-xl font-semibold tabular-nums">{money(vm.totalPaid, vm.currency)}</p></div></div>
+	<div>
+		<p class="command-metric-label">Projection</p>
+		<h2 class="mt-2 text-2xl font-semibold">{vm.title}</h2>
+	</div>
+	<div class="grid grid-cols-2 gap-3">
+		<div class="rounded-lg border border-black/5 p-4">
+			<p class="text-xs text-muted-foreground">Monthly</p>
+			<p class="mt-1 text-xl font-semibold tabular-nums">{money(vm.monthlyPayment, vm.currency)}</p>
+		</div>
+		<div class="rounded-lg border border-black/5 p-4">
+			<p class="text-xs text-muted-foreground">Total paid</p>
+			<p class="mt-1 text-xl font-semibold tabular-nums">{money(vm.totalPaid, vm.currency)}</p>
+		</div>
+	</div>
 	<div class="rounded-lg border border-black/5 p-4">
 		<p class="font-semibold">{vm.cashFlowStatus}</p>
 		<p class="mt-2 text-sm text-muted-foreground">{vm.cashFlowMessage}</p>
 	</div>
-	<div class="rounded-lg border border-black/5 p-4 space-y-2">
+	<div class="space-y-2 rounded-lg border border-black/5 p-4">
 		<p class="command-metric-label">Debt-service guidance</p>
 		<p class="font-semibold">{benchmarkTitle(vm)}</p>
 		{#if vm.benchmarkRatio !== null}
-			<p class="text-sm">Calculated ratio: <span class="font-semibold tabular-nums">{formatFloat(vm.benchmarkRatio, 1)}%</span>
+			<p class="text-sm">
+				Calculated ratio: <span class="font-semibold tabular-nums"
+					>{formatFloat(vm.benchmarkRatio, 1)}%</span
+				>
 				{#if vm.incomeBasis !== null}
 					<span class="opacity-55"> of {vm.incomeBasis} income</span>
 				{/if}
@@ -41,7 +59,10 @@
 				{/if}
 			</p>
 		{:else}
-			<p class="text-sm text-muted-foreground">This market has no universal consumer pass/fail threshold in Norviq. The ratio is informational only.</p>
+			<p class="text-sm text-muted-foreground">
+				This market has no universal consumer pass/fail threshold in Norviq. The ratio is
+				informational only.
+			</p>
 		{/if}
 		<p class="text-xs text-muted-foreground">{vm.benchmarkMessage}</p>
 	</div>
@@ -53,7 +74,11 @@
 			<SubmitButton class="w-full">Save to Expenses</SubmitButton>
 		</form>
 	{:else}
-		<PrimaryButton href="/settings/subscription" class="inline-flex justify-center">Upgrade to save and track</PrimaryButton>
+		<PrimaryButton href="/settings/subscription" class="inline-flex justify-center"
+			>Upgrade to save and track</PrimaryButton
+		>
 	{/if}
-	<p class="text-xs text-muted-foreground">Planning guidance only, not lender approval. Confirm every term against the provider disclosure.</p>
+	<p class="text-xs text-muted-foreground">
+		Planning guidance only, not lender approval. Confirm every term against the provider disclosure.
+	</p>
 </vigil.Panel>

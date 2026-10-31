@@ -24,11 +24,20 @@
 </svelte:head>
 
 {#snippet marketEarningsCalendarLink()}
-	<a href="/markets/earnings" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted" data-markets-earnings-link>Market earnings calendar</a>
+	<a
+		href="/markets/earnings"
+		class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+		data-markets-earnings-link>Market earnings calendar</a
+	>
 {/snippet}
 
 <ProGateWrap isPro={data.isPro} featureName="Earnings calendar">
-	<vigil.CanvasPage pageClass="portfolio-earnings-page earnings-modern-page" title="Earnings calendar" subtitle={vm.monthLabel} actions={marketEarningsCalendarLink}>
+	<vigil.CanvasPage
+		pageClass="portfolio-earnings-page earnings-modern-page"
+		title="Earnings calendar"
+		subtitle={vm.monthLabel}
+		actions={marketEarningsCalendarLink}
+	>
 		<VisualizerCard vm={vm.visualizer} />
 		<vigil.CommandSplit class="earnings-modern-layout">
 			<vigil.CommandSplitMain>
@@ -45,7 +54,10 @@
 					<div class="earnings-calendar-grid">
 						{#each vm.calendarDays as day, i (i)}
 							{#if !day.inMonth}
-								<div class="earnings-calendar-cell earnings-calendar-cell-pad" aria-hidden="true"></div>
+								<div
+									class="earnings-calendar-cell earnings-calendar-cell-pad"
+									aria-hidden="true"
+								></div>
 							{:else}
 								<div class={cellClass(day)}>
 									<span class="earnings-calendar-day">{day.day}</span>
@@ -58,11 +70,14 @@
 												<span>{symbol}</span>
 											{/each}
 											{#if day.eventCount > day.symbols.length}
-												<span class="earnings-calendar-more">+{day.eventCount - day.symbols.length}</span>
+												<span class="earnings-calendar-more"
+													>+{day.eventCount - day.symbols.length}</span
+												>
 											{/if}
 										</span>
 									{:else if day.hasEvents}
-										<span class="earnings-calendar-dot" aria-label={`${day.eventCount} events`}></span>
+										<span class="earnings-calendar-dot" aria-label={`${day.eventCount} events`}
+										></span>
 									{/if}
 								</div>
 							{/if}
@@ -91,7 +106,10 @@
 							{/each}
 						</ul>
 					{:else}
-						<EmptyStateInline title="No earnings scheduled" description="Dates for your portfolio symbols will appear here." />
+						<EmptyStateInline
+							title="No earnings scheduled"
+							description="Dates for your portfolio symbols will appear here."
+						/>
 					{/if}
 				</div>
 			</vigil.CommandSplitAside>

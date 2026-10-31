@@ -1,6 +1,9 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { verifyPollURL, type VerifyStateVM } from '#lib/features/settings-admin/api-access/connect.js';
+import {
+	verifyPollURL,
+	type VerifyStateVM
+} from '#lib/features/settings-admin/api-access/connect.js';
 import { listPersonalAccessTokens } from '#lib/features/settings-admin/api-access/tokens.server.js';
 import { formatRelativeTime } from '#lib/features/settings-admin/api-access/time.js';
 
@@ -37,7 +40,11 @@ export const GET: RequestHandler = async (event) => {
 	}
 	const lastUsedAt = tokens.find((t) => t.id === tokenID)?.lastUsedAt;
 	if (lastUsedAt) {
-		return json({ ...vm, state: 'connected', lastUsed: formatRelativeTime(new Date(lastUsedAt), new Date(now)) });
+		return json({
+			...vm,
+			state: 'connected',
+			lastUsed: formatRelativeTime(new Date(lastUsedAt), new Date(now))
+		});
 	}
 	if (now - startedAt >= VERIFY_POLL_WINDOW_MS) return json(vm);
 	return json({ ...vm, state: 'waiting', keepPolling: true });

@@ -14,7 +14,13 @@
 		title,
 		open = $bindable(false),
 		children
-	}: { modalID: string; openEvent?: string; title: string; open?: boolean; children?: Snippet } = $props();
+	}: {
+		modalID: string;
+		openEvent?: string;
+		title: string;
+		open?: boolean;
+		children?: Snippet;
+	} = $props();
 
 	$effect(() => {
 		if (!openEvent) return;

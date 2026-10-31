@@ -21,9 +21,17 @@ const EXPORT_TYPES = new Set(['all', 'insights', 'portfolio', 'transactions', 'w
 const EXPORT_FORMATS = new Set(['csv', 'json']);
 
 // Go LoadExportVM.
-async function loadExports(event: RequestEvent): Promise<{ exports: ExportRow[]; errorMessage: string }> {
+async function loadExports(
+	event: RequestEvent
+): Promise<{ exports: ExportRow[]; errorMessage: string }> {
 	try {
-		const resp = await apiJSON<{ items: ExportListItem[] }>(event, 'GET', '/v1/api/v3/export', undefined, { query: { limit: 20, offset: 0 } });
+		const resp = await apiJSON<{ items: ExportListItem[] }>(
+			event,
+			'GET',
+			'/v1/api/v3/export',
+			undefined,
+			{ query: { limit: 20, offset: 0 } }
+		);
 		return {
 			exports: (resp.items ?? []).map((item) => ({
 				id: item.id,
@@ -44,7 +52,10 @@ async function loadExports(event: RequestEvent): Promise<{ exports: ExportRow[];
 
 export const load: PageServerLoad = async (event) => {
 	const vm = await loadExports(event);
-	const successMessage = (event.url.searchParams.get('requested') ?? '').trim() === '1' ? 'Export requested. Refresh in a moment when it is ready.' : '';
+	const successMessage =
+		(event.url.searchParams.get('requested') ?? '').trim() === '1'
+			? 'Export requested. Refresh in a moment when it is ready.'
+			: '';
 	return { ...vm, successMessage };
 };
 
@@ -60,7 +71,8 @@ export const actions: Actions = {
 		}
 		const type = String(form.get('type') ?? '').trim();
 		const format = String(form.get('format') ?? '').trim();
-		if (!EXPORT_TYPES.has(type) || !EXPORT_FORMATS.has(format)) return { errorMessage: 'Choose a valid data type and format.' };
+		if (!EXPORT_TYPES.has(type) || !EXPORT_FORMATS.has(format))
+			return { errorMessage: 'Choose a valid data type and format.' };
 		try {
 			await apiJSON(event, 'POST', '/v1/api/v3/export', { type, format });
 		} catch (err) {

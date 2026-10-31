@@ -8,9 +8,17 @@
 		titleID = '',
 		children,
 		...rest
-	}: Omit<HTMLAttributes<HTMLElement>, 'class'> & { class?: string; titleID?: string; children?: Snippet } = $props();
+	}: Omit<HTMLAttributes<HTMLElement>, 'class'> & {
+		class?: string;
+		titleID?: string;
+		children?: Snippet;
+	} = $props();
 </script>
 
-<section class={'glass-card dash-panel ' + className} aria-labelledby={titleID || undefined} {...rest}>
+<section
+	class={'glass-card dash-panel ' + className}
+	aria-labelledby={titleID || undefined}
+	{...rest}
+>
 	{@render children?.()}
 </section>

@@ -25,7 +25,12 @@ export const actions: Actions = {
 		}
 		let id = '';
 		try {
-			const created = await apiJSON<{ id: string }>(event, 'POST', '/v1/ai/assistant/conversations', { title: 'New conversation' });
+			const created = await apiJSON<{ id: string }>(
+				event,
+				'POST',
+				'/v1/ai/assistant/conversations',
+				{ title: 'New conversation' }
+			);
 			id = created?.id ?? '';
 		} catch (err) {
 			console.warn('assistant create conversation failed', err);

@@ -1,10 +1,24 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { page } from '$app/state';
-	import { ChevronRight, CircleUserRound, Ellipsis, LogOut, PanelLeft, Settings } from '@lucide/svelte';
+	import {
+		ChevronRight,
+		CircleUserRound,
+		Ellipsis,
+		LogOut,
+		PanelLeft,
+		Settings
+	} from '@lucide/svelte';
 	import NorviqLogo from '#lib/components/brand/NorviqLogo.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
-	import { activeTab as tabFor, bottomTabs, bottomTabsMore, isActivePath, isMoreTab, type NavItem } from '#lib/nav.js';
+	import {
+		activeTab as tabFor,
+		bottomTabs,
+		bottomTabsMore,
+		isActivePath,
+		isMoreTab,
+		type NavItem
+	} from '#lib/nav.js';
 	import type { SocialConfig } from '#lib/nav.js';
 	import SectionSubNav from './SectionSubNav.svelte';
 	import NavBadge from './NavBadge.svelte';
@@ -30,7 +44,11 @@
 
 	// Go renderShell's activePath: a page may render under another section's nav
 	// (pilots under /markets) by returning `activePath` from its load.
-	const activePath = $derived(typeof page.data.activePath === 'string' && page.data.activePath ? page.data.activePath : page.url.pathname);
+	const activePath = $derived(
+		typeof page.data.activePath === 'string' && page.data.activePath
+			? page.data.activePath
+			: page.url.pathname
+	);
 	const activeTab = $derived(tabFor(activePath));
 	const groupKeys = $derived(sidebarItems.map((g) => g.tab));
 	let moreOpen = $state(false);
@@ -78,7 +96,9 @@
 				{/if}
 				<a
 					href="/settings"
-					class={activeTab === 'settings' ? 'app-icon-btn app-icon-btn-active lg:hidden' : 'app-icon-btn lg:hidden'}
+					class={activeTab === 'settings'
+						? 'app-icon-btn app-icon-btn-active lg:hidden'
+						: 'app-icon-btn lg:hidden'}
 					aria-label="Settings"
 				>
 					<Settings class="h-5 w-5" />
@@ -117,7 +137,10 @@
 							<PanelLeft class="h-4 w-4" />
 						</button>
 					</div>
-					<nav class="app-sidebar-nav min-h-0 flex-1 overflow-y-auto p-2" aria-label="Main navigation">
+					<nav
+						class="app-sidebar-nav min-h-0 flex-1 overflow-y-auto p-2"
+						aria-label="Main navigation"
+					>
 						{#each sidebarItems as group (group.tab)}
 							{@const open = shell.isOpen(group.tab, activeTab)}
 							<div
@@ -149,13 +172,18 @@
 														: `${linkBase} text-sidebar-foreground/80`}
 													aria-current={active ? 'page' : undefined}
 												>
-													<span class="app-sidebar-link-icon shrink-0" aria-hidden="true"><Icon class="h-4 w-4" /></span>
+													<span class="app-sidebar-link-icon shrink-0" aria-hidden="true"
+														><Icon class="h-4 w-4" /></span
+													>
 													<span class="truncate sidebar-collapsed:hidden">{item.label}</span>
 													{#if item.showProBadge}
-														<span class="pro-badge pro-badge-sm sidebar-collapsed:hidden!">Pro</span>
+														<span class="pro-badge pro-badge-sm sidebar-collapsed:hidden!">Pro</span
+														>
 													{/if}
 													{#if item.badgeURL}
-														<span class="ml-auto sidebar-collapsed:hidden"><NavBadge url={item.badgeURL} /></span>
+														<span class="ml-auto sidebar-collapsed:hidden"
+															><NavBadge url={item.badgeURL} /></span
+														>
 													{/if}
 												</a>
 											</li>
@@ -175,8 +203,12 @@
 							<CircleUserRound class="h-4 w-4" />
 						</span>
 						<div class="min-w-0 flex-1 sidebar-collapsed:hidden">
-							<p class="truncate text-subhead font-semibold text-sidebar-foreground">{username || 'Account'}</p>
-							{#if email}<span class="block truncate text-caption text-sidebar-foreground/60">{email}</span>{/if}
+							<p class="truncate text-subhead font-semibold text-sidebar-foreground">
+								{username || 'Account'}
+							</p>
+							{#if email}<span class="block truncate text-caption text-sidebar-foreground/60"
+									>{email}</span
+								>{/if}
 						</div>
 						<a
 							href="/settings"
@@ -188,7 +220,12 @@
 							<Settings class="h-4 w-4" />
 						</a>
 					</div>
-					<form method="post" action="/logout" class="app-sidebar-logout-form shrink-0 px-2 pb-2" data-sveltekit-reload>
+					<form
+						method="post"
+						action="/logout"
+						class="app-sidebar-logout-form shrink-0 px-2 pb-2"
+						data-sveltekit-reload
+					>
 						<button
 							type="submit"
 							class="app-sidebar-logout flex h-9 w-full items-center gap-2.5 rounded-md px-2.5 text-subhead text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground sidebar-collapsed:justify-center sidebar-collapsed:px-0"
@@ -202,13 +239,19 @@
 
 			<main id="main-content" class="app-main" {@attach pageMotion()}>
 				{#if trialExpired}
-					<div class="trial-ended-banner trial-banner glass-card mx-4 mt-4 flex flex-wrap items-center gap-3 p-4" role="status">
+					<div
+						class="trial-ended-banner trial-banner glass-card mx-4 mt-4 flex flex-wrap items-center gap-3 p-4"
+						role="status"
+					>
 						<span class="pro-badge">Trial ended</span>
 						<div class="min-w-0 flex-1">
 							<p class="text-sm font-semibold">Your trial has ended</p>
 							<p class="mt-0.5 text-sm text-muted-foreground">Subscribe to unlock all features.</p>
 						</div>
-						<a href="/settings/subscription" class="btn-primary w-full shrink-0 px-5 py-2 text-sm sm:w-auto">Subscribe</a>
+						<a
+							href="/settings/subscription"
+							class="btn-primary w-full shrink-0 px-5 py-2 text-sm sm:w-auto">Subscribe</a
+						>
 					</div>
 				{/if}
 				{#each sidebarItems as group (group.tab)}
@@ -228,7 +271,10 @@
 		<nav class="app-bottom-tabs" aria-label="Primary navigation">
 			{#each bottomTabs(t) as tab (tab.tab)}
 				{@const Icon = tabIcon(tab.tab)}
-				<a href={tab.path} class={activeTab === tab.tab ? 'app-bottom-tab app-bottom-tab-active' : 'app-bottom-tab'}>
+				<a
+					href={tab.path}
+					class={activeTab === tab.tab ? 'app-bottom-tab app-bottom-tab-active' : 'app-bottom-tab'}
+				>
 					<span class="app-bottom-tab-icon" aria-hidden="true"><Icon class="h-6 w-6" /></span>
 					<span>{tab.label}</span>
 				</a>
@@ -250,7 +296,9 @@
 						{@const Icon = tabIcon(tab.tab)}
 						<a
 							href={tab.path}
-							class={activeTab === tab.tab ? 'app-bottom-more-link app-bottom-more-link-active' : 'app-bottom-more-link'}
+							class={activeTab === tab.tab
+								? 'app-bottom-more-link app-bottom-more-link-active'
+								: 'app-bottom-more-link'}
 							role="menuitem"
 						>
 							<span class="app-bottom-tab-icon" aria-hidden="true"><Icon class="h-6 w-6" /></span>

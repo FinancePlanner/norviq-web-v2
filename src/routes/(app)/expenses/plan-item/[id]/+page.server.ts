@@ -1,5 +1,9 @@
 import type { Actions, PageServerLoad } from './$types';
-import { deletePlanItem, loadPlanItemFormVM, submitPlanItem } from '#lib/features/money/expenses/forms.server.js';
+import {
+	deletePlanItem,
+	loadPlanItemFormVM,
+	submitPlanItem
+} from '#lib/features/money/expenses/forms.server.js';
 
 // GET /expenses/plan-item/{id} (edit form fragment), PUT → ?/update,
 // DELETE → ?/delete (Go: hx-put / hx-delete).

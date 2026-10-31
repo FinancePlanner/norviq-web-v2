@@ -42,7 +42,9 @@ class ShellState {
 		} catch {
 			/* storage blocked */
 		}
-		window.dispatchEvent(new CustomEvent('sidebar-changed', { detail: { collapsed: this.collapsed } }));
+		window.dispatchEvent(
+			new CustomEvent('sidebar-changed', { detail: { collapsed: this.collapsed } })
+		);
 	}
 
 	/** Explicit preference, else the server default: the active tab's group is open. */
@@ -57,7 +59,10 @@ class ShellState {
 		next.set(key, !next.get(key));
 		this.groups = next;
 		try {
-			localStorage.setItem(GROUPS_KEY, Array.from(next, ([k, o]) => `${k}:${o ? '1' : '0'}`).join(','));
+			localStorage.setItem(
+				GROUPS_KEY,
+				Array.from(next, ([k, o]) => `${k}:${o ? '1' : '0'}`).join(',')
+			);
 		} catch {
 			/* storage blocked */
 		}

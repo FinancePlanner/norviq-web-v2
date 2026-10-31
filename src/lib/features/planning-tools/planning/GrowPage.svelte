@@ -30,7 +30,10 @@
 		</div>
 	{/if}
 	{#if vm.notice}
-		<div class="mb-4 rounded-[var(--radius-control)] border border-border bg-muted/40 px-4 py-3 text-footnote" role="status">
+		<div
+			class="mb-4 rounded-[var(--radius-control)] border border-border bg-muted/40 px-4 py-3 text-footnote"
+			role="status"
+		>
 			{vm.notice}
 		</div>
 	{/if}
@@ -68,7 +71,15 @@
 					step="50"
 				/>
 				<div class="grid gap-4 sm:grid-cols-2">
-					<Field name="years" label="Years" type="number" value={vm.draft.years} min="0" max="100" step="1" />
+					<Field
+						name="years"
+						label="Years"
+						type="number"
+						value={vm.draft.years}
+						min="0"
+						max="100"
+						step="1"
+					/>
 					<Field
 						name="returnPercent"
 						label="Expected return (%)"

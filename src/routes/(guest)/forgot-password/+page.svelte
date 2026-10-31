@@ -19,7 +19,9 @@
 
 	// The form re-renders in place (htmx outerHTML swap of #forgot-form). The
 	// swap also cleared the email field; the keyed block below does the same.
-	let result = $state<{ success: string; error: string }>(untrack(() => form ?? { success: '', error: '' }));
+	let result = $state<{ success: string; error: string }>(
+		untrack(() => form ?? { success: '', error: '' })
+	);
 	let generation = $state(0);
 	const submit = enhanceInPlace<{ success: string; error: string }>({
 		onData: (data) => {
@@ -33,7 +35,11 @@
 	});
 </script>
 
-<AuthMeta title="Reset password - Norviq" keywords="Reset password" description="Reset your Norviq password." />
+<AuthMeta
+	title="Reset password - Norviq"
+	keywords="Reset password"
+	description="Reset your Norviq password."
+/>
 
 <div class="auth-container auth-container-wide">
 	<vigil.AuthShell>
@@ -45,7 +51,10 @@
 				<ChevronLeft class="h-4 w-4 shrink-0" />
 				<span>{t('Back to sign in')}</span>
 			</a>
-			<header class="auth-modern-header space-y-4 text-center lg:text-left" {@attach staggerOnMount(':scope > *', 80)}>
+			<header
+				class="auth-modern-header space-y-4 text-center lg:text-left"
+				{@attach staggerOnMount(':scope > *', 80)}
+			>
 				<div class="space-y-2">
 					<h1 class="auth-modern-title">{t('Reset Password')}</h1>
 					<p class="text-subhead text-muted-foreground">

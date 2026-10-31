@@ -24,12 +24,18 @@
 		busy = true;
 		error = '';
 		try {
-			const res = await fetch('/dashboard/quick-expense', { method: 'POST', body: new FormData(form), headers: { accept: 'application/json' } });
+			const res = await fetch('/dashboard/quick-expense', {
+				method: 'POST',
+				body: new FormData(form),
+				headers: { accept: 'application/json' }
+			});
 			if (res.status === 204) {
 				window.dispatchEvent(new CustomEvent('closeQuickExpense'));
 				return;
 			}
-			error = ((await res.json().catch(() => null)) as { error?: string } | null)?.error ?? 'Could not save expense. Try again.';
+			error =
+				((await res.json().catch(() => null)) as { error?: string } | null)?.error ??
+				'Could not save expense. Try again.';
 		} catch {
 			error = 'Could not save expense. Try again.';
 		} finally {
@@ -38,12 +44,30 @@
 	}
 </script>
 
-<PinesModalShell modalID="quick-expense-modal" openEvent="openQuickExpense" title="Add expense" bind:open>
-	<form id="quick-expense-form" class={['quick-expense-form space-y-4', busy && 'htmx-request']} method="POST" action="/dashboard/quick-expense" onsubmit={submit}>
+<PinesModalShell
+	modalID="quick-expense-modal"
+	openEvent="openQuickExpense"
+	title="Add expense"
+	bind:open
+>
+	<form
+		id="quick-expense-form"
+		class={['quick-expense-form space-y-4', busy && 'htmx-request']}
+		method="POST"
+		action="/dashboard/quick-expense"
+		onsubmit={submit}
+	>
 		<div id="quick-expense-feedback"><FormErrorBanner message={error} /></div>
 		<VaultTextField label="Title" name="title" placeholder="Groceries" required />
 		<VaultTextField label="Amount" name="amount" placeholder="42.50" required />
-		<SelectField id="quick-expense-pillar" name="pillar" label="Pillar" required wrapperClass="space-y-2" {options} />
+		<SelectField
+			id="quick-expense-pillar"
+			name="pillar"
+			label="Pillar"
+			required
+			wrapperClass="space-y-2"
+			{options}
+		/>
 		<VaultTextField label="Date" name="occurred_on" inputType="date" value={today} required />
 		<div class="flex flex-wrap gap-3 pt-2">
 			<SubmitButton class="w-auto px-6">Save expense</SubmitButton>

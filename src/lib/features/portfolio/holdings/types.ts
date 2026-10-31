@@ -63,7 +63,14 @@ export interface PositionRowVM {
 /** The price fragment the quote poll refreshes (PositionQuote). */
 export type PositionQuoteVM = Pick<
 	PositionRowVM,
-	'id' | 'marketValue' | 'changePositive' | 'todayGL' | 'chgPct' | 'totalPositive' | 'totalGL' | 'totalGLPct'
+	| 'id'
+	| 'marketValue'
+	| 'changePositive'
+	| 'todayGL'
+	| 'chgPct'
+	| 'totalPositive'
+	| 'totalGL'
+	| 'totalGLPct'
 >;
 
 export interface AssetFilterVM {

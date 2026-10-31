@@ -1,7 +1,10 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { afterImportPath } from '#lib/features/auth-onboarding/onboarding/onboarding.server.js';
-import { loadCSVProviders, processCSVUpload } from '#lib/features/auth-onboarding/onboarding/import.server.js';
+import {
+	loadCSVProviders,
+	processCSVUpload
+} from '#lib/features/auth-onboarding/onboarding/import.server.js';
 
 // GET /onboarding/import/csv (onboarding.go ImportCSV). Reachable after
 // onboarding too (Settings → Integrations), so no funnel guard.

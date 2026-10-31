@@ -80,9 +80,13 @@
 		onclick={copy}
 		{...rest}
 	>
-		<span data-copy-icon-clipboard style:display={copied ? 'none' : undefined}><Clipboard class="size-4" /></span>
-		<span data-copy-icon-check class={copied ? undefined : 'hidden'} style:display={copied ? 'inline' : undefined}
-			><Check class="size-4" /></span
+		<span data-copy-icon-clipboard style:display={copied ? 'none' : undefined}
+			><Clipboard class="size-4" /></span
+		>
+		<span
+			data-copy-icon-check
+			class={copied ? undefined : 'hidden'}
+			style:display={copied ? 'inline' : undefined}><Check class="size-4" /></span
 		>
 	</Button>
 </div>

@@ -24,7 +24,11 @@ export const load: PageServerLoad = async (event) => {
 	// Store unless they asked to stay on the web (?web=1, or its cookie).
 	const wantsWeb = event.url.searchParams.get(StayWebQueryParam) === '1';
 	const bypass = wantsWeb || event.cookies.get(StayWebCookieName) === '1';
-	if (cfg.iosStoreRedirectEnabled && isIOSMobile(event.request.headers.get('user-agent') ?? '') && !bypass) {
+	if (
+		cfg.iosStoreRedirectEnabled &&
+		isIOSMobile(event.request.headers.get('user-agent') ?? '') &&
+		!bypass
+	) {
 		redirect(302, appStoreURL, { external: true });
 	}
 	if (wantsWeb) {

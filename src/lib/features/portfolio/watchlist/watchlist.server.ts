@@ -17,7 +17,13 @@ import {
 	type QuoteBatchResponse,
 	type SymbolSentiment
 } from '../market.server.js';
-import { emptyCSVImportVM, type WatchlistCSVImportVM, type WatchlistListVM, type WatchlistRowVM, type WatchlistViewModel } from './types.js';
+import {
+	emptyCSVImportVM,
+	type WatchlistCSVImportVM,
+	type WatchlistListVM,
+	type WatchlistRowVM,
+	type WatchlistViewModel
+} from './types.js';
 
 // Ports LoadWatchlistViewModel / mapPortfolioWatchlistRows /
 // LoadWatchlistQuoteRows (handlers/portfolio_subpages_data.go,
@@ -30,7 +36,8 @@ type WatchlistList = Schemas['WatchlistListResponse'];
 /** handlers.maxCSVUploadBytes (12 MiB). */
 export const MAX_CSV_UPLOAD_BYTES = 12 << 20;
 
-export const listWatchlistLists = (event: RequestEvent) => apiJSON<WatchlistList[]>(event, 'GET', '/v1/watchlist/lists');
+export const listWatchlistLists = (event: RequestEvent) =>
+	apiJSON<WatchlistList[]>(event, 'GET', '/v1/watchlist/lists');
 
 /** resolveWatchlistListID: the requested theme if it exists, else the default, else the first. */
 export function resolveWatchlistListID(raw: string, lists: WatchlistList[]): string {
@@ -114,7 +121,10 @@ export function mapPortfolioWatchlistRows(
 }
 
 /** LoadWatchlistViewModel */
-export async function loadWatchlistViewModel(event: RequestEvent, selectedListID: string): Promise<WatchlistViewModel> {
+export async function loadWatchlistViewModel(
+	event: RequestEvent,
+	selectedListID: string
+): Promise<WatchlistViewModel> {
 	const vm: WatchlistViewModel = {
 		sentiment: buildSentimentRollup('', null, 0, 0, 0, 0, '', '', ''),
 		lists: [],
@@ -135,20 +145,20 @@ export async function loadWatchlistViewModel(event: RequestEvent, selectedListID
 
 	const selected = resolveWatchlistListID(selectedListID, lists);
 	vm.selectedListID = uuidString(selected);
-	vm.lists = lists.map(
-		(list): WatchlistListVM => ({
-			id: uuidString(list.id),
-			name: list.name,
-			isDefault: list.isDefault,
-			canDelete: !list.isDefault,
-			active: list.id === selected,
-			href: '/portfolio/watchlist?list=' + uuidString(list.id)
-		})
-	);
+	vm.lists = lists.map((list): WatchlistListVM => ({
+		id: uuidString(list.id),
+		name: list.name,
+		isDefault: list.isDefault,
+		canDelete: !list.isDefault,
+		active: list.id === selected,
+		href: '/portfolio/watchlist?list=' + uuidString(list.id)
+	}));
 
 	let items: WatchlistItem[];
 	try {
-		items = await apiJSON<WatchlistItem[]>(event, 'GET', '/v1/watchlist', undefined, { query: { watchlistListId: selected } });
+		items = await apiJSON<WatchlistItem[]>(event, 'GET', '/v1/watchlist', undefined, {
+			query: { watchlistListId: selected }
+		});
 	} catch (err) {
 		vm.loadError = true;
 		console.warn('watchlist items fetch failed', err);
@@ -169,7 +179,10 @@ export async function loadWatchlistViewModel(event: RequestEvent, selectedListID
 }
 
 /** LoadWatchlistQuoteRows: the quote-only rows the 20s poll swaps in. */
-export async function loadWatchlistQuoteRows(event: RequestEvent, selectedListID: string): Promise<WatchlistRowVM[]> {
+export async function loadWatchlistQuoteRows(
+	event: RequestEvent,
+	selectedListID: string
+): Promise<WatchlistRowVM[]> {
 	let lists: WatchlistList[];
 	try {
 		lists = await listWatchlistLists(event);
@@ -181,7 +194,9 @@ export async function loadWatchlistQuoteRows(event: RequestEvent, selectedListID
 	const selected = resolveWatchlistListID(selectedListID, lists);
 	let items: WatchlistItem[];
 	try {
-		items = await apiJSON<WatchlistItem[]>(event, 'GET', '/v1/watchlist', undefined, { query: { watchlistListId: selected } });
+		items = await apiJSON<WatchlistItem[]>(event, 'GET', '/v1/watchlist', undefined, {
+			query: { watchlistListId: selected }
+		});
 	} catch (err) {
 		console.warn('watchlist quote refresh items fetch failed', err);
 		return [];
@@ -219,17 +234,22 @@ export function watchlistCSVErrorMessage(status: number, stage: 'preview' | 'com
 		case 429:
 			return 'Import limit reached. Try again later.';
 		case 400:
-			if (stage === 'commit') return 'Could not process this CSV. Check the file format and try again.';
+			if (stage === 'commit')
+				return 'Could not process this CSV. Check the file format and try again.';
 			return 'Could not parse CSV. Check the file format and try again.';
 	}
 	if (stage === 'commit') return 'Import failed. Check the CSV and try again.';
 	return 'Could not parse CSV. Check the file format and try again.';
 }
 
-const csvErrors = (errors: Schemas['CsvImportPreviewError'][] | null | undefined) => (errors ?? []).map((e) => `Line ${e.line}: ${e.message}`);
+const csvErrors = (errors: Schemas['CsvImportPreviewError'][] | null | undefined) =>
+	(errors ?? []).map((e) => `Line ${e.line}: ${e.message}`);
 
 /** processWatchlistCSVUpload: preview or commit the uploaded file into a theme. */
-export async function processWatchlistCSVUpload(event: RequestEvent, commit: boolean): Promise<WatchlistCSVImportVM> {
+export async function processWatchlistCSVUpload(
+	event: RequestEvent,
+	commit: boolean
+): Promise<WatchlistCSVImportVM> {
 	let form: FormData;
 	try {
 		const length = Number(event.request.headers.get('content-length') ?? 0);
@@ -275,16 +295,23 @@ export async function processWatchlistCSVUpload(event: RequestEvent, commit: boo
 	// Content-Type application/octet-stream.
 	const body = new FormData();
 	body.set('file', new Blob([bytes], { type: 'application/octet-stream' }), file.name);
-	const res = await apiFetch(event, 'POST', commit ? '/v1/watchlist/import/csv/commit' : '/v1/watchlist/import/csv/preview', body, {
-		query: { watchlistListId }
-	}).catch(() => null);
+	const res = await apiFetch(
+		event,
+		'POST',
+		commit ? '/v1/watchlist/import/csv/commit' : '/v1/watchlist/import/csv/preview',
+		body,
+		{
+			query: { watchlistListId }
+		}
+	).catch(() => null);
 	if (!res || res.status !== 200) {
 		vm.error = watchlistCSVErrorMessage(res?.status ?? 0, commit ? 'commit' : 'preview');
 		return vm;
 	}
 
 	if (commit) {
-		const payload = (await res.json().catch(() => null)) as Schemas['WatchlistCsvImportCommitResponse'] | null;
+		const payload = (await res.json().catch(() => null)) as
+			Schemas['WatchlistCsvImportCommitResponse'] | null;
 		if (!payload) {
 			vm.error = watchlistCSVErrorMessage(200, 'commit');
 			return vm;
@@ -296,7 +323,8 @@ export async function processWatchlistCSVUpload(event: RequestEvent, commit: boo
 		return vm;
 	}
 
-	const payload = (await res.json().catch(() => null)) as Schemas['WatchlistCsvImportPreviewResponse'] | null;
+	const payload = (await res.json().catch(() => null)) as
+		Schemas['WatchlistCsvImportPreviewResponse'] | null;
 	if (!payload) {
 		vm.error = watchlistCSVErrorMessage(200, 'preview');
 		return vm;

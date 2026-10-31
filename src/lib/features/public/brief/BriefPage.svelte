@@ -11,7 +11,10 @@
 	let { vm }: { vm: BriefPageVM } = $props();
 	const t = $derived(translator(vm.lang));
 	const subtitle = $derived(
-		vm.brief.tradingDate + (vm.brief.generatedAt ? ' · ' + t('Updated at') + ' ' + vm.brief.generatedAt + ' ' + t('(Lisbon time)') : '')
+		vm.brief.tradingDate +
+			(vm.brief.generatedAt
+				? ' · ' + t('Updated at') + ' ' + vm.brief.generatedAt + ' ' + t('(Lisbon time)')
+				: '')
 	);
 </script>
 
@@ -54,13 +57,19 @@
 	<article aria-labelledby="market-brief-heading">
 		<header>
 			<p class="text-sm font-semibold tracking-widest text-muted-foreground">{t('Market brief')}</p>
-			<h1 id="market-brief-heading" class="mt-1 text-3xl font-semibold tracking-tight">{vm.heading}</h1>
+			<h1 id="market-brief-heading" class="mt-1 text-3xl font-semibold tracking-tight">
+				{vm.heading}
+			</h1>
 			<p class="mt-2 text-sm text-muted-foreground">
 				<time datetime={vm.brief.tradingDateISO}>{subtitle}</time>
 				{#if vm.otherLanguageURL}
 					<span aria-hidden="true">·</span>
-					<a href={vm.otherLanguageURL} hreflang={vm.otherLanguageCode} lang={vm.otherLanguageCode} class="underline underline-offset-4" data-sveltekit-reload
-						>{vm.otherLanguageLabel}</a
+					<a
+						href={vm.otherLanguageURL}
+						hreflang={vm.otherLanguageCode}
+						lang={vm.otherLanguageCode}
+						class="underline underline-offset-4"
+						data-sveltekit-reload>{vm.otherLanguageLabel}</a
 					>
 				{/if}
 			</p>
@@ -71,9 +80,14 @@
 			</vigil.Panel>
 		</div>
 		{#if vm.previousURL || vm.latestURL}
-			<nav class="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm" aria-label={t('More market briefs')}>
+			<nav
+				class="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm"
+				aria-label={t('More market briefs')}
+			>
 				{#if vm.previousURL}
-					<a href={vm.previousURL} rel="prev" class="underline underline-offset-4">← {t('Previous brief')}</a>
+					<a href={vm.previousURL} rel="prev" class="underline underline-offset-4"
+						>← {t('Previous brief')}</a
+					>
 				{:else}
 					<span></span>
 				{/if}
@@ -84,7 +98,9 @@
 		{/if}
 	</article>
 	<section id="share" class="mt-10 scroll-mt-6" aria-labelledby="market-brief-share-heading">
-		<h2 id="market-brief-share-heading" class="text-sm font-semibold text-muted-foreground">{t('Share this brief')}</h2>
+		<h2 id="market-brief-share-heading" class="text-sm font-semibold text-muted-foreground">
+			{t('Share this brief')}
+		</h2>
 		<ShareBar
 			class="mt-3"
 			links={vm.share}
@@ -112,8 +128,14 @@
 	{#if !vm.signedIn}
 		<section class="mt-10 rounded-[var(--radius)] border bg-card-bg p-6" data-market-brief-cta>
 			<h2 class="text-xl font-semibold">{t('Follow the markets with Norviq')}</h2>
-			<p class="mt-2 text-muted-foreground">{t('The brief is on your Norviq dashboard every weekday morning and evening, next to your portfolio.')}</p>
-			<PrimaryButton href="/signup" class="mt-4 w-auto px-6">{t('Create free account')}</PrimaryButton>
+			<p class="mt-2 text-muted-foreground">
+				{t(
+					'The brief is on your Norviq dashboard every weekday morning and evening, next to your portfolio.'
+				)}
+			</p>
+			<PrimaryButton href="/signup" class="mt-4 w-auto px-6"
+				>{t('Create free account')}</PrimaryButton
+			>
 		</section>
 	{/if}
 	<footer class="mt-12 border-t border-border pt-6 text-xs text-muted-foreground">

@@ -36,17 +36,17 @@ Same builder, same arguments, camelCase name; it returns a `ChartSpec | null`
 
 Your `load` returns the plain data (labels, values, tiles…); the page builds the spec.
 
-| Go | v2 |
-| --- | --- |
-| `charts.SpendingLine / WealthLine / PriceLine` | `spendingLine / wealthLine / priceLine` |
-| `charts.AllocationPie`, `SectorGainsBar`, `Sparkline`, `Candlestick`, `SentimentHistoryLine` | same names, camelCase |
-| `charts.MultiSeriesLine / MultiSeriesBar` (`[]*float64`) | `multiSeriesLine / multiSeriesBar` (`(number \| null)[]`) |
-| `charts.MarketHeatmap(WithOptions)`, `charts.CryptoBubbles` | `marketHeatmap(WithOptions)`, `cryptoBubbles` (struct fields camelCase) |
-| `charts.SpendPillarBar`, `charts.ActivityHeatmap(from, to, counts)` | `spendPillarBar`, `activityHeatmap(id, from, to, counts, timeZone?)` |
-| `charts.DonutSVG(slices)` | `<DonutSVG {slices} />` (SSR, no JS) — or `donutSVG()` for the exact string |
-| `charts.GrowthSparklineSVG(points, tone)` | `<GrowthSparkline {points} {tone} />` — or `growthSparklineSVG()` |
-| `charts.AllocationColor(i)` | `allocationColor(i)` |
-| `@templ.Raw(vm.X)` | `{#if spec}<EChart {...spec} />{/if}` |
+| Go                                                                                           | v2                                                                          |
+| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `charts.SpendingLine / WealthLine / PriceLine`                                               | `spendingLine / wealthLine / priceLine`                                     |
+| `charts.AllocationPie`, `SectorGainsBar`, `Sparkline`, `Candlestick`, `SentimentHistoryLine` | same names, camelCase                                                       |
+| `charts.MultiSeriesLine / MultiSeriesBar` (`[]*float64`)                                     | `multiSeriesLine / multiSeriesBar` (`(number \| null)[]`)                   |
+| `charts.MarketHeatmap(WithOptions)`, `charts.CryptoBubbles`                                  | `marketHeatmap(WithOptions)`, `cryptoBubbles` (struct fields camelCase)     |
+| `charts.SpendPillarBar`, `charts.ActivityHeatmap(from, to, counts)`                          | `spendPillarBar`, `activityHeatmap(id, from, to, counts, timeZone?)`        |
+| `charts.DonutSVG(slices)`                                                                    | `<DonutSVG {slices} />` (SSR, no JS) — or `donutSVG()` for the exact string |
+| `charts.GrowthSparklineSVG(points, tone)`                                                    | `<GrowthSparkline {points} {tone} />` — or `growthSparklineSVG()`           |
+| `charts.AllocationColor(i)`                                                                  | `allocationColor(i)`                                                        |
+| `@templ.Raw(vm.X)`                                                                           | `{#if spec}<EChart {...spec} />{/if}`                                       |
 
 A hand-built option works too: `<EChart id="my-chart" height="240px" option={…} />`.
 
@@ -89,7 +89,7 @@ CSS selectors keep matching. Use the same id the Go handler used.
 - `sectorGainsBar` has no category data on its x axis (go-echarts dropped it),
   so bars are labelled 0, 1, 2…
 - Every go-echarts chart has `legend: {}`, so single-series lines show a legend.
-- The theme patch runs on the *current* (already patched) option, so after a
+- The theme patch runs on the _current_ (already patched) option, so after a
   light/dark toggle a red (down) line whose `--chart-down` resolves to a non-hex
   color becomes the regular line color — same as Go's `theme-changed` refresh.
 - The multi-series formatters use `toLocaleString(undefined, …)`: the reader's

@@ -38,23 +38,23 @@
 		type="checkbox"
 		class={cn(
 			'peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs',
-			'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring',
+			'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none',
 			'disabled:cursor-not-allowed disabled:opacity-50',
-			'checked:bg-primary checked:text-primary-foreground checked:border-primary',
-			'indeterminate:bg-primary indeterminate:text-primary-foreground indeterminate:border-primary',
-			'appearance-none cursor-pointer transition-shadow',
+			'checked:border-primary checked:bg-primary checked:text-primary-foreground',
+			'indeterminate:border-primary indeterminate:bg-primary indeterminate:text-primary-foreground',
+			'cursor-pointer appearance-none transition-shadow',
 			'relative',
 			className
 		)}
 		{...rest}
 	/>
 	<div
-		class="absolute inset-0 pointer-events-none flex items-center justify-center text-primary-foreground opacity-0 peer-checked:opacity-100"
+		class="pointer-events-none absolute inset-0 flex items-center justify-center text-primary-foreground opacity-0 peer-checked:opacity-100"
 	>
 		{#if icon}{@render icon()}{:else}<Check class="size-3.5" />{/if}
 	</div>
 	<div
-		class="absolute inset-0 pointer-events-none flex items-center justify-center text-primary-foreground opacity-0 peer-indeterminate:opacity-100"
+		class="pointer-events-none absolute inset-0 flex items-center justify-center text-primary-foreground opacity-0 peer-indeterminate:opacity-100"
 	>
 		<Minus class="size-3.5" />
 	</div>

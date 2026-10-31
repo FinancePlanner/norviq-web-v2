@@ -1,6 +1,12 @@
 import { error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { redirectWith, requireSocial, socialDo, socialErrorMessage, uuidParam } from '#lib/features/settings-admin/social/social.server.js';
+import {
+	redirectWith,
+	requireSocial,
+	socialDo,
+	socialErrorMessage,
+	uuidParam
+} from '#lib/features/settings-admin/social/social.server.js';
 import type { SocialUserSummary } from '#lib/features/settings-admin/social/privacy.js';
 
 // Port of norviq-web handlers.BlockedUsers / BlockedUserUnblock
@@ -12,7 +18,11 @@ export const load: PageServerLoad = async (event) => {
 	let hasLoadError = false;
 	let errorMessage = event.url.searchParams.get('error') ?? '';
 	try {
-		const blocked = await socialDo<{ users?: SocialUserSummary[] | null }>(event, 'GET', '/v1/social/blocks');
+		const blocked = await socialDo<{ users?: SocialUserSummary[] | null }>(
+			event,
+			'GET',
+			'/v1/social/blocks'
+		);
 		users = blocked?.users ?? [];
 	} catch (err) {
 		hasLoadError = true;

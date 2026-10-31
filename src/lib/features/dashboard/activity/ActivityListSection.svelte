@@ -40,7 +40,9 @@
 		</InsetList>
 		{#if list.hasMoreActivities}
 			<div class="mt-6 text-center">
-				<NativeButton class="dash-btn dash-btn-secondary" disabled={loading} onclick={loadMore}>{t('Load more')}</NativeButton>
+				<NativeButton class="dash-btn dash-btn-secondary" disabled={loading} onclick={loadMore}
+					>{t('Load more')}</NativeButton
+				>
 			</div>
 		{/if}
 	{/if}

@@ -39,7 +39,8 @@ export function notificationWebLink(item: NotificationInboxItem): string {
 			if (payload.screen_id) return '/portfolio/screens?history=' + queryEscape(payload.screen_id);
 			break;
 		case 'rebalancing':
-			if (payload.portfolio_list_id) return '/portfolio/rebalancing-rules?portfolio=' + queryEscape(payload.portfolio_list_id);
+			if (payload.portfolio_list_id)
+				return '/portfolio/rebalancing-rules?portfolio=' + queryEscape(payload.portfolio_list_id);
 			break;
 		case 'budget':
 			return '/expenses';

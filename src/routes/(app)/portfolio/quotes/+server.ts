@@ -23,5 +23,8 @@ export const GET: RequestHandler = async (event) => {
 		totalGL: r.totalGL,
 		totalGLPct: r.totalGLPct
 	}));
-	return json({ quotes, updatedAt: quoteRefreshStatusTime(new Date()) }, { headers: { 'cache-control': 'no-store' } });
+	return json(
+		{ quotes, updatedAt: quoteRefreshStatusTime(new Date()) },
+		{ headers: { 'cache-control': 'no-store' } }
+	);
 };

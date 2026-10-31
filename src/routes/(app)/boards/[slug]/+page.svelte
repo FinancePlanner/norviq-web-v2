@@ -36,11 +36,21 @@
 		{#snippet actions()}
 			<a href="/boards" class="btn-secondary px-4">All boards</a>
 			{#if data.viewer.canWrite}
-				<a href={'/boards/' + data.board.slug + '/submit'} class="btn-primary px-5" data-board-post-button>Post</a>
+				<a
+					href={'/boards/' + data.board.slug + '/submit'}
+					class="btn-primary px-5"
+					data-board-post-button>Post</a
+				>
 			{/if}
 			{#if data.viewer.isAdmin}
-				<form method="post" action={'/boards/' + data.board.slug + '/delete'} use:enhance={confirmDelete}>
-					<SecondarySubmitButton class="px-3 text-[var(--color-danger)]">Delete board</SecondarySubmitButton>
+				<form
+					method="post"
+					action={'/boards/' + data.board.slug + '/delete'}
+					use:enhance={confirmDelete}
+				>
+					<SecondarySubmitButton class="px-3 text-[var(--color-danger)]"
+						>Delete board</SecondarySubmitButton
+					>
 				</form>
 			{/if}
 		{/snippet}
@@ -51,7 +61,10 @@
 			{#each sorts as s (s.sort)}
 				<a
 					href={boardURL(data.board.slug, s.sort, data.kind, data.tag)}
-					class={['rounded-full px-3 py-1 text-sm font-medium', data.sort === s.sort && 'bg-[var(--color-accent)] text-white']}
+					class={[
+						'rounded-full px-3 py-1 text-sm font-medium',
+						data.sort === s.sort && 'bg-[var(--color-accent)] text-white'
+					]}
 					aria-current={data.sort === s.sort ? 'page' : undefined}>{s.label}</a
 				>
 			{/each}
@@ -83,7 +96,11 @@
 	</section>
 	{#if data.next}
 		<div class="mt-4">
-			<a class="btn-secondary px-4" href={boardURL(data.board.slug, data.sort, data.kind, data.tag) + '&cursor=' + data.next}>More</a>
+			<a
+				class="btn-secondary px-4"
+				href={boardURL(data.board.slug, data.sort, data.kind, data.tag) + '&cursor=' + data.next}
+				>More</a
+			>
 		</div>
 	{/if}
 </div>

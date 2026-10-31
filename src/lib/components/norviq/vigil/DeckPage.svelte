@@ -9,7 +9,13 @@
 		subtitle = '',
 		actions,
 		children
-	}: { pageClass?: string; title: string; subtitle?: string; actions?: Snippet; children?: Snippet } = $props();
+	}: {
+		pageClass?: string;
+		title: string;
+		subtitle?: string;
+		actions?: Snippet;
+		children?: Snippet;
+	} = $props();
 </script>
 
 <ModernPage pageClass={'vigil-deck-page ' + pageClass} {title} {subtitle} {actions}>

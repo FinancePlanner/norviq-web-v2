@@ -9,17 +9,17 @@ import { apiJSON } from '#lib/server/api.js';
 export const GET: RequestHandler = async (event) => {
 	if (!dev) error(404, 'Not found');
 	const env = privateEnv as Record<string, string | undefined>;
-	const which = event.url.searchParams.get('as') === 'onboarding' ? 'DEV_LOGIN_EMAIL_ONBOARDING' : 'DEV_LOGIN_EMAIL';
+	const which =
+		event.url.searchParams.get('as') === 'onboarding'
+			? 'DEV_LOGIN_EMAIL_ONBOARDING'
+			: 'DEV_LOGIN_EMAIL';
 	const email = env[which];
 	const password = env.DEV_LOGIN_PASSWORD;
 	if (!email || !password) error(500, `${which} / DEV_LOGIN_PASSWORD not set in .env`);
-	const res = await apiJSON<{ status?: string; auth?: Parameters<typeof event.locals.session.saveAuth>[0] }>(
-		event,
-		'POST',
-		'/v1/auth/login',
-		{ email, password },
-		{ auth: 'none' }
-	);
+	const res = await apiJSON<{
+		status?: string;
+		auth?: Parameters<typeof event.locals.session.saveAuth>[0];
+	}>(event, 'POST', '/v1/auth/login', { email, password }, { auth: 'none' });
 	const auth = res.auth ?? (res as unknown as Parameters<typeof event.locals.session.saveAuth>[0]);
 	await event.locals.session.destroy();
 	await event.locals.session.saveAuth(auth);

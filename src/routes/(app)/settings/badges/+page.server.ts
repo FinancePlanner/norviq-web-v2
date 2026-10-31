@@ -50,14 +50,24 @@ export const load: PageServerLoad = async (event) => {
 				errorMessage: '',
 				earnedTiers: payload.totalEarnedTiers,
 				totalTiers: payload.totalAvailableTiers,
-				progressPct: payload.totalAvailableTiers > 0 ? (payload.totalEarnedTiers / payload.totalAvailableTiers) * 100 : 0,
+				progressPct:
+					payload.totalAvailableTiers > 0
+						? (payload.totalEarnedTiers / payload.totalAvailableTiers) * 100
+						: 0,
 				badges: (payload.badges ?? []).map(mapBadgeCard)
 			}
 		};
 	} catch (err) {
 		console.warn('badges fetch failed', errorStatus(err), err);
 		return {
-			vm: { hasLoadError: true, errorMessage: 'Could not load badges right now.', earnedTiers: 0, totalTiers: 0, progressPct: 0, badges: [] as BadgeCardVM[] }
+			vm: {
+				hasLoadError: true,
+				errorMessage: 'Could not load badges right now.',
+				earnedTiers: 0,
+				totalTiers: 0,
+				progressPct: 0,
+				badges: [] as BadgeCardVM[]
+			}
 		};
 	}
 };

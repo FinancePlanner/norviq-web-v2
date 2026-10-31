@@ -3,7 +3,16 @@
 	// and PriceAlertPanel — whichever the last position action answered. The
 	// form posts go through `onsubmit(form, method, url)`, the hx-delete
 	// buttons through `onrequest(method, url)` after the same confirm prompt.
-	import { Field, FormErrorBanner, NativeButton, ProGateOverlay, SelectField, SubmitButton, TextareaField, VaultTextField } from '#lib/components/norviq/index.js';
+	import {
+		Field,
+		FormErrorBanner,
+		NativeButton,
+		ProGateOverlay,
+		SelectField,
+		SubmitButton,
+		TextareaField,
+		VaultTextField
+	} from '#lib/components/norviq/index.js';
 	import { closeDialog } from '#lib/components/norviq/tui/dialog/index.js';
 	import { alertRangeQuery } from './client.js';
 	import type { PositionActionResult } from './types.js';
@@ -48,7 +57,10 @@
 	{#if result.panel === 'edit'}
 		{@const form = result.form}
 		{@render header('Edit ' + form.symbol)}
-		<form class="portfolio-form mt-6 space-y-6" onsubmit={submitWith('PUT', '/portfolio/positions/' + form.id)}>
+		<form
+			class="portfolio-form mt-6 space-y-6"
+			onsubmit={submitWith('PUT', '/portfolio/positions/' + form.id)}
+		>
 			{#if form.error !== ''}
 				<FormErrorBanner message={form.error} />
 			{/if}
@@ -72,20 +84,51 @@
 					]}
 					wrapperClass="space-y-2"
 				/>
-				<VaultTextField label="Shares" name="shares" placeholder="10" value={form.shares} required />
-				<VaultTextField label="Buy price" name="buy_price" placeholder="150.00" value={form.buyPrice} required />
-				<Field id="edit-buy-date" name="buy_date" label="Buy date" type="date" value={form.buyDate} required wrapperClass="space-y-2" />
+				<VaultTextField
+					label="Shares"
+					name="shares"
+					placeholder="10"
+					value={form.shares}
+					required
+				/>
+				<VaultTextField
+					label="Buy price"
+					name="buy_price"
+					placeholder="150.00"
+					value={form.buyPrice}
+					required
+				/>
+				<Field
+					id="edit-buy-date"
+					name="buy_date"
+					label="Buy date"
+					type="date"
+					value={form.buyDate}
+					required
+					wrapperClass="space-y-2"
+				/>
 			</section>
 			<section class="portfolio-form-section glass-card p-4">
 				<h3 class="portfolio-form-section-title">Notes</h3>
-				<TextareaField id="edit-notes" name="notes" value={form.notes} placeholder="Optional notes" class="min-h-[88px] resize-y" />
+				<TextareaField
+					id="edit-notes"
+					name="notes"
+					value={form.notes}
+					placeholder="Optional notes"
+					class="min-h-[88px] resize-y"
+				/>
 			</section>
 			<div class="portfolio-form-actions">
 				<button
 					type="button"
 					class="portfolio-form-cancel text-danger"
-					onclick={() => confirmed('Delete this position from your portfolio?', 'DELETE', '/portfolio/positions/' + form.id + '?range=' + form.range)}
-				>Delete position</button>
+					onclick={() =>
+						confirmed(
+							'Delete this position from your portfolio?',
+							'DELETE',
+							'/portfolio/positions/' + form.id + '?range=' + form.range
+						)}>Delete position</button
+				>
 				<NativeButton class="portfolio-form-cancel" onclick={close}>Cancel</NativeButton>
 				<SubmitButton class="portfolio-form-save">Save changes</SubmitButton>
 			</div>
@@ -93,18 +136,43 @@
 	{:else if result.panel === 'sell'}
 		{@const form = result.form}
 		{@render header('Sell ' + form.symbol)}
-		<form class="portfolio-form mt-6 space-y-6" onsubmit={submitWith('POST', '/portfolio/positions/' + form.id + '/sell')}>
+		<form
+			class="portfolio-form mt-6 space-y-6"
+			onsubmit={submitWith('POST', '/portfolio/positions/' + form.id + '/sell')}
+		>
 			{#if form.error !== ''}
 				<FormErrorBanner message={form.error} />
 			{/if}
 			<input type="hidden" name="range" value={form.range} />
 			<input type="hidden" name="symbol" value={form.symbol} />
 			<input type="hidden" name="max_shares" value={form.maxShares} />
-			<p class="text-sm text-muted-foreground">You hold {form.maxShares} shares of {form.symbol}.</p>
+			<p class="text-sm text-muted-foreground">
+				You hold {form.maxShares} shares of {form.symbol}.
+			</p>
 			<section class="portfolio-form-section glass-card space-y-4 p-4">
-				<VaultTextField label="Shares to sell" name="shares" placeholder={form.maxShares} value={form.shares} required />
-				<VaultTextField label="Sell price" name="sell_price" placeholder="150.00" value={form.sellPrice} required />
-				<Field id="sell-date" name="sell_date" label="Sell date" type="date" value={form.sellDate} required wrapperClass="space-y-2" />
+				<VaultTextField
+					label="Shares to sell"
+					name="shares"
+					placeholder={form.maxShares}
+					value={form.shares}
+					required
+				/>
+				<VaultTextField
+					label="Sell price"
+					name="sell_price"
+					placeholder="150.00"
+					value={form.sellPrice}
+					required
+				/>
+				<Field
+					id="sell-date"
+					name="sell_date"
+					label="Sell date"
+					type="date"
+					value={form.sellDate}
+					required
+					wrapperClass="space-y-2"
+				/>
 			</section>
 			<div class="portfolio-form-actions">
 				<NativeButton class="portfolio-form-cancel" onclick={close}>Cancel</NativeButton>
@@ -120,14 +188,23 @@
 			</div>
 		{:else}
 			{@render header((form.targetID !== '' ? 'Edit alert · ' : 'Add alert · ') + form.symbol)}
-			<form class="portfolio-form mt-6 space-y-6" onsubmit={submitWith('POST', '/portfolio/positions/' + form.stockID + '/alert')}>
+			<form
+				class="portfolio-form mt-6 space-y-6"
+				onsubmit={submitWith('POST', '/portfolio/positions/' + form.stockID + '/alert')}
+			>
 				{#if form.error !== ''}
 					<FormErrorBanner message={form.error} />
 				{/if}
 				<input type="hidden" name="range" value={form.range} />
 				<input type="hidden" name="target_id" value={form.targetID} />
 				<section class="portfolio-form-section glass-card space-y-4 p-4">
-					<VaultTextField label="Target price" name="target_price" placeholder="200.00" value={form.targetPrice} required />
+					<VaultTextField
+						label="Target price"
+						name="target_price"
+						placeholder="200.00"
+						value={form.targetPrice}
+						required
+					/>
 					<SelectField
 						id="alert-direction"
 						name="direction"
@@ -145,7 +222,11 @@
 						<NativeButton
 							class="portfolio-form-cancel"
 							onclick={() =>
-								confirmed('Remove price alert for ' + form.symbol + '?', 'DELETE', '/portfolio/targets/' + form.targetID + alertRangeQuery(form.range))}
+								confirmed(
+									'Remove price alert for ' + form.symbol + '?',
+									'DELETE',
+									'/portfolio/targets/' + form.targetID + alertRangeQuery(form.range)
+								)}
 						>
 							Remove alert
 						</NativeButton>

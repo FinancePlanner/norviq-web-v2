@@ -2,8 +2,16 @@ import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { requireFeature } from '#lib/server/guards.js';
 import { apiFetch, apiJSON } from '#lib/server/api.js';
 import { Feature } from '#lib/billing.js';
-import { aiConsentMissing, aiConsentReturnPath, isAIConsentRequired } from '#lib/features/money/receipts/ai-consent.server.js';
-import { newReceiptImportVM, parseReviewedReceiptLines, receiptEntryVM } from '#lib/features/money/receipts/vm.js';
+import {
+	aiConsentMissing,
+	aiConsentReturnPath,
+	isAIConsentRequired
+} from '#lib/features/money/receipts/ai-consent.server.js';
+import {
+	newReceiptImportVM,
+	parseReviewedReceiptLines,
+	receiptEntryVM
+} from '#lib/features/money/receipts/vm.js';
 import {
 	MAX_RECEIPT_BATCH_IMAGES,
 	type ReceiptBatchScanResponse,
@@ -91,7 +99,11 @@ export const actions: Actions = {
 		try {
 			for (const [i, file] of files.entries()) {
 				const data = await file.arrayBuffer();
-				upload.append('file', new Blob([data], { type: file.type }), file.name || `receipt-${i + 1}.jpg`);
+				upload.append(
+					'file',
+					new Blob([data], { type: file.type }),
+					file.name || `receipt-${i + 1}.jpg`
+				);
 			}
 		} catch {
 			vm.error = 'Could not read one of the photos.';
@@ -104,7 +116,13 @@ export const actions: Actions = {
 			if (!res.ok) {
 				const body = await res.text().catch(() => '');
 				if (isAIConsentRequired(res.status, body)) {
-					return { state: { kind: 'consent', next: aiConsentReturnPath(event), vm } satisfies ReceiptImportState };
+					return {
+						state: {
+							kind: 'consent',
+							next: aiConsentReturnPath(event),
+							vm
+						} satisfies ReceiptImportState
+					};
 				}
 				throw new Error(`scan receipt batch: backend returned ${res.status}`);
 			}
@@ -124,7 +142,8 @@ export const actions: Actions = {
 			vm.receipts.push(receiptEntryVM(vm.receipts.length, result.draft));
 		}
 		if (unreadable > 0) vm.errors.push(`${unreadable} photo(s) could not be read as a receipt.`);
-		if (vm.receipts.length === 0 && vm.error === '') vm.error = 'Nothing could be read from those photos.';
+		if (vm.receipts.length === 0 && vm.error === '')
+			vm.error = 'Nothing could be read from those photos.';
 		return { state: review(vm) };
 	},
 
@@ -150,9 +169,14 @@ export const actions: Actions = {
 
 		let resp: ReceiptImportCommitResponse;
 		try {
-			resp = await apiJSON<ReceiptImportCommitResponse>(event, 'POST', '/v1/expenses/import/receipts/commit', {
-				items
-			});
+			resp = await apiJSON<ReceiptImportCommitResponse>(
+				event,
+				'POST',
+				'/v1/expenses/import/receipts/commit',
+				{
+					items
+				}
+			);
 		} catch (err) {
 			console.error('commit receipt expenses', err);
 			vm.error = 'Could not add those expenses. Try again.';

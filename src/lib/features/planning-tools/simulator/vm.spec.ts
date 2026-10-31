@@ -15,7 +15,9 @@ import {
 	weightValue
 } from './vm.js';
 
-const legs = (...bp: number[]) => ({ legs: bp.map((targetBasisPoints, i) => ({ symbol: 'S' + i, targetBasisPoints })) });
+const legs = (...bp: number[]) => ({
+	legs: bp.map((targetBasisPoints, i) => ({ symbol: 'S' + i, targetBasisPoints }))
+});
 
 function form(entries: [string, string][]): FormData {
 	const fd = new FormData();
@@ -77,18 +79,33 @@ describe('parseSimulatorForm', () => {
 			{ symbol: 'NVDA', targetBasisPoints: 3000 },
 			{ symbol: '', targetBasisPoints: 0 }
 		]);
-		expect(simulatorUpsertRequest(draft).legs).toEqual([{ symbol: 'NVDA', targetBasisPoints: 3000 }]);
+		expect(simulatorUpsertRequest(draft).legs).toEqual([
+			{ symbol: 'NVDA', targetBasisPoints: 3000 }
+		]);
 	});
 
 	it('clones when a source portfolio is picked', () => {
-		const { draft } = parseSimulatorForm(form([['targetCapital', '1'], ['sourcePortfolioId', 'P1']]));
+		const { draft } = parseSimulatorForm(
+			form([
+				['targetCapital', '1'],
+				['sourcePortfolioId', 'P1']
+			])
+		);
 		expect(draft.mode).toBe('cloneCurrentPortfolio');
 		expect(draft.legs).toHaveLength(3);
 	});
 
 	it('rejects a missing capital and negative weights', () => {
 		expect(parseSimulatorForm(form([['targetCapital', '']])).error).toBe(errBadCapital);
-		expect(parseSimulatorForm(form([['targetCapital', '10'], ['symbol', 'A'], ['weight', '-1']])).error).toBe(errBadWeight);
+		expect(
+			parseSimulatorForm(
+				form([
+					['targetCapital', '10'],
+					['symbol', 'A'],
+					['weight', '-1']
+				])
+			).error
+		).toBe(errBadWeight);
 	});
 
 	it('sends no legs as null, like a nil Go slice', () => {

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { KEY_POSTHOG_CAPTURE_EVENT, KEY_POSTHOG_CAPTURE_PROPS, setPostHogCaptureOnce, takePostHogCaptureOnce } from './runtime.server.js';
+import {
+	KEY_POSTHOG_CAPTURE_EVENT,
+	KEY_POSTHOG_CAPTURE_PROPS,
+	setPostHogCaptureOnce,
+	takePostHogCaptureOnce
+} from './runtime.server.js';
 
 // Port of the capture-once half of norviq-web session/posthog.go, against a
 // stand-in with the Session surface these helpers use.
@@ -23,10 +28,16 @@ describe('capture once', () => {
 	it('stores the event and JSON properties under the Go keys, then pops them', async () => {
 		const { locals, flags, saves } = fakeLocals();
 		await setPostHogCaptureOnce(locals, 'user_logged_in', { method: 'email' });
-		expect(flags).toEqual({ [KEY_POSTHOG_CAPTURE_EVENT]: 'user_logged_in', [KEY_POSTHOG_CAPTURE_PROPS]: '{"method":"email"}' });
+		expect(flags).toEqual({
+			[KEY_POSTHOG_CAPTURE_EVENT]: 'user_logged_in',
+			[KEY_POSTHOG_CAPTURE_PROPS]: '{"method":"email"}'
+		});
 		expect(saves()).toBe(1);
 
-		expect(await takePostHogCaptureOnce(locals)).toEqual({ event: 'user_logged_in', properties: { method: 'email' } });
+		expect(await takePostHogCaptureOnce(locals)).toEqual({
+			event: 'user_logged_in',
+			properties: { method: 'email' }
+		});
 		expect(flags).toEqual({});
 		expect(await takePostHogCaptureOnce(locals)).toBeNull();
 	});
@@ -39,12 +50,23 @@ describe('capture once', () => {
 	});
 
 	it('accepts an {event, properties} object under the event key', async () => {
-		const { locals } = fakeLocals({ [KEY_POSTHOG_CAPTURE_EVENT]: { event: 'onboarding_completed', properties: { via: 'complete' } } });
-		expect(await takePostHogCaptureOnce(locals)).toEqual({ event: 'onboarding_completed', properties: { via: 'complete' } });
+		const { locals } = fakeLocals({
+			[KEY_POSTHOG_CAPTURE_EVENT]: {
+				event: 'onboarding_completed',
+				properties: { via: 'complete' }
+			}
+		});
+		expect(await takePostHogCaptureOnce(locals)).toEqual({
+			event: 'onboarding_completed',
+			properties: { via: 'complete' }
+		});
 	});
 
 	it('ignores unparsable properties like Go', async () => {
-		const { locals } = fakeLocals({ [KEY_POSTHOG_CAPTURE_EVENT]: 'e', [KEY_POSTHOG_CAPTURE_PROPS]: '{bad' });
+		const { locals } = fakeLocals({
+			[KEY_POSTHOG_CAPTURE_EVENT]: 'e',
+			[KEY_POSTHOG_CAPTURE_PROPS]: '{bad'
+		});
 		expect(await takePostHogCaptureOnce(locals)).toEqual({ event: 'e' });
 	});
 });

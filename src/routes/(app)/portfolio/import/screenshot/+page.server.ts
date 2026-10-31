@@ -1,8 +1,15 @@
 import type { Actions, PageServerLoad } from './$types';
 import { requireFeature } from '#lib/server/guards.js';
 import { Feature } from '#lib/billing.js';
-import { aiConsentGranted, aiConsentReturnPath } from '#lib/features/portfolio/ai-consent.server.js';
-import { processScreenshotCommit, processScreenshotPreview, screenshotVMFrom } from '#lib/features/portfolio/workspace/screenshot.server.js';
+import {
+	aiConsentGranted,
+	aiConsentReturnPath
+} from '#lib/features/portfolio/ai-consent.server.js';
+import {
+	processScreenshotCommit,
+	processScreenshotPreview,
+	screenshotVMFrom
+} from '#lib/features/portfolio/workspace/screenshot.server.js';
 
 // handlers/portfolio_screenshot_import.go.
 //   GET  /portfolio/import/screenshot          requireScreenshotImport + RequireAIConsent
@@ -15,9 +22,17 @@ export const load: PageServerLoad = async (event) => {
 	await requireFeature(event, Feature.ScreenshotImport, FEATURE_NAME);
 	if (!(await aiConsentGranted(event))) {
 		// RenderAIConsentRequired for a navigation: the full consent page.
-		return { consentRequired: true as const, next: aiConsentReturnPath(event), vm: screenshotVMFrom(event.url.searchParams) };
+		return {
+			consentRequired: true as const,
+			next: aiConsentReturnPath(event),
+			vm: screenshotVMFrom(event.url.searchParams)
+		};
 	}
-	return { consentRequired: false as const, next: '', vm: screenshotVMFrom(event.url.searchParams) };
+	return {
+		consentRequired: false as const,
+		next: '',
+		vm: screenshotVMFrom(event.url.searchParams)
+	};
 };
 
 export const actions: Actions = {

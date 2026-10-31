@@ -1,6 +1,10 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { requireGroups } from '#lib/features/social/gates.server.js';
-import { deleteGroupChannel, groupsAction, groupsID } from '#lib/features/social/groups/groups.server.js';
+import {
+	deleteGroupChannel,
+	groupsAction,
+	groupsID
+} from '#lib/features/social/groups/groups.server.js';
 
 // GroupsDeleteChannel
 export const POST: RequestHandler = async (event) => {

@@ -3,7 +3,12 @@
 	// ordered by a TanStack Table sorted row model (the Alpine applySort DOM
 	// reorder); `quotes` overlays the 20s poll's price cells by row id, as the
 	// out-of-band swaps did. Like Go, the sort keys stay those of the page load.
-	import { createSortedRowModel, createTable, rowSortingFeature, tableFeatures } from '@tanstack/svelte-table';
+	import {
+		createSortedRowModel,
+		createTable,
+		rowSortingFeature,
+		tableFeatures
+	} from '@tanstack/svelte-table';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { sparkline } from '#lib/charts/index.js';
 	import { formatFloat } from '#lib/format.js';
@@ -40,7 +45,8 @@
 		columns: (['name', 'gains', 'weight'] as const).map((id) => ({
 			id,
 			accessorFn: (row: WatchlistRowVM) => row.symbol,
-			sortFn: (a: { original: WatchlistRowVM }, b: { original: WatchlistRowVM }) => watchlistComparators[id](a.original, b.original)
+			sortFn: (a: { original: WatchlistRowVM }, b: { original: WatchlistRowVM }) =>
+				watchlistComparators[id](a.original, b.original)
 		})),
 		get data() {
 			return rows;
@@ -93,9 +99,15 @@
 					</div>
 					<WatchlistQuote row={quotes.get(row.id) ?? row} />
 					{#if row.isHeld}
-						<span class="overview-watchlist-weight text-sm tabular-nums text-muted-foreground" title="Portfolio weight">{row.weightLabel}</span>
+						<span
+							class="overview-watchlist-weight text-sm text-muted-foreground tabular-nums"
+							title="Portfolio weight">{row.weightLabel}</span
+						>
 					{:else}
-						<span class="overview-watchlist-weight text-sm tabular-nums text-muted-foreground" title="Not held in portfolio">—</span>
+						<span
+							class="overview-watchlist-weight text-sm text-muted-foreground tabular-nums"
+							title="Not held in portfolio">—</span
+						>
 					{/if}
 					<NativeButton
 						class="watchlist-edit-btn"
@@ -104,7 +116,11 @@
 						data-tui-dialog-target="watchlist-edit-dialog"
 						onclick={() => onedit(row)}>Edit</NativeButton
 					>
-					<NativeButton class="watchlist-remove-btn" aria-label={'Remove ' + row.symbol} onclick={() => onremove(row)}>Remove</NativeButton>
+					<NativeButton
+						class="watchlist-remove-btn"
+						aria-label={'Remove ' + row.symbol}
+						onclick={() => onremove(row)}>Remove</NativeButton
+					>
 				</div>
 			{/each}
 		</div>
@@ -113,7 +129,12 @@
 	<div class="watchlist-empty glass-card p-8 text-center">
 		<VigMark />
 		<h2 class="empty-state-title mt-4">Your watchlist is empty</h2>
-		<p class="empty-state-desc mt-2">Search for a symbol and add it here to track quotes and news.</p>
-		<dialog.Trigger for="watchlist-add-dialog" class="btn-primary empty-state-action mt-6 inline-flex w-auto px-6">Add symbol</dialog.Trigger>
+		<p class="empty-state-desc mt-2">
+			Search for a symbol and add it here to track quotes and news.
+		</p>
+		<dialog.Trigger
+			for="watchlist-add-dialog"
+			class="btn-primary empty-state-action mt-6 inline-flex w-auto px-6">Add symbol</dialog.Trigger
+		>
 	</div>
 {/if}

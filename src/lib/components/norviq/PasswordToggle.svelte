@@ -7,7 +7,7 @@
 
 <button
 	type="button"
-	class="absolute bottom-0 right-3 h-9 text-sm font-medium text-muted-foreground hover:opacity-100"
+	class="absolute right-3 bottom-0 h-9 text-sm font-medium text-muted-foreground hover:opacity-100"
 	onclick={() => (visible = !visible)}
 	aria-label={visible ? 'Hide password' : 'Show password'}>{visible ? 'Hide' : 'Show'}</button
 >

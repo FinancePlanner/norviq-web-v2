@@ -35,8 +35,11 @@
 	{...rest}
 >
 	{#each options as opt, i (i)}
-		<option value={opt.value} selected={opt.selected || undefined} disabled={opt.disabled || undefined} {...opt.attrs}
-			>{opt.label}</option
+		<option
+			value={opt.value}
+			selected={opt.selected || undefined}
+			disabled={opt.disabled || undefined}
+			{...opt.attrs}>{opt.label}</option
 		>
 	{/each}
 </select>

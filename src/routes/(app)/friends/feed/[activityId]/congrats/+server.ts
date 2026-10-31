@@ -2,7 +2,13 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireActivityFeed } from '#lib/features/social/gates.server.js';
 import { uuidParam } from '#lib/features/settings-admin/social/social.server.js';
-import { isFetch, isNotFound, respondRedirect, socialDo, socialErrorMessage } from '#lib/features/social/friends/friends.server.js';
+import {
+	isFetch,
+	isNotFound,
+	respondRedirect,
+	socialDo,
+	socialErrorMessage
+} from '#lib/features/social/friends/friends.server.js';
 import type { CongratsVM } from '#lib/features/social/friends/types.js';
 
 // POST /friends/feed/{activityId}/congrats (handlers.FeedCongrats). The form
@@ -36,6 +42,12 @@ export const POST: RequestHandler = async (event) => {
 		return json(vm);
 	}
 	if (!err) return respondRedirect(event, '/friends/feed', 'Cheered!', '');
-	if (isNotFound(err)) return respondRedirect(event, '/friends/feed', '', 'That activity is no longer available.');
-	return respondRedirect(event, '/friends/feed', '', socialErrorMessage(err, 'Could not send your cheer.'));
+	if (isNotFound(err))
+		return respondRedirect(event, '/friends/feed', '', 'That activity is no longer available.');
+	return respondRedirect(
+		event,
+		'/friends/feed',
+		'',
+		socialErrorMessage(err, 'Could not send your cheer.')
+	);
 };

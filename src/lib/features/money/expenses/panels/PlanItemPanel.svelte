@@ -17,8 +17,12 @@
 	let vm = $state(untrack(() => initial));
 	let failure = $state('');
 
-	const action = $derived(vm.isEdit ? `/expenses/plan-item/${vm.itemID}?/update` : '/expenses/plan-item');
-	const deleteAction = $derived(`/expenses/plan-item/${vm.itemID}?/delete&month=${encodeURIComponent(vm.monthQuery)}`);
+	const action = $derived(
+		vm.isEdit ? `/expenses/plan-item/${vm.itemID}?/update` : '/expenses/plan-item'
+	);
+	const deleteAction = $derived(
+		`/expenses/plan-item/${vm.itemID}?/delete&month=${encodeURIComponent(vm.monthQuery)}`
+	);
 </script>
 
 <div id="expense-action-panel" class="vigil-modal-body">
@@ -31,17 +35,50 @@
 			class="portfolio-form mt-6 space-y-6"
 			method="POST"
 			{action}
-			use:enhance={panelEnhance<PlanItemFormVM>((next) => (vm = next), (_, msg) => (failure = msg || 'Could not save plan item.'))}
+			use:enhance={panelEnhance<PlanItemFormVM>(
+				(next) => (vm = next),
+				(_, msg) => (failure = msg || 'Could not save plan item.')
+			)}
 		>
 			<input type="hidden" name="month" value={vm.monthQuery} />
 			{#if vm.snapshotID}
 				<input type="hidden" name="snapshot_id" value={vm.snapshotID} />
 			{/if}
-			<Field id="plan-item-title" name="title" label="Title" value={vm.title} required wrapperClass="space-y-2" />
-			<Field id="plan-item-amount" name="planned_amount" label="Planned amount" type="number" value={vm.plannedAmount} required wrapperClass="space-y-2" min="0" step="0.01" />
-			<SelectField id="plan-item-pillar" name="pillar" label="Pillar" required wrapperClass="space-y-2" options={pillarOptions(vm.pillar)} />
+			<Field
+				id="plan-item-title"
+				name="title"
+				label="Title"
+				value={vm.title}
+				required
+				wrapperClass="space-y-2"
+			/>
+			<Field
+				id="plan-item-amount"
+				name="planned_amount"
+				label="Planned amount"
+				type="number"
+				value={vm.plannedAmount}
+				required
+				wrapperClass="space-y-2"
+				min="0"
+				step="0.01"
+			/>
+			<SelectField
+				id="plan-item-pillar"
+				name="pillar"
+				label="Pillar"
+				required
+				wrapperClass="space-y-2"
+				options={pillarOptions(vm.pillar)}
+			/>
 			{#if vm.hasPartner}
-				<SelectField id="plan-item-split" name="split_mode" label="Split" wrapperClass="space-y-2" options={splitModeOptions(vm.splitMode)} />
+				<SelectField
+					id="plan-item-split"
+					name="split_mode"
+					label="Split"
+					wrapperClass="space-y-2"
+					options={splitModeOptions(vm.splitMode)}
+				/>
 				<Field
 					id="plan-item-share"
 					name="user_share_percent"

@@ -49,7 +49,13 @@
 			<div class="hc-ring">
 				<svg viewBox="0 0 36 36">
 					<circle class="hc-ring-track" cx="18" cy="18" r="15.9155"></circle>
-					<circle class="hc-ring-fill" cx="18" cy="18" r="15.9155" stroke-dasharray={budgetRingDash(c.percent ?? 0)}></circle>
+					<circle
+						class="hc-ring-fill"
+						cx="18"
+						cy="18"
+						r="15.9155"
+						stroke-dasharray={budgetRingDash(c.percent ?? 0)}
+					></circle>
 				</svg>
 				<span class="hc-ring-label hc-mono">{c.percent}%</span>
 			</div>

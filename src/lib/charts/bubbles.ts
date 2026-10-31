@@ -36,7 +36,11 @@ export const bubbleMaxSize = 110;
  */
 export function bubbleSizes(weights: readonly number[]): number[] {
 	const maxWeight = Math.max(0, ...weights);
-	return weights.map((w) => (maxWeight <= 0 || w <= 0 ? bubbleMinSize : Math.max(bubbleMinSize, bubbleMaxSize * Math.sqrt(w / maxWeight))));
+	return weights.map((w) =>
+		maxWeight <= 0 || w <= 0
+			? bubbleMinSize
+			: Math.max(bubbleMinSize, bubbleMaxSize * Math.sqrt(w / maxWeight))
+	);
 }
 
 interface BubbleData {
@@ -71,7 +75,11 @@ export function openBubbleHref(params: ChartClickParams): void {
 	if (data && data.href) window.location.href = data.href;
 }
 
-export function cryptoBubbles(chartID: string, nodes: readonly BubbleNode[], opts: BubbleOptions = {}): ChartSpec | null {
+export function cryptoBubbles(
+	chartID: string,
+	nodes: readonly BubbleNode[],
+	opts: BubbleOptions = {}
+): ChartSpec | null {
 	if (nodes.length === 0) return null;
 	const id = normalizeChartID(chartID);
 	const scaleMaxPct = opts.scaleMaxPct && opts.scaleMaxPct > 0 ? opts.scaleMaxPct : 5;
@@ -79,7 +87,9 @@ export function cryptoBubbles(chartID: string, nodes: readonly BubbleNode[], opt
 	const sizeBy = opts.sizeBy || 'marketCap';
 	const height = opts.height && opts.height > 0 ? opts.height : 620;
 
-	const sizes = bubbleSizes(nodes.map((n) => (sizeBy === 'change' ? Math.abs(n.changePct) : n.marketCap)));
+	const sizes = bubbleSizes(
+		nodes.map((n) => (sizeBy === 'change' ? Math.abs(n.changePct) : n.marketCap))
+	);
 	const data = nodes.map((node, i) => {
 		const item: Record<string, unknown> = {
 			name: node.symbol,
@@ -119,11 +129,24 @@ export function cryptoBubbles(chartID: string, nodes: readonly BubbleNode[], opt
 					edgeLength: 0,
 					layoutAnimation: true
 				},
-				label: { show: true, formatter: bubbleLabel, color: '#ffffff', fontWeight: 'bold', fontSize: 11 },
+				label: {
+					show: true,
+					formatter: bubbleLabel,
+					color: '#ffffff',
+					fontWeight: 'bold',
+					fontSize: 11
+				},
 				emphasis: { scale: 1.08 },
 				data
 			}
 		]
 	};
-	return { id, width: '100%', height: `${height}px`, class: 'crypto-bubbles', option: option as unknown as EChartsOption, onclick: openBubbleHref };
+	return {
+		id,
+		width: '100%',
+		height: `${height}px`,
+		class: 'crypto-bubbles',
+		option: option as unknown as EChartsOption,
+		onclick: openBubbleHref
+	};
 }

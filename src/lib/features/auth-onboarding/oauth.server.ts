@@ -38,7 +38,12 @@ export async function saveOAuthFlow(
 }
 
 export async function clearOAuthFlow(event: RequestEvent): Promise<void> {
-	await event.locals.session.remove(OAuthKey.Provider, OAuthKey.RedirectURI, OAuthKey.FlowID, OAuthKey.Intent);
+	await event.locals.session.remove(
+		OAuthKey.Provider,
+		OAuthKey.RedirectURI,
+		OAuthKey.FlowID,
+		OAuthKey.Intent
+	);
 }
 
 export function oauthIntent(event: RequestEvent): OAuthIntent {

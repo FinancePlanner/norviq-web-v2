@@ -31,12 +31,16 @@
 		{name}
 		type="text"
 		bind:value
-		class="w-32 tabular-nums text-transparent focus:text-foreground"
+		class="w-32 text-transparent tabular-nums focus:text-foreground"
 		aria-label={label}
 		autocomplete="off"
 		inputmode="decimal"
 		onchange={(e: Event) => onchange((e.currentTarget as HTMLInputElement).value)}
-		onblur={(e: FocusEvent) => (compact = compactLabel((e.currentTarget as HTMLInputElement).value, symbol))}
+		onblur={(e: FocusEvent) =>
+			(compact = compactLabel((e.currentTarget as HTMLInputElement).value, symbol))}
 	/>
-	<span class="pointer-events-none absolute inset-y-0 left-3 flex items-center tabular-nums group-focus-within:hidden" aria-hidden="true">{compact}</span>
+	<span
+		class="pointer-events-none absolute inset-y-0 left-3 flex items-center tabular-nums group-focus-within:hidden"
+		aria-hidden="true">{compact}</span
+	>
 </div>

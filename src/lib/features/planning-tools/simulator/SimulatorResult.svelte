@@ -2,7 +2,15 @@
 	// simulator.Result(vm) — internal/pages/simulator/page.templ. Swapped on its
 	// own after a preview.
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
-	import { deltaBasisPoints, diffSentiment, isBuy, money, percent, quantity, type PageViewModel } from './vm.js';
+	import {
+		deltaBasisPoints,
+		diffSentiment,
+		isBuy,
+		money,
+		percent,
+		quantity,
+		type PageViewModel
+	} from './vm.js';
 
 	let { vm }: { vm: PageViewModel } = $props();
 </script>
@@ -10,7 +18,9 @@
 <vigil.Panel titleID="simulator-result-title">
 	<vigil.PanelHeader id="simulator-result-title" title="What it would cost" />
 	{#if !vm.result}
-		<p class="text-footnote text-muted-foreground">Add a position and run the simulation to see the trades and the cash it would take.</p>
+		<p class="text-footnote text-muted-foreground">
+			Add a position and run the simulation to see the trades and the cash it would take.
+		</p>
 	{:else}
 		{@const result = vm.result}
 		<vigil.MetricStrip>
@@ -21,7 +31,8 @@
 		</vigil.MetricStrip>
 		{#if result.wholeShares && result.leftoverCash > 0}
 			<p class="mt-3 text-footnote text-muted-foreground">
-				Whole-share rounding leaves {money(result.leftoverCash, result.currency)} unspent. Allow fractional shares to deploy it.
+				Whole-share rounding leaves {money(result.leftoverCash, result.currency)} unspent. Allow fractional
+				shares to deploy it.
 			</p>
 		{/if}
 		{#each result.warnings as warning, i (i)}
@@ -43,7 +54,9 @@
 					{#each result.trades as trade, i (i)}
 						<tr>
 							<td>{trade.symbol}</td>
-							<td>{#if isBuy(trade)}Buy{:else}Sell{/if}</td>
+							<td
+								>{#if isBuy(trade)}Buy{:else}Sell{/if}</td
+							>
 							<td>{quantity(trade.quantity)}</td>
 							<td>{money(trade.price, result.currency)}</td>
 							<td>{money(trade.notional, result.currency)}</td>
@@ -70,8 +83,10 @@
 							<td>{percent(row.currentBasisPoints)}</td>
 							<td>{percent(row.targetBasisPoints)}</td>
 							<td
-								class={[diffSentiment(row) === 'positive' && 'text-success', diffSentiment(row) === 'negative' && 'text-destructive']}
-								>{percent(deltaBasisPoints(row))}</td
+								class={[
+									diffSentiment(row) === 'positive' && 'text-success',
+									diffSentiment(row) === 'negative' && 'text-destructive'
+								]}>{percent(deltaBasisPoints(row))}</td
 							>
 						</tr>
 					{/each}

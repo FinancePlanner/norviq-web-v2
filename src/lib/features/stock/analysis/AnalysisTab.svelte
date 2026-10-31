@@ -13,6 +13,7 @@
 	import type { AnalysisTabVM } from './types.js';
 
 	// symbol is part of the tab contract; the Go template never printed it.
+	// eslint-disable-next-line svelte/no-unused-props
 	let { vm }: { vm: AnalysisTabVM; symbol: string } = $props();
 
 	const spy = $state({ active: '' });

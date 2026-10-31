@@ -9,7 +9,9 @@
 	{#each items as item (item.path)}
 		<a
 			href={item.path}
-			class={isActivePath(activePath ?? page.url.pathname, item.path) ? 'section-subnav-link section-subnav-link-active' : 'section-subnav-link'}
+			class={isActivePath(activePath ?? page.url.pathname, item.path)
+				? 'section-subnav-link section-subnav-link-active'
+				: 'section-subnav-link'}
 		>
 			{item.label}
 			{#if item.showProBadge}<span class="pro-badge pro-badge-sm">Pro</span>{/if}

@@ -54,7 +54,14 @@
 	<input type="hidden" name="sheet_name" value={vm.sheetName} />
 	<input type="hidden" name="amount_sign" value={vm.amountSign} />
 	<input type="hidden" name="date_order" value={vm.dateOrder} />
-	<button type="submit" formaction="?/preview" hidden tabindex="-1" aria-hidden="true" bind:this={previewBtn}></button>
+	<button
+		type="submit"
+		formaction="?/preview"
+		hidden
+		tabindex="-1"
+		aria-hidden="true"
+		bind:this={previewBtn}
+	></button>
 
 	<section class="glass-card">
 		<h3>{vm.fileName}</h3>
@@ -98,7 +105,11 @@
 						<tr>
 							<td>{category.sourceValue}</td>
 							<td>
-								<select class="field-input" name={'pillar_' + category.sourceValue} onchange={() => schedulePreview(400)}>
+								<select
+									class="field-input"
+									name={'pillar_' + category.sourceValue}
+									onchange={() => schedulePreview(400)}
+								>
 									<option value="" selected={category.pillar === ''}>Choose…</option>
 									{#each pillarOptions(category.pillar) as opt (opt.value)}
 										<option value={opt.value} selected={opt.selected}>{opt.label}</option>
@@ -116,7 +127,8 @@
 		<section class="glass-card">
 			<h3>Exchange rates</h3>
 			<p class="field-hint">
-				These rows are in another currency. Without a rate they are left out rather than converted at face value.
+				These rows are in another currency. Without a rate they are left out rather than converted
+				at face value.
 			</p>
 			{#each vm.currencies as currency (currency)}
 				<label class="field-label" for={'rate_' + currency}>{currency}</label>
@@ -149,7 +161,11 @@
 						</td>
 						<td>{column.sample}</td>
 						<td>
-							<select class="field-input" name={'column_' + column.letter} onchange={() => schedulePreview(400)}>
+							<select
+								class="field-input"
+								name={'column_' + column.letter}
+								onchange={() => schedulePreview(400)}
+							>
 								{#each SELECTABLE_FIELDS as field (field)}
 									<option value={field} selected={column.field === field}>{field}</option>
 								{/each}
@@ -170,11 +186,18 @@
 			{/if}
 		</h3>
 		{#if vm.rows.length === 0}
-			<EmptyState title="Nothing to import" description="We could not read any expense rows from that sheet." />
+			<EmptyState
+				title="Nothing to import"
+				description="We could not read any expense rows from that sheet."
+			/>
 		{:else}
 			<table class="expenses-plan-table">
 				<thead>
-					<tr><th>Include</th><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Status</th></tr>
+					<tr
+						><th>Include</th><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th
+							>Status</th
+						></tr
+					>
 				</thead>
 				<tbody>
 					{#each vm.rows as row (row.row)}

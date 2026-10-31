@@ -20,7 +20,8 @@ export const requireScenarioPlanning = (event: RequestEvent) =>
 	requireFeature(event, Feature.ScenarioPlanning, 'Scenario planning');
 
 /** h.scenarioFormError: 422 with the FormErrorBanner message (rendered by the page). */
-export const formError = (message: string) => json({ formError: message } satisfies FormErrorResponse, { status: 422 });
+export const formError = (message: string) =>
+	json({ formError: message } satisfies FormErrorResponse, { status: 422 });
 
 /** http.Error(w, message, status). */
 export const httpError = (message: string, status: number) => text(message + '\n', { status });
@@ -34,12 +35,16 @@ export function formValue(form: FormData, name: string): string {
 	return typeof value === 'string' ? value : '';
 }
 
-const UUID = /^(urn:uuid:)?\{?[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}\}?$/i;
+const UUID =
+	/^(urn:uuid:)?\{?[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}\}?$/i;
 
 /** uuid.Parse; returns the canonical lower-case form, or null. */
 export function parseUUID(raw: string): string | null {
 	if (!UUID.test(raw)) return null;
-	const hex = raw.replace(/^urn:uuid:/i, '').replace(/[{}-]/g, '').toLowerCase();
+	const hex = raw
+		.replace(/^urn:uuid:/i, '')
+		.replace(/[{}-]/g, '')
+		.toLowerCase();
 	return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
@@ -66,7 +71,11 @@ export function parseBoundedFloat(value: string, minimum: number, maximum: numbe
 	return parsed;
 }
 
-export function optionalBoundedFloat(value: string, minimum: number, maximum: number): number | null {
+export function optionalBoundedFloat(
+	value: string,
+	minimum: number,
+	maximum: number
+): number | null {
 	if (value.trim() === '') return null;
 	return parseBoundedFloat(value, minimum, maximum);
 }
@@ -88,7 +97,16 @@ export function defaultString(value: string, fallback: string): string {
 	return value.trim() === '' ? fallback : value.trim();
 }
 
-const ASSET_CATEGORIES = ['stock', 'etf', 'mutual_fund', 'crypto', 'cash', 'bond', 'real_estate', 'commodity'];
+const ASSET_CATEGORIES = [
+	'stock',
+	'etf',
+	'mutual_fund',
+	'crypto',
+	'cash',
+	'bond',
+	'real_estate',
+	'commodity'
+];
 export const scenarioAssetCategory = (value: string) => ASSET_CATEGORIES.includes(value);
 
 /** scenarioCryptoHoldingIDs: de-duplicated, every value must be a UUID. */
@@ -108,7 +126,8 @@ function optionalScenarioShock(targetRaw: string, percentageRaw: string, label: 
 	const target = targetRaw.trim();
 	percentageRaw = percentageRaw.trim();
 	if (target === '' && percentageRaw === '') return [];
-	if (target === '' || percentageRaw === '') throw new ConfigError(`provide both ${label} target and shock`);
+	if (target === '' || percentageRaw === '')
+		throw new ConfigError(`provide both ${label} target and shock`);
 	let percentage: number;
 	try {
 		percentage = parseBoundedFloat(percentageRaw, -100, 100);
@@ -118,7 +137,13 @@ function optionalScenarioShock(targetRaw: string, percentageRaw: string, label: 
 	return [{ target, percentage: percentage / 100 }];
 }
 
-function bounded(form: FormData, name: string, minimum: number, maximum: number, message: string): number {
+function bounded(
+	form: FormData,
+	name: string,
+	minimum: number,
+	maximum: number,
+	message: string
+): number {
 	try {
 		return parseBoundedFloat(formValue(form, name), minimum, maximum);
 	} catch {
@@ -134,7 +159,8 @@ function parseMultiAssetAssumptions(weightsRaw: string, returnsRaw: string, cova
 	if (weightsRaw === '' || returnsRaw === '' || covarianceRaw === '') {
 		throw new ConfigError('weights, per-asset returns, and covariance must be provided together');
 	}
-	const numbers = (v: unknown): v is number[] => Array.isArray(v) && v.every((n) => typeof n === 'number');
+	const numbers = (v: unknown): v is number[] =>
+		Array.isArray(v) && v.every((n) => typeof n === 'number');
 	let weights: unknown, returns: unknown, covariance: unknown;
 	try {
 		weights = JSON.parse(weightsRaw);
@@ -163,7 +189,13 @@ function parseMultiAssetAssumptions(weightsRaw: string, returnsRaw: string, cova
 	let weightTotal = 0;
 	for (let index = 0; index < count; index++) {
 		const weight = weights[index];
-		if (weight < 0 || weight > 1 || returns[index] < -1 || returns[index] > 10 || matrix[index].length !== count) {
+		if (
+			weight < 0 ||
+			weight > 1 ||
+			returns[index] < -1 ||
+			returns[index] > 10 ||
+			matrix[index].length !== count
+		) {
 			throw new ConfigError('invalid multi-asset weight, return, or covariance dimension');
 		}
 		weightTotal += weight;
@@ -186,15 +218,52 @@ export function scenarioConfiguration(form: FormData, kind: string): ScenarioJSO
 			return { catalogId: preset };
 		}
 		case 'custom': {
-			const shock = bounded(form, 'assetClassShock', -100, 100, 'asset-class shock must be between -100% and 100%');
-			const horizon = bounded(form, 'customHorizonMonths', 1, 120, 'horizon must be between 1 and 120 months');
-			const rateShift = bounded(form, 'rateShiftBps', -5000, 5000, 'rate shift must be between -5,000 and 5,000 basis points');
-			const volatilityMultiplier = bounded(form, 'volatilityMultiplier', 0, 10, 'volatility multiplier must be between 0 and 10');
+			const shock = bounded(
+				form,
+				'assetClassShock',
+				-100,
+				100,
+				'asset-class shock must be between -100% and 100%'
+			);
+			const horizon = bounded(
+				form,
+				'customHorizonMonths',
+				1,
+				120,
+				'horizon must be between 1 and 120 months'
+			);
+			const rateShift = bounded(
+				form,
+				'rateShiftBps',
+				-5000,
+				5000,
+				'rate shift must be between -5,000 and 5,000 basis points'
+			);
+			const volatilityMultiplier = bounded(
+				form,
+				'volatilityMultiplier',
+				0,
+				10,
+				'volatility multiplier must be between 0 and 10'
+			);
 			const assetClass = defaultString(formValue(form, 'assetClassTarget'), 'stock');
-			if (!scenarioAssetCategory(assetClass)) throw new ConfigError('choose a supported asset class');
-			const holdingShocks = optionalScenarioShock(formValue(form, 'holdingShockTarget'), formValue(form, 'holdingShock'), 'holding');
-			const sectorShocks = optionalScenarioShock(formValue(form, 'sectorShockTarget'), formValue(form, 'sectorShock'), 'sector');
-			const regionShocks = optionalScenarioShock(formValue(form, 'regionShockTarget'), formValue(form, 'regionShock'), 'region');
+			if (!scenarioAssetCategory(assetClass))
+				throw new ConfigError('choose a supported asset class');
+			const holdingShocks = optionalScenarioShock(
+				formValue(form, 'holdingShockTarget'),
+				formValue(form, 'holdingShock'),
+				'holding'
+			);
+			const sectorShocks = optionalScenarioShock(
+				formValue(form, 'sectorShockTarget'),
+				formValue(form, 'sectorShock'),
+				'sector'
+			);
+			const regionShocks = optionalScenarioShock(
+				formValue(form, 'regionShockTarget'),
+				formValue(form, 'regionShock'),
+				'region'
+			);
 			const currencyShocks = optionalScenarioShock(
 				formValue(form, 'currencyShockTarget').toUpperCase(),
 				formValue(form, 'currencyShock'),
@@ -214,14 +283,62 @@ export function scenarioConfiguration(form: FormData, kind: string): ScenarioJSO
 		}
 		case 'monte_carlo': {
 			const paths = bounded(form, 'paths', 100, 50000, 'paths must be between 100 and 50,000');
-			const horizon = bounded(form, 'monteCarloHorizonMonths', 1, 600, 'horizon must be between 1 and 600 months');
-			const annualReturn = bounded(form, 'annualReturn', -100, 100, 'annual return must be between -100% and 100%');
-			const annualVolatility = bounded(form, 'annualVolatility', 0, 500, 'annual volatility must be between 0% and 500%');
-			const inflation = bounded(form, 'inflation', -20, 100, 'inflation must be between -20% and 100%');
-			const monthlyContribution = bounded(form, 'monthlyContribution', 0, 1_000_000_000, 'monthly contribution must be zero or greater');
-			const contributionGrowth = bounded(form, 'contributionGrowth', -100, 100, 'contribution growth must be between -100% and 100%');
-			const degreesOfFreedom = bounded(form, 'degreesOfFreedom', 2.01, 100, 'student-t degrees of freedom must be greater than 2');
-			const bootstrapMonths = bounded(form, 'bootstrapBlockMonths', 1, 120, 'bootstrap block length must be between 1 and 120 months');
+			const horizon = bounded(
+				form,
+				'monteCarloHorizonMonths',
+				1,
+				600,
+				'horizon must be between 1 and 600 months'
+			);
+			const annualReturn = bounded(
+				form,
+				'annualReturn',
+				-100,
+				100,
+				'annual return must be between -100% and 100%'
+			);
+			const annualVolatility = bounded(
+				form,
+				'annualVolatility',
+				0,
+				500,
+				'annual volatility must be between 0% and 500%'
+			);
+			const inflation = bounded(
+				form,
+				'inflation',
+				-20,
+				100,
+				'inflation must be between -20% and 100%'
+			);
+			const monthlyContribution = bounded(
+				form,
+				'monthlyContribution',
+				0,
+				1_000_000_000,
+				'monthly contribution must be zero or greater'
+			);
+			const contributionGrowth = bounded(
+				form,
+				'contributionGrowth',
+				-100,
+				100,
+				'contribution growth must be between -100% and 100%'
+			);
+			const degreesOfFreedom = bounded(
+				form,
+				'degreesOfFreedom',
+				2.01,
+				100,
+				'student-t degrees of freedom must be greater than 2'
+			);
+			const bootstrapMonths = bounded(
+				form,
+				'bootstrapBlockMonths',
+				1,
+				120,
+				'bootstrap block length must be between 1 and 120 months'
+			);
 			const configuration: ScenarioJSON = {
 				path_count: Math.trunc(paths),
 				horizon_months: Math.trunc(horizon),
@@ -261,10 +378,20 @@ export async function readForm(event: RequestEvent): Promise<FormData> {
 }
 
 /** CreateScenarioRun accepts 200 or 202; the page then navigates to /scenarios?run=<id>. */
-export async function queueRun(event: RequestEvent, scenarioID: string, snapshotID: string, seed: number | null) {
+export async function queueRun(
+	event: RequestEvent,
+	scenarioID: string,
+	snapshotID: string,
+	seed: number | null
+) {
 	const input: { snapshotId: string; seed?: number } = { snapshotId: snapshotID };
 	if (seed !== null) input.seed = seed;
-	return apiJSON<ScenarioRun>(event, 'POST', `/v1/scenarios/${encodeURIComponent(scenarioID)}/runs`, input);
+	return apiJSON<ScenarioRun>(
+		event,
+		'POST',
+		`/v1/scenarios/${encodeURIComponent(scenarioID)}/runs`,
+		input
+	);
 }
 
 export async function createSnapshot(
@@ -283,12 +410,16 @@ export async function createSnapshot(
 
 /** api.Service.FetchScenarioWorkspace: seven reads plus a holdings fan-out; any failure fails the whole workspace. */
 export async function fetchScenarioWorkspace(event: RequestEvent): Promise<ScenarioWorkspace> {
-	const get = <T>(path: string, query?: Record<string, string>) => apiJSON<T>(event, 'GET', path, undefined, { query });
+	const get = <T>(path: string, query?: Record<string, string>) =>
+		apiJSON<T>(event, 'GET', path, undefined, { query });
 	const portfoliosAndHoldings = (async () => {
 		const portfolios = (await get<{ id: string; name: string }[]>('/v1/portfolio/lists')) ?? [];
 		const holdings = await Promise.all(
 			portfolios.map(
-				async (p) => (await get<{ id: string; symbol: string; category: string }[]>('/v1/stocks', { portfolioListId: uid(p.id) })) ?? []
+				async (p) =>
+					(await get<{ id: string; symbol: string; category: string }[]>('/v1/stocks', {
+						portfolioListId: uid(p.id)
+					})) ?? []
 			)
 		);
 		return { portfolios, holdings: holdings.flat() };
@@ -312,7 +443,11 @@ export async function fetchScenarioWorkspace(event: RequestEvent): Promise<Scena
 		goals: goals.map((g) => ({ id: g.id, name: g.name })),
 		scenarios,
 		holdings: ph.holdings.map((h) => ({ id: h.id, symbol: h.symbol, category: h.category })),
-		cryptoHoldings: cryptoHoldings.map((c) => ({ id: c.id, symbol: c.symbol, quantity: c.quantity })),
+		cryptoHoldings: cryptoHoldings.map((c) => ({
+			id: c.id,
+			symbol: c.symbol,
+			quantity: c.quantity
+		})),
 		riskProfiles
 	};
 }

@@ -34,20 +34,35 @@
 <div class="app-page-content vigil-canvas-page activity-page activity-modern-page">
 	<ModernPageHeader title={t('Activity & Events')}>
 		{#snippet actions()}
-			<SelectField id="activity-filter" name="activity_filter" aria-label={t('Filter activity')} options={filterOptions} />
+			<SelectField
+				id="activity-filter"
+				name="activity_filter"
+				aria-label={t('Filter activity')}
+				options={filterOptions}
+			/>
 			<ConnectAgentPill />
 		{/snippet}
 	</ModernPageHeader>
 	<CommandSplit class="activity-modern-layout">
 		<CommandSplitMain>
 			<Panel class="activity-timeline-panel" titleID="activity-timeline-heading">
-				<PanelHeader id="activity-timeline-heading" title={t('Timeline')} desc={t('Latest events, newest first.')} />
+				<PanelHeader
+					id="activity-timeline-heading"
+					title={t('Timeline')}
+					desc={t('Latest events, newest first.')}
+				/>
 				{#if vm.activitiesError}
-					<p class="text-subhead text-muted-foreground">{t('Activity feed unavailable right now.')}</p>
+					<p class="text-subhead text-muted-foreground">
+						{t('Activity feed unavailable right now.')}
+					</p>
 				{:else}
 					{#key vm}
 						<ActivityListSection
-							initial={{ activities: vm.activities, activityLimit: vm.activityLimit, hasMoreActivities: vm.hasMoreActivities }}
+							initial={{
+								activities: vm.activities,
+								activityLimit: vm.activityLimit,
+								hasMoreActivities: vm.hasMoreActivities
+							}}
 						/>
 					{/key}
 				{/if}

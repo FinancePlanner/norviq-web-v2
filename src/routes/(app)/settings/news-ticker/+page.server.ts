@@ -81,7 +81,8 @@ export const actions: Actions = {
 		} catch (err) {
 			console.warn('remove news ticker feed', err);
 		}
-		if (status !== 204 && status !== 404) plainPostFeedback('Could not remove that feed. Try again.', '');
+		if (status !== 204 && status !== 404)
+			plainPostFeedback('Could not remove that feed. Try again.', '');
 		plainPostFeedback('', 'Feed removed.');
 	}
 };

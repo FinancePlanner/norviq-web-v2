@@ -15,7 +15,11 @@
 
 <label
 	for={htmlFor || undefined}
-	class={cn('text-sm font-medium leading-none inline-block', error && 'text-destructive', className)}
+	class={cn(
+		'inline-block text-sm leading-none font-medium',
+		error && 'text-destructive',
+		className
+	)}
 	data-tui-label-disabled-style="opacity-50 cursor-not-allowed"
 	{...rest}>{@render children?.()}</label
 >

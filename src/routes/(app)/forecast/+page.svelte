@@ -8,7 +8,12 @@
 	import * as table from '#lib/components/norviq/tui/table/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { formatFloat } from '#lib/format.js';
-	import { forecastAction, forecastSubmitLabel, forecastValue, money } from '#lib/features/planning-tools/forecast/view.js';
+	import {
+		forecastAction,
+		forecastSubmitLabel,
+		forecastValue,
+		money
+	} from '#lib/features/planning-tools/forecast/view.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -20,7 +25,11 @@
 		{ value: '', label: 'Choose portfolio' },
 		...vm.portfolios.map((p) => {
 			const id = p.id.toLowerCase();
-			return { value: id, label: p.name, selected: vm.editing != null && vm.editing.portfolioListId === id };
+			return {
+				value: id,
+				label: p.name,
+				selected: vm.editing != null && vm.editing.portfolioListId === id
+			};
 		})
 	]);
 
@@ -39,7 +48,10 @@
 </svelte:head>
 
 <div class="app-page-content vigil-deck-page automation-modern-page space-y-6">
-	<vigil.ModernPageHeader title="Net worth forecast" subtitle="Projected from your portfolio, income, spending, cash, and crypto." />
+	<vigil.ModernPageHeader
+		title="Net worth forecast"
+		subtitle="Projected from your portfolio, income, spending, cash, and crypto."
+	/>
 	{#if vm.error !== ''}
 		<div class="rounded-xl border border-danger p-4" role="alert">{vm.error}</div>
 	{/if}
@@ -49,10 +61,13 @@
 				<h2 class="text-lg font-semibold">Forecast assumptions</h2>
 				{#if vm.defaults}
 					<p class="mt-1 text-sm text-muted-foreground">
-						Suggested from {vm.defaults.cashFlowSource}: income {money(vm.defaults.monthlyIncome, vm.defaults.baseCurrency)}, spending {money(
-							vm.defaults.monthlySpending,
+						Suggested from {vm.defaults.cashFlowSource}: income {money(
+							vm.defaults.monthlyIncome,
 							vm.defaults.baseCurrency
-						)}, net flow {money(vm.defaults.monthlyNetFlow, vm.defaults.baseCurrency)}.
+						)}, spending {money(vm.defaults.monthlySpending, vm.defaults.baseCurrency)}, net flow {money(
+							vm.defaults.monthlyNetFlow,
+							vm.defaults.baseCurrency
+						)}.
 					</p>
 				{/if}
 			</div>
@@ -69,7 +84,13 @@
 				wrapperClass="grid gap-1 text-sm"
 				options={portfolioOptions}
 			/>
-			<Field name="name" label="Name" value={forecastValue(vm, 'name')} required wrapperClass="grid gap-1 text-sm" />
+			<Field
+				name="name"
+				label="Name"
+				value={forecastValue(vm, 'name')}
+				required
+				wrapperClass="grid gap-1 text-sm"
+			/>
 			<Field
 				name="base_currency"
 				label="Base currency"
@@ -178,10 +199,17 @@
 					{`${forecast.horizonMonths} months · ${forecast.pathCount} simulation paths · ${forecast.baseCurrency}`}
 				</p>
 				<div class="mt-3 flex flex-wrap gap-2">
-					<form method="post" action={'/forecast/' + forecast.id + '/run'}><SubmitButton class="btn-primary">Run now</SubmitButton></form><a
-						class="btn"
-						href={'/forecast?edit=' + forecast.id}>Edit</a
-					><form method="post" action={'/forecast/' + forecast.id + '/delete'} onsubmit={confirmDelete}><SubmitButton>Delete</SubmitButton></form>
+					<form method="post" action={'/forecast/' + forecast.id + '/run'}>
+						<SubmitButton class="btn-primary">Run now</SubmitButton>
+					</form>
+					<a class="btn" href={'/forecast?edit=' + forecast.id}>Edit</a>
+					<form
+						method="post"
+						action={'/forecast/' + forecast.id + '/delete'}
+						onsubmit={confirmDelete}
+					>
+						<SubmitButton>Delete</SubmitButton>
+					</form>
 				</div>
 			</article>
 		{/each}
@@ -190,14 +218,22 @@
 		<section class="rounded-lg border p-5">
 			<h2 class="text-lg font-semibold">Latest projection</h2>
 			<p class="text-sm text-muted-foreground">
-				Starting value {money(run.startingValue, currency)}. Income and spending remain separate throughout the simulation.
+				Starting value {money(run.startingValue, currency)}. Income and spending remain separate
+				throughout the simulation.
 			</p>
 			{#if run.targetProbability != null}
-				<p class="mt-2 font-semibold">Target probability: {formatFloat(run.targetProbability * 100, 1)}%</p>
+				<p class="mt-2 font-semibold">
+					Target probability: {formatFloat(run.targetProbability * 100, 1)}%
+				</p>
 			{/if}
 			<div class="mt-4 overflow-x-auto">
 				<table.Table class="w-full text-sm">
-					<thead><tr class="text-left"><th>Month</th><th>Income</th><th>Spending</th><th>P10</th><th>P50</th><th>P90</th></tr></thead>
+					<thead
+						><tr class="text-left"
+							><th>Month</th><th>Income</th><th>Spending</th><th>P10</th><th>P50</th><th>P90</th
+							></tr
+						></thead
+					>
 					<tbody>
 						{#each run.timeline as point, index (index)}
 							{#if index === 0 || index === run.timeline.length - 1 || point.month % 12 === 0}

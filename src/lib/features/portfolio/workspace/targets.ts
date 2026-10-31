@@ -26,5 +26,17 @@ export interface TargetFormVM {
 }
 
 export function emptyTargetForm(over: Partial<TargetFormVM> = {}): TargetFormVM {
-	return { id: '', symbol: '', scenario: '', targetPrice: '', highPrice: '', lowPrice: '', rationale: '', targetDate: '', isEdit: false, error: '', ...over };
+	return {
+		id: '',
+		symbol: '',
+		scenario: '',
+		targetPrice: '',
+		highPrice: '',
+		lowPrice: '',
+		rationale: '',
+		targetDate: '',
+		isEdit: false,
+		error: '',
+		...over
+	};
 }

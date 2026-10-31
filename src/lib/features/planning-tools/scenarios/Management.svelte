@@ -27,7 +27,8 @@
 		onredirect: (to: string) => void;
 	} = $props();
 
-	type Slot = { kind: 'review'; review: SnapshotReviewResponse } | { kind: 'error'; message: string } | null;
+	type Slot =
+		{ kind: 'review'; review: SnapshotReviewResponse } | { kind: 'error'; message: string } | null;
 	let slot = $state<Slot>(null);
 
 	const assetClassOptions: Option[] = [
@@ -74,10 +75,17 @@
 				{#if scenario.isSaved}
 					<details class="rounded-lg border p-4">
 						<summary class="cursor-pointer"
-							><span class="font-medium">{scenario.name}</span><span class="ml-2 text-footnote text-muted-foreground">{scenario.kind}</span></summary
+							><span class="font-medium">{scenario.name}</span><span
+								class="ml-2 text-footnote text-muted-foreground">{scenario.kind}</span
+							></summary
 						>
-						<pre class="mt-3 max-h-44 overflow-auto rounded-xl bg-black/5 p-3 text-xs">{resultJSON(scenario.configuration)}</pre>
-						<form class="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]" onsubmit={(e) => submitTo('/scenarios/snapshot-review', e)}>
+						<pre class="mt-3 max-h-44 overflow-auto rounded-xl bg-black/5 p-3 text-xs">{resultJSON(
+								scenario.configuration
+							)}</pre>
+						<form
+							class="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]"
+							onsubmit={(e) => submitTo('/scenarios/snapshot-review', e)}
+						>
 							<input type="hidden" name="savedScenarioId" value={uid(scenario.id)} /><input
 								type="hidden"
 								name="portfolioId"
@@ -93,7 +101,7 @@
 								maxlength={3}
 							/>
 							{#if workspace.cryptoHoldings.length > 0}
-								<fieldset class="sm:col-span-2 rounded-xl border p-3">
+								<fieldset class="rounded-xl border p-3 sm:col-span-2">
 									<legend class="px-1 text-xs font-medium">Include crypto holdings</legend>
 									{#each workspace.cryptoHoldings as holding (holding.id)}
 										<label class="mr-4 inline-flex items-center gap-2 text-sm">
@@ -103,14 +111,20 @@
 									{/each}
 								</fieldset>
 							{/if}
-							<Field name="seed" type="number" placeholder="Random seed (optional)" aria-label="Random seed" /><SecondarySubmitButton
-								>Review and run</SecondarySubmitButton
-							>
+							<Field
+								name="seed"
+								type="number"
+								placeholder="Random seed (optional)"
+								aria-label="Random seed"
+							/><SecondarySubmitButton>Review and run</SecondarySubmitButton>
 						</form>
 						<NativeButton
 							class="mt-3 text-sm text-danger"
-							onclick={() => remove('/scenarios/configurations/' + uid(scenario.id), 'Delete this saved scenario and its runs?')}
-							>Delete configuration</NativeButton
+							onclick={() =>
+								remove(
+									'/scenarios/configurations/' + uid(scenario.id),
+									'Delete this saved scenario and its runs?'
+								)}>Delete configuration</NativeButton
 						>
 					</details>
 				{/if}
@@ -124,14 +138,18 @@
 		<p class="text-footnote font-semibold text-muted-foreground">Reusable inputs</p>
 		<h2 class="mt-2 text-xl font-semibold">Financial goals</h2>
 		<p class="mt-2 text-sm text-muted-foreground">
-			Goals are managed in the dedicated planning workspace and remain available here as scenario inputs.
+			Goals are managed in the dedicated planning workspace and remain available here as scenario
+			inputs.
 		</p>
 		<a class="btn-secondary mt-5 inline-flex" href="/goals">Open financial goals</a>
 	</section>
 	<section class="glass-card p-6">
 		<p class="text-footnote font-semibold text-muted-foreground">Snapshot classification</p>
 		<h2 class="mt-2 text-xl font-semibold">Holding risk profiles</h2>
-		<form class="mt-5 grid gap-4 sm:grid-cols-2" onsubmit={(e) => submitTo('/scenarios/risk-profiles', e)}>
+		<form
+			class="mt-5 grid gap-4 sm:grid-cols-2"
+			onsubmit={(e) => submitTo('/scenarios/risk-profiles', e)}
+		>
 			<SelectField
 				name="holdingId"
 				label="Holding"
@@ -148,9 +166,25 @@
 				class="mt-2 w-full"
 				wrapperClass="block text-sm font-medium"
 			/>
-			<Field name="benchmarkProxy" label="Benchmark proxy" placeholder="SPY" class="mt-2 w-full" wrapperClass="block text-sm font-medium" />
-			<Field name="sector" label="Sector" class="mt-2 w-full" wrapperClass="block text-sm font-medium" />
-			<Field name="region" label="Region" class="mt-2 w-full" wrapperClass="block text-sm font-medium" />
+			<Field
+				name="benchmarkProxy"
+				label="Benchmark proxy"
+				placeholder="SPY"
+				class="mt-2 w-full"
+				wrapperClass="block text-sm font-medium"
+			/>
+			<Field
+				name="sector"
+				label="Sector"
+				class="mt-2 w-full"
+				wrapperClass="block text-sm font-medium"
+			/>
+			<Field
+				name="region"
+				label="Region"
+				class="mt-2 w-full"
+				wrapperClass="block text-sm font-medium"
+			/>
 			<Field
 				name="manualValue"
 				label="Manual value"
@@ -160,8 +194,24 @@
 				min="0.01"
 				step="0.01"
 			/>
-			<Field name="duration" label="Duration" type="number" class="mt-2 w-full" wrapperClass="block text-sm font-medium" min="0" step="0.01" />
-			<Field name="convexity" label="Convexity" type="number" class="mt-2 w-full" wrapperClass="block text-sm font-medium" min="0" step="0.01" />
+			<Field
+				name="duration"
+				label="Duration"
+				type="number"
+				class="mt-2 w-full"
+				wrapperClass="block text-sm font-medium"
+				min="0"
+				step="0.01"
+			/>
+			<Field
+				name="convexity"
+				label="Convexity"
+				type="number"
+				class="mt-2 w-full"
+				wrapperClass="block text-sm font-medium"
+				min="0"
+				step="0.01"
+			/>
 			<SecondarySubmitButton class="sm:col-span-2">Save risk profile</SecondarySubmitButton>
 		</form>
 		<div class="mt-5 space-y-2">
@@ -170,9 +220,12 @@
 					<div>
 						<p class="text-sm font-medium">{profile.assetCategory}</p>
 						<p class="text-xs text-muted-foreground">Holding {uid(profile.holdingId)}</p>
-					</div><NativeButton
+					</div>
+					<NativeButton
 						class="text-sm text-danger"
-						onclick={() => remove('/scenarios/risk-profiles/' + uid(profile.id), 'Delete this risk profile?')}>Delete</NativeButton
+						onclick={() =>
+							remove('/scenarios/risk-profiles/' + uid(profile.id), 'Delete this risk profile?')}
+						>Delete</NativeButton
 					>
 				</div>
 			{/each}
@@ -181,7 +234,12 @@
 </div>
 <div id="scenario-management-error" class="mt-4">
 	{#if slot?.kind === 'review'}
-		<SnapshotReview snapshot={slot.review.snapshot} values={slot.review.values} {onformerror} {onredirect} />
+		<SnapshotReview
+			snapshot={slot.review.snapshot}
+			values={slot.review.values}
+			{onformerror}
+			{onredirect}
+		/>
 	{:else if slot?.kind === 'error'}
 		<FormErrorBanner message={slot.message} />
 	{/if}

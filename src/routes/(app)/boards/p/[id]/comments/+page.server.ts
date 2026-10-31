@@ -27,9 +27,15 @@ export const actions: Actions = {
 		const raw = formValue(data, 'parent_id').trim();
 		let comment;
 		try {
-			comment = await createBoardComment(event, id, raw !== '' ? raw : null, formValue(data, 'body'));
+			comment = await createBoardComment(
+				event,
+				id,
+				raw !== '' ? raw : null,
+				formValue(data, 'body')
+			);
 		} catch (err) {
-			if (isBoardsNotFound(err) || isBoardsCode(err, 'community_banned')) boardsFailure(err, 'post');
+			if (isBoardsNotFound(err) || isBoardsCode(err, 'community_banned'))
+				boardsFailure(err, 'post');
 			return fail(422, { error: boardsErrorText(err) });
 		}
 		// boardPostPath: no slug in this route, so the generic post path.

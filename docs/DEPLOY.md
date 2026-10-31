@@ -28,13 +28,13 @@ public API hostname instead. Nothing in the API contract changes.
 
 ## Prerequisites before the first production deploy
 
-| Item | Owner | Notes |
-|---|---|---|
-| `EDGE_CLIENT_IP_KEY` sealed into `norviq` (and `norviq-staging`) | backend-v2 | v2 trusts `X-Norviq-Client-IP` only when `X-Norviq-Edge-Key` matches. Mirror the same value into the Worker: `wrangler secret put EDGE_CLIENT_IP_KEY`. Without it login/signup rate limits see Cloudflare egress IPs. |
-| `SESSION_SECRET` | web | A **new** random value (≥32 bytes). Sessions are not shared with the Go web (scs store vs sealed cookie), so cutover signs everyone out once. |
-| `PUBLIC_API_TOKEN`, `REVENUECAT_WEB_API_KEY` | web | Same values as the cluster's `secrets/norviq/production/web-env.yaml`. |
-| `WEBAUTHN_ORIGINS`, OAuth redirect URIs | backend (infra values) | Already `https://www.norviq.org` / `https://norviq.org`; a preview host (`*.workers.dev`) needs adding temporarily for passkey / Google / Apple sign-in to work there. |
-| Staging preview | approved 2026-10-28 | See "Hosted staging preview" below. |
+| Item                                                             | Owner                  | Notes                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EDGE_CLIENT_IP_KEY` sealed into `norviq` (and `norviq-staging`) | backend-v2             | v2 trusts `X-Norviq-Client-IP` only when `X-Norviq-Edge-Key` matches. Mirror the same value into the Worker: `wrangler secret put EDGE_CLIENT_IP_KEY`. Without it login/signup rate limits see Cloudflare egress IPs. |
+| `SESSION_SECRET`                                                 | web                    | A **new** random value (≥32 bytes). Sessions are not shared with the Go web (scs store vs sealed cookie), so cutover signs everyone out once.                                                                         |
+| `PUBLIC_API_TOKEN`, `REVENUECAT_WEB_API_KEY`                     | web                    | Same values as the cluster's `secrets/norviq/production/web-env.yaml`.                                                                                                                                                |
+| `WEBAUTHN_ORIGINS`, OAuth redirect URIs                          | backend (infra values) | Already `https://www.norviq.org` / `https://norviq.org`; a preview host (`*.workers.dev`) needs adding temporarily for passkey / Google / Apple sign-in to work there.                                                |
+| Staging preview                                                  | approved 2026-10-28    | See "Hosted staging preview" below.                                                                                                                                                                                   |
 
 ## Hosted staging preview
 
@@ -63,7 +63,7 @@ browser ──basic auth──▶ Worker "norviq-web-staging" (*.workers.dev, wr
   until then every backend call from the Worker fails.
 - Smoke against it with a real account (no `/__dev/login` there):
   `SMOKE_BASIC_AUTH=user:pass SMOKE_EMAIL=webv2-test@norviq-staging.invalid
-  SMOKE_PASSWORD_FILE=<file> bun run smoke:browser scripts/smoke-pages.txt <url>`.
+SMOKE_PASSWORD_FILE=<file> bun run smoke:browser scripts/smoke-pages.txt <url>`.
   2026-10-29: 116/122 clean (the same 6 expected failures as locally), and
   assistant SSE plus a watchlist add/remove passed through the Worker.
 
@@ -78,19 +78,19 @@ users if the records are copied exactly.
 Records visible from outside on 2026-10-29. This is not exhaustive: export the
 zone from Namecheap → Advanced DNS and compare.
 
-| Name | Type | Value | Cloudflare proxy |
-|---|---|---|---|
-| `norviq.org` | A | 178.105.244.185 | DNS only until cutover |
-| `www` | A | 178.105.244.185 | DNS only until cutover |
-| `api` | A | 178.105.244.185 | **DNS only, always** |
-| `api-staging` | A | 178.105.244.185 | **DNS only, always** |
-| `mcp` | A | 178.105.244.185 | **DNS only, always** |
-| `norviq.org` | MX | 10 mx1.privateemail.com, 10 mx2.privateemail.com | n/a |
-| `norviq.org` | TXT | `v=spf1 include:spf.privateemail.com ~all` | n/a |
-| `_dmarc` | TXT | `v=DMARC1; p=none;` | n/a |
-| `send` | MX | 10 feedback-smtp.eu-west-1.amazonses.com | n/a |
-| `send` | TXT | `v=spf1 include:amazonses.com ~all` | n/a |
-| `resend._domainkey` | TXT | Resend DKIM key (copy exactly from the export) | n/a |
+| Name                | Type | Value                                            | Cloudflare proxy       |
+| ------------------- | ---- | ------------------------------------------------ | ---------------------- |
+| `norviq.org`        | A    | 178.105.244.185                                  | DNS only until cutover |
+| `www`               | A    | 178.105.244.185                                  | DNS only until cutover |
+| `api`               | A    | 178.105.244.185                                  | **DNS only, always**   |
+| `api-staging`       | A    | 178.105.244.185                                  | **DNS only, always**   |
+| `mcp`               | A    | 178.105.244.185                                  | **DNS only, always**   |
+| `norviq.org`        | MX   | 10 mx1.privateemail.com, 10 mx2.privateemail.com | n/a                    |
+| `norviq.org`        | TXT  | `v=spf1 include:spf.privateemail.com ~all`       | n/a                    |
+| `_dmarc`            | TXT  | `v=DMARC1; p=none;`                              | n/a                    |
+| `send`              | MX   | 10 feedback-smtp.eu-west-1.amazonses.com         | n/a                    |
+| `send`              | TXT  | `v=spf1 include:amazonses.com ~all`              | n/a                    |
+| `resend._domainkey` | TXT  | Resend DKIM key (copy exactly from the export)   | n/a                    |
 
 The cluster hosts stay "DNS only" because cert-manager issues their
 certificates with HTTP-01 on the node. Proxying them would also change the
@@ -134,7 +134,6 @@ removing the Worker's custom domains and recreating A `@`/`www` →
 To attach the domains, the old `@`/`www` A records had to be deleted first
 (error 100117); outage window ~20 s.
 
-
 Preconditions, in order:
 
 - [ ] Backend v2 serves `/v1/auth` in production with `EDGE_CLIENT_IP_KEY`
@@ -158,7 +157,7 @@ Cutover:
    new `SESSION_SECRET`, prod `PUBLIC_API_TOKEN` + `REVENUECAT_WEB_API_KEY`.
    No `EDGE_CLIENT_IP_KEY` yet (not sealed in `norviq`). Public pages 200,
    app pages redirect to login. At cutover: `wrangler secret delete
-   PREVIEW_BASIC_AUTH` and `wrangler secret put EDGE_CLIENT_IP_KEY`.
+PREVIEW_BASIC_AUTH` and `wrangler secret put EDGE_CLIENT_IP_KEY`.
 3. Uncomment the custom-domain `routes` in `wrangler.jsonc` and deploy. That
    replaces the `norviq.org`/`www` A records with the Worker. Everyone is
    signed out once, because sessions aren't shared with the Go web.
@@ -173,8 +172,8 @@ right away.
 
 ## CI/CD (GitHub Actions)
 
-- `ci.yml`: every PR and push to `main` runs `check`, `types:check`, the
-  server vitest project and `build`. A green push to `main` then deploys the
+- `ci.yml`: every PR and push to `main` runs `check`, `lint` (Prettier +
+  ESLint), the server vitest project, `build` and `types:check`. A green push to `main` then deploys the
   **staging** Worker through `deploy.yml`.
 - `deploy.yml`: production is manual, like the rest of Norviq:
   `gh workflow run deploy.yml -f environment=production`. To gate it further,

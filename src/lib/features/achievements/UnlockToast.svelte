@@ -15,12 +15,18 @@
 
 	afterNavigate(async (nav) => {
 		// Hash-only moves are not page loads.
-		if (nav.type === 'enter' || nav.from?.url.pathname !== nav.to?.url.pathname || nav.from?.url.search !== nav.to?.url.search) {
+		if (
+			nav.type === 'enter' ||
+			nav.from?.url.pathname !== nav.to?.url.pathname ||
+			nav.from?.url.search !== nav.to?.url.search
+		) {
 			const mine = ++seq;
 			// The new page replaces the old shell, toast and all.
 			toast = null;
 			try {
-				const res = await fetch('/achievements/unseen', { headers: { accept: 'application/json' } });
+				const res = await fetch('/achievements/unseen', {
+					headers: { accept: 'application/json' }
+				});
 				if (!res.ok || mine !== seq) return;
 				const body = (await res.json()) as { toast: ToastViewModel | null };
 				toast = body.toast;
@@ -40,7 +46,9 @@
 	>
 		<span>
 			{#if toast.count === 1}
-				{t('Achievement unlocked')} · {toast.title}{#if toast.tier}{' (' + t(tierLabelID(toast.tier)) + ')'}{/if}
+				{t('Achievement unlocked')} · {toast.title}{#if toast.tier}{' (' +
+						t(tierLabelID(toast.tier)) +
+						')'}{/if}
 			{:else}
 				{toast.count + ' ' + t('achievements unlocked')}
 			{/if}

@@ -5,6 +5,10 @@
 	let { text, sentiment = '' }: { text: string; sentiment?: Sentiment } = $props();
 </script>
 
-<span class={['nq-hero-delta', sentiment === 'positive' && 'is-positive', sentiment === 'negative' && 'is-negative']}
-	>{text}</span
+<span
+	class={[
+		'nq-hero-delta',
+		sentiment === 'positive' && 'is-positive',
+		sentiment === 'negative' && 'is-negative'
+	]}>{text}</span
 >

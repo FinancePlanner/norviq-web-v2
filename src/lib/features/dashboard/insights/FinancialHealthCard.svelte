@@ -9,7 +9,9 @@
 	let { health }: { health: FinancialHealthVM } = $props();
 
 	// healthGaugeStyle: the gauge is a half circle, so 100% is 180deg.
-	const gaugeStyle = $derived(`--health-gauge-angle: ${formatFloat(Math.min(100, Math.max(0, health.ringPercent)) * 1.8, 1)}deg;`);
+	const gaugeStyle = $derived(
+		`--health-gauge-angle: ${formatFloat(Math.min(100, Math.max(0, health.ringPercent)) * 1.8, 1)}deg;`
+	);
 </script>
 
 <Panel class="financial-health-panel" titleID="financial-health-title">
@@ -17,7 +19,11 @@
 		{#snippet trailing()}<a href="/dashboard/insights">{t('Details')}</a>{/snippet}
 	</PanelHeader>
 	<div class="financial-health-card">
-		<div class={'health-gauge health-ring-' + health.tone} style={gaugeStyle} aria-label={health.scoreText + ' out of 100'}>
+		<div
+			class={'health-gauge health-ring-' + health.tone}
+			style={gaugeStyle}
+			aria-label={health.scoreText + ' out of 100'}
+		>
 			<div class="health-gauge-arc" aria-hidden="true"></div>
 			<div class="health-ring-inner">
 				<span class="health-ring-score">{health.scoreText}</span>

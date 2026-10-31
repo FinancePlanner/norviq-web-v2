@@ -9,7 +9,14 @@ type GetUserProfileResponse = components['schemas']['GetUserProfileResponse'];
 
 // Go Settings, section "": LoadSettingsIndexVM.
 export const load: PageServerLoad = async (event) => {
-	const vm = { username: '', email: '', isPro: false, planLabel: '', hasProfile: false, profileError: '' };
+	const vm = {
+		username: '',
+		email: '',
+		isPro: false,
+		planLabel: '',
+		hasProfile: false,
+		profileError: ''
+	};
 	try {
 		const resp = await apiJSON<GetUserProfileResponse>(event, 'GET', '/v1/users');
 		const profile = resp.userProfile;

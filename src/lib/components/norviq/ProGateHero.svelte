@@ -3,7 +3,7 @@
 	let { featureName }: { featureName: string } = $props();
 </script>
 
-<div class="pro-gate-hero glass-card p-8 md:p-10 text-center">
+<div class="pro-gate-hero glass-card p-8 text-center md:p-10">
 	<span class="pro-badge">Pro</span>
 	<h1 class="mt-4 text-3xl font-bold md:text-4xl">{featureName}</h1>
 	<p class="mx-auto mt-3 max-w-lg text-base text-muted-foreground">

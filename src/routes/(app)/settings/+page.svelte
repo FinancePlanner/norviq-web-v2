@@ -8,26 +8,106 @@
 	const vm = $derived(data.vm);
 
 	const links = $derived([
-		{ title: t('Profile'), href: '/settings/profile', description: t('Name, email, and password'), icon: 'user-round-cog' },
-		{ title: t('Subscription'), href: '/settings/subscription', description: t('Plan, billing, and coupons'), icon: 'badge-dollar-sign' },
-		{ title: t('Appearance'), href: '/settings/appearance', description: t('Theme and display'), icon: 'palette' },
-		{ title: t('Badges'), href: '/settings/badges', description: t('Achievements and milestones'), icon: 'badge-check' },
+		{
+			title: t('Profile'),
+			href: '/settings/profile',
+			description: t('Name, email, and password'),
+			icon: 'user-round-cog'
+		},
+		{
+			title: t('Subscription'),
+			href: '/settings/subscription',
+			description: t('Plan, billing, and coupons'),
+			icon: 'badge-dollar-sign'
+		},
+		{
+			title: t('Appearance'),
+			href: '/settings/appearance',
+			description: t('Theme and display'),
+			icon: 'palette'
+		},
+		{
+			title: t('Badges'),
+			href: '/settings/badges',
+			description: t('Achievements and milestones'),
+			icon: 'badge-check'
+		},
 		...(data.social.enabled
 			? [
-					{ title: t('Friends privacy'), href: '/settings/friends-privacy', description: t('Who can find you and what friends see'), icon: 'users' },
-					{ title: t('Blocked people'), href: '/settings/blocked', description: t('People you blocked'), icon: 'ban' }
+					{
+						title: t('Friends privacy'),
+						href: '/settings/friends-privacy',
+						description: t('Who can find you and what friends see'),
+						icon: 'users'
+					},
+					{
+						title: t('Blocked people'),
+						href: '/settings/blocked',
+						description: t('People you blocked'),
+						icon: 'ban'
+					}
 				]
 			: []),
-		{ title: t('Notifications'), href: '/settings/notifications', description: t('Earnings reminder preferences'), icon: 'bell' },
-		{ title: t('Language'), href: '/settings/language', description: t('App language preference'), icon: 'languages' },
-		{ title: t('Feedback'), href: '/settings/feedback', description: t('Send suggestions or report issues'), icon: 'message-square-text' },
-		{ title: t('Integrations'), href: '/settings/integrations', description: t('Brokers, CSV import, and IBKR'), icon: 'blocks' },
-		{ title: t('Bank sync'), href: '/settings/banks', description: t('Connect a bank to review and import transactions'), icon: 'landmark' },
-		{ title: t('API access'), href: '/settings/api-access', description: t('Connect AI clients with access tokens'), icon: 'key-round' },
-		{ title: t('AI providers'), href: '/settings/ai-providers', description: t('Use your own Anthropic or OpenAI key'), icon: 'brain-circuit' },
-		{ title: t('News ticker'), href: '/settings/news-ticker', description: t('Breaking market headlines on your dashboard'), icon: 'newspaper' },
-		{ title: t('Data export'), href: '/settings/export', description: t('Download portfolio and activity data'), icon: 'download' },
-		{ title: t('About'), href: '/settings/about', description: t('Version, legal, and connect'), icon: 'info' }
+		{
+			title: t('Notifications'),
+			href: '/settings/notifications',
+			description: t('Earnings reminder preferences'),
+			icon: 'bell'
+		},
+		{
+			title: t('Language'),
+			href: '/settings/language',
+			description: t('App language preference'),
+			icon: 'languages'
+		},
+		{
+			title: t('Feedback'),
+			href: '/settings/feedback',
+			description: t('Send suggestions or report issues'),
+			icon: 'message-square-text'
+		},
+		{
+			title: t('Integrations'),
+			href: '/settings/integrations',
+			description: t('Brokers, CSV import, and IBKR'),
+			icon: 'blocks'
+		},
+		{
+			title: t('Bank sync'),
+			href: '/settings/banks',
+			description: t('Connect a bank to review and import transactions'),
+			icon: 'landmark'
+		},
+		{
+			title: t('API access'),
+			href: '/settings/api-access',
+			description: t('Connect AI clients with access tokens'),
+			icon: 'key-round'
+		},
+		{
+			title: t('AI providers'),
+			href: '/settings/ai-providers',
+			description: t('Use your own Anthropic or OpenAI key'),
+			icon: 'brain-circuit'
+		},
+		{
+			title: t('News ticker'),
+			href: '/settings/news-ticker',
+			description: t('Breaking market headlines on your dashboard'),
+			icon: 'newspaper'
+		},
+		{
+			title: t('Data export'),
+			href: '/settings/export',
+			description: t('Download portfolio and activity data'),
+			icon: 'download'
+		},
+		{
+			title: t('About'),
+			href: '/settings/about',
+			description: t('Version, legal, and connect'),
+			icon: 'info'
+		}
 	]);
 </script>
 
@@ -58,7 +138,9 @@
 							{/if}
 						</p>
 					</div>
-					<a href="/settings/profile" class="btn-primary w-auto px-5 py-2 text-sm">{t('Edit profile')}</a>
+					<a href="/settings/profile" class="btn-primary w-auto px-5 py-2 text-sm"
+						>{t('Edit profile')}</a
+					>
 				</div>
 			</div>
 		{:else if vm.profileError !== ''}
@@ -68,7 +150,10 @@
 		{/if}
 		<nav class="settings-card-grid" aria-label={t('Settings sections')}>
 			{#each links as link (link.href)}
-				<a href={link.href} class="settings-link-card glass-card p-5 transition hover:brightness-[1.02]">
+				<a
+					href={link.href}
+					class="settings-link-card glass-card p-5 transition hover:brightness-[1.02]"
+				>
 					<span class="settings-link-icon" aria-hidden="true">
 						<Icon name={link.icon} class="h-5 w-5" />
 					</span>

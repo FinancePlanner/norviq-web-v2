@@ -29,9 +29,21 @@ const timeout = () => AbortSignal.timeout(15_000);
 
 /** A 503 from the backend means the ticker is not configured there; the page says so. */
 export async function loadNewsTickerSettingsVM(event: RequestEvent): Promise<NewsTickerViewModel> {
-	const vm: NewsTickerViewModel = { enabled: false, configured: false, feeds: [], maxFeeds: 0, errorMessage: '' };
+	const vm: NewsTickerViewModel = {
+		enabled: false,
+		configured: false,
+		feeds: [],
+		maxFeeds: 0,
+		errorMessage: ''
+	};
 	try {
-		const st = await apiJSON<{ enabled: boolean }>(event, 'GET', '/v1/news/ticker/settings', undefined, { signal: timeout() });
+		const st = await apiJSON<{ enabled: boolean }>(
+			event,
+			'GET',
+			'/v1/news/ticker/settings',
+			undefined,
+			{ signal: timeout() }
+		);
 		vm.enabled = !!st?.enabled;
 	} catch (err) {
 		console.warn('load news ticker settings', err);
@@ -40,7 +52,13 @@ export async function loadNewsTickerSettingsVM(event: RequestEvent): Promise<New
 	}
 	let feeds: NewsTickerFeedsResponse;
 	try {
-		feeds = await apiJSON<NewsTickerFeedsResponse>(event, 'GET', '/v1/news/ticker/feeds', undefined, { signal: timeout() });
+		feeds = await apiJSON<NewsTickerFeedsResponse>(
+			event,
+			'GET',
+			'/v1/news/ticker/feeds',
+			undefined,
+			{ signal: timeout() }
+		);
 	} catch (err) {
 		console.warn('load news ticker feeds', err);
 		vm.errorMessage = 'Your feeds are unavailable right now.';
@@ -53,7 +71,10 @@ export async function loadNewsTickerSettingsVM(event: RequestEvent): Promise<New
 }
 
 /** PUT /v1/news/ticker/settings; throws unless the backend answers 200. */
-export async function updateNewsTickerSettings(event: RequestEvent, enabled: boolean): Promise<void> {
+export async function updateNewsTickerSettings(
+	event: RequestEvent,
+	enabled: boolean
+): Promise<void> {
 	await apiJSON(event, 'PUT', '/v1/news/ticker/settings', { enabled }, { signal: timeout() });
 }
 
@@ -69,7 +90,13 @@ export async function addNewsTickerFeed(event: RequestEvent, url: string): Promi
 
 /** DELETE /v1/news/ticker/feeds/{feedId}; returns the status. Throws on a transport error. */
 export async function deleteNewsTickerFeed(event: RequestEvent, id: string): Promise<number> {
-	const res = await apiFetch(event, 'DELETE', '/v1/news/ticker/feeds/' + encodeURIComponent(id), null, { signal: timeout() });
+	const res = await apiFetch(
+		event,
+		'DELETE',
+		'/v1/news/ticker/feeds/' + encodeURIComponent(id),
+		null,
+		{ signal: timeout() }
+	);
 	await res.body?.cancel();
 	return res.status;
 }

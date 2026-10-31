@@ -6,7 +6,6 @@ import {
 	formError,
 	formValue,
 	parseUUID,
-	readForm,
 	requireScenarioPlanning,
 	scenarioConfiguration,
 	scenarioCryptoHoldingIDs

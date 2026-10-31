@@ -33,7 +33,10 @@
 	<meta name="twitter:image" content={ogImage} />
 </svelte:head>
 
-<main id="main-content" class="legal-page legal-modern-page legal-prose mx-auto w-full max-w-3xl px-6 py-16">
+<main
+	id="main-content"
+	class="legal-page legal-modern-page legal-prose mx-auto w-full max-w-3xl px-6 py-16"
+>
 	<a href="/" class="text-sm text-muted-foreground hover:opacity-100">← Back to Norviq</a>
 	<h1 class="mt-4 text-3xl font-semibold tracking-tight">{doc.title}</h1>
 	{#if doc.lastUpdated}
@@ -59,7 +62,8 @@
 				<div class="mt-4 overflow-x-auto">
 					<table class="w-full border-collapse text-left text-sm">
 						{#if table.caption}
-							<caption class="mb-2 text-left text-xs text-muted-foreground">{table.caption}</caption>
+							<caption class="mb-2 text-left text-xs text-muted-foreground">{table.caption}</caption
+							>
 						{/if}
 						{#if hasHeaders(table.headers)}
 							<thead>
@@ -92,7 +96,9 @@
 		</section>
 	{/each}
 	<footer class="mt-16 border-t pt-6 text-sm text-muted-foreground">
-		<p>Questions? Contact <a href={'mailto:' + OperatorEmail} class="underline">{OperatorEmail}</a>.</p>
+		<p>
+			Questions? Contact <a href={'mailto:' + OperatorEmail} class="underline">{OperatorEmail}</a>.
+		</p>
 		<p class="mt-2 flex flex-wrap gap-x-4 gap-y-1">
 			<a href="/privacy" class="underline">Privacy Policy</a>
 			<a href="/terms" class="underline">Terms of Use</a>

@@ -14,22 +14,33 @@
 </svelte:head>
 
 {#snippet detailActions()}
-	<a href="/pilots" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">All pilots</a>
+	<a href="/pilots" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+		>All pilots</a
+	>
 	{#if vm.following}
-		<a href={vm.following.href} class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">View your follow</a>
+		<a
+			href={vm.following.href}
+			class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">View your follow</a
+		>
 	{/if}
 	{#if vm.pilot.followHref}
 		<a href={vm.pilot.followHref} class="btn-primary px-4 py-2 text-sm">Follow</a>
 	{/if}
 {/snippet}
 
-<vigil.CanvasPage pageClass="pilot-detail-page" title={vm.pilot.name} subtitle={vm.pilot.kindLabel} actions={detailActions}>
+<vigil.CanvasPage
+	pageClass="pilot-detail-page"
+	title={vm.pilot.name}
+	subtitle={vm.pilot.kindLabel}
+	actions={detailActions}
+>
 	{#if vm.pilot.updatedLabel}
 		<p class="text-sm text-muted-foreground">{vm.pilot.updatedLabel}</p>
 	{/if}
 	{#if !vm.pilot.hasTrades}
 		<p class="mt-4 text-sm" role="status">
-			{NO_TRADES_YET + '. Norviq lists this pilot but has not seen a disclosed trade, so there is nothing to follow yet.'}
+			{NO_TRADES_YET +
+				'. Norviq lists this pilot but has not seen a disclosed trade, so there is nothing to follow yet.'}
 		</p>
 	{/if}
 	<vigil.Panel class="mt-6 p-5 md:p-6" titleID="pilot-notes-title">
@@ -61,8 +72,10 @@
 				<tbody>
 					{#each vm.weights as row, i (i)}
 						<tr>
-							<td class="font-semibold vigil-mono"><SymbolLink symbol={row.symbol} href={row.symbolHref} /></td>
-							<td class="tabular-nums vigil-mono">{row.weight}</td>
+							<td class="vigil-mono font-semibold"
+								><SymbolLink symbol={row.symbol} href={row.symbolHref} /></td
+							>
+							<td class="vigil-mono tabular-nums">{row.weight}</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -71,7 +84,11 @@
 	{/if}
 	{#if vm.disclosures.length > 0}
 		<vigil.Panel class="mt-6 p-5 md:p-6" titleID="pilot-disclosures-title">
-			<vigil.PanelHeader id="pilot-disclosures-title" title="Recent disclosures" desc="Newest first, as filed" />
+			<vigil.PanelHeader
+				id="pilot-disclosures-title"
+				title="Recent disclosures"
+				desc="Newest first, as filed"
+			/>
 			<vigil.DataTable>
 				<thead>
 					<tr>
@@ -86,12 +103,14 @@
 				<tbody>
 					{#each vm.disclosures as row, i (i)}
 						<tr>
-							<td class="font-semibold vigil-mono"><SymbolLink symbol={row.symbol} href={row.symbolHref} /></td>
+							<td class="vigil-mono font-semibold"
+								><SymbolLink symbol={row.symbol} href={row.symbolHref} /></td
+							>
 							<td>{row.side}</td>
 							<td class="text-muted-foreground">{row.instrument}</td>
-							<td class="tabular-nums vigil-mono">{row.amount}</td>
+							<td class="vigil-mono tabular-nums">{row.amount}</td>
 							<td class="whitespace-nowrap tabular-nums">{row.traded}</td>
-							<td class="whitespace-nowrap tabular-nums text-muted-foreground">{row.disclosed}</td>
+							<td class="whitespace-nowrap text-muted-foreground tabular-nums">{row.disclosed}</td>
 						</tr>
 					{/each}
 				</tbody>

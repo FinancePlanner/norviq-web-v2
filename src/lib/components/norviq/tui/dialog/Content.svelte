@@ -8,9 +8,19 @@
 	import { cn } from '#lib/utils.js';
 	import { CLOSE_DURATION_MS, getDialogContext } from './dialog.svelte.js';
 
-	type Props = HTMLDialogAttributes & { hideCloseButton?: boolean; disableModal?: boolean; children?: Snippet };
+	type Props = HTMLDialogAttributes & {
+		hideCloseButton?: boolean;
+		disableModal?: boolean;
+		children?: Snippet;
+	};
 
-	let { class: className, hideCloseButton = false, disableModal = false, children, ...rest }: Props = $props();
+	let {
+		class: className,
+		hideCloseButton = false,
+		disableModal = false,
+		children,
+		...rest
+	}: Props = $props();
 
 	const ctx = getDialogContext();
 	if (!ctx) throw new Error('dialog.Content must be inside dialog.Dialog');
@@ -74,7 +84,7 @@
 <dialog
 	bind:this={el}
 	class={cn(
-		'fixed left-[50%] top-[50%] z-50 m-0 flex w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-hidden border bg-background p-6 text-foreground shadow-lg outline-none sm:max-w-lg',
+		'fixed top-[50%] left-[50%] z-50 m-0 flex w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-hidden border bg-background p-6 text-foreground shadow-lg outline-none sm:max-w-lg',
 		'[&:not([open]):not([data-tui-dialog-closing=true])]:hidden',
 		'rounded-lg',
 		'[&::backdrop]:transition-all [&::backdrop]:duration-200',
@@ -103,7 +113,7 @@
 				'absolute top-4 right-4',
 				'rounded-xs opacity-70',
 				'transition-opacity hover:opacity-100',
-				'focus:outline-none focus:ring-2',
+				'focus:ring-2 focus:outline-none',
 				'focus:ring-ring focus:ring-offset-2',
 				'ring-offset-background',
 				'data-[tui-dialog-open=true]:bg-accent',

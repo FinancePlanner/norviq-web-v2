@@ -9,12 +9,17 @@
 
 	let { vm }: { vm: VisualizerVM } = $props();
 
-	const filingOptions = $derived(vm.filings.map((f) => ({ value: f.value, label: f.label, selected: f.selected })));
+	const filingOptions = $derived(
+		vm.filings.map((f) => ({ value: f.value, label: f.label, selected: f.selected }))
+	);
 </script>
 
 {#snippet flowNode(metric: FlowMetricVM)}
 	{#if metric.visible}
-		<div class={'earnings-flow-node earnings-flow-node-' + metric.tone} style={'min-height:' + metric.widthPercent}>
+		<div
+			class={'earnings-flow-node earnings-flow-node-' + metric.tone}
+			style={'min-height:' + metric.widthPercent}
+		>
 			<span>{metric.label}</span>
 			<strong>{metric.value}</strong>
 			{#if metric.subtext}
@@ -36,14 +41,29 @@
 <section class="earnings-flow-card glass-card p-5 md:p-6">
 	<div class="earnings-flow-header">
 		<div>
-			<CardHeader title="Earnings visualizer" desc="Income statement flow from revenue to net income." />
+			<CardHeader
+				title="Earnings visualizer"
+				desc="Income statement flow from revenue to net income."
+			/>
 		</div>
 		<form method="get" action={vm.action} class="earnings-flow-controls">
 			<label class="sr-only" for="earnings-flow-symbol">Symbol</label>
-			<Field id="earnings-flow-symbol" name="symbol" value={vm.inputSymbol} placeholder="AAPL" class="earnings-flow-input" autocomplete="off" />
+			<Field
+				id="earnings-flow-symbol"
+				name="symbol"
+				value={vm.inputSymbol}
+				placeholder="AAPL"
+				class="earnings-flow-input"
+				autocomplete="off"
+			/>
 			{#if vm.filings.length > 0}
 				<label class="sr-only" for="earnings-flow-filing">Filing</label>
-				<SelectField id="earnings-flow-filing" name="filing" class="earnings-flow-select" options={filingOptions} />
+				<SelectField
+					id="earnings-flow-filing"
+					name="filing"
+					class="earnings-flow-select"
+					options={filingOptions}
+				/>
 			{/if}
 			<NativeButton type="submit" class="btn-secondary px-4 py-2 text-sm">Generate</NativeButton>
 		</form>

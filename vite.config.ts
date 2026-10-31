@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference -- vitest's documented way to type `test` in vite.config
 /// <reference types="vitest/config" />
 import { mdsvex } from 'mdsvex';
 import { enhancedImages } from '@sveltejs/enhanced-img';
@@ -13,78 +14,92 @@ const dirname = import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.ur
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-  plugins: [enhancedImages(), tailwindcss(), sveltekit({
-    compilerOptions: {
-      // Force runes mode for the project, except for libraries. Can be removed in svelte 6.
-      runes: ({
-        filename
-      }) => filename.split(/[/\\]/).includes('node_modules') ? undefined : true,
-      experimental: {
-        async: true
-      }
-    },
-    adapter: adapter(),
-    // Apple sign-in answers with a cross-site form_post to
-    // /auth/oauth/apple/callback (Go exempted that path from CSRF; the flow is
-    // protected by the OAuth state check instead).
-    csrf: {
-      trustedOrigins: ['https://appleid.apple.com']
-    },
-    preprocess: [mdsvex({
-      extensions: ['.svx', '.md']
-    })],
-    extensions: ['.svelte', '.svx', '.md'],
-    experimental: {
-      remoteFunctions: true,
-      forkPreloads: true
-    }
-  })],
-  test: {
-    expect: {
-      requireAssertions: true
-    },
-    projects: [{
-      extends: './vite.config.ts',
-      test: {
-        name: 'client',
-        browser: {
-          enabled: true,
-          provider: playwright(),
-          instances: [{
-            browser: 'chromium',
-            headless: true
-          }]
-        },
-        include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-        exclude: ['src/lib/server/**']
-      }
-    }, {
-      extends: './vite.config.ts',
-      test: {
-        name: 'server',
-        environment: 'node',
-        include: ['src/**/*.{test,spec}.{js,ts}'],
-        exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
-      }
-    }, {
-      extends: true,
-      plugins: [
-      // The plugin will run tests for the stories defined in your Storybook config
-      // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
-      storybookTest({
-        configDir: path.join(dirname, '.storybook')
-      })],
-      test: {
-        name: 'storybook',
-        browser: {
-          enabled: true,
-          headless: true,
-          provider: playwright({}),
-          instances: [{
-            browser: 'chromium'
-          }]
-        }
-      }
-    }]
-  }
+	plugins: [
+		enhancedImages(),
+		tailwindcss(),
+		sveltekit({
+			compilerOptions: {
+				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
+				runes: ({ filename }) =>
+					filename.split(/[/\\]/).includes('node_modules') ? undefined : true,
+				experimental: {
+					async: true
+				}
+			},
+			adapter: adapter(),
+			// Apple sign-in answers with a cross-site form_post to
+			// /auth/oauth/apple/callback (Go exempted that path from CSRF; the flow is
+			// protected by the OAuth state check instead).
+			csrf: {
+				trustedOrigins: ['https://appleid.apple.com']
+			},
+			preprocess: [
+				mdsvex({
+					extensions: ['.svx', '.md']
+				})
+			],
+			extensions: ['.svelte', '.svx', '.md'],
+			experimental: {
+				remoteFunctions: true,
+				forkPreloads: true
+			}
+		})
+	],
+	test: {
+		expect: {
+			requireAssertions: true
+		},
+		projects: [
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'client',
+					browser: {
+						enabled: true,
+						provider: playwright(),
+						instances: [
+							{
+								browser: 'chromium',
+								headless: true
+							}
+						]
+					},
+					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+					exclude: ['src/lib/server/**']
+				}
+			},
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'server',
+					environment: 'node',
+					include: ['src/**/*.{test,spec}.{js,ts}'],
+					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
+				}
+			},
+			{
+				extends: true,
+				plugins: [
+					// The plugin will run tests for the stories defined in your Storybook config
+					// See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
+					storybookTest({
+						configDir: path.join(dirname, '.storybook')
+					})
+				],
+				test: {
+					name: 'storybook',
+					browser: {
+						enabled: true,
+						headless: true,
+						provider: playwright({}),
+						instances: [
+							{
+								browser: 'chromium'
+							}
+						]
+					}
+				}
+			}
+		]
+	}
 });

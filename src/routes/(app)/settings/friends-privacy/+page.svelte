@@ -18,7 +18,10 @@
 	let { data }: PageProps = $props();
 
 	const visibilityOptions = $derived(
-		searchVisibilityOptions(data.settings.searchVisibility).map((o) => ({ ...o, label: t(o.label) }))
+		searchVisibilityOptions(data.settings.searchVisibility).map((o) => ({
+			...o,
+			label: t(o.label)
+		}))
 	);
 </script>
 
@@ -37,7 +40,12 @@
 		<ToastBanner message={data.successMessage ? t(data.successMessage) : ''} />
 		<FormErrorBanner message={data.errorMessage} />
 		{#if !data.hasLoadError}
-			<form method="post" action="/settings/friends-privacy" class="space-y-6" use:enhance={withSpinner()}>
+			<form
+				method="post"
+				action="/settings/friends-privacy"
+				class="space-y-6"
+				use:enhance={withSpinner()}
+			>
 				<section class="glass-card p-6">
 					<h2 class="text-lg leading-none font-semibold tracking-tight">{t('Discovery')}</h2>
 					<div class="mt-4">
@@ -70,16 +78,23 @@
 			{#if data.facebookImport}
 				<!-- Its own form, after the privacy one: disconnecting is immediate and must not ride along with a Save. -->
 				<section class="glass-card mt-6 p-6" aria-labelledby="facebook-connection-title">
-					<h2 id="facebook-connection-title" class="text-lg leading-none font-semibold tracking-tight">
+					<h2
+						id="facebook-connection-title"
+						class="text-lg leading-none font-semibold tracking-tight"
+					>
 						{t('Facebook')}
 					</h2>
 					<p class="mt-3 text-sm text-muted-foreground">
 						{t('Disconnecting removes your Facebook account id and the friend ids stored with it.')}
-						<a href="/facebook-data-deletion" class="link-tint font-semibold">{t('How Facebook data is deleted')}</a>
+						<a href="/facebook-data-deletion" class="link-tint font-semibold"
+							>{t('How Facebook data is deleted')}</a
+						>
 					</p>
 					<form method="post" action="/friends/facebook/disconnect" class="mt-4">
 						<input type="hidden" name="return" value="settings" />
-						<SecondarySubmitButton class="w-auto px-4">{t('Disconnect Facebook')}</SecondarySubmitButton>
+						<SecondarySubmitButton class="w-auto px-4"
+							>{t('Disconnect Facebook')}</SecondarySubmitButton
+						>
 					</form>
 				</section>
 			{/if}

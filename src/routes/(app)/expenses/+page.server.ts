@@ -6,7 +6,11 @@ import { requireFeature } from '#lib/server/guards.js';
 import { isProRequest } from '#lib/features/money/expenses/gates.server.js';
 import { isUUID } from '#lib/features/money/expenses/forms.server.js';
 import { expensesPlannerURL, parseExpensesMonth } from '#lib/features/money/expenses/month.js';
-import { loadPlannerViewModel, loadTaxTeaser, parseFloatStrict } from '#lib/features/money/expenses/planner.server.js';
+import {
+	loadPlannerViewModel,
+	loadTaxTeaser,
+	parseFloatStrict
+} from '#lib/features/money/expenses/planner.server.js';
 import type { BudgetTemplateItem } from '#lib/features/money/expenses/types.js';
 
 // GET /expenses (ExpensesPlanner). The tax teaser (Go: hx-get
@@ -55,7 +59,14 @@ export const actions: Actions = {
 		if (!isUUID(snapshotID)) error(400, 'Invalid snapshot');
 		const category = parseFloatStrict(field(fd, 'category_threshold'));
 		const total = parseFloatStrict(field(fd, 'total_threshold'));
-		if (category === null || total === null || category < 0 || category > 1000 || total < 0 || total > 1000) {
+		if (
+			category === null ||
+			total === null ||
+			category < 0 ||
+			category > 1000 ||
+			total < 0 ||
+			total > 1000
+		) {
 			return fail(400, { message: 'enter valid drift thresholds between 0 and 1000' });
 		}
 		try {
@@ -91,7 +102,11 @@ export const actions: Actions = {
 		if (goal.err) return fail(400, { message: goal.err });
 		const portfolio = destination(field(fd, 'portfolio_list_id'), 'portfolio');
 		if (portfolio.err) return fail(400, { message: portfolio.err });
-		const preview: Record<string, unknown> = { snapshotId: snapshotID, expectedRevision: revision, adjustments };
+		const preview: Record<string, unknown> = {
+			snapshotId: snapshotID,
+			expectedRevision: revision,
+			adjustments
+		};
 		if (goal.id) preview.financialGoalId = goal.id;
 		if (portfolio.id) preview.portfolioListId = portfolio.id;
 		try {
@@ -100,7 +115,10 @@ export const actions: Actions = {
 			return fail(409, { message: 'Budget changed. Refresh and try again.' });
 		}
 		try {
-			await apiJSON(event, 'POST', '/v1/budget/reallocations', { requestId: crypto.randomUUID(), preview });
+			await apiJSON(event, 'POST', '/v1/budget/reallocations', {
+				requestId: crypto.randomUUID(),
+				preview
+			});
 		} catch {
 			return fail(409, { message: 'Could not commit reallocation' });
 		}
@@ -113,14 +131,20 @@ export const actions: Actions = {
 		const fd = await event.request.formData();
 		const snapshotID = field(fd, 'snapshot_id');
 		const name = field(fd, 'name');
-		if (!isUUID(snapshotID) || !name) return fail(400, { message: 'Snapshot and template name are required' });
+		if (!isUUID(snapshotID) || !name)
+			return fail(400, { message: 'Snapshot and template name are required' });
 		let items: BudgetTemplateItem[] = [];
 		try {
-			items = await apiJSON<BudgetTemplateItem[]>(event, 'GET', `/v1/budget/snapshots/${snapshotID}/items`);
+			items = await apiJSON<BudgetTemplateItem[]>(
+				event,
+				'GET',
+				`/v1/budget/snapshots/${snapshotID}/items`
+			);
 		} catch {
 			items = [];
 		}
-		if (!items || items.length === 0) return fail(400, { message: 'Add targets before saving a template' });
+		if (!items || items.length === 0)
+			return fail(400, { message: 'Add targets before saving a template' });
 		const body = {
 			name,
 			items: items.map((item) => {
@@ -153,7 +177,8 @@ export const actions: Actions = {
 		const templateID = field(fd, 'template_id');
 		const snapshotID = field(fd, 'snapshot_id');
 		const revision = intStrict(field(fd, 'revision'));
-		if (!isUUID(templateID) || !isUUID(snapshotID) || revision === null) return fail(400, { message: 'Invalid template request' });
+		if (!isUUID(templateID) || !isUUID(snapshotID) || revision === null)
+			return fail(400, { message: 'Invalid template request' });
 		const replace = fd.get('replace_existing') === 'true';
 		try {
 			await apiJSON(event, 'POST', `/v1/budget/templates/${templateID}/apply`, {
@@ -162,7 +187,10 @@ export const actions: Actions = {
 				replaceExisting: replace
 			});
 		} catch {
-			if (!replace) return fail(409, { message: 'This month already has targets. Confirm replacement before applying a template.' });
+			if (!replace)
+				return fail(409, {
+					message: 'This month already has targets. Confirm replacement before applying a template.'
+				});
 			return fail(400, { message: 'Could not apply template' });
 		}
 		redirect(303, monthTarget(fd));
@@ -176,8 +204,13 @@ export const actions: Actions = {
 		const id = field(fd, 'id');
 		if (!id) return fail(400, { message: 'Invalid suggestion' });
 		try {
-			const res = await apiJSON<{ success?: boolean } | undefined>(event, 'POST', `/v1/reports/suggestions/${encodeURIComponent(id)}/dismiss`);
-			if (res && res.success === false) return fail(502, { message: 'Could not dismiss suggestion' });
+			const res = await apiJSON<{ success?: boolean } | undefined>(
+				event,
+				'POST',
+				`/v1/reports/suggestions/${encodeURIComponent(id)}/dismiss`
+			);
+			if (res && res.success === false)
+				return fail(502, { message: 'Could not dismiss suggestion' });
 		} catch (err) {
 			console.warn('dismiss suggestion failed', id, err);
 			return fail(502, { message: 'Could not dismiss suggestion' });

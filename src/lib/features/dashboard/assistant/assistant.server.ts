@@ -1,7 +1,11 @@
 import { json, type RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { apiFetch, apiJSON, isAPIError } from '#lib/server/api.js';
-import { aiConsentRequiredJSON, aiConsentReturnPath, hasAIConsent } from '#lib/features/dashboard/ai-consent.server.js';
+import {
+	aiConsentRequiredJSON,
+	aiConsentReturnPath,
+	hasAIConsent
+} from '#lib/features/dashboard/ai-consent.server.js';
 import type {
 	ActionOutcome,
 	ActionRow,
@@ -110,7 +114,9 @@ export async function loadAssistantPage(event: RequestEvent): Promise<PageViewMo
 	};
 	let conversations: AIConversationSummary[];
 	try {
-		conversations = (await apiJSON<AIConversationSummary[]>(event, 'GET', '/v1/ai/assistant/conversations')) ?? [];
+		conversations =
+			(await apiJSON<AIConversationSummary[]>(event, 'GET', '/v1/ai/assistant/conversations')) ??
+			[];
 	} catch (err) {
 		const status = statusOf(err);
 		console.error('assistant conversations load failed', { status, err });
@@ -162,17 +168,36 @@ export async function loadAssistantPage(event: RequestEvent): Promise<PageViewMo
 }
 
 /** loadAssistantConversation. Null when the conversation could not be loaded. */
-export async function loadAssistantConversation(event: RequestEvent, id: string): Promise<ConversationViewModel | null> {
+export async function loadAssistantConversation(
+	event: RequestEvent,
+	id: string
+): Promise<ConversationViewModel | null> {
 	let conversation: AIConversation;
 	try {
-		conversation = await apiJSON<AIConversation>(event, 'GET', `/v1/ai/assistant/conversations/${id}`);
+		conversation = await apiJSON<AIConversation>(
+			event,
+			'GET',
+			`/v1/ai/assistant/conversations/${id}`
+		);
 	} catch (err) {
-		console.error('assistant conversation load failed', { conversation_id: id, status: statusOf(err), err });
+		console.error('assistant conversation load failed', {
+			conversation_id: id,
+			status: statusOf(err),
+			err
+		});
 		return null;
 	}
 	const source = conversation.messages ?? [];
-	const vm: ConversationViewModel = { id, title: conversation.title, messages: source.map(mapAssistantMessage), seed: '' };
-	await Promise.all([attachConversationMemos(event, id, vm.messages), attachPendingActions(event, id, source, vm.messages)]);
+	const vm: ConversationViewModel = {
+		id,
+		title: conversation.title,
+		messages: source.map(mapAssistantMessage),
+		seed: ''
+	};
+	await Promise.all([
+		attachConversationMemos(event, id, vm.messages),
+		attachPendingActions(event, id, source, vm.messages)
+	]);
 	return vm;
 }
 
@@ -182,12 +207,21 @@ export async function loadAssistantConversation(event: RequestEvent, id: string)
  * frame, so the card is rebuilt from GET /v1/ai/assistant/actions. A failure
  * only costs the cards, never the thread.
  */
-async function attachPendingActions(event: RequestEvent, conversationID: string, source: AIMessage[], messages: MessageRow[]) {
+async function attachPendingActions(
+	event: RequestEvent,
+	conversationID: string,
+	source: AIMessage[],
+	messages: MessageRow[]
+) {
 	let actions: AIPendingAction[];
 	try {
 		actions = (await apiJSON<AIPendingAction[]>(event, 'GET', '/v1/ai/assistant/actions')) ?? [];
 	} catch (err) {
-		console.warn('assistant pending actions load failed', { conversation_id: conversationID, status: statusOf(err), err });
+		console.warn('assistant pending actions load failed', {
+			conversation_id: conversationID,
+			status: statusOf(err),
+			err
+		});
 		return;
 	}
 	attachActionsToMessages(conversationID, source, messages, actions);
@@ -232,12 +266,21 @@ export function attachActionsToMessages(
  * Only called when some message looks like an announcement, so ordinary
  * conversations cost no extra request.
  */
-export async function attachConversationMemos(event: RequestEvent, conversationID: string, messages: MessageRow[]) {
-	const announced = messages.some((m) => m.role === 'assistant' && memoAnnouncementSymbol(m.content) !== null);
+export async function attachConversationMemos(
+	event: RequestEvent,
+	conversationID: string,
+	messages: MessageRow[]
+) {
+	const announced = messages.some(
+		(m) => m.role === 'assistant' && memoAnnouncementSymbol(m.content) !== null
+	);
 	if (!announced) return;
 	let memos: PositionMemoListItem[];
 	try {
-		memos = (await apiJSON<PositionMemoListItem[]>(event, 'GET', '/v1/ai/memos', undefined, { query: { conversationId: conversationID } })) ?? [];
+		memos =
+			(await apiJSON<PositionMemoListItem[]>(event, 'GET', '/v1/ai/memos', undefined, {
+				query: { conversationId: conversationID }
+			})) ?? [];
 	} catch (err) {
 		console.warn('conversation memos fetch failed', { conversation_id: conversationID, err });
 		return;
@@ -264,7 +307,12 @@ export function attachMemoCards(messages: MessageRow[], memos: PositionMemoListI
 		const queue = symbol ? queues.get(symbol) : undefined;
 		if (!queue || queue.length === 0) continue;
 		const memo = queue.shift()!;
-		message.memo = { id: memo.id, title: memo.title, verdict: memo.verdict, bookmarked: memo.bookmarked };
+		message.memo = {
+			id: memo.id,
+			title: memo.title,
+			verdict: memo.verdict,
+			bookmarked: memo.bookmarked
+		};
 	}
 }
 
@@ -300,8 +348,14 @@ function assistantCaption(message: AIMessage): string {
 const CREATE_WATCH_TOOL = 'create_watch';
 
 export function mapAssistantAction(action: AIPendingAction): ActionRow {
-	const row: ActionRow = { id: action.id, summary: action.summary, expiresAt: kitchen(action.expiresAt), status: action.status };
-	if (action.toolName === CREATE_WATCH_TOOL) row.watch = watchProposalFromArguments(action.arguments, action.summary);
+	const row: ActionRow = {
+		id: action.id,
+		summary: action.summary,
+		expiresAt: kitchen(action.expiresAt),
+		status: action.status
+	};
+	if (action.toolName === CREATE_WATCH_TOOL)
+		row.watch = watchProposalFromArguments(action.arguments, action.summary);
 	return row;
 }
 
@@ -320,7 +374,11 @@ function watchProposalFromArguments(args: string, summary: string): WatchProposa
 	}
 	const str = (v: unknown) => (typeof v === 'string' ? v : '');
 	const title = str(stored.title);
-	return { title: title.trim() === '' ? summary : title, scheduleHuman: str(stored.scheduleHuman), spec: str(stored.spec) };
+	return {
+		title: title.trim() === '' ? summary : title,
+		scheduleHuman: str(stored.scheduleHuman),
+		spec: str(stored.spec)
+	};
 }
 
 /** watchProposalFromForm: the proposal the card posted back with its button. */
@@ -348,13 +406,24 @@ export async function aiConsentRefusal(event: RequestEvent): Promise<Response | 
 }
 
 /** AssistantTurn: one non-streamed turn, answered as the new message row. */
-export async function assistantTurn(event: RequestEvent, id: string, content: string): Promise<MessageRow> {
-	const turn = await apiJSON<AITurn>(event, 'POST', `/v1/ai/assistant/conversations/${id}/chat`, { content });
+export async function assistantTurn(
+	event: RequestEvent,
+	id: string,
+	content: string
+): Promise<MessageRow> {
+	const turn = await apiJSON<AITurn>(event, 'POST', `/v1/ai/assistant/conversations/${id}/chat`, {
+		content
+	});
 	const message = mapAssistantMessage(turn.message);
 	if (turn.pendingAction) {
 		const action = mapAssistantAction(turn.pendingAction);
 		const proposal = turn.watchProposal;
-		if (proposal) action.watch = { title: proposal.title, scheduleHuman: proposal.scheduleHuman, spec: proposal.spec };
+		if (proposal)
+			action.watch = {
+				title: proposal.title,
+				scheduleHuman: proposal.scheduleHuman,
+				spec: proposal.spec
+			};
 		message.action = action;
 	}
 	const messages = [message];
@@ -363,18 +432,30 @@ export async function assistantTurn(event: RequestEvent, id: string, content: st
 }
 
 /** AssistantConfirmAction. */
-export async function confirmAction(event: RequestEvent, id: string, form: FormData): Promise<ActionOutcome> {
+export async function confirmAction(
+	event: RequestEvent,
+	id: string,
+	form: FormData
+): Promise<ActionOutcome> {
 	let confirmed: AIConfirmedAction | null = null;
 	let status = 0;
 	try {
-		confirmed = await apiJSON<AIConfirmedAction>(event, 'POST', `/v1/ai/assistant/actions/${id}/confirm`);
+		confirmed = await apiJSON<AIConfirmedAction>(
+			event,
+			'POST',
+			`/v1/ai/assistant/actions/${id}/confirm`
+		);
 		status = 200;
 	} catch (err) {
 		status = statusOf(err);
 	}
-	if (String(form.get('kind') ?? '') === 'watch') return watchConfirmOutcome(id, watchProposalFromForm(form), status, confirmed);
+	if (String(form.get('kind') ?? '') === 'watch')
+		return watchConfirmOutcome(id, watchProposalFromForm(form), status, confirmed);
 	const success = confirmed !== null;
-	return { kind: 'result', vm: { id, success, message: success ? confirmed!.message : 'The action could not be applied.' } };
+	return {
+		kind: 'result',
+		vm: { id, success, message: success ? confirmed!.message : 'The action could not be applied.' }
+	};
 }
 
 /**
@@ -382,14 +463,26 @@ export async function confirmAction(event: RequestEvent, id: string, form: FormD
  * the agent's confirmation to the thread; a 409 means the action was already
  * handled (a double click or a second tab).
  */
-function watchConfirmOutcome(id: string, watch: WatchProposalRow, status: number, confirmed: AIConfirmedAction | null): ActionOutcome {
+function watchConfirmOutcome(
+	id: string,
+	watch: WatchProposalRow,
+	status: number,
+	confirmed: AIConfirmedAction | null
+): ActionOutcome {
 	const vm: WatchResultViewModel = { id, state: 'confirmed', title: watch.title, message: '' };
 	if (confirmed) {
 		vm.message = 'Set up';
 		if (watch.scheduleHuman) vm.message += ' · ' + watch.scheduleHuman;
 		const replyID = 'watch-' + (confirmed.resultId ?? id);
 		const text = (confirmed.message ?? '').trim();
-		if (text) vm.reply = { id: replyID, role: 'assistant', content: text, createdAt: clock(new Date()), caption: 'Standing task' };
+		if (text)
+			vm.reply = {
+				id: replyID,
+				role: 'assistant',
+				content: text,
+				createdAt: clock(new Date()),
+				caption: 'Standing task'
+			};
 		return { kind: 'watchResult', vm };
 	}
 	if (status === 409) {
@@ -417,12 +510,23 @@ export async function dismissTip(event: RequestEvent, id: string): Promise<boole
 }
 
 /** AssistantCancelAction. */
-export async function cancelAction(event: RequestEvent, id: string, form: FormData): Promise<ActionOutcome> {
+export async function cancelAction(
+	event: RequestEvent,
+	id: string,
+	form: FormData
+): Promise<ActionOutcome> {
 	const success = (await noContent(event, 'POST', `/v1/ai/assistant/actions/${id}/cancel`)) === 204;
 	if (String(form.get('kind') ?? '') === 'watch') {
 		const watch = watchProposalFromForm(form);
-		if (!success) return { kind: 'watchCard', id, watch, error: 'That did not go through. Try again.' };
-		return { kind: 'watchResult', vm: { id, state: 'declined', title: watch.title, message: 'Not set up. Ask again any time.' } };
+		if (!success)
+			return { kind: 'watchCard', id, watch, error: 'That did not go through. Try again.' };
+		return {
+			kind: 'watchResult',
+			vm: { id, state: 'declined', title: watch.title, message: 'Not set up. Ask again any time.' }
+		};
 	}
-	return { kind: 'result', vm: { id, success, message: success ? 'Action canceled.' : 'The action could not be canceled.' } };
+	return {
+		kind: 'result',
+		vm: { id, success, message: success ? 'Action canceled.' : 'The action could not be canceled.' }
+	};
 }

@@ -15,7 +15,8 @@ export const load: PageServerLoad = async (event) => {
 		if (res.response.status !== 200 || !res.data) throw new Error('inbox');
 		vm.page = res.data;
 		vm.items = (vm.page.items ?? []).map((item) => ({ item, webLink: notificationWebLink(item) }));
-		if (vm.page.nextCursor != null) vm.nextURL = '/notifications?cursor=' + queryEscape(vm.page.nextCursor);
+		if (vm.page.nextCursor != null)
+			vm.nextURL = '/notifications?cursor=' + queryEscape(vm.page.nextCursor);
 	} catch {
 		vm.error = 'Could not load notifications.';
 	}

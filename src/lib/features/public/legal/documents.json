@@ -43,30 +43,12 @@
 					"caption": "",
 					"headers": null,
 					"rows": [
-						[
-							"Name",
-							"Fernando Correia"
-						],
-						[
-							"Legal form",
-							"Individual; no company is registered yet"
-						],
-						[
-							"Country",
-							"Portugal"
-						],
-						[
-							"Correspondence address",
-							"Rua Espírito Santo 187, Matosinhos, Portugal"
-						],
-						[
-							"Email",
-							"fernando@facorreia.com"
-						],
-						[
-							"Website",
-							"https://www.norviq.org"
-						]
+						["Name", "Fernando Correia"],
+						["Legal form", "Individual; no company is registered yet"],
+						["Country", "Portugal"],
+						["Correspondence address", "Rua Espírito Santo 187, Matosinhos, Portugal"],
+						["Email", "fernando@facorreia.com"],
+						["Website", "https://www.norviq.org"]
 					]
 				},
 				"links": null
@@ -84,9 +66,7 @@
 			{
 				"id": "hosting",
 				"heading": "Hosting",
-				"body": [
-					"Norviq is hosted by Hetzner Online GmbH on a server in Falkenstein, Germany."
-				],
+				"body": ["Norviq is hosted by Hetzner Online GmbH on a server in Falkenstein, Germany."],
 				"table": null,
 				"links": null
 			},
@@ -174,12 +154,7 @@
 				],
 				"table": {
 					"caption": "",
-					"headers": [
-						"Purpose",
-						"Data",
-						"Legal basis (GDPR Art. 6)",
-						"Retention"
-					],
+					"headers": ["Purpose", "Data", "Legal basis (GDPR Art. 6)", "Retention"],
 					"rows": [
 						[
 							"Your account and sign-in",
@@ -271,59 +246,23 @@
 				],
 				"table": {
 					"caption": "",
-					"headers": [
-						"Data",
-						"Kept for"
-					],
+					"headers": ["Data", "Kept for"],
 					"rows": [
-						[
-							"Account data",
-							"Until you delete your account"
-						],
-						[
-							"Financial data you enter or import",
-							"Until you delete it or your account"
-						],
-						[
-							"Position memos",
-							"Until you delete them or your account"
-						],
-						[
-							"AI assistant conversations",
-							"Deleted 30 days after the last message"
-						],
+						["Account data", "Until you delete your account"],
+						["Financial data you enter or import", "Until you delete it or your account"],
+						["Position memos", "Until you delete them or your account"],
+						["AI assistant conversations", "Deleted 30 days after the last message"],
 						[
 							"Pending AI action proposals (changes the assistant suggested that you have not confirmed)",
 							"30 days"
 						],
-						[
-							"AI usage records (counts and cost, no content)",
-							"14 months"
-						],
-						[
-							"AI action audit log (changes you confirmed)",
-							"90 days"
-						],
-						[
-							"Data exports",
-							"Download links expire after 7 days and files are deleted"
-						],
-						[
-							"Server logs (Grafana Cloud, EU)",
-							"About 14 days"
-						],
-						[
-							"Receipt images",
-							"Not retained after text extraction"
-						],
-						[
-							"Billing records",
-							"As long as tax and accounting law requires"
-						],
-						[
-							"Database backups",
-							"Daily backups 30 days, monthly backups 12 months"
-						]
+						["AI usage records (counts and cost, no content)", "14 months"],
+						["AI action audit log (changes you confirmed)", "90 days"],
+						["Data exports", "Download links expire after 7 days and files are deleted"],
+						["Server logs (Grafana Cloud, EU)", "About 14 days"],
+						["Receipt images", "Not retained after text extraction"],
+						["Billing records", "As long as tax and accounting law requires"],
+						["Database backups", "Daily backups 30 days, monthly backups 12 months"]
 					]
 				},
 				"links": null
@@ -370,10 +309,7 @@
 				],
 				"table": {
 					"caption": "",
-					"headers": [
-						"Feature",
-						"Data sent to the AI provider"
-					],
+					"headers": ["Feature", "Data sent to the AI provider"],
 					"rows": [
 						[
 							"Insight cards",
@@ -387,14 +323,8 @@
 							"Why it moved and screen summaries",
 							"The figures shown on that screen, such as your holdings' daily moves"
 						],
-						[
-							"Position memos",
-							"The holding and your notes on it"
-						],
-						[
-							"Proactive tips",
-							"Totals only"
-						],
+						["Position memos", "The holding and your notes on it"],
+						["Proactive tips", "Totals only"],
 						[
 							"Imports",
 							"Receipt images, broker screenshots, or a digest of the spreadsheet you upload (its column headers and sample cell values)"
@@ -431,12 +361,7 @@
 				],
 				"table": {
 					"caption": "",
-					"headers": [
-						"Provider",
-						"Purpose",
-						"Location",
-						"Transfer safeguard"
-					],
+					"headers": ["Provider", "Purpose", "Location", "Transfer safeguard"],
 					"rows": [
 						[
 							"Hetzner Online GmbH",
@@ -462,12 +387,7 @@
 							"United States",
 							"SCCs / EU-US Data Privacy Framework"
 						],
-						[
-							"Plaid",
-							"US bank linking",
-							"United States",
-							"SCCs / EU-US Data Privacy Framework"
-						],
+						["Plaid", "US bank linking", "United States", "SCCs / EU-US Data Privacy Framework"],
 						[
 							"GoCardless Bank Account Data",
 							"EU and UK bank linking",
@@ -534,30 +454,10 @@
 							"EU (PostHog EU cloud)",
 							"EU"
 						],
-						[
-							"Amplitude",
-							"iPhone app analytics",
-							"EU (Amplitude EU data center)",
-							"EU"
-						],
-						[
-							"TelemetryDeck",
-							"iPhone app analytics",
-							"EU",
-							"EU"
-						],
-						[
-							"Sentry",
-							"Error tracking",
-							"EU (Germany data region)",
-							"EU"
-						],
-						[
-							"Grafana Cloud",
-							"Server logs and traces",
-							"EU",
-							"EU"
-						],
+						["Amplitude", "iPhone app analytics", "EU (Amplitude EU data center)", "EU"],
+						["TelemetryDeck", "iPhone app analytics", "EU", "EU"],
+						["Sentry", "Error tracking", "EU (Germany data region)", "EU"],
+						["Grafana Cloud", "Server logs and traces", "EU", "EU"],
 						[
 							"Discord",
 							"Internal operations channel: feedback text, moderation reports (reported username, user ID and an excerpt) and sign-up notices without email addresses",
@@ -914,9 +814,7 @@
 			{
 				"id": "contact",
 				"heading": "Contact",
-				"body": [
-					"Questions about these terms: fernando@facorreia.com."
-				],
+				"body": ["Questions about these terms: fernando@facorreia.com."],
 				"table": null,
 				"links": null
 			}

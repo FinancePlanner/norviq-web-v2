@@ -40,10 +40,20 @@
 		<p class="muse-watch-error" role="alert">{errorMessage}</p>
 	{/if}
 	<div class="muse-watch-controls">
-		<PrimaryButton class="muse-watch-confirm" data-watch-confirm="true" disabled={busy} onclick={() => onanswer('confirm')}>
+		<PrimaryButton
+			class="muse-watch-confirm"
+			data-watch-confirm="true"
+			disabled={busy}
+			onclick={() => onanswer('confirm')}
+		>
 			Confirm
 		</PrimaryButton>
-		<SecondaryButton class="muse-watch-dismiss" data-watch-dismiss="true" disabled={busy} onclick={() => onanswer('cancel')}>
+		<SecondaryButton
+			class="muse-watch-dismiss"
+			data-watch-dismiss="true"
+			disabled={busy}
+			onclick={() => onanswer('cancel')}
+		>
 			Not now
 		</SecondaryButton>
 	</div>

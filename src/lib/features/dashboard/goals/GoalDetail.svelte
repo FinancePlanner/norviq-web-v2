@@ -2,12 +2,24 @@
 	// goals.goalDetail(item, suggestions) with whatIf, WhatIfResult,
 	// suggestionList and projectionTable.
 	import { enhance } from '$app/forms';
-	import { Field, SecondarySubmitButton, SubmitButton, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		Field,
+		SecondarySubmitButton,
+		SubmitButton,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import { formatFloat } from '#lib/format.js';
-	import type { PlanningGoalOverviewItem, PlanningGoalSuggestion, PlanningGoalWhatIfResponse } from './types.js';
+	import type {
+		PlanningGoalOverviewItem,
+		PlanningGoalSuggestion,
+		PlanningGoalWhatIfResponse
+	} from './types.js';
 	import { driftLabel, money, percent, sampled, trajectoryPoints } from './view.js';
 
-	let { item, suggestions }: { item: PlanningGoalOverviewItem; suggestions: PlanningGoalSuggestion[] } = $props();
+	let {
+		item,
+		suggestions
+	}: { item: PlanningGoalOverviewItem; suggestions: PlanningGoalSuggestion[] } = $props();
 
 	// The hx-post swap target (#what-if-result). Failures leave it untouched,
 	// as htmx did for Go's non-2xx plain-text errors.
@@ -29,14 +41,25 @@
 			<p class="text-footnote font-semibold text-muted-foreground">Selected goal</p>
 			<h2 class="mt-2 text-2xl font-semibold">{item.goal.name}</h2>
 		</div>
-		<a class="btn-secondary" href={'/goals/' + item.id + '/report.pdf'} data-sveltekit-reload>Export goal PDF</a>
+		<a class="btn-secondary" href={'/goals/' + item.id + '/report.pdf'} data-sveltekit-reload
+			>Export goal PDF</a
+		>
 	</div>
 	<div class="glass-card p-6">
 		<div class="grid gap-4 sm:grid-cols-4">
 			{@render detailMetric('Progress', percent(item.progress.percentComplete))}
-			{@render detailMetric('Projected', money(item.progress.projectedValueAtTarget, item.goal.baseCurrency))}
-			{@render detailMetric('Planned / month', money(item.progress.plannedMonthlyContribution, item.goal.baseCurrency))}
-			{@render detailMetric('Observed / month', money(item.progress.observedMonthlyContribution, item.goal.baseCurrency))}
+			{@render detailMetric(
+				'Projected',
+				money(item.progress.projectedValueAtTarget, item.goal.baseCurrency)
+			)}
+			{@render detailMetric(
+				'Planned / month',
+				money(item.progress.plannedMonthlyContribution, item.goal.baseCurrency)
+			)}
+			{@render detailMetric(
+				'Observed / month',
+				money(item.progress.observedMonthlyContribution, item.goal.baseCurrency)
+			)}
 		</div>
 		<div class="mt-6 overflow-hidden rounded-lg border p-3">
 			<svg
@@ -67,13 +90,16 @@
 	<div class="grid gap-6 xl:grid-cols-2">
 		<div class="glass-card p-6">
 			<h3 class="text-lg font-semibold">What-if simulator</h3>
-			<p class="mt-1 text-sm text-muted-foreground">Adjust contribution or return inside the transparent risk guardrail.</p>
+			<p class="mt-1 text-sm text-muted-foreground">
+				Adjust contribution or return inside the transparent risk guardrail.
+			</p>
 			<form
 				class="mt-5 space-y-4"
 				method="POST"
 				action="?/whatIf"
 				use:enhance={withSpinner(() => async ({ result }) => {
-					if (result.type === 'success' && result.data?.whatIf) whatIf = result.data.whatIf as PlanningGoalWhatIfResponse;
+					if (result.type === 'success' && result.data?.whatIf)
+						whatIf = result.data.whatIf as PlanningGoalWhatIfResponse;
 				})}
 			>
 				<input type="hidden" name="goalId" value={item.id} />
@@ -105,10 +131,8 @@
 					<div class="rounded-lg bg-success/10 p-4 text-sm">
 						<p class="font-semibold">Scenario result</p>
 						<p class="mt-1">
-							{money(whatIf.scenario.projectedValueAtTarget, whatIf.scenario.currency)} projected at target · {driftLabel(
-								whatIf.scenario.driftState,
-								whatIf.scenario.driftMonths
-							)}
+							{money(whatIf.scenario.projectedValueAtTarget, whatIf.scenario.currency)} projected at target
+							· {driftLabel(whatIf.scenario.driftState, whatIf.scenario.driftMonths)}
 						</p>
 						<p class="mt-2 text-xs text-muted-foreground">
 							Baseline: {money(whatIf.baseline.projectedValueAtTarget, whatIf.baseline.currency)}
@@ -119,7 +143,9 @@
 		</div>
 		<div class="glass-card p-6">
 			<h3 class="text-lg font-semibold">Adjustment options</h3>
-			<p class="mt-1 text-sm text-muted-foreground">Accepting prepares a draft. It never changes a budget or places trades.</p>
+			<p class="mt-1 text-sm text-muted-foreground">
+				Accepting prepares a draft. It never changes a budget or places trades.
+			</p>
 			<div class="mt-5 space-y-3">
 				{#if suggestions.length === 0}
 					<p class="text-sm text-muted-foreground">No adjustment is needed right now.</p>
@@ -148,18 +174,25 @@
 		<div class="overflow-x-auto">
 			<table class="w-full text-left text-sm">
 				<thead class="border-y bg-black/5 dark:bg-white/5"
-					><tr><th class="p-3">Date</th><th class="p-3">Planned</th><th class="p-3">Actual</th><th class="p-3">Projected</th></tr></thead
+					><tr
+						><th class="p-3">Date</th><th class="p-3">Planned</th><th class="p-3">Actual</th><th
+							class="p-3">Projected</th
+						></tr
+					></thead
 				>
 				<tbody>
 					{#each sampled(item.progress.trajectory) as point, i (i)}
 						<tr class="border-b"
-							><td class="p-3">{point.date}</td><td class="p-3 tabular-nums">{money(point.plannedValue, item.goal.baseCurrency)}</td><td
-								class="p-3 tabular-nums"
+							><td class="p-3">{point.date}</td><td class="p-3 tabular-nums"
+								>{money(point.plannedValue, item.goal.baseCurrency)}</td
+							><td class="p-3 tabular-nums"
 								>{#if point.actualValue !== null && point.actualValue !== undefined}{money(
 										point.actualValue,
 										item.goal.baseCurrency
 									)}{:else}<span class="opacity-40">—</span>{/if}</td
-							><td class="p-3 tabular-nums">{money(point.projectedValue, item.goal.baseCurrency)}</td></tr
+							><td class="p-3 tabular-nums"
+								>{money(point.projectedValue, item.goal.baseCurrency)}</td
+							></tr
 						>
 					{/each}
 				</tbody>

@@ -96,14 +96,32 @@
 			>
 				<Icon name="ellipsis" class="h-5 w-5" />
 			</NativeButton>
-			<div class="portfolio-row-menu-panel" hidden={!open} role="menu" style:top={pos.top} style:left={pos.left}>
-				<NativeButton class="portfolio-row-menu-item" role="menuitem" onclick={() => act('/portfolio/positions/' + row.id + '/edit')}>
+			<div
+				class="portfolio-row-menu-panel"
+				hidden={!open}
+				role="menu"
+				style:top={pos.top}
+				style:left={pos.left}
+			>
+				<NativeButton
+					class="portfolio-row-menu-item"
+					role="menuitem"
+					onclick={() => act('/portfolio/positions/' + row.id + '/edit')}
+				>
 					Edit
 				</NativeButton>
-				<NativeButton class="portfolio-row-menu-item" role="menuitem" onclick={() => act('/portfolio/positions/' + row.id + '/sell')}>
+				<NativeButton
+					class="portfolio-row-menu-item"
+					role="menuitem"
+					onclick={() => act('/portfolio/positions/' + row.id + '/sell')}
+				>
 					Sell
 				</NativeButton>
-				<NativeButton class="portfolio-row-menu-item" role="menuitem" onclick={() => act('/portfolio/positions/' + row.id + '/alert')}>
+				<NativeButton
+					class="portfolio-row-menu-item"
+					role="menuitem"
+					onclick={() => act('/portfolio/positions/' + row.id + '/alert')}
+				>
 					{#if row.targetAlertID !== ''}
 						Edit price alert
 					{:else if isPro}

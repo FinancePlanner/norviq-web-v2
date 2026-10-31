@@ -8,14 +8,14 @@
 
 /* App shell */
 .app-frame {
-  @apply flex min-h-dvh min-w-0 flex-col;
-  height: 100dvh;
-  overflow: hidden;
+	@apply flex min-h-dvh min-w-0 flex-col;
+	height: 100dvh;
+	overflow: hidden;
 }
 
 .app-body {
-  @apply flex min-h-0 min-w-0 flex-1;
-  overflow: hidden;
+	@apply flex min-h-0 min-w-0 flex-1;
+	overflow: hidden;
 }
 
 /* The desktop sidebar is styled entirely in Tailwind utilities against the
@@ -36,178 +36,177 @@
  * initSidebarGroups). See the comment on sidebarGroupVars for why the state
  * lives on <html> and not on the group itself. */
 .app-sidebar-group-panel {
-  display: grid;
-  grid-template-rows: var(--nav-rows, 0fr);
-  transition: grid-template-rows 200ms ease-out;
+	display: grid;
+	grid-template-rows: var(--nav-rows, 0fr);
+	transition: grid-template-rows 200ms ease-out;
 }
 
 .app-sidebar-group-panel > * {
-  overflow: hidden;
-  min-height: 0;
+	overflow: hidden;
+	min-height: 0;
 }
 
 .app-sidebar-group-chevron {
-  rotate: var(--nav-turn, 0turn);
-  transition: rotate 200ms ease-out;
+	rotate: var(--nav-turn, 0turn);
+	transition: rotate 200ms ease-out;
 }
 
 /* The 3rem rail flattens to icons, so every group must be open there regardless
  * of its expanded-mode state — a collapsed group would hide its icons outright. */
 html[data-sidebar='collapsed'] .app-sidebar-group-panel {
-  grid-template-rows: 1fr;
-  transition: none;
+	grid-template-rows: 1fr;
+	transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app-sidebar-group-panel,
-  .app-sidebar-group-chevron {
-    transition: none;
-  }
+	.app-sidebar-group-panel,
+	.app-sidebar-group-chevron {
+		transition: none;
+	}
 }
 
 .app-main {
-  @apply min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-5;
-  padding-bottom: calc(var(--app-tabbar-height) + 1rem + env(safe-area-inset-bottom, 0px));
-  scroll-padding-bottom: calc(var(--app-tabbar-height) + 1rem + env(safe-area-inset-bottom, 0px));
-  -webkit-overflow-scrolling: touch;
+	@apply min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-5;
+	padding-bottom: calc(var(--app-tabbar-height) + 1rem + env(safe-area-inset-bottom, 0px));
+	scroll-padding-bottom: calc(var(--app-tabbar-height) + 1rem + env(safe-area-inset-bottom, 0px));
+	-webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 1024px) {
-  .app-main {
-    padding-bottom: 1.5rem;
-    scroll-padding-bottom: 1.5rem;
-  }
+	.app-main {
+		padding-bottom: 1.5rem;
+		scroll-padding-bottom: 1.5rem;
+	}
 }
 
 .mobile-section-subnav {
-  @apply -mx-1 mb-4;
+	@apply -mx-1 mb-4;
 }
 
 .app-bottom-tabs {
-  @apply relative z-40 grid shrink-0 grid-cols-5 border-t lg:hidden;
-  min-height: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px));
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  padding-left: env(safe-area-inset-left, 0px);
-  padding-right: env(safe-area-inset-right, 0px);
-  background: var(--color-top-bar);
-  border-color: var(--border);
+	@apply relative z-40 grid shrink-0 grid-cols-5 border-t lg:hidden;
+	min-height: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px));
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+	padding-left: env(safe-area-inset-left, 0px);
+	padding-right: env(safe-area-inset-right, 0px);
+	background: var(--color-top-bar);
+	border-color: var(--border);
 }
 
 /* Critical CSS sets display:grid; keep desktop chrome hard-hidden when sidebar shows. */
 @media (min-width: 1024px) {
-  .app-topbar {
-    display: none !important;
-  }
+	.app-topbar {
+		display: none !important;
+	}
 
-  .app-bottom-tabs {
-    display: none !important;
-  }
+	.app-bottom-tabs {
+		display: none !important;
+	}
 }
 
 /* Unlock toast: pinned to the viewport so it never lands below the fold.
    Mobile sits above the bottom tab bar; desktop takes the bottom-right corner. */
 .achievement-toast {
-  position: fixed;
-  z-index: 50;
-  left: calc(0.75rem + env(safe-area-inset-left, 0px));
-  right: calc(0.75rem + env(safe-area-inset-right, 0px));
-  bottom: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.75rem);
-  max-width: 28rem;
-  margin-left: auto;
+	position: fixed;
+	z-index: 50;
+	left: calc(0.75rem + env(safe-area-inset-left, 0px));
+	right: calc(0.75rem + env(safe-area-inset-right, 0px));
+	bottom: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.75rem);
+	max-width: 28rem;
+	margin-left: auto;
 }
 
 /* Opaque: the banner's translucent tint would show page content through it. */
 .achievement-toast.success-banner {
-  background: color-mix(in srgb, var(--color-success) 12%, var(--color-card-bg));
-  border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-card-bg));
+	border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);
 }
 
 @media (min-width: 1024px) {
-  .achievement-toast {
-    left: auto;
-    right: 1.5rem;
-    bottom: 1.5rem;
-  }
+	.achievement-toast {
+		left: auto;
+		right: 1.5rem;
+		bottom: 1.5rem;
+	}
 }
 
 .app-bottom-tabs-more {
-  @apply absolute bottom-full right-3 z-50 mb-2 flex min-w-44 flex-col gap-1 rounded-2xl border p-2 shadow-lg;
-  background: var(--color-card-bg);
-  border-color: var(--border);
+	@apply absolute right-3 bottom-full z-50 mb-2 flex min-w-44 flex-col gap-1 rounded-2xl border p-2 shadow-lg;
+	background: var(--color-card-bg);
+	border-color: var(--border);
 }
 
 .app-bottom-more-link {
-  @apply flex items-center gap-3 rounded-md px-3 py-2.5 text-subhead font-semibold;
-  color: var(--muted-foreground);
+	@apply flex items-center gap-3 rounded-md px-3 py-2.5 text-subhead font-semibold;
+	color: var(--muted-foreground);
 }
 
 .app-bottom-more-link-active {
-  color: var(--color-tint);
-  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+	color: var(--color-tint);
+	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
 }
 
 .app-bottom-tab {
-  @apply flex min-h-0 flex-col items-center justify-center gap-0.5 py-1.5 text-[10px] font-semibold leading-none;
-  color: var(--muted-foreground);
+	@apply flex min-h-0 flex-col items-center justify-center gap-0.5 py-1.5 text-[10px] leading-none font-semibold;
+	color: var(--muted-foreground);
 }
 
 .app-bottom-tab-active {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 
 .app-bottom-tab-icon {
-  @apply inline-flex h-6 w-6 items-center justify-center leading-none;
+	@apply inline-flex h-6 w-6 items-center justify-center leading-none;
 }
 
 .app-bottom-tab-active .app-bottom-tab-icon {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 
 .app-icon-btn {
-  @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded border opacity-80 hover:opacity-100;
-  border-color: color-mix(in srgb, currentColor 12%, transparent);
+	@apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded border opacity-80 hover:opacity-100;
+	border-color: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .app-icon-btn-active {
-  @apply opacity-100;
-  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
-  color: var(--color-tint);
-  border-color: color-mix(in srgb, var(--color-tint) 25%, transparent);
+	@apply opacity-100;
+	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+	color: var(--color-tint);
+	border-color: color-mix(in srgb, var(--color-tint) 25%, transparent);
 }
 
 .app-topbar .norviq-logo {
-  @apply h-10 w-10;
+	@apply h-10 w-10;
 }
 
 .app-page-content {
-  @apply mx-auto min-w-0 max-w-5xl;
+	@apply mx-auto max-w-5xl min-w-0;
 }
 
 .section-subnav {
-  @apply mt-4 flex gap-2 overflow-x-auto pb-1 pr-4;
-  -webkit-overflow-scrolling: touch;
-  scroll-padding-inline-end: 1rem;
-  scrollbar-width: none;
+	@apply mt-4 flex gap-2 overflow-x-auto pr-4 pb-1;
+	-webkit-overflow-scrolling: touch;
+	scroll-padding-inline-end: 1rem;
+	scrollbar-width: none;
 }
 
 .section-subnav::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 .section-subnav-link {
-  @apply inline-flex shrink-0 items-center gap-1.5 rounded-md border px-3 py-1.5 text-footnote font-semibold transition;
-  border-color: var(--border);
-  color: var(--muted-foreground);
+	@apply inline-flex shrink-0 items-center gap-1.5 rounded-md border px-3 py-1.5 text-footnote font-semibold transition;
+	border-color: var(--border);
+	color: var(--muted-foreground);
 }
 
 .section-subnav-link:hover {
-  color: var(--foreground);
+	color: var(--foreground);
 }
 
 .section-subnav-link-active {
-  color: var(--color-tint);
-  background: var(--color-tint-soft);
-  border-color: var(--border);
-  position: relative;
+	color: var(--color-tint);
+	background: var(--color-tint-soft);
+	border-color: var(--border);
+	position: relative;
 }
-

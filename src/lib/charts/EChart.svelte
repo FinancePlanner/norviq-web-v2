@@ -34,7 +34,15 @@
 		themed?: boolean;
 	}
 
-	let { id, option, width = '100%', height = '220px', class: klass = '', onclick, themed }: Props = $props();
+	let {
+		id,
+		option,
+		width = '100%',
+		height = '220px',
+		class: klass = '',
+		onclick,
+		themed
+	}: Props = $props();
 
 	let node: HTMLDivElement;
 	let chart = $state.raw<ECharts | null>(null);
@@ -71,12 +79,18 @@
 				instance = echarts.init(node, null, { renderer: 'canvas' });
 				chart = instance;
 				if (domThemeEnv().coarsePointer) {
-					const painter = (instance.getZr() as unknown as { painter?: { type?: string; root?: HTMLElement } }).painter;
-					if (painter?.type === 'canvas' && painter.root) painter.root.style.touchAction = 'manipulation';
+					const painter = (
+						instance.getZr() as unknown as { painter?: { type?: string; root?: HTMLElement } }
+					).painter;
+					if (painter?.type === 'canvas' && painter.root)
+						painter.root.style.touchAction = 'manipulation';
 				}
 				instance.on('click', (params) => onclick?.(params as ChartClickParams));
 				observer.observe(node);
-				themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme', 'data-brand'] });
+				themeObserver.observe(document.documentElement, {
+					attributes: true,
+					attributeFilter: ['class', 'data-theme', 'data-brand']
+				});
 				window.addEventListener('overviewChartsResize', resize);
 			},
 			(err) => console.error(err)

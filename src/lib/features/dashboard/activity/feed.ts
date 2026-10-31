@@ -9,7 +9,9 @@ import { mapActivities, overviewActivityLimit, type UserActivity } from './mappe
 export const activityFeedQueryKey = ['dashboard', 'activity-feed'] as const;
 
 export async function fetchActivityFeed(): Promise<ActivityItemVM[]> {
-	const res = await fetch(`/api/v1/activities?limit=${overviewActivityLimit}`, { headers: { accept: 'application/json' } });
+	const res = await fetch(`/api/v1/activities?limit=${overviewActivityLimit}`, {
+		headers: { accept: 'application/json' }
+	});
 	if (!res.ok) return [];
 	const items = (await res.json().catch(() => null)) as UserActivity[] | null;
 	return mapActivities(items ?? []);

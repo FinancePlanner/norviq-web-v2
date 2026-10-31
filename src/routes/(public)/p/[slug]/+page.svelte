@@ -35,8 +35,13 @@
 {/snippet}
 
 {#snippet shareSwatch(color: string)}
-	<svg data-share-swatch class="mr-2 inline-block align-middle" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"
-		><rect width="10" height="10" rx="2" fill={color}></rect></svg
+	<svg
+		data-share-swatch
+		class="mr-2 inline-block align-middle"
+		width="10"
+		height="10"
+		viewBox="0 0 10 10"
+		aria-hidden="true"><rect width="10" height="10" rx="2" fill={color}></rect></svg
 	>
 {/snippet}
 
@@ -94,5 +99,9 @@
 			</table>
 		{/if}
 	</section>
-	<a href="/signup" class="mt-6 block rounded-[var(--radius-control)] bg-tint px-4 py-3 text-center font-medium text-white">Build yours on Norviq</a>
+	<a
+		href="/signup"
+		class="mt-6 block rounded-[var(--radius-control)] bg-tint px-4 py-3 text-center font-medium text-white"
+		>Build yours on Norviq</a
+	>
 </main>

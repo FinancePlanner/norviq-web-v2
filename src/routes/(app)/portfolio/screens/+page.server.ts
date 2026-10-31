@@ -4,7 +4,12 @@ import { requireFeature } from '#lib/server/guards.js';
 import { Feature } from '#lib/billing.js';
 import { safeRedirect } from '#lib/helpers.js';
 import { validUUID } from '#lib/features/portfolio/automation/common.server.js';
-import { callExpect, loadScreensVM, ScreenFormError, screenRequestFromForm } from '#lib/features/portfolio/automation/screens.server.js';
+import {
+	callExpect,
+	loadScreensVM,
+	ScreenFormError,
+	screenRequestFromForm
+} from '#lib/features/portfolio/automation/screens.server.js';
 
 // GET /portfolio/screens (SmartScreens) and its POST routes as named actions:
 //   POST /portfolio/screens               → ?/create
@@ -13,7 +18,8 @@ import { callExpect, loadScreensVM, ScreenFormError, screenRequestFromForm } fro
 //   POST /portfolio/screens/{id}/delete   → ?id={id}&/delete
 // Failures answer like Go's http.Error (400 bad form, 404 bad id, 422 backend).
 
-const gate = (event: RequestEvent) => requireFeature(event, Feature.SmartScreening, 'Smart screening');
+const gate = (event: RequestEvent) =>
+	requireFeature(event, Feature.SmartScreening, 'Smart screening');
 
 export const load: PageServerLoad = async (event) => {
 	await gate(event);
@@ -41,26 +47,30 @@ export const actions: Actions = {
 	create: async (event) => {
 		await gate(event);
 		const body = await screenBody(event);
-		if (!(await callExpect(event, 'POST', '/v1/watchlist/screens', 200, body))) error(422, 'Could not create screen');
+		if (!(await callExpect(event, 'POST', '/v1/watchlist/screens', 200, body)))
+			error(422, 'Could not create screen');
 		safeRedirect(303, '/portfolio/screens');
 	},
 	update: async (event) => {
 		await gate(event);
 		const { id } = screenID(event);
 		const body = await screenBody(event);
-		if (!(await callExpect(event, 'PUT', `/v1/watchlist/screens/${id}`, 200, body))) error(422, 'Could not update screen');
+		if (!(await callExpect(event, 'PUT', `/v1/watchlist/screens/${id}`, 200, body)))
+			error(422, 'Could not update screen');
 		safeRedirect(303, '/portfolio/screens');
 	},
 	evaluate: async (event) => {
 		await gate(event);
 		const { raw, id } = screenID(event);
-		if (!(await callExpect(event, 'POST', `/v1/watchlist/screens/${id}/evaluate`, 200))) error(422, 'Could not evaluate screen');
+		if (!(await callExpect(event, 'POST', `/v1/watchlist/screens/${id}/evaluate`, 200)))
+			error(422, 'Could not evaluate screen');
 		safeRedirect(303, '/portfolio/screens?evaluated=' + raw);
 	},
 	delete: async (event) => {
 		await gate(event);
 		const { id } = screenID(event);
-		if (!(await callExpect(event, 'DELETE', `/v1/watchlist/screens/${id}`, 204))) error(422, 'Could not delete screen');
+		if (!(await callExpect(event, 'DELETE', `/v1/watchlist/screens/${id}`, 204)))
+			error(422, 'Could not delete screen');
 		safeRedirect(303, '/portfolio/screens');
 	}
 };

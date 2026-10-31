@@ -5,7 +5,10 @@
 	import type { FocusPointVM } from '../types.js';
 	import FocusPointRow from './FocusPointRow.svelte';
 
-	let { points, goalsError = false }: { points: FocusPointVM[] | null | undefined; goalsError?: boolean } = $props();
+	let {
+		points,
+		goalsError = false
+	}: { points: FocusPointVM[] | null | undefined; goalsError?: boolean } = $props();
 </script>
 
 <div class="dash-panel focus-teaser">

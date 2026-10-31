@@ -2,7 +2,12 @@
 // Pure; safe on server and client.
 import type { AchievementUnlock } from '#lib/features/social/friends/types.js';
 import { achievementIcon } from './icons.js';
-import { AchievementState, type Achievement, type AchievementsResponse, type AchievementSummary } from './types.js';
+import {
+	AchievementState,
+	type Achievement,
+	type AchievementsResponse,
+	type AchievementSummary
+} from './types.js';
 
 /** MaxShowcase is how many achievements a member can pin. */
 export const MaxShowcase = 3;
@@ -107,7 +112,8 @@ export function buildPage(resp: AchievementsResponse): PageViewModel {
 	for (const a of all) {
 		if (a.state === AchievementState.Hidden) continue;
 		for (const tier of a.tiers ?? []) {
-			if (tier.showcaseRank != null) pins.push({ rank: tier.showcaseRank, key: a.key, tier: tier.tier });
+			if (tier.showcaseRank != null)
+				pins.push({ rank: tier.showcaseRank, key: a.key, tier: tier.tier });
 		}
 	}
 	pins.sort((x, y) => x.rank - y.rank);

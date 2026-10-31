@@ -14,7 +14,11 @@ export const AI_CONSENT_REQUIRED_REASON = 'AI_CONSENT_REQUIRED';
  */
 export async function aiConsentMissing(event: RequestEvent): Promise<boolean> {
 	try {
-		const consent = await apiJSON<{ consentedAt?: string | null }>(event, 'GET', '/v1/users/ai-consent');
+		const consent = await apiJSON<{ consentedAt?: string | null }>(
+			event,
+			'GET',
+			'/v1/users/ai-consent'
+		);
 		return !consent?.consentedAt;
 	} catch (err) {
 		console.warn('ai consent lookup failed; deferring to backend', event.url.pathname, err);
@@ -48,7 +52,8 @@ export function safeLocalPath(raw: string | null | undefined, host: string): str
 		if (!host || parsed.host.toLowerCase() !== host.toLowerCase()) return null;
 	}
 	const path = parsed.pathname;
-	if (path.startsWith('//') || decodeURIComponent(path).includes('\\') || value.includes('\\')) return null;
+	if (path.startsWith('//') || decodeURIComponent(path).includes('\\') || value.includes('\\'))
+		return null;
 	if (!path.startsWith('/')) return null;
 	return path + parsed.search;
 }
@@ -61,7 +66,8 @@ export function safeLocalPath(raw: string | null | undefined, host: string): str
  */
 export function aiConsentReturnPath(event: RequestEvent): string {
 	const candidates: string[] = [];
-	if (event.request.method === 'GET' && !event.isDataRequest) candidates.push(event.url.pathname + event.url.search);
+	if (event.request.method === 'GET' && !event.isDataRequest)
+		candidates.push(event.url.pathname + event.url.search);
 	candidates.push(event.request.headers.get('referer') ?? '');
 	for (const c of candidates) {
 		const path = safeLocalPath(c, event.url.host);

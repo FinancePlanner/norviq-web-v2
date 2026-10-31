@@ -1,5 +1,8 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit';
-import { loadActionQueueViewModel, markActionRead } from '#lib/features/dashboard/command-center/load.server.js';
+import {
+	loadActionQueueViewModel,
+	markActionRead
+} from '#lib/features/dashboard/command-center/load.server.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -10,5 +13,7 @@ export const POST: RequestHandler = async (event) => {
 	const id = event.params.id ?? '';
 	if (!UUID.test(id)) error(404, 'Not found');
 	await markActionRead(event, id);
-	return json(await loadActionQueueViewModel(event), { headers: { 'Cache-Control': 'private, no-store' } });
+	return json(await loadActionQueueViewModel(event), {
+		headers: { 'Cache-Control': 'private, no-store' }
+	});
 };

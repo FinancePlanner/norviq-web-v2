@@ -104,7 +104,15 @@ export function resolvePillar(key: string): BudgetPillarDef {
 
 function sortPillars(defs: BudgetPillarDef[]) {
 	// Go sort.SliceStable on (rank, label) — byte order for labels.
-	defs.sort((a, b) => (a.sortRank !== b.sortRank ? a.sortRank - b.sortRank : a.label < b.label ? -1 : a.label > b.label ? 1 : 0));
+	defs.sort((a, b) =>
+		a.sortRank !== b.sortRank
+			? a.sortRank - b.sortRank
+			: a.label < b.label
+				? -1
+				: a.label > b.label
+					? 1
+					: 0
+	);
 }
 
 export function resolvePillars(...extraKeys: string[]): BudgetPillarDef[] {
@@ -157,7 +165,8 @@ export function normalizeShares(shares: PillarMap): Record<string, number> | nul
 export function shareOrDefault(shares: PillarMap, def: BudgetPillarDef): number {
 	if (shares) {
 		if (def.key in shares) return shares[def.key];
-		for (const [k, v] of Object.entries(shares)) if (k.toLowerCase() === def.key.toLowerCase()) return v;
+		for (const [k, v] of Object.entries(shares))
+			if (k.toLowerCase() === def.key.toLowerCase()) return v;
 	}
 	return def.defaultShare;
 }

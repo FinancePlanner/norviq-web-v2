@@ -3,7 +3,20 @@
 // zone conversion, so these format in UTC too. #lib/format.js has no date
 // helpers yet; dedupe into it if another domain needs the same layouts.
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const MONTHS = [
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
+	'July',
+	'August',
+	'September',
+	'October',
+	'November',
+	'December'
+];
 
 function parse(raw: string | null | undefined): Date | null {
 	if (!raw) return null;

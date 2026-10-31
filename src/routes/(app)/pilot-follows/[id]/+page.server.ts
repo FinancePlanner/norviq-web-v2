@@ -1,6 +1,10 @@
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { pilotLoadFailure, pilotsCall, requirePilots } from '#lib/features/settings-admin/pilots/gate.server.js';
+import {
+	pilotLoadFailure,
+	pilotsCall,
+	requirePilots
+} from '#lib/features/settings-admin/pilots/gate.server.js';
 import {
 	PILOT_FOLLOW_STOP_FAILED_COPY,
 	PILOT_FOLLOW_UPDATE_FAILED_COPY,
@@ -41,13 +45,18 @@ export const load: PageServerLoad = async (event) => {
 	const [events, snaps] = await Promise.all([
 		pilotsCall<PilotFollowEventResponse[]>(event, 'GET', `/v1/pilot-follows/${followID}/events`),
 		vm.isPortfolio
-			? pilotsCall<PilotFollowSnapshotResponse[]>(event, 'GET', `/v1/pilot-follows/${followID}/snapshots`)
+			? pilotsCall<PilotFollowSnapshotResponse[]>(
+					event,
+					'GET',
+					`/v1/pilot-follows/${followID}/snapshots`
+				)
 			: Promise.resolve(null)
 	]);
 	if (!events.ok || events.status !== 200 || !Array.isArray(events.data)) vm.eventsError = true;
 	else vm.events = pilotEventRows(events.data);
 	if (snaps) {
-		if (snaps.ok && snaps.status === 200 && Array.isArray(snaps.data)) applyPilotSnapshots(vm, follow, snaps.data);
+		if (snaps.ok && snaps.status === 200 && Array.isArray(snaps.data))
+			applyPilotSnapshots(vm, follow, snaps.data);
 		else vm.chartNote = 'The value history is unavailable right now.';
 	}
 	return { vm, title: 'Following ' + follow.pilot.displayName, activePath: '/markets' };
@@ -67,7 +76,12 @@ export const actions: Actions = {
 		const status = String(form.get('status') ?? '').trim();
 		if (status !== 'active' && status !== 'paused') error(400, 'Invalid status.');
 		const page = '/pilot-follows/' + followID;
-		const res = await pilotsCall<PilotFollowResponse>(event, 'PATCH', '/v1/pilot-follows/' + followID, { status });
+		const res = await pilotsCall<PilotFollowResponse>(
+			event,
+			'PATCH',
+			'/v1/pilot-follows/' + followID,
+			{ status }
+		);
 		if (res.status === 0) {
 			console.warn('update pilot follow', 'transport error');
 			redirect(303, page + q('error', PILOT_FOLLOW_UPDATE_FAILED_COPY));
@@ -77,8 +91,12 @@ export const actions: Actions = {
 			console.warn('update pilot follow', 'status', res.status);
 			redirect(303, page + q('error', PILOT_FOLLOW_UPDATE_FAILED_COPY));
 		}
-		if (status === 'paused') redirect(303, page + q('notice', 'Paused. No new trades are copied until you resume.'));
-		redirect(303, page + q('notice', 'Resumed. Norviq catches up on the latest disclosures within a few hours.'));
+		if (status === 'paused')
+			redirect(303, page + q('notice', 'Paused. No new trades are copied until you resume.'));
+		redirect(
+			303,
+			page + q('notice', 'Resumed. Norviq catches up on the latest disclosures within a few hours.')
+		);
 	},
 
 	// handlers.PilotFollowStop (POST /pilot-follows/{id}/stop): the backend keeps
@@ -99,7 +117,11 @@ export const actions: Actions = {
 		}
 		redirect(
 			303,
-			'/pilots' + q('notice', 'Stopped following. The portfolio or watchlist and everything copied into it are kept.')
+			'/pilots' +
+				q(
+					'notice',
+					'Stopped following. The portfolio or watchlist and everything copied into it are kept.'
+				)
 		);
 	}
 };

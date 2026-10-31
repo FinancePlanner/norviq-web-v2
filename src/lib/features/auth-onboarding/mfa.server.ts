@@ -25,11 +25,18 @@ export async function mfaVerify(event: RequestEvent) {
 	if (!challengeId) return mfaError(event, 'Verification session expired. Please sign in again.');
 	const code = String(form.get('code') ?? '').trim();
 	if (!mfaCodePattern.test(code)) return mfaError(event, 'Enter the 6-digit verification code.');
-	if (!uuidPattern.test(challengeId)) return mfaError(event, 'Verification session expired. Please sign in again.');
+	if (!uuidPattern.test(challengeId))
+		return mfaError(event, 'Verification session expired. Please sign in again.');
 
 	let auth: AuthResponse;
 	try {
-		auth = await apiJSON<AuthResponse>(event, 'POST', '/v1/auth/mfa/verify', { challengeId, code }, { auth: 'none' });
+		auth = await apiJSON<AuthResponse>(
+			event,
+			'POST',
+			'/v1/auth/mfa/verify',
+			{ challengeId, code },
+			{ auth: 'none' }
+		);
 	} catch (err) {
 		if (!isAPIError(err)) console.error('mfa verify', err);
 		return mfaError(event, apiErrorMessage(err, 'Could not verify code. Please try again.'));
@@ -48,7 +55,13 @@ export async function mfaResend(event: RequestEvent) {
 	}
 	let challenge: MFAChallengeResponse;
 	try {
-		challenge = await apiJSON<MFAChallengeResponse>(event, 'POST', '/v1/auth/mfa/resend', { challengeId }, { auth: 'none' });
+		challenge = await apiJSON<MFAChallengeResponse>(
+			event,
+			'POST',
+			'/v1/auth/mfa/resend',
+			{ challengeId },
+			{ auth: 'none' }
+		);
 	} catch (err) {
 		if (!isAPIError(err)) console.error('mfa resend', err);
 		return mfaError(event, apiErrorMessage(err, 'Could not resend code right now.'));

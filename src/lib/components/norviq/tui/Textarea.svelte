@@ -32,7 +32,8 @@
 
 	function autosize(el: HTMLTextAreaElement) {
 		if (!autoResize) return;
-		if (!el.style.height || el.style.height === el.style.minHeight) el.style.height = `${el.scrollHeight}px`;
+		if (!el.style.height || el.style.height === el.style.minHeight)
+			el.style.height = `${el.scrollHeight}px`;
 	}
 </script>
 
@@ -49,11 +50,11 @@
 		'dark:bg-input/30',
 		'selection:bg-primary selection:text-primary-foreground',
 		'placeholder:text-muted-foreground',
-		'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+		'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
 		'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-		'aria-invalid:ring-destructive/20 aria-invalid:border-destructive dark:aria-invalid:ring-destructive/40',
+		'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
 		hasError && 'border-destructive ring-destructive/20 dark:ring-destructive/40',
-		autoResize && 'overflow-hidden resize-none',
+		autoResize && 'resize-none overflow-hidden',
 		className
 	)}
 	bind:value
@@ -62,5 +63,4 @@
 		if (autoResize) fit(e.currentTarget);
 		oninput?.(e);
 	}}
-	{...rest}
-></textarea>
+	{...rest}></textarea>

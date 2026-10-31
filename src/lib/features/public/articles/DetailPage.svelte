@@ -30,7 +30,11 @@
 			/* storage blocked */
 		}
 		try {
-			const response = await fetch(url, { method: 'POST', keepalive: true, credentials: 'same-origin' });
+			const response = await fetch(url, {
+				method: 'POST',
+				keepalive: true,
+				credentials: 'same-origin'
+			});
 			if (!response.ok) return;
 		} catch {
 			return;
@@ -88,7 +92,12 @@
 	{@html jsonLDTag}
 </svelte:head>
 
-<main bind:this={main} id="main-content" class="mx-auto w-full max-w-3xl px-6 py-10" data-article-view={vm.viewURL}>
+<main
+	bind:this={main}
+	id="main-content"
+	class="mx-auto w-full max-w-3xl px-6 py-10"
+	data-article-view={vm.viewURL}
+>
 	<Header />
 	{#if vm.notice !== ''}
 		<p role="status" class="mb-6 rounded-lg border border-border p-3 text-sm">{vm.notice}</p>
@@ -104,7 +113,7 @@
 			› <a href={vm.tickers[0].feedURL} class="hover:underline">{'$' + vm.tickers[0].symbol}</a>
 		{/if}
 	</nav>
-	<h1 class="mt-3 text-3xl font-semibold leading-tight">{vm.title}</h1>
+	<h1 class="mt-3 text-3xl leading-tight font-semibold">{vm.title}</h1>
 	<p class="mt-3 text-sm text-muted-foreground">
 		<a href={vm.authorURL} class="font-medium hover:underline">{vm.author}</a>
 		· <time datetime={vm.publishedISO}>{vm.publishedLabel}</time>
@@ -115,7 +124,9 @@
 	</p>
 	<div class="mt-4 flex flex-wrap items-center gap-2">
 		{#each vm.tickers as t (t.symbol)}
-			<a href={t.feedURL} class="rounded-full border border-border px-3 py-1 text-sm font-medium">{'$' + t.symbol}</a>
+			<a href={t.feedURL} class="rounded-full border border-border px-3 py-1 text-sm font-medium"
+				>{'$' + t.symbol}</a
+			>
 			{#if t.stockURL !== ''}
 				<a href={t.stockURL} class="text-xs text-muted-foreground underline">{t.symbol} data</a>
 			{/if}
@@ -136,11 +147,20 @@
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised by #lib/markdown.js -->
 		{@html vm.bodyHTML}
 	</article>
-	<aside class="mt-8 rounded-xl border border-border p-4 text-sm"><strong>Disclosure:</strong> {vm.disclosure}</aside>
+	<aside class="mt-8 rounded-xl border border-border p-4 text-sm">
+		<strong>Disclosure:</strong>
+		{vm.disclosure}
+	</aside>
 	<p class="mt-3 text-xs text-muted-foreground">{DISCLAIMER}</p>
 	<div class="mt-6 flex flex-wrap items-center gap-3">
 		{#key vm.code}
-			<VoteButton code={vm.code} count={vm.upvotes} voted={vm.viewerUpvoted} canVote={vm.signedIn} loginURL={vm.loginURL} />
+			<VoteButton
+				code={vm.code}
+				count={vm.upvotes}
+				voted={vm.viewerUpvoted}
+				canVote={vm.signedIn}
+				loginURL={vm.loginURL}
+			/>
 		{/key}
 		<ShareBar
 			links={vm.share}
@@ -164,7 +184,9 @@
 			{#if vm.viewerIsAuthor}
 				<a href={'/articles/' + vm.code + '/edit'} class="underline">Edit</a>
 				<form method="post" action={'/articles/' + vm.code + '/delete'} onsubmit={confirmDelete}>
-					<NativeButton type="submit" class="text-[var(--color-danger)] underline">Delete</NativeButton>
+					<NativeButton type="submit" class="text-[var(--color-danger)] underline"
+						>Delete</NativeButton
+					>
 				</form>
 			{/if}
 			{#if vm.isAdmin}
@@ -182,7 +204,12 @@
 			<details>
 				<summary class="cursor-pointer underline">Report</summary>
 				<form method="post" action={'/articles/' + vm.code + '/report'} class="mt-2 space-y-2">
-					<NativeSelect name="reason" class="rounded border border-border p-1" options={REPORT_REASONS} aria-label="Reason" />
+					<NativeSelect
+						name="reason"
+						class="rounded border border-border p-1"
+						options={REPORT_REASONS}
+						aria-label="Reason"
+					/>
 					<TextareaField
 						name="note"
 						rows={2}
@@ -191,7 +218,9 @@
 						maxlength={1000}
 						aria-label="Report details"
 					/>
-					<NativeButton type="submit" class="rounded-lg border border-border px-3 py-1">Send report</NativeButton>
+					<NativeButton type="submit" class="rounded-lg border border-border px-3 py-1"
+						>Send report</NativeButton
+					>
 				</form>
 			</details>
 		</div>

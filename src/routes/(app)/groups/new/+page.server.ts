@@ -9,14 +9,30 @@ import {
 	isServerFailure,
 	readForm
 } from '#lib/features/social/groups/groups.server.js';
-import { groupLanding, groupsError, topicAllowsTicker, withNotice } from '#lib/features/social/groups/view.js';
-import type { CreateGroupRequest, GroupDetail, GroupForm } from '#lib/features/social/groups/types.js';
+import {
+	groupLanding,
+	groupsError,
+	topicAllowsTicker,
+	withNotice
+} from '#lib/features/social/groups/view.js';
+import type {
+	CreateGroupRequest,
+	GroupDetail,
+	GroupForm
+} from '#lib/features/social/groups/types.js';
 
 // GroupsNew / GroupsCreate (norviq-web internal/handlers/groups.go).
 export const load: PageServerLoad = async (event) => {
 	const cfg = await requireGroups(event);
 	const q = event.url.searchParams;
-	const form: GroupForm = { name: '', description: '', emoji: '', topic: q.get('topic') ?? '', ticker: q.get('ticker') ?? '', visibility: '' };
+	const form: GroupForm = {
+		name: '',
+		description: '',
+		emoji: '',
+		topic: q.get('topic') ?? '',
+		ticker: q.get('ticker') ?? '',
+		visibility: ''
+	};
 	return { form, error: groupsError(event.url), publicAllowed: groupsPublicOn(cfg) };
 };
 
@@ -48,7 +64,8 @@ export const actions: Actions = {
 			detail = await createGroup(event, request);
 		} catch (err) {
 			const code = (err as { code?: string }).code;
-			if (code === 'guidelines_required' || code === 'community_banned') groupsRedirectError(err, '/groups/new', event.url.pathname);
+			if (code === 'guidelines_required' || code === 'community_banned')
+				groupsRedirectError(err, '/groups/new', event.url.pathname);
 			if (isServerFailure(err)) groupsFailure(err, event.url.pathname);
 			return fail(422, { form, error: boardsErrorText(err), publicAllowed: groupsPublicOn(cfg) });
 		}

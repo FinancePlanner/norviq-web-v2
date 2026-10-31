@@ -4,7 +4,11 @@
 
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
-import { formChoice, portfolioAPIErrorMessage, type PortfolioPage } from '#lib/features/portfolio/workspace/api.server.js';
+import {
+	formChoice,
+	portfolioAPIErrorMessage,
+	type PortfolioPage
+} from '#lib/features/portfolio/workspace/api.server.js';
 import type {
 	AdvancedReportRun,
 	AdvancedReportSchedule,
@@ -17,7 +21,10 @@ import type {
 	ReportTemplateInput
 } from './types.js';
 
-export async function loadAdvancedReports(event: RequestEvent, isPro: boolean): Promise<AdvancedViewModel> {
+export async function loadAdvancedReports(
+	event: RequestEvent,
+	isPro: boolean
+): Promise<AdvancedViewModel> {
 	const q = event.url.searchParams;
 	const vm: AdvancedViewModel = {
 		templates: [],
@@ -45,7 +52,8 @@ export async function loadAdvancedReports(event: RequestEvent, isPro: boolean): 
 	vm.runs = runs.items;
 	vm.portfolios = portfolios.items.map((p) => ({ id: p.id, name: p.name, mode: p.mode }));
 	const errors = [templates.err, schedules.err, runs.err, portfolios.err].filter(Boolean);
-	if (!vm.error && errors.length > 0) vm.error = 'Some reporting data could not be loaded: ' + errors.join(', ');
+	if (!vm.error && errors.length > 0)
+		vm.error = 'Some reporting data could not be loaded: ' + errors.join(', ');
 	return vm;
 }
 
@@ -77,8 +85,10 @@ function reportBlockTitle(kind: string): string {
 	return titles[kind] || 'Report section';
 }
 
-const formValues = (form: FormData, name: string) => form.getAll(name).filter((v): v is string => typeof v === 'string');
-const nonEmptyFormValues = (values: string[]) => values.map((v) => v.trim()).filter((v) => v !== '');
+const formValues = (form: FormData, name: string) =>
+	form.getAll(name).filter((v): v is string => typeof v === 'string');
+const nonEmptyFormValues = (values: string[]) =>
+	values.map((v) => v.trim()).filter((v) => v !== '');
 const formValue = (form: FormData, name: string) => {
 	const v = form.get(name);
 	return typeof v === 'string' ? v : '';
@@ -86,7 +96,8 @@ const formValue = (form: FormData, name: string) => {
 
 function reportFormats(values: string[]): string[] {
 	const formats: string[] = [];
-	for (const v of values) if ((v === 'pdf' || v === 'xlsx') && !formats.includes(v)) formats.push(v);
+	for (const v of values)
+		if ((v === 'pdf' || v === 'xlsx') && !formats.includes(v)) formats.push(v);
 	return formats;
 }
 
@@ -123,7 +134,12 @@ export async function createTemplate(event: RequestEvent) {
 		name,
 		...(description ? { description } : {}),
 		theme: formChoice(form.get('theme'), 'norviq_light', 'midnight', 'advisor'),
-		pageSettings: { size: formChoice(form.get('page'), 'a4', 'letter'), orientation: 'portrait', showPageNumbers: true, showGeneratedAt: true },
+		pageSettings: {
+			size: formChoice(form.get('page'), 'a4', 'letter'),
+			orientation: 'portrait',
+			showPageNumbers: true,
+			showGeneratedAt: true
+		},
 		blocks
 	};
 	try {
@@ -138,7 +154,11 @@ export async function createRun(event: RequestEvent) {
 	const form = await event.request.formData();
 	let formats = reportFormats(formValues(form, 'format'));
 	if (formats.length === 0) formats = ['pdf'];
-	const input = { templateId: formValue(form, 'template').trim(), outputFormats: formats, recipientUserIds: [] as string[] };
+	const input = {
+		templateId: formValue(form, 'template').trim(),
+		outputFormats: formats,
+		recipientUserIds: [] as string[]
+	};
 	try {
 		await apiJSON(event, 'POST', '/v1/reporting/runs', input);
 	} catch (err) {
@@ -180,7 +200,11 @@ export async function createSchedule(event: RequestEvent) {
 export async function artifactRedirect(event: RequestEvent, id: string): Promise<never> {
 	let link: ReportArtifactLink;
 	try {
-		link = await apiJSON<ReportArtifactLink>(event, 'GET', '/v1/reporting/artifacts/' + encodeURIComponent(id.trim()) + '/link');
+		link = await apiJSON<ReportArtifactLink>(
+			event,
+			'GET',
+			'/v1/reporting/artifacts/' + encodeURIComponent(id.trim()) + '/link'
+		);
 	} catch (err) {
 		redirectAdvancedReports('', portfolioAPIErrorMessage(err, 'Could not create download link.'));
 	}
@@ -190,6 +214,7 @@ export async function artifactRedirect(event: RequestEvent, id: string): Promise
 	} catch {
 		parsed = null;
 	}
-	if (!parsed || (parsed.protocol !== 'https:' && parsed.protocol !== 'http:')) redirectAdvancedReports('', 'The download link is invalid.');
+	if (!parsed || (parsed.protocol !== 'https:' && parsed.protocol !== 'http:'))
+		redirectAdvancedReports('', 'The download link is invalid.');
 	redirect(303, parsed.toString(), { external: true });
 }

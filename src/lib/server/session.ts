@@ -53,7 +53,12 @@ function key(secret: string): Promise<CryptoKey> {
 				'deriveKey'
 			]);
 			return crypto.subtle.deriveKey(
-				{ name: 'HKDF', hash: 'SHA-256', salt: enc.encode('norviq-web-v2'), info: enc.encode('session') },
+				{
+					name: 'HKDF',
+					hash: 'SHA-256',
+					salt: enc.encode('norviq-web-v2'),
+					info: enc.encode('session')
+				},
 				base,
 				{ name: 'AES-GCM', length: 256 },
 				false,
@@ -81,7 +86,11 @@ function unb64url(s: string): Uint8Array {
 export async function seal(data: SessionData, secret: string): Promise<string> {
 	const iv = crypto.getRandomValues(new Uint8Array(12));
 	const ct = new Uint8Array(
-		await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await key(secret), enc.encode(JSON.stringify(data)))
+		await crypto.subtle.encrypt(
+			{ name: 'AES-GCM', iv },
+			await key(secret),
+			enc.encode(JSON.stringify(data))
+		)
 	);
 	const out = new Uint8Array(iv.length + ct.length);
 	out.set(iv);

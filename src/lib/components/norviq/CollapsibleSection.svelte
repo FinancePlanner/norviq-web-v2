@@ -22,7 +22,10 @@
 				<span class="mt-0.5 block text-footnote text-muted-foreground">{desc}</span>
 			{/if}
 		</span>
-		<ChevronDown class="collapsible-section-chevron h-4 w-4 shrink-0 text-muted-foreground" data-lucide="icon" />
+		<ChevronDown
+			class="collapsible-section-chevron h-4 w-4 shrink-0 text-muted-foreground"
+			data-lucide="icon"
+		/>
 	</summary>
 	<div class="collapsible-section-body px-4 pb-4 md:px-5 md:pb-5">
 		{@render children?.()}

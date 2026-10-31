@@ -6,12 +6,17 @@
 </script>
 
 {#if vm.present}
-	<div class="market-technicals-strip flex flex-wrap items-center gap-2 text-sm" data-market-signal="technicals">
+	<div
+		class="market-technicals-strip flex flex-wrap items-center gap-2 text-sm"
+		data-market-signal="technicals"
+	>
 		{#if vm.trendLabel}
 			<span class="rounded-full border px-3 py-1">{vm.trendLabel}</span>
 		{/if}
 		{#if vm.crossLabel}
-			<span class={['rounded-full border px-3 py-1 font-semibold', vm.crossTone]}>{vm.crossLabel}</span>
+			<span class={['rounded-full border px-3 py-1 font-semibold', vm.crossTone]}
+				>{vm.crossLabel}</span
+			>
 		{/if}
 		{#if vm.hasRSI}
 			<span class="rounded-full border px-3 py-1 tabular-nums">
@@ -26,7 +31,7 @@
 		{/if}
 		{#if vm.has52Week}
 			<span class="market-technicals-band flex min-w-[12rem] flex-1 items-center gap-2">
-				<span class="text-xs tabular-nums text-muted-foreground">{vm.low52}</span>
+				<span class="text-xs text-muted-foreground tabular-nums">{vm.low52}</span>
 				<span
 					class="relative h-1.5 flex-1 rounded-full bg-muted"
 					role="img"
@@ -38,7 +43,7 @@
 						style={barOffset(vm.position52Pct ?? 0)}
 					></span>
 				</span>
-				<span class="text-xs tabular-nums text-muted-foreground">{vm.high52}</span>
+				<span class="text-xs text-muted-foreground tabular-nums">{vm.high52}</span>
 			</span>
 		{/if}
 		{#if vm.asOf}

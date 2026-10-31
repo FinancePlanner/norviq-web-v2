@@ -41,8 +41,12 @@ export const load: PageServerLoad = async (event) => {
 		if (!credentialRejected(failure)) {
 			if (!detail) detailFailed(event.url.pathname, failure);
 			const canonical = articlePath(detail.article.slug, detail.article.code);
-			if ('/articles/' + segment !== canonical) redirectToArticle(event, canonical, ARTICLE_SLUG_REDIRECT_CACHE_CONTROL);
-			const [vm, isAdmin] = await Promise.all([detailVM(event, detail, true), viewerIsAdmin(event)]);
+			if ('/articles/' + segment !== canonical)
+				redirectToArticle(event, canonical, ARTICLE_SLUG_REDIRECT_CACHE_CONTROL);
+			const [vm, isAdmin] = await Promise.all([
+				detailVM(event, detail, true),
+				viewerIsAdmin(event)
+			]);
 			vm.isAdmin = isAdmin;
 			vm.notice = noticeFrom(event);
 			event.setHeaders({ 'cache-control': SIGNED_IN_CACHE_CONTROL });
@@ -58,7 +62,8 @@ export const load: PageServerLoad = async (event) => {
 		detailFailed(event.url.pathname, err);
 	}
 	const canonical = articlePath(detail.article.slug, detail.article.code);
-	if ('/articles/' + segment !== canonical) redirectToArticle(event, canonical, ARTICLE_SLUG_REDIRECT_CACHE_CONTROL);
+	if ('/articles/' + segment !== canonical)
+		redirectToArticle(event, canonical, ARTICLE_SLUG_REDIRECT_CACHE_CONTROL);
 	const vm = await detailVM(event, detail, false);
 	event.setHeaders({ 'cache-control': pageCacheControl(event, ARTICLE_PAGE_CACHE_CONTROL) });
 	return { vm };

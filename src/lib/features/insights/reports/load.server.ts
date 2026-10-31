@@ -5,13 +5,22 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { allocationColor } from '#lib/charts/index.js';
-import { formatCurrency, formatFloat, formatPercentValue, formatSignedCurrency } from '#lib/format.js';
+import {
+	formatCurrency,
+	formatFloat,
+	formatPercentValue,
+	formatSignedCurrency
+} from '#lib/format.js';
 import { normalizeReportTab } from '#lib/nav.js';
 import { getJSON } from '#lib/features/dashboard/fetch.server.js';
 import { goFormat, parseTime } from '#lib/features/dashboard/shared.js';
 import { resolvePillar } from '#lib/features/dashboard/pillars.js';
 import { mapFinancialHealth, mapInsightCards } from '#lib/features/dashboard/insights/mappers.js';
-import { formatChangeLabel, performancePointSeries, primaryChange } from '#lib/features/portfolio/holdings/change.js';
+import {
+	formatChangeLabel,
+	performancePointSeries,
+	primaryChange
+} from '#lib/features/portfolio/holdings/change.js';
 import type {
 	AllocationCardVM,
 	AllocationRowVM,
@@ -61,7 +70,10 @@ function lastTwelveByMonth<T extends { monthStart: string }>(rows: T[]): T[] {
 function spendingSeries(summaries: S['BudgetMonthSummaryResponse'][] | undefined): LineSeries {
 	if (!summaries?.length) return { labels: [], values: [] };
 	const window = lastTwelveByMonth(summaries);
-	return { labels: window.map((r) => monthLabel(r.monthStart)), values: window.map((r) => Math.max(0, r.actual)) };
+	return {
+		labels: window.map((r) => monthLabel(r.monthStart)),
+		values: window.map((r) => Math.max(0, r.actual))
+	};
 }
 
 /** expenses_data.go pillarProgressState. */
@@ -81,7 +93,9 @@ function formatOverweight(delta: number): string {
 }
 
 /** portfolio_subpages_data.go mapSectorAllocations (rows + the pie input). */
-function mapSectorAllocations(items: S['SectorAllocationDTO'][] | undefined): [AllocationRowVM[], PieSeries | null] {
+function mapSectorAllocations(
+	items: S['SectorAllocationDTO'][] | undefined
+): [AllocationRowVM[], PieSeries | null] {
 	if (!items?.length) return [[], null];
 	const sorted = [...items].sort((a, b) => b.weightPercent - a.weightPercent);
 	const equalWeight = 100 / sorted.length;
@@ -103,17 +117,26 @@ function mapSectorAllocations(items: S['SectorAllocationDTO'][] | undefined): [A
 }
 
 /** reports_data.go mapSectorAllocationsForReports. Also used by the deep dive. */
-export function mapSectorAllocationsForReports(items: S['SectorAllocationDTO'][] | undefined): [AllocationRowVM[], PieSeries | null] {
+export function mapSectorAllocationsForReports(
+	items: S['SectorAllocationDTO'][] | undefined
+): [AllocationRowVM[], PieSeries | null] {
 	return mapSectorAllocations(items);
 }
 
-const signedPct = (pct: number, unit: string) => `${pct >= 0 ? '+' : ''}${formatFloat(pct * 100, 1)}${unit}`;
+const signedPct = (pct: number, unit: string) =>
+	`${pct >= 0 ? '+' : ''}${formatFloat(pct * 100, 1)}${unit}`;
 
 // ---------------------------------------------------------------------------
 // Card mappers
 
 function mapNetWorth(overview: Overview | null, performance: Performance | null): NetWorthCardVM {
-	const vm: NetWorthCardVM = { available: false, totalValue: '', changeLabel: '', changePositive: false, chart: null };
+	const vm: NetWorthCardVM = {
+		available: false,
+		totalValue: '',
+		changeLabel: '',
+		changePositive: false,
+		chart: null
+	};
 	if (overview && overview.portfolioStatistics.totalMarketValue > 0) {
 		vm.available = true;
 		vm.totalValue = formatCurrency(overview.portfolioStatistics.totalMarketValue);
@@ -121,7 +144,8 @@ function mapNetWorth(overview: Overview | null, performance: Performance | null)
 	if (performance && performance.points?.length > 0) {
 		vm.available = true;
 		const series = performancePointSeries(performance.points);
-		if (vm.totalValue === '' && series.values.length > 0) vm.totalValue = formatCurrency(series.values[series.values.length - 1]);
+		if (vm.totalValue === '' && series.values.length > 0)
+			vm.totalValue = formatCurrency(series.values[series.values.length - 1]);
 		const change = formatChangeLabel(primaryChange(performance.changes));
 		if (change.ok) {
 			vm.changeLabel = change.label;
@@ -132,7 +156,10 @@ function mapNetWorth(overview: Overview | null, performance: Performance | null)
 	return vm;
 }
 
-function mapQuickStats(overview: Overview | null, statistics: S['StatisticsDTO'] | null): QuickStatsCardVM {
+function mapQuickStats(
+	overview: Overview | null,
+	statistics: S['StatisticsDTO'] | null
+): QuickStatsCardVM {
 	const stats: StatVM[] = [];
 	if (overview) {
 		const p = overview.portfolioStatistics;
@@ -147,12 +174,17 @@ function mapQuickStats(overview: Overview | null, statistics: S['StatisticsDTO']
 		}
 	}
 	if (statistics) {
-		if (statistics.watchlist.totalSymbols > 0) stats.push({ label: 'Watchlist', value: `${statistics.watchlist.totalSymbols} symbols` });
-		if (statistics.looklist.totalIdeas > 0) stats.push({ label: 'Research ideas', value: `${statistics.looklist.activeIdeas} active` });
+		if (statistics.watchlist.totalSymbols > 0)
+			stats.push({ label: 'Watchlist', value: `${statistics.watchlist.totalSymbols} symbols` });
+		if (statistics.looklist.totalIdeas > 0)
+			stats.push({ label: 'Research ideas', value: `${statistics.looklist.activeIdeas} active` });
 		const change = statistics.market.benchmarkChange1D;
 		if (change !== null && change !== undefined && statistics.market.benchmarkSymbol) {
 			const sign = change < 0 ? '' : '+';
-			stats.push({ label: statistics.market.benchmarkSymbol + ' (1D)', value: `${sign}${formatFloat(change, 2)}%` });
+			stats.push({
+				label: statistics.market.benchmarkSymbol + ' (1D)',
+				value: `${sign}${formatFloat(change, 2)}%`
+			});
 		}
 	}
 	if (stats.length === 0) return { available: false, error: 'Quick stats unavailable.', stats: [] };
@@ -161,14 +193,30 @@ function mapQuickStats(overview: Overview | null, statistics: S['StatisticsDTO']
 
 function mapInsights(insights: S['DashboardInsightsResponse'] | null): InsightsCardVM {
 	if (!insights) return { available: false, financialHealth: null, insightCards: [] };
-	return { available: true, financialHealth: mapFinancialHealth(insights.financialHealth), insightCards: mapInsightCards(insights) };
+	return {
+		available: true,
+		financialHealth: mapFinancialHealth(insights.financialHealth),
+		insightCards: mapInsightCards(insights)
+	};
 }
 
 function mapPerformance(performance: Performance | null): PerformanceCardVM {
 	if (!performance || !performance.points?.length) {
-		return { available: false, error: 'Performance data unavailable.', changeLabel: '', changePositive: false, chart: null };
+		return {
+			available: false,
+			error: 'Performance data unavailable.',
+			changeLabel: '',
+			changePositive: false,
+			chart: null
+		};
 	}
-	const vm: PerformanceCardVM = { available: true, error: '', changeLabel: '', changePositive: false, chart: performancePointSeries(performance.points) };
+	const vm: PerformanceCardVM = {
+		available: true,
+		error: '',
+		changeLabel: '',
+		changePositive: false,
+		chart: performancePointSeries(performance.points)
+	};
 	const change = formatChangeLabel(primaryChange(performance.changes));
 	if (change.ok) {
 		vm.changeLabel = change.label;
@@ -180,18 +228,27 @@ function mapPerformance(performance: Performance | null): PerformanceCardVM {
 function mapAllocation(overview: Overview | null): AllocationCardVM {
 	const empty: AllocationCardVM = { available: false, chart: null, rows: [] };
 	if (!overview) return empty;
-	const [rows, chart] = mapSectorAllocationsForReports(overview.portfolioStatistics.sectorAllocations);
+	const [rows, chart] = mapSectorAllocationsForReports(
+		overview.portfolioStatistics.sectorAllocations
+	);
 	if (rows.length === 0 && !chart) return empty;
 	return { available: true, chart, rows };
 }
 
 function mapSpending(overview: Overview | null): SpendingCardVM {
-	const vm: SpendingCardVM = { available: false, latestMonth: '', changeLabel: '', changePositive: false, chart: null };
+	const vm: SpendingCardVM = {
+		available: false,
+		latestMonth: '',
+		changeLabel: '',
+		changePositive: false,
+		chart: null
+	};
 	if (!overview) return vm;
 	const series = spendingSeries(overview.monthlySummaries);
 	if (series.labels.length === 0) return vm;
 	vm.available = true;
-	if (overview.latestMonthSummary) vm.latestMonth = formatCurrency(overview.latestMonthSummary.actual);
+	if (overview.latestMonthSummary)
+		vm.latestMonth = formatCurrency(overview.latestMonthSummary.actual);
 	const change = monthOverMonthChange(series.values);
 	if (change) {
 		vm.changePositive = change.positive;
@@ -229,7 +286,13 @@ function mapBudgetTracking(overview: Overview | null): BudgetTrackingCardVM {
 }
 
 function mapSavingsRate(overview: Overview | null): SavingsRateCardVM {
-	const vm: SavingsRateCardVM = { available: false, latestRate: '', changeLabel: '', changePositive: false, chart: null };
+	const vm: SavingsRateCardVM = {
+		available: false,
+		latestRate: '',
+		changeLabel: '',
+		changePositive: false,
+		chart: null
+	};
 	if (!overview || !overview.cashFlow?.length) return vm;
 	const window = lastTwelveByMonth(overview.cashFlow);
 	const labels = window.map((r) => monthLabel(r.monthStart));
@@ -301,7 +364,12 @@ function mapCashFlow(overview: Overview | null): CashFlowCardVM {
 
 // ---------------------------------------------------------------------------
 
-export async function loadReportsViewModel(event: RequestEvent, tab: string, activePath: string, isPro: boolean): Promise<ReportsPageVM> {
+export async function loadReportsViewModel(
+	event: RequestEvent,
+	tab: string,
+	activePath: string,
+	isPro: boolean
+): Promise<ReportsPageVM> {
 	// Four independent reads; a failure of one only blanks its cards.
 	const [overview, insights, performance, statistics] = await Promise.all([
 		getJSON<Overview>(event, '/v1/reports/overview'),

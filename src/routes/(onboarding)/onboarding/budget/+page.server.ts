@@ -6,7 +6,10 @@ import {
 	recordFunnelComplete,
 	recordFunnelStep
 } from '#lib/features/auth-onboarding/onboarding/onboarding.server.js';
-import { budgetPageVM, submitBudget } from '#lib/features/auth-onboarding/onboarding/budget.server.js';
+import {
+	budgetPageVM,
+	submitBudget
+} from '#lib/features/auth-onboarding/onboarding/budget.server.js';
 
 // GET /onboarding/budget (onboarding.go Budget)
 export const load: PageServerLoad = async (event) => {

@@ -28,6 +28,8 @@
 		{/each}
 	</div>
 	<form class="mt-5" method="POST" action="/tax?/placementPlans" use:enhance={submit}>
-		<input type="hidden" name="scenarioId" value={s.id} /><SubmitButton>Create placement plan</SubmitButton>
+		<input type="hidden" name="scenarioId" value={s.id} /><SubmitButton
+			>Create placement plan</SubmitButton
+		>
 	</form>
 </section>

@@ -14,7 +14,13 @@
 	import { EmptyState, SkeletonBlock } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { buildCryptoMarketsVM, cryptoMarketsPath, unavailableMarketsVM } from './markets.js';
-	import type { AthRowVM, CoinRowVM, CryptoMarketsResponse, MarketsVM, ToggleOption } from './types.js';
+	import type {
+		AthRowVM,
+		CoinRowVM,
+		CryptoMarketsResponse,
+		MarketsVM,
+		ToggleOption
+	} from './types.js';
 
 	let { view, tf, size }: { view: string; tf: string; size: string } = $props();
 
@@ -86,9 +92,9 @@
 {#snippet coinLabel(symbol: string, name: string, href: string)}
 	<div class="min-w-0">
 		{#if href !== ''}
-			<a class="font-semibold vigil-mono hover:text-[var(--color-tint)]" {href}>{symbol}</a>
+			<a class="vigil-mono font-semibold hover:text-[var(--color-tint)]" {href}>{symbol}</a>
 		{:else}
-			<span class="font-semibold vigil-mono">{symbol}</span>
+			<span class="vigil-mono font-semibold">{symbol}</span>
 		{/if}
 		<p class="truncate text-xs text-muted-foreground">{name}</p>
 	</div>
@@ -102,7 +108,10 @@
 		{:else}
 			<vigil.DataTable class="mt-4">
 				<thead>
-					<tr><th>Coin</th><th class="hidden sm:table-cell">7d</th><th class="text-right">Price</th><th class="text-right">{periodLabel}</th></tr>
+					<tr
+						><th>Coin</th><th class="hidden sm:table-cell">7d</th><th class="text-right">Price</th
+						><th class="text-right">{periodLabel}</th></tr
+					>
 				</thead>
 				<tbody>
 					{#each rows as row, i (i)}
@@ -111,10 +120,15 @@
 								{@render coinLabel(row.symbol, row.name, row.href)}
 							</td>
 							<td class="hidden w-24 sm:table-cell">
-								{#if row.sparkline}<GrowthSparkline points={row.sparkline.points} tone={row.sparkline.tone} />{/if}
+								{#if row.sparkline}<GrowthSparkline
+										points={row.sparkline.points}
+										tone={row.sparkline.tone}
+									/>{/if}
 							</td>
-							<td class="text-right tabular-nums vigil-mono">{row.price}</td>
-							<td class={['text-right font-semibold tabular-nums vigil-mono', row.changeClass]}>{row.change}</td>
+							<td class="vigil-mono text-right tabular-nums">{row.price}</td>
+							<td class={['vigil-mono text-right font-semibold tabular-nums', row.changeClass]}
+								>{row.change}</td
+							>
 						</tr>
 					{/each}
 				</tbody>
@@ -133,7 +147,7 @@
 				{#each rows as row, i (i)}
 					<li class="flex items-start justify-between gap-3">
 						{@render coinLabel(row.symbol, row.name, row.href)}
-						<div class="text-right tabular-nums vigil-mono">
+						<div class="vigil-mono text-right tabular-nums">
 							<p class="text-sm font-semibold">{row.fromATH}</p>
 							<p class="text-xs text-muted-foreground">
 								{row.athDate}
@@ -164,11 +178,16 @@
 		</div>
 		{#if vm.unavailable}
 			<div class="mt-6">
-				<EmptyState title="Crypto markets are warming up" description="Market data is temporarily unavailable. Try again in a minute." />
+				<EmptyState
+					title="Crypto markets are warming up"
+					description="Market data is temporarily unavailable. Try again in a minute."
+				/>
 			</div>
 		{:else}
 			{#if vm.isStale}
-				<p class="mt-4 text-sm text-muted-foreground" role="status">Showing the last available data; live prices are catching up.</p>
+				<p class="mt-4 text-sm text-muted-foreground" role="status">
+					Showing the last available data; live prices are catching up.
+				</p>
 			{/if}
 			<p class="mt-4 text-sm text-muted-foreground tabular-nums">
 				Market cap {vm.totalMarketCap}
@@ -190,7 +209,9 @@
 					<vigil.Panel class="mt-4 p-4 md:p-5" titleID="crypto-heatmap-title">
 						<div class="flex items-end justify-between gap-3 px-1">
 							<h2 id="crypto-heatmap-title" class="text-lg font-semibold">Heat-map</h2>
-							<span class="text-footnote text-muted-foreground">tile size = market cap · color = {vm.timeframeLabel}</span>
+							<span class="text-footnote text-muted-foreground"
+								>tile size = market cap · color = {vm.timeframeLabel}</span
+							>
 						</div>
 						<div class="markets-heatmap mt-3">
 							<EChart {...heatmap} />

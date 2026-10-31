@@ -45,7 +45,9 @@
 
 	// #scenario-form-error, #scenario-snapshot-review and #scenario-comparison.
 	let formError = $state('');
-	let review = $state<{ kind: 'review'; review: SnapshotReviewResponse } | { kind: 'error'; message: string } | null>(null);
+	let review = $state<
+		{ kind: 'review'; review: SnapshotReviewResponse } | { kind: 'error'; message: string } | null
+	>(null);
 	let comparison = $state<ScenarioRun[] | null>(null);
 	let reviewPending = $state(false);
 	let comparePending = $state(false);
@@ -100,7 +102,10 @@
 	async function compare(event: SubmitEvent) {
 		event.preventDefault();
 		comparePending = true;
-		const result = await postForm<CompareResponse>('/scenarios/compare', new FormData(event.currentTarget as HTMLFormElement));
+		const result = await postForm<CompareResponse>(
+			'/scenarios/compare',
+			new FormData(event.currentTarget as HTMLFormElement)
+		);
 		comparePending = false;
 		if (result?.kind === 'ok') comparison = result.data.runs;
 	}
@@ -156,7 +161,7 @@
 								maxlength={3}
 							/>
 							{#if workspace.cryptoHoldings.length > 0}
-								<fieldset class="sm:col-span-2 rounded-lg border p-4">
+								<fieldset class="rounded-lg border p-4 sm:col-span-2">
 									<legend class="px-1 text-sm font-medium">Include crypto holdings</legend>
 									<div class="mt-2 grid gap-2 sm:grid-cols-2">
 										{#each workspace.cryptoHoldings as holding (holding.id)}
@@ -166,7 +171,9 @@
 											</label>
 										{/each}
 									</div>
-									<p class="mt-2 text-xs text-muted-foreground">Only selected crypto holdings are frozen into this snapshot.</p>
+									<p class="mt-2 text-xs text-muted-foreground">
+										Only selected crypto holdings are frozen into this snapshot.
+									</p>
 								</fieldset>
 							{/if}
 						</div>
@@ -368,15 +375,27 @@
 								min="1"
 								max="120"
 							/>
-							<Field name="seed" label="Random seed (optional)" type="number" class="mt-2 w-full" wrapperClass="block text-sm font-medium" />
+							<Field
+								name="seed"
+								label="Random seed (optional)"
+								type="number"
+								class="mt-2 w-full"
+								wrapperClass="block text-sm font-medium"
+							/>
 						</div>
 						<details class="rounded-lg border p-4">
 							<summary class="cursor-pointer text-sm font-medium">Scoped custom shocks</summary>
 							<p class="mt-2 text-xs text-muted-foreground">
-								Optional target and percentage pairs. Applicable shocks compound; a holding target overrides broader percentage shocks.
+								Optional target and percentage pairs. Applicable shocks compound; a holding target
+								overrides broader percentage shocks.
 							</p>
 							<div class="mt-4 grid gap-4 sm:grid-cols-2">
-								<Field name="holdingShockTarget" label="Holding ID" class="mt-2 w-full" wrapperClass="block text-sm font-medium" /><Field
+								<Field
+									name="holdingShockTarget"
+									label="Holding ID"
+									class="mt-2 w-full"
+									wrapperClass="block text-sm font-medium"
+								/><Field
 									name="holdingShock"
 									label="Holding shock (%)"
 									type="number"
@@ -386,7 +405,12 @@
 									max="100"
 									step="0.1"
 								/>
-								<Field name="sectorShockTarget" label="Sector" class="mt-2 w-full" wrapperClass="block text-sm font-medium" /><Field
+								<Field
+									name="sectorShockTarget"
+									label="Sector"
+									class="mt-2 w-full"
+									wrapperClass="block text-sm font-medium"
+								/><Field
 									name="sectorShock"
 									label="Sector shock (%)"
 									type="number"
@@ -396,7 +420,12 @@
 									max="100"
 									step="0.1"
 								/>
-								<Field name="regionShockTarget" label="Region" class="mt-2 w-full" wrapperClass="block text-sm font-medium" /><Field
+								<Field
+									name="regionShockTarget"
+									label="Region"
+									class="mt-2 w-full"
+									wrapperClass="block text-sm font-medium"
+								/><Field
 									name="regionShock"
 									label="Region shock (%)"
 									type="number"
@@ -425,8 +454,12 @@
 							</div>
 						</details>
 						<details class="rounded-lg border p-4">
-							<summary class="cursor-pointer text-sm font-medium">Advanced multi-asset assumptions</summary>
-							<p class="mt-2 text-xs text-muted-foreground">Optional JSON arrays using the same asset order. Covariance is annualized.</p>
+							<summary class="cursor-pointer text-sm font-medium"
+								>Advanced multi-asset assumptions</summary
+							>
+							<p class="mt-2 text-xs text-muted-foreground">
+								Optional JSON arrays using the same asset order. Covariance is annualized.
+							</p>
 							<div class="mt-4 grid gap-4">
 								<TextareaField
 									name="assetWeights"
@@ -451,10 +484,19 @@
 								/>
 							</div>
 						</details>
-						<CheckboxField name="isSaved" label="Save this configuration" value="true" wrapperClass="flex items-center gap-2 text-sm" />
+						<CheckboxField
+							name="isSaved"
+							label="Save this configuration"
+							value="true"
+							wrapperClass="flex items-center gap-2 text-sm"
+						/>
 						<SubmitButton class="w-full">Review snapshot</SubmitButton>
 					</form>
-					<div id="scenario-snapshot-loading" class="skeleton-indicator mt-5" class:htmx-request={reviewPending}>
+					<div
+						id="scenario-snapshot-loading"
+						class="skeleton-indicator mt-5"
+						class:htmx-request={reviewPending}
+					>
 						<SkeletonBlock heightClass="h-40" />
 					</div>
 					<div id="scenario-snapshot-review" class="mt-5">
@@ -474,17 +516,27 @@
 			<vigil.CommandSplitAside>
 				<div class="flex items-end justify-between">
 					<h2 class="text-title3 font-semibold">Recent runs</h2>
-					<span class="text-footnote text-muted-foreground tabular-nums">{workspace.runs.length} runs</span>
+					<span class="text-footnote text-muted-foreground tabular-nums"
+						>{workspace.runs.length} runs</span
+					>
 				</div>
 				<form onsubmit={compare}>
 					<div class="vigil-dense-list mt-4">
 						{#if workspace.runs.length === 0}
-							<EmptyState title="No scenarios yet" description="Build your first stress test to see its progress and results here." />
+							<EmptyState
+								title="No scenarios yet"
+								description="Build your first stress test to see its progress and results here."
+							/>
 						{/if}
 						{#each workspace.runs as run (run.id)}
 							<div class="flex items-start gap-3">
 								{#if run.state === 'completed'}
-									<CheckboxField name="runId" value={uid(run.id)} wrapperClass="mt-6" aria-label="Include run in comparison" />
+									<CheckboxField
+										name="runId"
+										value={uid(run.id)}
+										wrapperClass="mt-6"
+										aria-label="Include run in comparison"
+									/>
 								{/if}
 								<div class="min-w-0 flex-1"><RunCard {run} /></div>
 							</div>
@@ -493,9 +545,17 @@
 					<SecondarySubmitButton class="mt-4 w-full">Compare selected runs</SecondarySubmitButton>
 				</form>
 				{#if workspace.runs.length > 0}
-					<Management {workspace} onformerror={(message) => (formError = message)} onredirect={navigate} />
+					<Management
+						{workspace}
+						onformerror={(message) => (formError = message)}
+						onredirect={navigate}
+					/>
 				{/if}
-				<div id="scenario-comparison-loading" class="skeleton-indicator mt-6" class:htmx-request={comparePending}>
+				<div
+					id="scenario-comparison-loading"
+					class="skeleton-indicator mt-6"
+					class:htmx-request={comparePending}
+				>
 					<SkeletonBlock heightClass="h-40" />
 				</div>
 				<div id="scenario-comparison" class="mt-6">

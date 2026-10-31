@@ -17,7 +17,15 @@
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { initScrollTaste } from '#lib/motion.js';
 	import HeroWallCard from './HeroWallCard.svelte';
-	import { DiscordURL, OGImagePath, absoluteURL, heroBackSlots, heroFrontSlots, structuredData, type LandingVM } from './landing.js';
+	import {
+		DiscordURL,
+		OGImagePath,
+		absoluteURL,
+		heroBackSlots,
+		heroFrontSlots,
+		structuredData,
+		type LandingVM
+	} from './landing.js';
 	import './landing.css';
 
 	let { vm }: { vm: LandingVM } = $props();
@@ -39,7 +47,9 @@
 		// landing.js trackSignupClicks: CTA clicks are the one funnel event the
 		// landing page owns.
 		const onClick = (event: MouseEvent) => {
-			const link = (event.target as Element | null)?.closest?.<HTMLAnchorElement>('a[href^="/signup"], a.store-badge');
+			const link = (event.target as Element | null)?.closest?.<HTMLAnchorElement>(
+				'a[href^="/signup"], a.store-badge'
+			);
 			if (!link) return;
 			const section = link.closest<HTMLElement>('[data-landing-section]')?.dataset.landingSection;
 			const location = section || (link.closest('.landing-nav') ? 'nav' : 'hero');
@@ -48,7 +58,8 @@
 		};
 		// landing.js trackDiscordClicks: the footer's Discord invite.
 		const onDiscord = (event: MouseEvent) => {
-			if ((event.target as Element | null)?.closest?.('a[data-discord-link]')) capture('discord_link_clicked', { surface: 'footer' });
+			if ((event.target as Element | null)?.closest?.('a[data-discord-link]'))
+				capture('discord_link_clicked', { surface: 'footer' });
 		};
 		document.addEventListener('click', onDiscord);
 		document.addEventListener('click', onClick);
@@ -68,7 +79,10 @@
 		name="description"
 		content="Norviq - nothing slips past. Portfolio, spending, and AI-powered signals in one private financial guardian, with MCP integrations."
 	/>
-	<meta name="keywords" content="Norviq, portfolio tracker, stock research, due diligence, expenses, budgeting, AI finance, MCP" />
+	<meta
+		name="keywords"
+		content="Norviq, portfolio tracker, stock research, due diligence, expenses, budgeting, AI finance, MCP"
+	/>
 	<meta name="robots" content="index,follow,max-image-preview:large" />
 	{#if vm.appStoreID}
 		<meta name="apple-itunes-app" content={'app-id=' + vm.appStoreID} />
@@ -81,7 +95,10 @@
 	<meta property="og:locale" content="en_US" />
 	<meta property="og:url" content={canonical} />
 	<meta property="og:title" content="Norviq — nothing slips past." />
-	<meta property="og:description" content="Norviq keeps the vigil: wealth, spending, and the signals between." />
+	<meta
+		property="og:description"
+		content="Norviq keeps the vigil: wealth, spending, and the signals between."
+	/>
 	<meta property="og:image" content={ogImage} />
 	<meta property="og:image:type" content="image/png" />
 	<meta property="og:image:width" content="1200" />
@@ -90,7 +107,10 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@NorviqPlanner" />
 	<meta name="twitter:title" content="Norviq — nothing slips past." />
-	<meta name="twitter:description" content="Norviq keeps the vigil: wealth, spending, and the signals between." />
+	<meta
+		name="twitter:description"
+		content="Norviq keeps the vigil: wealth, spending, and the signals between."
+	/>
 	<meta name="twitter:image" content={ogImage} />
 	<meta name="twitter:image:alt" content="Norviq — nothing slips past." />
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- Go-style escaped JSON (<, >, & as \u00XX) -->
@@ -113,7 +133,15 @@
 	</div>
 {/snippet}
 
-{#snippet vigilStation(kicker: string, title: string, lead: string, features: Feature[], imageURL: string, imageTitle: string, mark: boolean)}
+{#snippet vigilStation(
+	kicker: string,
+	title: string,
+	lead: string,
+	features: Feature[],
+	imageURL: string,
+	imageTitle: string,
+	mark: boolean
+)}
 	<article class="landing-vigil-station" data-motion-reveal>
 		{#if mark}
 			<VigIcon class="landing-station-vig" />
@@ -135,7 +163,10 @@
 {/snippet}
 
 {#snippet planCard(title: string, description: string, items: string[], highlighted: boolean)}
-	<div class={'landing-plan-card rounded-lg p-6 md:p-8' + (highlighted ? ' landing-plan-card-featured border-[var(--color-tint)]' : '')}>
+	<div
+		class={'landing-plan-card rounded-lg p-6 md:p-8' +
+			(highlighted ? ' landing-plan-card-featured border-[var(--color-tint)]' : '')}
+	>
 		<div class="flex items-start justify-between gap-4">
 			<div>
 				<h3 class="text-2xl font-bold">{title}</h3>
@@ -165,9 +196,21 @@
 		</a>
 		<nav class="landing-nav-actions">
 			<ThemeToggleCompact />
-			<a href="https://x.com/fatc88" target="_blank" rel="noopener noreferrer" aria-label="Fernando on X" class="landing-nav-x">X</a>
-			<a href="/login" class="rounded-md px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:px-4">Log in</a>
-			<PrimaryButton href="/signup" class="landing-nav-cta px-4 py-2 text-sm sm:px-5">Get started</PrimaryButton>
+			<a
+				href="https://x.com/fatc88"
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="Fernando on X"
+				class="landing-nav-x">X</a
+			>
+			<a
+				href="/login"
+				class="rounded-md px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:px-4"
+				>Log in</a
+			>
+			<PrimaryButton href="/signup" class="landing-nav-cta px-4 py-2 text-sm sm:px-5"
+				>Get started</PrimaryButton
+			>
 		</nav>
 	</header>
 	<section class="landing-hero-v3" data-landing-section="hero">
@@ -182,13 +225,17 @@
 				<span>Nothing slips past.</span>
 				<span class="hero-title-muted">Every angle of your money.</span>
 			</h1>
-			<p class="hero-subtitle">Norviq keeps the vigil &mdash; wealth, spending, and the signals between.</p>
+			<p class="hero-subtitle">
+				Norviq keeps the vigil &mdash; wealth, spending, and the signals between.
+			</p>
 			<div class="hero-store-row">
 				<StoreBadges appStoreURL={vm.appStoreURL} googlePlayURL={vm.googlePlayURL} />
 			</div>
 			<p class="hero-web-cta">
 				<span>Or on the web:</span>
-				<a href="/signup" class="hero-web-link">Create a free account <span aria-hidden="true">&rarr;</span></a>
+				<a href="/signup" class="hero-web-link"
+					>Create a free account <span aria-hidden="true">&rarr;</span></a
+				>
 			</p>
 		</div>
 		<!-- heroCardWall: decorative only (aria-hidden, nothing focusable). -->
@@ -199,7 +246,10 @@
 				</div>
 			{/each}
 			{#each frontSlots as slot, i (i)}
-				<div class={'hero-wall-slot hero-wall-front' + (slot.class ? ' ' + slot.class : '')} style={slot.style}>
+				<div
+					class={'hero-wall-slot hero-wall-front' + (slot.class ? ' ' + slot.class : '')}
+					style={slot.style}
+				>
 					<HeroWallCard c={slot.card} />
 				</div>
 			{/each}
@@ -207,7 +257,11 @@
 	</section>
 	<!-- Today's market brief, the same card signed-in users get on the dashboard.
 	     Collapses (landing.css) when the endpoint has no brief. -->
-	<section class="landing-section landing-market-brief" data-landing-section="market-brief" aria-label={t('Market brief')}>
+	<section
+		class="landing-section landing-market-brief"
+		data-landing-section="market-brief"
+		aria-label={t('Market brief')}
+	>
 		<MarketBriefShell src="/market-brief" />
 	</section>
 	<section class="landing-section landing-vigil" data-landing-section="vigil">
@@ -218,7 +272,10 @@
 				'Portfolio, crypto, and watchlists — with a 216-metric chart builder, base, bear, and bull scenarios, and due-diligence notes that keep your thesis where your money is.',
 				[
 					['Portfolio & watchlists', 'Holdings, allocation, and live performance in one view.'],
-					['Chart builder', '216 fundamental and market metrics, plotted your way, exported as CSV.'],
+					[
+						'Chart builder',
+						'216 fundamental and market metrics, plotted your way, exported as CSV.'
+					],
 					['Scenario targets', 'Base, bear, and bull cases with rationale for every position.'],
 					['Research & due diligence', 'Thesis, risks, and catalysts captured while you work.']
 				],
@@ -256,12 +313,17 @@
 			)}
 		</div>
 	</section>
-	<section class="landing-section landing-integrations" data-landing-section="integrations" data-motion-reveal>
+	<section
+		class="landing-section landing-integrations"
+		data-landing-section="integrations"
+		data-motion-reveal
+	>
 		<p class="landing-eyebrow">MCP inside</p>
 		<h2 class="landing-section-title mt-3">Speaks to your tools.</h2>
 		<p class="landing-section-lead">
-			Norviq ships a Model Context Protocol server. Connect Claude or any MCP client and query your portfolio, market data, and spending from
-			wherever you work &mdash; scoped tokens, OAuth 2.1, revocable any time.
+			Norviq ships a Model Context Protocol server. Connect Claude or any MCP client and query your
+			portfolio, market data, and spending from wherever you work &mdash; scoped tokens, OAuth 2.1,
+			revocable any time.
 		</p>
 		<div class="landing-stage-pills">
 			<span class="landing-pill landing-pill-soft">Claude &amp; MCP clients</span>
@@ -277,23 +339,42 @@
 				<p class="landing-eyebrow">Private by design</p>
 				<h2 class="landing-section-title mt-3">The gate holds.</h2>
 				<p class="landing-section-lead">
-					A guardian that answers to you alone: secure account access, passkeys, exports, and account deletion are first-class flows.
+					A guardian that answers to you alone: secure account access, passkeys, exports, and
+					account deletion are first-class flows.
 				</p>
 			</div>
 			<div class="landing-spec-list">
-				{@render specRow('Passkeys and MFA', 'Modern account protection alongside password and MFA support.')}
-				{@render specRow('Private research notes', 'Thesis, risks, catalysts, and target rationale stay in your workspace.')}
-				{@render specRow('Export your data', 'Download account data when you need a copy outside Norviq.')}
-				{@render specRow('Delete account', 'Account deletion is wired from settings, not hidden behind support.')}
+				{@render specRow(
+					'Passkeys and MFA',
+					'Modern account protection alongside password and MFA support.'
+				)}
+				{@render specRow(
+					'Private research notes',
+					'Thesis, risks, catalysts, and target rationale stay in your workspace.'
+				)}
+				{@render specRow(
+					'Export your data',
+					'Download account data when you need a copy outside Norviq.'
+				)}
+				{@render specRow(
+					'Delete account',
+					'Account deletion is wired from settings, not hidden behind support.'
+				)}
 			</div>
 		</div>
 	</section>
-	<section class="landing-section landing-pricing" data-landing-section="pricing" data-motion-reveal>
+	<section
+		class="landing-section landing-pricing"
+		data-landing-section="pricing"
+		data-motion-reveal
+	>
 		<div class="landing-pricing-header">
 			<div>
 				<p class="landing-eyebrow">Free and Pro</p>
 				<h2 class="landing-section-title mt-3">Simple pricing.</h2>
-				<p class="landing-section-lead">Start free with tracking. Upgrade when research gets serious.</p>
+				<p class="landing-section-lead">
+					Start free with tracking. Upgrade when research gets serious.
+				</p>
 			</div>
 			<a href="/signup" class="instrument-action">Create free account</a>
 		</div>
@@ -301,27 +382,45 @@
 			{@render planCard(
 				'Free',
 				'Core portfolio and spending workspace',
-				['Portfolio holdings and watchlists', 'Manual and CSV imports', 'Expense planning and recent spend', 'Reports overview'],
+				[
+					'Portfolio holdings and watchlists',
+					'Manual and CSV imports',
+					'Expense planning and recent spend',
+					'Reports overview'
+				],
 				false
 			)}
 			{@render planCard(
 				'Pro',
 				'Advanced research and planning depth',
-				['AI insights and advanced research', 'Valuation cases and target alerts', 'Broker sync and recurring templates', 'Crypto, statistics, and deep market data'],
+				[
+					'AI insights and advanced research',
+					'Valuation cases and target alerts',
+					'Broker sync and recurring templates',
+					'Crypto, statistics, and deep market data'
+				],
 				true
 			)}
 		</div>
 	</section>
-	<section id="eu-tax" class="landing-section landing-filing" data-landing-section="filing" data-motion-reveal>
+	<section
+		id="eu-tax"
+		class="landing-section landing-filing"
+		data-landing-section="filing"
+		data-motion-reveal
+	>
 		<div class="landing-pricing-header">
 			<div>
 				<p class="landing-eyebrow">Tax</p>
 				<h2 class="landing-section-title mt-3">IBKR to Anexo J in five minutes.</h2>
 				<p class="landing-section-lead">
-					Your trades and dividends, converted at the ECB rate on each day, matched FIFO, and laid out row by row the way the Portuguese return
-					asks for them. Preview the numbers first; download the PDF and CSV when they look right.
+					Your trades and dividends, converted at the ECB rate on each day, matched FIFO, and laid
+					out row by row the way the Portuguese return asks for them. Preview the numbers first;
+					download the PDF and CSV when they look right.
 				</p>
-				<p class="landing-section-lead mt-2">Portugal first, Germany next. Not tax advice; check it against your broker statements.</p>
+				<p class="landing-section-lead mt-2">
+					Portugal first, Germany next. Not tax advice; check it against your broker statements.
+				</p>
 			</div>
 			<a href="/signup" class="instrument-action">Start with a free account</a>
 		</div>
@@ -332,8 +431,16 @@
 			<a href="/terms" class="hover:text-foreground">Terms of Use</a>
 			<a href="/legal" class="hover:text-foreground">Legal notice</a>
 			<a href="/security" class="hover:text-foreground">Security</a>
-			<a href={DiscordURL} class="hover:text-foreground" target="_blank" rel="noopener noreferrer" data-discord-link>{t('Join us on Discord')}</a>
+			<a
+				href={DiscordURL}
+				class="hover:text-foreground"
+				target="_blank"
+				rel="noopener noreferrer"
+				data-discord-link>{t('Join us on Discord')}</a
+			>
 		</div>
-		<p class="landing-footer-copy mt-4 text-center text-footnote">&copy; 2026 Norviq. Nothing slips past.</p>
+		<p class="landing-footer-copy mt-4 text-center text-footnote">
+			&copy; 2026 Norviq. Nothing slips past.
+		</p>
 	</footer>
 </main>

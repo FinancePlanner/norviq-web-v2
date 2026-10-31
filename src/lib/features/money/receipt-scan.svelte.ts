@@ -41,9 +41,12 @@ export class ReceiptScan {
 		}
 		this.open = true;
 		try {
-			const Detector = (window as unknown as { BarcodeDetector: BarcodeDetectorCtor }).BarcodeDetector;
+			const Detector = (window as unknown as { BarcodeDetector: BarcodeDetectorCtor })
+				.BarcodeDetector;
 			this.#detector = new Detector({ formats: ['qr_code'] });
-			this.#stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+			this.#stream = await navigator.mediaDevices.getUserMedia({
+				video: { facingMode: 'environment' }
+			});
 			await tick();
 			const video = this.video;
 			if (!video) throw new Error('no video element');
@@ -109,7 +112,10 @@ export class ReceiptScan {
 			const resp = await fetch('/expenses/receipt/ocr', { method: 'POST', body: form });
 			if (resp.status === 403) {
 				// No AI consent yet: hand the user the consent page.
-				const refusal = (await resp.json().catch(() => null)) as { reason?: string; consentUrl?: string } | null;
+				const refusal = (await resp.json().catch(() => null)) as {
+					reason?: string;
+					consentUrl?: string;
+				} | null;
 				if (refusal?.reason === 'AI_CONSENT_REQUIRED' && refusal.consentUrl) {
 					window.location.assign(refusal.consentUrl);
 					return;

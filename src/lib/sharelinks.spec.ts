@@ -39,7 +39,9 @@ it('builds without disclaimer or tickers', () => {
 	const links = build({ canonical: 'https://x.test/p', title: 'T', captionCTA: 'See it.' });
 	expect(links.discordText).toBe('**T**\nhttps://x.test/p?utm_source=discord&utm_medium=share');
 	expect(links.instagramCaption).toBe('T\n\nSee it.');
-	expect(links.x).toBe('https://x.com/intent/post?text=T&url=https%3A%2F%2Fx.test%2Fp%3Futm_source%3Dx%26utm_medium%3Dshare');
+	expect(links.x).toBe(
+		'https://x.com/intent/post?text=T&url=https%3A%2F%2Fx.test%2Fp%3Futm_source%3Dx%26utm_medium%3Dshare'
+	);
 });
 
 it('builds with tickers, bullets and a disclaimer', () => {
@@ -54,7 +56,9 @@ it('builds with tickers, bullets and a disclaimer', () => {
 	expect(links.x).toBe(
 		'https://x.com/intent/post?text=Close+%24NVDA+%24BRK.B&url=https%3A%2F%2Fx.test%2Fp%3Futm_source%3Dx%26utm_medium%3Dshare'
 	);
-	expect(links.discordText).toBe('**Close**\n• one\n• two\nhttps://x.test/p?utm_source=discord&utm_medium=share\nNot advice.');
+	expect(links.discordText).toBe(
+		'**Close**\n• one\n• two\nhttps://x.test/p?utm_source=discord&utm_medium=share\nNot advice.'
+	);
 	expect(links.instagramCaption).toBe('Close\n\n$NVDA $BRK.B\n\nLink in bio.\nNot advice.');
 	expect(links.linkedIn).toBe(
 		'https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fx.test%2Fp%3Futm_source%3Dlinkedin%26utm_medium%3Dshare'

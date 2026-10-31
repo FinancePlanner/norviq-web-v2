@@ -1,7 +1,12 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { isAPIError } from '#lib/server/api.js';
-import { boardNotice, reportRow, sanctionRow, type CreateSanctionRequest } from '#lib/features/settings-admin/admin/boards-admin.js';
+import {
+	boardNotice,
+	reportRow,
+	sanctionRow,
+	type CreateSanctionRequest
+} from '#lib/features/settings-admin/admin/boards-admin.js';
 import {
 	adminCreateSanction,
 	adminListBoardReports,

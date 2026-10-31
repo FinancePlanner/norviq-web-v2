@@ -1,7 +1,12 @@
 import type { Actions, PageServerLoad } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
-import { createRun, createSchedule, createTemplate, loadAdvancedReports } from '#lib/features/insights/reports/advanced.server.js';
+import {
+	createRun,
+	createSchedule,
+	createTemplate,
+	loadAdvancedReports
+} from '#lib/features/insights/reports/advanced.server.js';
 
 // server.go wraps every /reports/advanced route in requireAdvancedReports
 // (RequireFeature advanced_report_runs, "Advanced reports").

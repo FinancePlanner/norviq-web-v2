@@ -2,7 +2,11 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { requireSocial } from '#lib/features/social/gates.server.js';
 import { redirectWith, uuidParam } from '#lib/features/settings-admin/social/social.server.js';
-import { achievementsDo, isNotFound, socialErrorMessage } from '#lib/features/social/friends/friends.server.js';
+import {
+	achievementsDo,
+	isNotFound,
+	socialErrorMessage
+} from '#lib/features/social/friends/friends.server.js';
 import type { SocialProfile } from '#lib/features/social/friends/types.js';
 
 // Port of handlers.FriendProfile. A backend 404 (missing, or hidden from the

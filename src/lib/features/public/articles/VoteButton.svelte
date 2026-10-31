@@ -48,8 +48,10 @@
 			▲ {vote.count}
 		</NativeButton>
 	{:else}
-		<a href={loginURL} class="rounded-lg border border-border px-3 py-1.5 text-sm font-medium" aria-label="Sign in to upvote"
-			>▲ {count}</a
+		<a
+			href={loginURL}
+			class="rounded-lg border border-border px-3 py-1.5 text-sm font-medium"
+			aria-label="Sign in to upvote">▲ {count}</a
 		>
 	{/if}
 </div>

@@ -4,7 +4,10 @@ import { requireFeature } from '#lib/server/guards.js';
 import { Feature } from '#lib/billing.js';
 import { safeRedirect } from '#lib/helpers.js';
 import { formChoice, statusText } from '#lib/features/portfolio/automation/common.server.js';
-import { rebalancingBase, rebalancingURL } from '#lib/features/portfolio/automation/rebalancing.server.js';
+import {
+	rebalancingBase,
+	rebalancingURL
+} from '#lib/features/portfolio/automation/rebalancing.server.js';
 
 // GET /portfolio/rebalancing/{id}/plans/{planID}/export.{format} —
 // PortfolioRebalancingPlanExport: streams the backend's CSV/PDF through with
@@ -27,7 +30,11 @@ export const GET: RequestHandler = async (event) => {
 		const message = body || statusText(upstream.status);
 		safeRedirect(
 			303,
-			rebalancingURL(portfolioID, message && message !== statusText(500) ? message : 'Could not export the plan.', true)
+			rebalancingURL(
+				portfolioID,
+				message && message !== statusText(500) ? message : 'Could not export the plan.',
+				true
+			)
 		);
 	}
 	const headers = new Headers();

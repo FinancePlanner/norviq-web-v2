@@ -17,8 +17,16 @@
 </svelte:head>
 
 {#snippet actions()}
-	<a href="/markets/earnings" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted" data-markets-earnings-link>Earnings calendar</a>
-	<a href="/markets/congress" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted" data-markets-congress-link>Congressional trades</a>
+	<a
+		href="/markets/earnings"
+		class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+		data-markets-earnings-link>Earnings calendar</a
+	>
+	<a
+		href="/markets/congress"
+		class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+		data-markets-congress-link>Congressional trades</a
+	>
 	<ConnectAgentPill />
 {/snippet}
 
@@ -30,19 +38,25 @@
 		{:else}
 			<vigil.DataTable class="mt-4">
 				<thead>
-					<tr><th>Symbol</th><th>Name</th><th class="text-right">Price</th><th class="text-right">Today</th></tr>
+					<tr
+						><th>Symbol</th><th>Name</th><th class="text-right">Price</th><th class="text-right"
+							>Today</th
+						></tr
+					>
 				</thead>
 				<tbody>
 					{#each movers as mover, i (i)}
 						<tr>
-							<td class="tabular-nums font-semibold vigil-mono">
-								<a class="hover:text-[var(--color-tint)]" href={'/portfolio/' + mover.symbol}>{mover.symbol}</a>
+							<td class="vigil-mono font-semibold tabular-nums">
+								<a class="hover:text-[var(--color-tint)]" href={'/portfolio/' + mover.symbol}
+									>{mover.symbol}</a
+								>
 							</td>
 							<td class="max-w-[12rem] truncate text-muted-foreground">{mover.name}</td>
-							<td class="text-right tabular-nums vigil-mono">{mover.price}</td>
+							<td class="vigil-mono text-right tabular-nums">{mover.price}</td>
 							<td
 								class={[
-									'text-right font-semibold tabular-nums vigil-mono',
+									'vigil-mono text-right font-semibold tabular-nums',
 									positive && 'text-[var(--color-success,#089981)]',
 									!positive && 'text-[var(--color-danger)]'
 								]}>{mover.change}</td
@@ -70,7 +84,7 @@
 					<p class="command-metric-value mt-1">{index.price}</p>
 					<p
 						class={[
-							'mt-1 text-sm font-semibold tabular-nums vigil-mono',
+							'vigil-mono mt-1 text-sm font-semibold tabular-nums',
 							index.changePct >= 0 && 'text-[var(--color-success,#089981)]',
 							index.changePct < 0 && 'text-[var(--color-danger)]'
 						]}
@@ -85,7 +99,9 @@
 		<vigil.Panel class="mt-6 p-4 md:p-5" titleID="markets-heatmap-title">
 			<div class="flex items-end justify-between gap-3 px-1">
 				<h2 id="markets-heatmap-title" class="text-lg font-semibold">Heat-map</h2>
-				<span class="text-footnote text-muted-foreground">Top 150 by market cap · tile size = cap · color = today</span>
+				<span class="text-footnote text-muted-foreground"
+					>Top 150 by market cap · tile size = cap · color = today</span
+				>
 			</div>
 			<div class="markets-heatmap mt-3">
 				<EChart {...heatmap} />
@@ -101,7 +117,10 @@
 	{/if}
 	{#if vm.indices.length === 0 && !heatmap && vm.gainers.length === 0 && vm.losers.length === 0}
 		<div class="mt-6">
-			<EmptyState title="Markets are warming up" description="Market data is temporarily unavailable. Try again in a minute." />
+			<EmptyState
+				title="Markets are warming up"
+				description="Market data is temporarily unavailable. Try again in a minute."
+			/>
 		</div>
 	{/if}
 {/snippet}

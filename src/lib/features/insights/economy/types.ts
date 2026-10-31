@@ -258,7 +258,8 @@ export function countryHref(base: string, country: string): string {
 /** page.templ countryChipClass. */
 export function countryChipClass(active: string, code: string): string {
 	const base = 'inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm transition';
-	if (active === code) return base + ' border-[var(--color-tint)] bg-[var(--color-tint)]/10 font-semibold';
+	if (active === code)
+		return base + ' border-[var(--color-tint)] bg-[var(--color-tint)]/10 font-semibold';
 	return base + ' border-current/15 opacity-70 hover:opacity-100';
 }
 

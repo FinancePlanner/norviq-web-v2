@@ -1,7 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { boardReturnTo, withNotice } from '#lib/features/social/boards/boards.js';
-import { blockCommunityUser, boardsFailure, formValue, methodNotAllowed } from '#lib/features/social/boards/boards.server.js';
+import {
+	blockCommunityUser,
+	boardsFailure,
+	formValue,
+	methodNotAllowed
+} from '#lib/features/social/boards/boards.server.js';
 
 // POST /boards/block (handlers.BoardsBlock). POST-only, as in Go.
 export const load: PageServerLoad = () => methodNotAllowed();

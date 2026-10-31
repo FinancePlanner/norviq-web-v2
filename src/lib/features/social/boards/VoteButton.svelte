@@ -5,7 +5,12 @@
 	import { NativeButton } from '#lib/components/norviq/index.js';
 	import { pathEscape, voteClass } from './boards.js';
 
-	let { postID, score, voted, canVote }: { postID: string; score: number; voted: boolean; canVote: boolean } = $props();
+	let {
+		postID,
+		score,
+		voted,
+		canVote
+	}: { postID: string; score: number; voted: boolean; canVote: boolean } = $props();
 
 	// Overridable derived: follows the props, and a vote writes the backend's answer over it.
 	let current = $derived({ score, voted });
@@ -27,7 +32,12 @@
 
 <div id={'vote-' + postID} class="flex w-8 shrink-0 flex-col items-center text-xs" data-vote>
 	{#if canVote}
-		<NativeButton class={voteClass(current.voted)} aria-pressed={current.voted ? 'true' : 'false'} aria-label="Upvote" onclick={vote}>
+		<NativeButton
+			class={voteClass(current.voted)}
+			aria-pressed={current.voted ? 'true' : 'false'}
+			aria-label="Upvote"
+			onclick={vote}
+		>
 			▲
 		</NativeButton>
 	{:else}

@@ -14,7 +14,10 @@
 	import FocusPointEditForm from './FocusPointEditForm.svelte';
 	import FocusPointRow from './FocusPointRow.svelte';
 
-	let { points, goalsError = false }: { points: FocusPointVM[] | null | undefined; goalsError?: boolean } = $props();
+	let {
+		points,
+		goalsError = false
+	}: { points: FocusPointVM[] | null | undefined; goalsError?: boolean } = $props();
 
 	/** The row in edit mode (Go: GET /dashboard/insights/goals/{id}/edit). */
 	let editingID = $state<string | null>(null);
@@ -38,7 +41,12 @@
 <div id="focus-points" class="dash-panel focus-points-card p-4 md:p-5">
 	<p class="dash-panel-label">{t('Focus this week')}</p>
 	<div id="focus-points-body">
-		<form class="focus-points-form mt-4" method="POST" action="/dashboard/insights?/create" use:enhance={submit}>
+		<form
+			class="focus-points-form mt-4"
+			method="POST"
+			action="/dashboard/insights?/create"
+			use:enhance={submit}
+		>
 			<div class="focus-points-input-row">
 				<input
 					type="text"
@@ -54,7 +62,9 @@
 		{#if goalsError}
 			<p class="focus-points-error mt-3 text-sm">{t('Focus points unavailable right now.')}</p>
 		{:else if !points || points.length === 0}
-			<p class="overview-empty mt-4">{t('No focus points yet. Add one to start tracking this week.')}</p>
+			<p class="overview-empty mt-4">
+				{t('No focus points yet. Add one to start tracking this week.')}
+			</p>
 		{:else}
 			<ul class="focus-points-list mt-4 space-y-2">
 				{#each points as point (point.id)}
@@ -72,7 +82,13 @@
 				{/each}
 			</ul>
 		{/if}
-		<form bind:this={deleteForm} method="POST" action="/dashboard/insights?/delete" use:enhance={submit} hidden>
+		<form
+			bind:this={deleteForm}
+			method="POST"
+			action="/dashboard/insights?/delete"
+			use:enhance={submit}
+			hidden
+		>
 			<input type="hidden" name="id" value={deleteID} />
 		</form>
 	</div>

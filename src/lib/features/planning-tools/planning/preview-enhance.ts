@@ -10,7 +10,10 @@ import { goto } from '$app/navigation';
 // hx-indicator put `.htmx-request` on the result container, not on the form.
 //
 // htmx swapped nothing on a 4xx/5xx; neither does this.
-export function previewEnhance<T>(indicator: () => HTMLElement | null | undefined, onData: (data: T) => void): SubmitFunction {
+export function previewEnhance<T>(
+	indicator: () => HTMLElement | null | undefined,
+	onData: (data: T) => void
+): SubmitFunction {
 	return () => {
 		const el = indicator();
 		el?.classList.add('htmx-request');

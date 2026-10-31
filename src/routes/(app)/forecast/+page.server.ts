@@ -19,11 +19,20 @@ import type {
 // are best effort: only a transport failure listing forecasts shows the error.
 export const load: PageServerLoad = async (event) => {
 	await requireNetWorthForecasting(event);
-	const vm: ForecastVM = { portfolios: [], forecasts: [], defaults: null, run: null, editing: null, error: '' };
+	const vm: ForecastVM = {
+		portfolios: [],
+		forecasts: [],
+		defaults: null,
+		run: null,
+		editing: null,
+		error: ''
+	};
 	const query = event.url.searchParams;
 	const get = <T>(path: string) => apiJSON<T>(event, 'GET', path);
 
-	const portfolios = await get<{ id: string; name: string }[]>('/v1/portfolio/lists').catch(() => null);
+	const portfolios = await get<{ id: string; name: string }[]>('/v1/portfolio/lists').catch(
+		() => null
+	);
 	vm.portfolios = (portfolios ?? []).map((p) => ({ id: p.id, name: p.name }));
 	try {
 		vm.forecasts = (await get<NetWorthForecastDefinition[]>('/v1/net-worth-forecasts')) ?? [];
@@ -33,14 +42,22 @@ export const load: PageServerLoad = async (event) => {
 	}
 	const editID = parseUUID(query.get('edit') ?? '');
 	if (editID) {
-		vm.editing = (await get<NetWorthForecastDefinition>(`/v1/net-worth-forecasts/${editID}`).catch(() => null)) ?? null;
+		vm.editing =
+			(await get<NetWorthForecastDefinition>(`/v1/net-worth-forecasts/${editID}`).catch(
+				() => null
+			)) ?? null;
 	}
-	vm.defaults = (await get<NetWorthForecastDefaults>('/v1/net-worth-forecasts/defaults').catch(() => null)) ?? null;
+	vm.defaults =
+		(await get<NetWorthForecastDefaults>('/v1/net-worth-forecasts/defaults').catch(() => null)) ??
+		null;
 	const runID = query.get('run') ?? '';
 	if (runID !== '' && vm.forecasts.some((f) => f.id === runID)) {
 		// parseUUID(id): an id that is not a UUID becomes uuid.Nil.
 		const id = parseUUID(runID) ?? '00000000-0000-0000-0000-000000000000';
-		vm.run = (await get<NetWorthForecastRun>(`/v1/net-worth-forecasts/${id}/runs/latest`).catch(() => null)) ?? null;
+		vm.run =
+			(await get<NetWorthForecastRun>(`/v1/net-worth-forecasts/${id}/runs/latest`).catch(
+				() => null
+			)) ?? null;
 	}
 	return { vm };
 };
@@ -66,7 +83,9 @@ export const actions: Actions = {
 			throw err;
 		}
 		try {
-			await apiJSON(event, 'POST', '/v1/net-worth-forecasts', body, { query: { portfolio_list_id: portfolioID } });
+			await apiJSON(event, 'POST', '/v1/net-worth-forecasts', body, {
+				query: { portfolio_list_id: portfolioID }
+			});
 		} catch {
 			error(422, 'Could not save forecast');
 		}

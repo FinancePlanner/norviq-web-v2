@@ -113,7 +113,11 @@ export const emptyCSVImportVM = (listID = '', listName = ''): WatchlistCSVImport
 });
 
 /** watchlistImportSummary; strconv.Quote of a plain name is a double-quoted string. */
-export function watchlistImportSummary(inserted: number, updated: number, listName: string): string {
+export function watchlistImportSummary(
+	inserted: number,
+	updated: number,
+	listName: string
+): string {
 	if (inserted === 0 && updated === 0) {
 		if (listName === '') return 'No symbols were changed in the selected theme.';
 		return `No symbols were changed in ${JSON.stringify(listName)}.`;
@@ -124,7 +128,14 @@ export function watchlistImportSummary(inserted: number, updated: number, listNa
 
 /** watchlistListForm: the form VM for a theme, from the lists already on the page (loadWatchlistListFormVM). */
 export function watchlistListForm(lists: WatchlistListVM[], listID: string): ListFormVM {
-	const vm: ListFormVM = { listID: '', name: '', isEdit: false, isDefault: false, canDelete: false, error: '' };
+	const vm: ListFormVM = {
+		listID: '',
+		name: '',
+		isEdit: false,
+		isDefault: false,
+		canDelete: false,
+		error: ''
+	};
 	listID = listID.trim();
 	if (listID === '') return vm;
 	vm.isEdit = true;

@@ -8,13 +8,16 @@
 </script>
 
 {#if attention.show && (attention.tone === 'warning' || attention.tone === 'setup')}
-	<section class={'overview-subheader overview-subheader-' + attention.tone + ' overview-hero-status'}>
+	<section
+		class={'overview-subheader overview-subheader-' + attention.tone + ' overview-hero-status'}
+	>
 		<div class="overview-subheader-main">
 			<div class="overview-subheader-metric-row">
 				<h2 class="overview-subheader-title">{attention.title}</h2>
 				{#if attention.metricPositive !== null}
 					<span
-						class={'overview-change-pill ' + (attention.metricPositive ? 'overview-change-positive' : 'overview-change-negative')}
+						class={'overview-change-pill ' +
+							(attention.metricPositive ? 'overview-change-positive' : 'overview-change-negative')}
 						data-direction={attention.metricPositive ? 'up' : 'down'}>{attention.description}</span
 					>
 					{#if attention.metricSuffix}
@@ -29,7 +32,9 @@
 			{/if}
 		</div>
 		{#if attention.actionHref}
-			<a href={attention.actionHref} class="instrument-action overview-hero-primary shrink-0">{attention.actionLabel}</a>
+			<a href={attention.actionHref} class="instrument-action overview-hero-primary shrink-0"
+				>{attention.actionLabel}</a
+			>
 		{/if}
 	</section>
 {/if}

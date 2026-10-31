@@ -5,7 +5,13 @@
 	let { kind }: { kind: string } = $props();
 
 	const name = $derived(
-		kind === 'portfolio' ? 'briefcase' : kind === 'expense' ? 'credit-card' : kind === 'news' ? 'newspaper' : 'circle'
+		kind === 'portfolio'
+			? 'briefcase'
+			: kind === 'expense'
+				? 'credit-card'
+				: kind === 'news'
+					? 'newspaper'
+					: 'circle'
 	);
 </script>
 

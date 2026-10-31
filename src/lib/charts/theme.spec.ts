@@ -10,8 +10,18 @@ import {
 	type ThemeEnv
 } from './theme.js';
 
-function env(dark: boolean, vars: Record<string, string> = {}, extra: Partial<ThemeEnv> = {}): ThemeEnv {
-	return { dark, cssVar: (n, f) => vars[n] ?? f, reducedMotion: false, coarsePointer: false, ...extra };
+function env(
+	dark: boolean,
+	vars: Record<string, string> = {},
+	extra: Partial<ThemeEnv> = {}
+): ThemeEnv {
+	return {
+		dark,
+		cssVar: (n, f) => vars[n] ?? f,
+		reducedMotion: false,
+		coarsePointer: false,
+		...extra
+	};
 }
 
 describe('chartKind', () => {
@@ -62,7 +72,12 @@ describe('themedOptionPatch', () => {
 
 	it('recolours a wealth line and installs the currency tooltip', () => {
 		const next = themedOptionPatch(wealth, 'wealth_chart', env(true)) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-		expect(next.tooltip).toMatchObject({ backgroundColor: '#1e222d', confine: true, triggerOn: 'mousemove|click', transitionDuration: 0.12 });
+		expect(next.tooltip).toMatchObject({
+			backgroundColor: '#1e222d',
+			confine: true,
+			triggerOn: 'mousemove|click',
+			transitionDuration: 0.12
+		});
 		expect(next.tooltip.formatter).toBe(wealthTooltipFormatter);
 		expect(next.xAxis[0].axisLabel.color).toBe('#787b86');
 		expect(next.xAxis[0].axisPointer).toEqual({ show: true, snap: true });
@@ -76,7 +91,11 @@ describe('themedOptionPatch', () => {
 
 	it('keeps red lines red and spending lines alt, honours coarse pointers and reduced motion', () => {
 		const down = { ...wealth, series: [{ type: 'line', lineStyle: { color: '#f23645' } }] };
-		const next = themedOptionPatch(down, 'spark_x', env(false, {}, { coarsePointer: true, reducedMotion: true })) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+		const next = themedOptionPatch(
+			down,
+			'spark_x',
+			env(false, {}, { coarsePointer: true, reducedMotion: true })
+		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 		expect(next.series[0].lineStyle.color).toBe('#dc2626');
 		expect(next.tooltip.triggerOn).toBe('click');
 		expect(next.tooltip.transitionDuration).toBe(0);
@@ -93,7 +112,11 @@ describe('themedOptionPatch', () => {
 			calendar: [{ dayLabel: { firstDay: 1 } }],
 			series: [{ type: 'heatmap' }]
 		};
-		const next = themedOptionPatch(current, 'cc-heatmap', env(false, { '--color-card-bg': '#fafafa' })) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+		const next = themedOptionPatch(
+			current,
+			'cc-heatmap',
+			env(false, { '--color-card-bg': '#fafafa' })
+		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 		expect(next.visualMap[0].inRange.color).toHaveLength(4); // hex --color-tint fallback: four alpha steps
 		expect(next.calendar[0].dayLabel).toEqual({ firstDay: 1, color: '#64748b' });
 		expect(next.calendar[0].itemStyle).toEqual({ borderColor: '#fafafa', borderWidth: 2 });
@@ -101,11 +124,21 @@ describe('themedOptionPatch', () => {
 	});
 
 	it('gives pies a theme-aware shadow', () => {
-		const next = themedOptionPatch({ series: [{ type: 'pie' }] }, 'allocation_chart', env(true)) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-		expect(next.series[0].emphasis).toMatchObject({ focus: 'self', scale: true, itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.45)' } });
+		const next = themedOptionPatch(
+			{ series: [{ type: 'pie' }] },
+			'allocation_chart',
+			env(true)
+		) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+		expect(next.series[0].emphasis).toMatchObject({
+			focus: 'self',
+			scale: true,
+			itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.45)' }
+		});
 	});
 
 	it('formats the wealth tooltip in whole dollars', () => {
-		expect(wealthTooltipFormatter([{ axisValueLabel: 'Jan 2', data: { value: 105000.4 } }])).toBe('Jan 2<br/><strong>$105,000</strong>');
+		expect(wealthTooltipFormatter([{ axisValueLabel: 'Jan 2', data: { value: 105000.4 } }])).toBe(
+			'Jan 2<br/><strong>$105,000</strong>'
+		);
 	});
 });
