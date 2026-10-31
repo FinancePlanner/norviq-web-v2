@@ -1,7 +1,12 @@
 // Chart builders from norviq-web internal/pages/scenarios/page.templ
 // (comparisonChart, comparisonFanChart, comparisonMetricChart). They return
 // the same multi-series specs the Go charts.MultiSeries* builders produced.
-import { multiSeriesBar, multiSeriesLine, type ChartSpec, type MultiSeriesData } from '#lib/charts/index.js';
+import {
+	multiSeriesBar,
+	multiSeriesLine,
+	type ChartSpec,
+	type MultiSeriesData
+} from '#lib/charts/index.js';
 import { formatFloat } from '#lib/format.js';
 import type { ScenarioRun } from './types.js';
 import { numberFrom, objectArray } from './view.js';
@@ -50,7 +55,11 @@ export function comparisonChart(runs: ScenarioRun[], percentage: boolean): Chart
 		});
 		series.push({ name: `Run ${index + 1}`, values, format: percentage ? 'percent' : '' });
 	});
-	return multiSeriesLine(percentage ? 'scenario-comparison-return' : 'scenario-comparison-value', labels, series);
+	return multiSeriesLine(
+		percentage ? 'scenario-comparison-return' : 'scenario-comparison-value',
+		labels,
+		series
+	);
 }
 
 export function comparisonFanChart(runs: ScenarioRun[]): ChartSpec | null {
@@ -67,7 +76,8 @@ export function comparisonFanChart(runs: ScenarioRun[]): ChartSpec | null {
 	bandsByRun.forEach((bands, index) => {
 		for (const percentile of ['p10', 'p50', 'p90']) {
 			const byDay = new Map<number, number>();
-			for (const point of bands) byDay.set(comparisonElapsedDays(point), numberFrom(point, percentile));
+			for (const point of bands)
+				byDay.set(comparisonElapsedDays(point), numberFrom(point, percentile));
 			const values = days.map((day) => byDay.get(day) ?? null);
 			if (bands.length > 0) series.push({ name: `Run ${index + 1} ${percentile}`, values });
 		}
@@ -75,7 +85,11 @@ export function comparisonFanChart(runs: ScenarioRun[]): ChartSpec | null {
 	return multiSeriesLine('scenario-comparison-fan', labels, series);
 }
 
-export function comparisonMetricChart(runs: ScenarioRun[], key: string, chartID: string): ChartSpec | null {
+export function comparisonMetricChart(
+	runs: ScenarioRun[],
+	key: string,
+	chartID: string
+): ChartSpec | null {
 	const labels = runs.map((_, index) => `Run ${index + 1}`);
 	const values = runs.map((run) => (run.result != null ? numberFrom(run.result, key) : null));
 	return multiSeriesBar(chartID, labels, [{ name: key, format: 'percent', values }]);

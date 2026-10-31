@@ -1,6 +1,10 @@
 import type { PageServerLoad } from './$types';
 import { requireGroups, groupsPublicOn } from '#lib/features/social/gates.server.js';
-import { groupInvitations, groupsFailure, myGroups } from '#lib/features/social/groups/groups.server.js';
+import {
+	groupInvitations,
+	groupsFailure,
+	myGroups
+} from '#lib/features/social/groups/groups.server.js';
 import { card, groupNotice, groupsError } from '#lib/features/social/groups/view.js';
 import type { GroupInvitation, InvitationRow } from '#lib/features/social/groups/types.js';
 
@@ -24,7 +28,11 @@ export const load: PageServerLoad = async (event) => {
 			console.warn('group invitations load failed', err);
 		}
 		for (const invitation of items) {
-			invitations.push({ id: invitation.id, group: card(invitation.group, now), inviter: invitation.inviterUsername ?? '' });
+			invitations.push({
+				id: invitation.id,
+				group: card(invitation.group, now),
+				inviter: invitation.inviterUsername ?? ''
+			});
 		}
 	}
 	return {

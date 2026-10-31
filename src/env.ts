@@ -31,5 +31,5 @@ export const variables = defineEnvVars({
 	// Dev only: /__dev/login signs in as these staging test accounts.
 	DEV_LOGIN_EMAIL: { schema: optional },
 	DEV_LOGIN_EMAIL_ONBOARDING: { schema: optional },
-	DEV_LOGIN_PASSWORD: { schema: optional },
+	DEV_LOGIN_PASSWORD: { schema: optional }
 });

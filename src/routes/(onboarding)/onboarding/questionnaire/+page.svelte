@@ -47,7 +47,8 @@
 	<div class="onboarding-hero onboarding-step-card glass-card p-8 md:p-10">
 		<h1 class="onboarding-title">Shape your Norviq setup</h1>
 		<p class="onboarding-lead mt-3 max-w-2xl">
-			Answer a few quick questions so the web setup follows the same planning path as the iOS onboarding flow.
+			Answer a few quick questions so the web setup follows the same planning path as the iOS
+			onboarding flow.
 		</p>
 		<form method="POST" action="/onboarding/questionnaire" class="mt-8 space-y-7 text-left">
 			<fieldset>

@@ -8,7 +8,13 @@
 		canonicalURL,
 		ogImageURL,
 		robots
-	}: { title: string; description: string; canonicalURL: string; ogImageURL: string; robots: string } = $props();
+	}: {
+		title: string;
+		description: string;
+		canonicalURL: string;
+		ogImageURL: string;
+		robots: string;
+	} = $props();
 </script>
 
 <meta name="description" content={description} />

@@ -6,6 +6,10 @@ import { loadLedgerViewModel } from '#lib/features/dashboard/command-center/load
 // LedgerPanel chips instead of the LedgerBody fragment.
 export const GET: RequestHandler = async (event) => {
 	const q = event.url.searchParams;
-	const vm = await loadLedgerViewModel(event, timerange.parse(q.get('range')), q.get('domain') ?? '');
+	const vm = await loadLedgerViewModel(
+		event,
+		timerange.parse(q.get('range')),
+		q.get('domain') ?? ''
+	);
 	return json(vm, { headers: { 'Cache-Control': 'private, no-store' } });
 };

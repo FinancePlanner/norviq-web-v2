@@ -34,7 +34,9 @@
 	<ConnectAgentPill />
 {/snippet}
 
-<div class="app-page-content vigil-deck-page overview-page overview-modern-page command-center-page">
+<div
+	class="app-page-content vigil-deck-page overview-page overview-modern-page command-center-page"
+>
 	<vigil.ModernPageHeader title="Pulse" actions={headerActions} />
 	<section class="cc-rail cc-rail-pulse" aria-label="Pulse">
 		<PulseCharts {vm} />
@@ -57,7 +59,10 @@
 			</div>
 			<aside class="overview-main-side">
 				{#if overview.loadErrors.insights}
-					<OverviewPanelError title={t('Financial health')} message={t('Financial health is unavailable right now.')} />
+					<OverviewPanelError
+						title={t('Financial health')}
+						message={t('Financial health is unavailable right now.')}
+					/>
 				{:else}
 					<FinancialHealthCard health={overview.financialHealth} />
 				{/if}
@@ -68,7 +73,10 @@
 				{/if}
 				<div id="recent-spend-panel">
 					{#if overview.loadErrors.expenses}
-						<OverviewPanelError title={t('Recent spend')} message={t('Recent expenses are unavailable right now.')} />
+						<OverviewPanelError
+							title={t('Recent spend')}
+							message={t('Recent expenses are unavailable right now.')}
+						/>
 					{:else}
 						<RecentSpendCard items={overview.recentSpend} />
 					{/if}

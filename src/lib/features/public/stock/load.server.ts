@@ -73,7 +73,10 @@ export function cachedPublicStock(event: RequestEvent, symbol: string): Promise<
 	return cache.do(symbol, () => loadPublicStockViewModel(event, symbol));
 }
 
-export async function loadPublicStockViewModel(event: RequestEvent, symbol: string): Promise<StockVM> {
+export async function loadPublicStockViewModel(
+	event: RequestEvent,
+	symbol: string
+): Promise<StockVM> {
 	const cfg = config();
 	const base = cfg.publicBaseURL;
 	const vm: StockVM = {
@@ -104,7 +107,11 @@ export async function loadPublicStockViewModel(event: RequestEvent, symbol: stri
 		// parked behind it, so it is bounded by its own deadline.
 		const signal = AbortSignal.timeout(publicRenderTimeoutMs);
 		const seg = encodeURIComponent(symbol);
-		const leg = <T>(what: string, path: string, query?: Record<string, string | number>): Promise<T | null> =>
+		const leg = <T>(
+			what: string,
+			path: string,
+			query?: Record<string, string | number>
+		): Promise<T | null> =>
 			apiJSON<T>(event, 'GET', path, undefined, { auth: 'public', query, signal }).catch((err) => {
 				if (what === 'earnings' && typeof err?.status === 'number') {
 					console.warn('public stock earnings fetch refused', {
@@ -122,16 +129,31 @@ export async function loadPublicStockViewModel(event: RequestEvent, symbol: stri
 		const from = new Date(to);
 		from.setUTCFullYear(from.getUTCFullYear() - 1);
 
-		const [details, profile, history, earnings, sentiment, technicals, insider, institutional, congress] = await Promise.all([
+		const [
+			details,
+			profile,
+			history,
+			earnings,
+			sentiment,
+			technicals,
+			insider,
+			institutional,
+			congress
+		] = await Promise.all([
 			leg<StockDetailsResponse>('details', '/v1/market/details', { symbol }),
 			leg<CompanyProfileResponse>('profile', `/v1/market/profile/${seg}`),
-			leg<HistoryResponse>('history', `/v1/market/history/${seg}`, { from: ymd(from), to: ymd(to) }),
+			leg<HistoryResponse>('history', `/v1/market/history/${seg}`, {
+				from: ymd(from),
+				to: ymd(to)
+			}),
 			// The un-gated teaser, not the Pro-gated /v1/market/earnings/{symbol}.
 			leg<RecentEarningsResponse>('earnings', `/v1/market/earnings/${seg}/recent`),
 			// Pro-gated upstream; a 403 just hides the badge.
 			leg<TickerSentimentResponse>('sentiment', `/v1/insights/tickers/${seg}/sentiment`),
 			leg<TechnicalSignalsResponse>('technicals', `/v1/market/technicals/${seg}`),
-			leg<InsiderActivityResponse>('insider', `/v1/market/insider/${seg}`, { days: insiderWindowPublicDays }),
+			leg<InsiderActivityResponse>('insider', `/v1/market/insider/${seg}`, {
+				days: insiderWindowPublicDays
+			}),
 			leg<InstitutionalOwnershipResponse>('institutional', `/v1/market/institutional/${seg}`),
 			leg<{ trades: CongressTrade[] | null }>('congress', `/v1/market/congress/${seg}`)
 		]);
@@ -151,7 +173,11 @@ export async function loadPublicStockViewModel(event: RequestEvent, symbol: stri
 	return vm;
 }
 
-function applyHeader(vm: StockVM, details: StockDetailsResponse | null, profile: CompanyProfileResponse | null) {
+function applyHeader(
+	vm: StockVM,
+	details: StockDetailsResponse | null,
+	profile: CompanyProfileResponse | null
+) {
 	if (profile) {
 		const name = (profile.name ?? '').trim();
 		if (name) vm.companyName = name;
@@ -186,5 +212,6 @@ function applySentiment(vm: StockVM, sentiment: TickerSentimentResponse | null) 
 	const agg = sentiment?.aggregate;
 	if (!agg || !(agg.label ?? '').trim()) return;
 	vm.sentiment = { present: true, label: agg.label, postCount: agg.postCount, score: '' };
-	if (agg.score != null) vm.sentiment.score = (agg.score >= 0 ? '+' : '') + formatFloat(agg.score, 2);
+	if (agg.score != null)
+		vm.sentiment.score = (agg.score >= 0 ? '+' : '') + formatFloat(agg.score, 2);
 }

@@ -25,12 +25,25 @@
 		fixed,
 		groupingOptionList
 	} from './format.js';
-	import type { AllocationTargetBucket, AllocationTargetLeaf, RebalancingViewModel } from './types.js';
+	import type {
+		AllocationTargetBucket,
+		AllocationTargetLeaf,
+		RebalancingViewModel
+	} from './types.js';
 
 	let { vm }: { vm: RebalancingViewModel } = $props();
 
-	type LeafRow = { key: number; variant: 'existing' | 'added' | 'template-first'; leaf?: AllocationTargetLeaf };
-	type GroupRow = { key: number; variant: 'existing' | 'template'; bucket?: AllocationTargetBucket; leaves: LeafRow[] };
+	type LeafRow = {
+		key: number;
+		variant: 'existing' | 'added' | 'template-first';
+		leaf?: AllocationTargetLeaf;
+	};
+	type GroupRow = {
+		key: number;
+		variant: 'existing' | 'template';
+		bucket?: AllocationTargetBucket;
+		leaves: LeafRow[];
+	};
 
 	let seq = 0;
 	// The editor is keyed on the view model by the page, so this seeds once per render of the server state.
@@ -45,7 +58,11 @@
 	);
 
 	function addGroup() {
-		groups.push({ key: seq++, variant: 'template', leaves: [{ key: seq++, variant: 'template-first' }] });
+		groups.push({
+			key: seq++,
+			variant: 'template',
+			leaves: [{ key: seq++, variant: 'template-first' }]
+		});
 	}
 	function addLeaf(group: number) {
 		groups[group].leaves.push({ key: seq++, variant: 'added' });
@@ -58,22 +75,38 @@
 		{ value: 'security', label: 'Security', selected: kind === 'security' },
 		{ value: 'cash', label: 'Cash', selected: kind === 'cash' }
 	];
-	const action = $derived(`/portfolio/rebalancing?portfolio=${encodeURIComponent(vm.selected!.id)}&/model`);
+	const action = $derived(
+		`/portfolio/rebalancing?portfolio=${encodeURIComponent(vm.selected!.id)}&/model`
+	);
 </script>
 
 <section class="glass-card p-5 md:p-6" aria-labelledby="policy-title">
 	<div>
 		<h2 id="policy-title" class="text-lg font-semibold">Allocation policy</h2>
-		<p class="mt-1 text-sm text-muted-foreground">Nested leaf targets make each proposed trade deterministic.</p>
+		<p class="mt-1 text-sm text-muted-foreground">
+			Nested leaf targets make each proposed trade deterministic.
+		</p>
 	</div>
 	<form method="POST" {action} use:enhance={withSpinner()} class="mt-5 space-y-4">
 		{#if vm.overview.model}
 			<input type="hidden" name="modelId" value={vm.overview.model.id} />
 			<input type="hidden" name="revision" value={String(vm.overview.model.revision)} />
 		{/if}
-		<Field name="name" label="Model name" value={editorName(vm)} required class="w-full" wrapperClass="block text-sm" />
+		<Field
+			name="name"
+			label="Model name"
+			value={editorName(vm)}
+			required
+			class="w-full"
+			wrapperClass="block text-sm"
+		/>
 		<div class="grid grid-cols-2 gap-3">
-			<SelectField name="groupingMode" label="Grouping" wrapperClass="text-sm" options={groupingOptionList(editorGrouping(vm))} />
+			<SelectField
+				name="groupingMode"
+				label="Grouping"
+				wrapperClass="text-sm"
+				options={groupingOptionList(editorGrouping(vm))}
+			/>
 			<Field
 				name="minimumTradeAmount"
 				label="Min. trade"
@@ -129,7 +162,10 @@
 								{@render leafRow(index, row)}
 							{/each}
 						</div>
-						<NativeButton class="mt-2 text-sm font-medium text-muted-foreground hover:opacity-100" onclick={() => addLeaf(index)}>
+						<NativeButton
+							class="mt-2 text-sm font-medium text-muted-foreground hover:opacity-100"
+							onclick={() => addLeaf(index)}
+						>
 							+ Add holding
 						</NativeButton>
 					</div>
@@ -137,7 +173,12 @@
 					<!-- #rebalance-group-template -->
 					<div class="rounded-lg bg-current/5 p-3" data-rebalance-group={String(index)}>
 						<div class="grid grid-cols-[1fr_6rem] gap-2">
-							<NativeInput name="bucketName[]" placeholder="Group name" required aria-label="Group name" /><NativeInput
+							<NativeInput
+								name="bucketName[]"
+								placeholder="Group name"
+								required
+								aria-label="Group name"
+							/><NativeInput
 								name="bucketTarget[]"
 								type="number"
 								class="text-right"
@@ -157,9 +198,8 @@
 			{/each}
 		</div>
 		<div class="flex gap-2">
-			<NativeButton class="btn-secondary flex-1" onclick={addGroup}>Add group</NativeButton><SubmitButton class="flex-1"
-				>Save policy</SubmitButton
-			>
+			<NativeButton class="btn-secondary flex-1" onclick={addGroup}>Add group</NativeButton
+			><SubmitButton class="flex-1">Save policy</SubmitButton>
 		</div>
 		<div class="grid grid-cols-2 gap-3">
 			<CheckboxField
@@ -184,11 +224,21 @@
 {#snippet leafRow(group: number, row: LeafRow)}
 	{#if row.variant === 'existing' && row.leaf}
 		<div class="grid grid-cols-[1fr_5rem_5rem_auto] gap-2">
-			<input type="hidden" name="leafGroup[]" value={String(group)} /><input type="hidden" name="leafId[]" value={row.leaf.id} /><NativeSelect
+			<input type="hidden" name="leafGroup[]" value={String(group)} /><input
+				type="hidden"
+				name="leafId[]"
+				value={row.leaf.id}
+			/><NativeSelect
 				name="leafKind[]"
 				aria-label="Holding kind"
 				options={kindOptions(row.leaf.kind)}
-			/><NativeInput name="leafSymbol[]" value={row.leaf.symbol ?? ''} class="tabular-nums" placeholder="Ticker" aria-label="Ticker" /><NativeInput
+			/><NativeInput
+				name="leafSymbol[]"
+				value={row.leaf.symbol ?? ''}
+				class="tabular-nums"
+				placeholder="Ticker"
+				aria-label="Ticker"
+			/><NativeInput
 				name="leafTarget[]"
 				type="number"
 				value={fixed(row.leaf.targetBasisPoints / 100, 2)}
@@ -212,14 +262,22 @@
 	{:else if row.variant === 'added'}
 		<!-- #rebalance-leaf-template -->
 		<div class="grid grid-cols-[1fr_5rem_5rem_auto] gap-2">
-			<input type="hidden" name="leafGroup[]" value={String(group)} /><input type="hidden" name="leafId[]" /><SelectField
+			<input type="hidden" name="leafGroup[]" value={String(group)} /><input
+				type="hidden"
+				name="leafId[]"
+			/><SelectField
 				name="leafKind[]"
 				aria-label="Holding kind"
 				options={[
 					{ value: 'security', label: 'Security' },
 					{ value: 'cash', label: 'Cash' }
 				]}
-			/><NativeInput name="leafSymbol[]" class="tabular-nums" placeholder="Ticker" aria-label="Ticker" /><NativeInput
+			/><NativeInput
+				name="leafSymbol[]"
+				class="tabular-nums"
+				placeholder="Ticker"
+				aria-label="Ticker"
+			/><NativeInput
 				name="leafTarget[]"
 				type="number"
 				class="text-right"
@@ -227,7 +285,13 @@
 				placeholder="%"
 				required
 				aria-label="Target percent"
-			/><NativeInput name="leafName[]" class="col-span-3" placeholder="Target name" required aria-label="Holding name" /><NativeButton
+			/><NativeInput
+				name="leafName[]"
+				class="col-span-3"
+				placeholder="Target name"
+				required
+				aria-label="Holding name"
+			/><NativeButton
 				class="text-sm text-muted-foreground hover:opacity-100"
 				aria-label="Remove holding"
 				onclick={() => removeLeaf(group, row.key)}>×</NativeButton
@@ -236,11 +300,15 @@
 	{:else}
 		<!-- first holding of #rebalance-group-template -->
 		<div class="grid grid-cols-[1fr_5rem_5rem] gap-2">
-			<input type="hidden" name="leafGroup[]" value={String(group)} /><input type="hidden" name="leafId[]" /><input
+			<input type="hidden" name="leafGroup[]" value={String(group)} /><input
 				type="hidden"
-				name="leafKind[]"
-				value="security"
-			/><NativeInput name="leafName[]" placeholder="Holding name" required aria-label="Holding name" /><NativeInput
+				name="leafId[]"
+			/><input type="hidden" name="leafKind[]" value="security" /><NativeInput
+				name="leafName[]"
+				placeholder="Holding name"
+				required
+				aria-label="Holding name"
+			/><NativeInput
 				name="leafSymbol[]"
 				class="tabular-nums"
 				placeholder="Ticker"

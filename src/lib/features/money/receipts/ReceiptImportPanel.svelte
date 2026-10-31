@@ -52,7 +52,8 @@
 			return async ({ result }) => {
 				onDone?.();
 				if (result.type === 'success' || result.type === 'failure') {
-					const d = result.data as { state?: ReceiptImportState; expensesChanged?: boolean } | undefined;
+					const d = result.data as
+						{ state?: ReceiptImportState; expensesChanged?: boolean } | undefined;
 					if (d?.state) {
 						gate = '';
 						override = d.state;
@@ -82,8 +83,8 @@
 	<div id="receipt-import-panel">
 		<h2 class="text-xl font-semibold">Scan receipts</h2>
 		<p class="mt-2 text-sm text-muted-foreground">
-			Up to {vm.maxImages} receipts. Itemized receipts become one expense per article. Photos are read and discarded —
-			they are never stored.
+			Up to {vm.maxImages} receipts. Itemized receipts become one expense per article. Photos are read
+			and discarded — they are never stored.
 		</p>
 		<form
 			id="receipt-import-form"
@@ -111,7 +112,9 @@
 			<div class="flex items-center gap-3">
 				<SubmitButton>Read receipts</SubmitButton>
 				{#if scanning}
-					<span id="receipt-import-spinner" class="htmx-indicator text-sm text-muted-foreground"> Reading… </span>
+					<span id="receipt-import-spinner" class="htmx-indicator text-sm text-muted-foreground">
+						Reading…
+					</span>
 				{/if}
 			</div>
 		</form>
@@ -139,7 +142,7 @@
 						<input type="hidden" name="receipt_count" value={vm.receipts.length} />
 						{#each vm.receipts as entry (entry.index)}
 							{@const prefix = 'r' + entry.index}
-							<div class="rounded-lg border p-4 space-y-3">
+							<div class="space-y-3 rounded-lg border p-4">
 								<div class="flex flex-wrap items-baseline justify-between gap-2">
 									<span class="font-semibold">{entry.merchant}</span>
 									<span class="text-sm text-muted-foreground">
@@ -147,7 +150,9 @@
 									</span>
 								</div>
 								{#if entry.warning}
-									<p class="rounded border border-[var(--color-warning)]/30 p-2 text-sm">{entry.warning}</p>
+									<p class="rounded border border-[var(--color-warning)]/30 p-2 text-sm">
+										{entry.warning}
+									</p>
 								{/if}
 								<input type="hidden" name="{prefix}_line_count" value={entry.lines.length} />
 								<input type="hidden" name="{prefix}_date" value={entry.date} />
@@ -161,7 +166,13 @@
 									{#each entry.lines as line (line.index)}
 										{@const lp = `${prefix}_l${line.index}`}
 										<div class="flex flex-wrap items-center gap-2">
-											<input type="checkbox" name="{lp}_keep" value="1" checked aria-label={'Include ' + line.title} />
+											<input
+												type="checkbox"
+												name="{lp}_keep"
+												value="1"
+												checked
+												aria-label={'Include ' + line.title}
+											/>
 											<input
 												class="min-w-0 flex-1 rounded border bg-transparent px-2 py-1"
 												type="text"
@@ -177,9 +188,15 @@
 												value={line.amount}
 												aria-label="Amount"
 											/>
-											<select class="rounded border bg-transparent px-2 py-1" name="{lp}_pillar" aria-label="Pillar">
+											<select
+												class="rounded border bg-transparent px-2 py-1"
+												name="{lp}_pillar"
+												aria-label="Pillar"
+											>
 												{#each vm.pillarOptions as option (option.key)}
-													<option value={option.key} selected={option.key === line.pillar}>{option.label}</option>
+													<option value={option.key} selected={option.key === line.pillar}
+														>{option.label}</option
+													>
 												{/each}
 											</select>
 											<input type="hidden" name="{lp}_external_id" value={line.externalID} />

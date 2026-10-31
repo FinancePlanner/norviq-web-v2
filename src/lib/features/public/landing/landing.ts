@@ -54,9 +54,16 @@ function goJSON(value: unknown): string {
 		Array.isArray(v)
 			? v.map(sortDeep)
 			: v && typeof v === 'object'
-				? Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortDeep((v as Record<string, unknown>)[k])]))
+				? Object.fromEntries(
+						Object.keys(v)
+							.sort()
+							.map((k) => [k, sortDeep((v as Record<string, unknown>)[k])])
+					)
 				: v;
-	return JSON.stringify(sortDeep(value)).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
+	return JSON.stringify(sortDeep(value))
+		.replace(/</g, '\\u003c')
+		.replace(/>/g, '\\u003e')
+		.replace(/&/g, '\\u0026');
 }
 
 /** The JSON-LD @graph: the product, its publisher and the website. */
@@ -65,7 +72,12 @@ export function structuredData(vm: LandingVM): string {
 	const orgID = home + '#organization';
 	const siteID = home + '#website';
 	const appID = home + '#app';
-	const image = { '@type': 'ImageObject', url: absoluteURL(vm, OGImagePath), width: 1200, height: 630 };
+	const image = {
+		'@type': 'ImageObject',
+		url: absoluteURL(vm, OGImagePath),
+		width: 1200,
+		height: 630
+	};
 	const sameAs = vm.appStoreURL ? [vm.appStoreURL, norviqXURL] : [norviqXURL];
 	const app: Record<string, unknown> = {
 		'@type': 'SoftwareApplication',
@@ -78,7 +90,12 @@ export function structuredData(vm: LandingVM): string {
 			'Norviq keeps the vigil: wealth, spending, and the signals between. Portfolio, budgeting, and AI-powered signals in one private financial guardian.',
 		image,
 		screenshot: image,
-		featureList: ['Portfolio and watchlists', 'Spending and budgets', 'AI-powered signals', 'MCP integrations'],
+		featureList: [
+			'Portfolio and watchlists',
+			'Spending and budgets',
+			'AI-powered signals',
+			'MCP integrations'
+		],
 		offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 		publisher: { '@id': orgID },
 		isPartOf: { '@id': siteID },
@@ -88,7 +105,14 @@ export function structuredData(vm: LandingVM): string {
 		app.installUrl = vm.appStoreURL;
 		app.downloadUrl = vm.appStoreURL;
 	}
-	const org = { '@type': 'Organization', '@id': orgID, name: 'Norviq', url: home, logo: image, sameAs };
+	const org = {
+		'@type': 'Organization',
+		'@id': orgID,
+		name: 'Norviq',
+		url: home,
+		logo: image,
+		sameAs
+	};
 	const site = {
 		'@type': 'WebSite',
 		'@id': siteID,
@@ -103,7 +127,8 @@ export function structuredData(vm: LandingVM): string {
 
 // --- hero_cards.go: the decorative card wall along the bottom of the hero ---
 
-export type HeroCardKind = 'ticker' | 'networth' | 'budget' | 'insight' | 'receipt' | 'dividend' | 'tax' | 'shot';
+export type HeroCardKind =
+	'ticker' | 'networth' | 'budget' | 'insight' | 'receipt' | 'dividend' | 'tax' | 'shot';
 
 export interface HeroCardLine {
 	label: string;
@@ -127,11 +152,41 @@ export interface HeroCard {
 const L = (label: string, value: string): HeroCardLine => ({ label, value });
 
 const heroCards: HeroCard[] = [
-	{ kind: 'ticker', title: 'AAPL', sub: 'Apple', value: '$228.40', delta: '+1.8%', up: true, series: [4, 5, 4.6, 5.8, 5.4, 6.6, 6.2, 7.4, 7.1, 8.2] },
-	{ kind: 'networth', title: 'Net worth', value: '€184,320', delta: '+€2,140 · 30d', up: true, series: [3, 3.4, 3.2, 4.1, 4.4, 4.2, 5.1, 5.6, 5.4, 6.3, 6.8] },
+	{
+		kind: 'ticker',
+		title: 'AAPL',
+		sub: 'Apple',
+		value: '$228.40',
+		delta: '+1.8%',
+		up: true,
+		series: [4, 5, 4.6, 5.8, 5.4, 6.6, 6.2, 7.4, 7.1, 8.2]
+	},
+	{
+		kind: 'networth',
+		title: 'Net worth',
+		value: '€184,320',
+		delta: '+€2,140 · 30d',
+		up: true,
+		series: [3, 3.4, 3.2, 4.1, 4.4, 4.2, 5.1, 5.6, 5.4, 6.3, 6.8]
+	},
 	{ kind: 'shot', image: '/static/images/screenshots/home.webp' },
-	{ kind: 'ticker', title: 'VWCE', sub: 'FTSE All-World', value: '€132.06', delta: '+0.6%', up: true, series: [5, 5.2, 5.1, 5.5, 5.4, 5.8, 5.7, 6, 6.2, 6.3] },
-	{ kind: 'budget', title: 'October budget', value: '€1,632', sub: 'of €2,400', percent: 68, lines: [L('Groceries', '€412'), L('Home', '€860'), L('Going out', '€190')] },
+	{
+		kind: 'ticker',
+		title: 'VWCE',
+		sub: 'FTSE All-World',
+		value: '€132.06',
+		delta: '+0.6%',
+		up: true,
+		series: [5, 5.2, 5.1, 5.5, 5.4, 5.8, 5.7, 6, 6.2, 6.3]
+	},
+	{
+		kind: 'budget',
+		title: 'October budget',
+		value: '€1,632',
+		sub: 'of €2,400',
+		percent: 68,
+		lines: [L('Groceries', '€412'), L('Home', '€860'), L('Going out', '€190')]
+	},
 	{
 		kind: 'insight',
 		title: 'Why it moved',
@@ -139,28 +194,76 @@ const heroCards: HeroCard[] = [
 		note: 'NVDA drove most of the drop after chip-export headlines.',
 		lines: [L('NVDA', '−0.84%'), L('ASML', '−0.21%'), L('AAPL', '+0.12%')]
 	},
-	{ kind: 'ticker', title: 'BTC', sub: 'Bitcoin', value: '€58,210', delta: '−2.4%', up: false, series: [8, 7.6, 7.9, 7.1, 7.3, 6.5, 6.8, 6.1, 6.3, 5.8] },
+	{
+		kind: 'ticker',
+		title: 'BTC',
+		sub: 'Bitcoin',
+		value: '€58,210',
+		delta: '−2.4%',
+		up: false,
+		series: [8, 7.6, 7.9, 7.1, 7.3, 6.5, 6.8, 6.1, 6.3, 5.8]
+	},
 	{
 		kind: 'receipt',
 		title: 'Receipt scanned',
 		sub: 'Pingo Doce',
 		value: '€24.83',
 		note: 'Groceries',
-		lines: [L('Fruit & veg', '8.40'), L('Bread', '2.15'), L('Olive oil', '9.99'), L('Coffee', '4.29')]
+		lines: [
+			L('Fruit & veg', '8.40'),
+			L('Bread', '2.15'),
+			L('Olive oil', '9.99'),
+			L('Coffee', '4.29')
+		]
 	},
 	{ kind: 'shot', image: '/static/images/screenshots/portfolio.webp' },
-	{ kind: 'ticker', title: 'NVDA', sub: 'NVIDIA', value: '$118.72', delta: '−3.1%', up: false, series: [7, 7.4, 6.9, 7.2, 6.4, 6.6, 5.9, 5.4, 5.6, 4.9] },
-	{ kind: 'dividend', title: 'Dividend received', sub: 'VWRL', value: '+€38.12', up: true, lines: [L('Paid', '25 Sep'), L('Withheld', '€5.72'), L('ECB rate', '1.0712')] },
+	{
+		kind: 'ticker',
+		title: 'NVDA',
+		sub: 'NVIDIA',
+		value: '$118.72',
+		delta: '−3.1%',
+		up: false,
+		series: [7, 7.4, 6.9, 7.2, 6.4, 6.6, 5.9, 5.4, 5.6, 4.9]
+	},
+	{
+		kind: 'dividend',
+		title: 'Dividend received',
+		sub: 'VWRL',
+		value: '+€38.12',
+		up: true,
+		lines: [L('Paid', '25 Sep'), L('Withheld', '€5.72'), L('ECB rate', '1.0712')]
+	},
 	{
 		kind: 'tax',
 		title: 'IBKR → Anexo J',
 		sub: 'Tax year 2025',
-		lines: [L('Dividends · 8A', '€412.80'), L('Gains · 9.2A', '€1,206.44'), L('Trades, FIFO', '37')],
+		lines: [
+			L('Dividends · 8A', '€412.80'),
+			L('Gains · 9.2A', '€1,206.44'),
+			L('Trades, FIFO', '37')
+		],
 		note: 'PDF ready'
 	},
-	{ kind: 'ticker', title: 'MSFT', sub: 'Microsoft', value: '$431.15', delta: '+0.9%', up: true, series: [5, 5.3, 5.1, 5.6, 5.9, 5.7, 6.1, 6.4, 6.3, 6.7] },
+	{
+		kind: 'ticker',
+		title: 'MSFT',
+		sub: 'Microsoft',
+		value: '$431.15',
+		delta: '+0.9%',
+		up: true,
+		series: [5, 5.3, 5.1, 5.6, 5.9, 5.7, 6.1, 6.4, 6.3, 6.7]
+	},
 	{ kind: 'shot', image: '/static/images/screenshots/expenses.webp' },
-	{ kind: 'ticker', title: 'ASML', sub: 'ASML Holding', value: '€684.30', delta: '−0.7%', up: false, series: [6, 6.3, 6.1, 6.4, 6, 5.8, 6, 5.6, 5.7, 5.5] },
+	{
+		kind: 'ticker',
+		title: 'ASML',
+		sub: 'ASML Holding',
+		value: '€684.30',
+		delta: '−0.7%',
+		up: false,
+		series: [6, 6.3, 6.1, 6.4, 6, 5.8, 6, 5.6, 5.7, 5.5]
+	},
 	{ kind: 'shot', image: '/static/images/screenshots/technical_analysis.webp' }
 ];
 
@@ -212,7 +315,13 @@ export function heroBackSlots(): HeroWallSlot[] {
 		const d = (j - 6.5) / 6.5;
 		return {
 			card: heroCards[heroBackRow[j]],
-			style: heroSlotStyle(heroStep / 2 + j * heroStep, 15.6 - 2.4 * j, -14.6 + 18.6 * d * d, 1, heroSwayDelay(j + 2)),
+			style: heroSlotStyle(
+				heroStep / 2 + j * heroStep,
+				15.6 - 2.4 * j,
+				-14.6 + 18.6 * d * d,
+				1,
+				heroSwayDelay(j + 2)
+			),
 			class: ''
 		};
 	});

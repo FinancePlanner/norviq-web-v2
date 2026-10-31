@@ -4,7 +4,12 @@
 
 import { changeClass, formatCompactNumber, formatCurrency, formatFloat } from '#lib/format.js';
 import { clampPercent, goFormat } from '#lib/features/dashboard/shared.js';
-import type { CongressVM, InsiderVM, InstitutionalVM, TechnicalsVM } from '#lib/components/norviq/market-signals.js';
+import type {
+	CongressVM,
+	InsiderVM,
+	InstitutionalVM,
+	TechnicalsVM
+} from '#lib/components/norviq/market-signals.js';
 import type {
 	CongressTrade,
 	EarningsVM,
@@ -116,12 +121,23 @@ function insiderKindLabel(kind: string): string {
 	}
 }
 
-const emptyInsider = (): InsiderVM => ({ present: false, windowLabel: '', buys: 0, sells: 0, netShares: '', trades: [] });
+const emptyInsider = (): InsiderVM => ({
+	present: false,
+	windowLabel: '',
+	buys: 0,
+	sells: 0,
+	netShares: '',
+	trades: []
+});
 
-export function mapInsiderActivity(resp: InsiderActivityResponse | null | undefined, maxTrades: number): InsiderVM {
+export function mapInsiderActivity(
+	resp: InsiderActivityResponse | null | undefined,
+	maxTrades: number
+): InsiderVM {
 	if (!resp) return emptyInsider();
 	const trades = resp.trades ?? [];
-	if (trades.length === 0 && resp.summary.buys === 0 && resp.summary.sells === 0) return emptyInsider();
+	if (trades.length === 0 && resp.summary.buys === 0 && resp.summary.sells === 0)
+		return emptyInsider();
 
 	const vm: InsiderVM = {
 		present: true,
@@ -159,8 +175,13 @@ export function mapInstitutionalOwnership(
 	if (holders.length === 0 && resp.holdersCount == null && resp.institutionalOwnershipPct == null) {
 		return { present: false, holders: [] };
 	}
-	const vm: InstitutionalVM = { present: true, asOfQuarter: (resp.asOfQuarter ?? '').trim(), holders: [] };
-	if (resp.institutionalOwnershipPct != null) vm.ownershipPct = formatFloat(resp.institutionalOwnershipPct, 1) + '%';
+	const vm: InstitutionalVM = {
+		present: true,
+		asOfQuarter: (resp.asOfQuarter ?? '').trim(),
+		holders: []
+	};
+	if (resp.institutionalOwnershipPct != null)
+		vm.ownershipPct = formatFloat(resp.institutionalOwnershipPct, 1) + '%';
 	if (resp.holdersCount != null) vm.holdersCount = String(resp.holdersCount);
 	for (const holder of holders) {
 		if (vm.holders.length === maxHolders) break;
@@ -191,7 +212,10 @@ function congressTypeLabel(kind: string): string {
 	}
 }
 
-export function mapCongressTrades(trades: CongressTrade[] | null | undefined, maxRows: number): CongressVM {
+export function mapCongressTrades(
+	trades: CongressTrade[] | null | undefined,
+	maxRows: number
+): CongressVM {
 	const vm: CongressVM = { present: false, trades: [] };
 	for (const trade of trades ?? []) {
 		if (vm.trades.length === maxRows) break;
@@ -226,10 +250,14 @@ const byDateDesc = <T extends { date: string }>(rows: readonly T[]) =>
 	[...rows].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 /** headlineRecentEarningsStreak: the first row, newest first, with a non-zero run. */
-export function headlineRecentEarningsStreak(quarters: readonly RecentEarningsQuarter[]): EarningsStreak {
+export function headlineRecentEarningsStreak(
+	quarters: readonly RecentEarningsQuarter[]
+): EarningsStreak {
 	for (const q of byDateDesc(quarters)) {
-		if (q.beatStreak > 0) return { headline: 'Beat ' + quartersRunning(q.beatStreak), tone: 'positive' };
-		if (q.missStreak > 0) return { headline: 'Missed ' + quartersRunning(q.missStreak), tone: 'negative' };
+		if (q.beatStreak > 0)
+			return { headline: 'Beat ' + quartersRunning(q.beatStreak), tone: 'positive' };
+		if (q.missStreak > 0)
+			return { headline: 'Missed ' + quartersRunning(q.missStreak), tone: 'negative' };
 	}
 	return { headline: '', tone: '' };
 }
@@ -239,7 +267,6 @@ export function earningsRunVerdict(beat: number, miss: number): { verdict: strin
 	if (miss > 0) return { verdict: 'Missed', tone: 'negative' };
 	return { verdict: '—', tone: '' };
 }
-
 
 const publicEarningsQuarters = 4;
 

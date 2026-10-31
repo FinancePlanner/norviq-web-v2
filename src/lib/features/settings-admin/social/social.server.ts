@@ -30,8 +30,15 @@ export function socialTimezone(event: RequestEvent): string {
 }
 
 /** socialDo: a backend call as the signed-in user, carrying X-Timezone. */
-export function socialDo<T = unknown>(event: RequestEvent, method: string, path: string, body?: unknown): Promise<T> {
-	return apiJSON<T>(event, method, path, body, { headers: { [TIMEZONE_HEADER]: socialTimezone(event) } });
+export function socialDo<T = unknown>(
+	event: RequestEvent,
+	method: string,
+	path: string,
+	body?: unknown
+): Promise<T> {
+	return apiJSON<T>(event, method, path, body, {
+		headers: { [TIMEZONE_HEADER]: socialTimezone(event) }
+	});
 }
 
 /** socialErrorMessage: the backend's own reason for a 4xx, else the fallback. */

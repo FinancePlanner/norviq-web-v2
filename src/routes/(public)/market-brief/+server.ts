@@ -1,5 +1,8 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { loadMarketBriefCard, parseMarketBriefQuery } from '#lib/features/dashboard/market-brief/load.server.js';
+import {
+	loadMarketBriefCard,
+	parseMarketBriefQuery
+} from '#lib/features/dashboard/market-brief/load.server.js';
 
 // GET /market-brief — Go marketBriefHandler.Partial("/market-brief"): the
 // card on the logged-out landing page. Public on purpose: it reads the

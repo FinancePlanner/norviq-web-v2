@@ -1,6 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { deleteAutobuy, terminalID, updateAutobuy } from '#lib/features/planning-tools/terminal/terminal.server.js';
+import {
+	deleteAutobuy,
+	terminalID,
+	updateAutobuy
+} from '#lib/features/planning-tools/terminal/terminal.server.js';
 
 // PATCH /terminal/autobuys/{id} (TerminalAutobuyUpdate) and DELETE
 // (TerminalAutobuyDelete). Both answer the panel.

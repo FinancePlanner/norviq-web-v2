@@ -16,9 +16,17 @@ export const GET: RequestHandler = async (event) => {
 	} catch {
 		parsed = null;
 	}
-	if (!parsed || parsed.host === '' || (parsed.protocol !== 'http:' && parsed.protocol !== 'https:')) error(400, 'Invalid article URL');
+	if (
+		!parsed ||
+		parsed.host === '' ||
+		(parsed.protocol !== 'http:' && parsed.protocol !== 'https:')
+	)
+		error(400, 'Invalid article URL');
 
-	const body: components['schemas']['NewsViewRequest'] = { headline: (q.get('headline') ?? '').trim() || 'Untitled article', url: target };
+	const body: components['schemas']['NewsViewRequest'] = {
+		headline: (q.get('headline') ?? '').trim() || 'Untitled article',
+		url: target
+	};
 	const symbol = (q.get('symbol') ?? '').trim().toUpperCase();
 	if (symbol !== '') body.symbol = symbol;
 	const id = (q.get('id') ?? '').trim();

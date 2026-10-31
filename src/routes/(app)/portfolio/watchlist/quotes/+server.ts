@@ -12,17 +12,19 @@ export const GET: RequestHandler = async (event) => {
 	const rows = await loadWatchlistQuoteRows(event, event.url.searchParams.get('list') ?? '');
 	const body: WatchlistQuotesResponse = {
 		updatedAt: quoteRefreshStatusTime(new Date()),
-		rows: rows.map(({ id, price, netChg, changePercent, changePositive, open, prevClose, high, low }) => ({
-			id,
-			price,
-			netChg,
-			changePercent,
-			changePositive,
-			open,
-			prevClose,
-			high,
-			low
-		}))
+		rows: rows.map(
+			({ id, price, netChg, changePercent, changePositive, open, prevClose, high, low }) => ({
+				id,
+				price,
+				netChg,
+				changePercent,
+				changePositive,
+				open,
+				prevClose,
+				high,
+				low
+			})
+		)
 	};
 	return json(body, { headers: { 'cache-control': 'no-store' } });
 };

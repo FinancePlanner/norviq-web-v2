@@ -13,7 +13,11 @@
 	});
 </script>
 
-<AuthMeta title="Sign in - Norviq" keywords="Sign in - Norviq" description="Securely access your Norviq account." />
+<AuthMeta
+	title="Sign in - Norviq"
+	keywords="Sign in - Norviq"
+	description="Securely access your Norviq account."
+/>
 <AuthLayout>
 	<LoginPage isSignup={false} errorMessage={result?.error ?? ''} nextPath={result?.next ?? ''} />
 </AuthLayout>

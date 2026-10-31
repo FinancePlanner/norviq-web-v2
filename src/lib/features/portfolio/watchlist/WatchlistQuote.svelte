@@ -5,7 +5,9 @@
 
 	let { row }: { row: WatchlistQuoteVM } = $props();
 
-	const changeClass = $derived(row.changePositive ? 'overview-watchlist-change-up' : 'overview-watchlist-change-down');
+	const changeClass = $derived(
+		row.changePositive ? 'overview-watchlist-change-up' : 'overview-watchlist-change-down'
+	);
 </script>
 
 <div id={'watchlist-quote-' + row.id} class="watchlist-quote-cells contents">

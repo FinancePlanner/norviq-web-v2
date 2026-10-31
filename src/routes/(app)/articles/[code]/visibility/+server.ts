@@ -1,6 +1,10 @@
 import { error, redirect, type RequestHandler } from '@sveltejs/kit';
 import { parseSlugCode } from '#lib/features/public/articles/articles.js';
-import { afterActionLocation, requireArticles, setArticleVisibility } from '#lib/features/public/articles/articles.server.js';
+import {
+	afterActionLocation,
+	requireArticles,
+	setArticleVisibility
+} from '#lib/features/public/articles/articles.server.js';
 
 // POST /articles/{code}/visibility → ArticlesHandler.Visibility (moderators).
 // A non-admin's 403 gets the failure notice, never a success one.

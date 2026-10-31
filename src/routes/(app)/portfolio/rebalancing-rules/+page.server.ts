@@ -3,9 +3,18 @@ import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { requireFeature } from '#lib/server/guards.js';
 import { Feature } from '#lib/billing.js';
 import { safeRedirect } from '#lib/helpers.js';
-import { formString, parseOptionalFloat, validUUID } from '#lib/features/portfolio/automation/common.server.js';
+import {
+	formString,
+	parseOptionalFloat,
+	validUUID
+} from '#lib/features/portfolio/automation/common.server.js';
 import { callExpect } from '#lib/features/portfolio/automation/screens.server.js';
-import { loadRulesVM, parseTargets, policyBase, TargetsError } from '#lib/features/portfolio/automation/rules.server.js';
+import {
+	loadRulesVM,
+	parseTargets,
+	policyBase,
+	TargetsError
+} from '#lib/features/portfolio/automation/rules.server.js';
 import type { RebalancingPolicyUpsertRequest } from '#lib/features/portfolio/automation/types.js';
 
 // GET /portfolio/rebalancing-rules (RebalancingRules) and its POST routes as
@@ -15,7 +24,8 @@ import type { RebalancingPolicyUpsertRequest } from '#lib/features/portfolio/aut
 //   POST /portfolio/rebalancing/{id}/events/{eventID}/dismiss  → ?id={id}&event={eventID}&/dismiss
 // Failures answer like Go's http.Error (400 bad form, 404 bad id, 422 backend).
 
-const gate = (event: RequestEvent) => requireFeature(event, Feature.RebalancingRules, 'Rebalancing rules');
+const gate = (event: RequestEvent) =>
+	requireFeature(event, Feature.RebalancingRules, 'Rebalancing rules');
 
 export const load: PageServerLoad = async (event) => {
 	await gate(event);
@@ -53,7 +63,8 @@ export const actions: Actions = {
 		const cadence = formString(form, 'cadence');
 		if (!CADENCES.has(cadence)) error(400, 'Invalid cadence');
 		const baseCurrency = formString(form, 'base_currency').trim().toUpperCase();
-		if (new TextEncoder().encode(baseCurrency).length !== 3) error(400, 'Base currency must be a 3-letter code');
+		if (new TextEncoder().encode(baseCurrency).length !== 3)
+			error(400, 'Base currency must be a 3-letter code');
 		const body: RebalancingPolicyUpsertRequest = {
 			baseCurrency,
 			enabled: form.get('enabled') === 'on',
@@ -61,7 +72,8 @@ export const actions: Actions = {
 			targets
 		};
 		if (drift.value !== undefined) body.driftThreshold = drift.value / 100;
-		if (!(await callExpect(event, 'PUT', policyBase(id), 200, body))) error(422, 'Could not save policy');
+		if (!(await callExpect(event, 'PUT', policyBase(id), 200, body)))
+			error(422, 'Could not save policy');
 		safeRedirect(303, '/portfolio/rebalancing-rules?portfolio=' + raw);
 	},
 	confirm: (event) => updateEvent(event, true),

@@ -99,7 +99,13 @@ export function receiptEntryVM(index: number, draft: ReceiptDraft): ReceiptImpor
 
 	entry.singleLine = true;
 	entry.lines = [
-		{ index: 0, title: merchant, amount: entry.total, pillar: DEFAULT_RECEIPT_PILLAR, externalID: externalID('') }
+		{
+			index: 0,
+			title: merchant,
+			amount: entry.total,
+			pillar: DEFAULT_RECEIPT_PILLAR,
+			externalID: externalID('')
+		}
 	];
 	return entry;
 }
@@ -116,7 +122,8 @@ export function optionalFloat(raw: string | null | undefined): number | null {
 }
 
 /** handlers.decimalComma */
-export const decimalComma = (raw: string | null | undefined) => (raw ?? '').trim().replaceAll(',', '.');
+export const decimalComma = (raw: string | null | undefined) =>
+	(raw ?? '').trim().replaceAll(',', '.');
 
 const str = (form: FormData, key: string) => {
 	const v = form.get(key);
@@ -133,7 +140,10 @@ function isISODate(raw: string): boolean {
 	return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === raw;
 }
 
-function receiptMetadataFromPrefix(form: FormData, prefix: string): ReceiptExpenseMetadata | undefined {
+function receiptMetadataFromPrefix(
+	form: FormData,
+	prefix: string
+): ReceiptExpenseMetadata | undefined {
 	const source = str(form, prefix + '_source').trim();
 	if (source !== 'qr' && source !== 'ocr') return undefined;
 	const meta: ReceiptExpenseMetadata = { source };

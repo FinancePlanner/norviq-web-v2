@@ -36,13 +36,15 @@ const emptyPreview = (): CSVPreviewVM => ({
 });
 
 /** portfolio_data.go formatShares */
-const formatShares = (shares: number) => (shares % 1 === 0 ? formatFloat(shares, 0) : formatFloat(shares, 2));
+const formatShares = (shares: number) =>
+	shares % 1 === 0 ? formatFloat(shares, 0) : formatFloat(shares, 2);
 
 /** loadCSVProviders: distinct broker providers, or the defaults. */
 export async function loadCSVProviders(event: RequestEvent): Promise<string[]> {
 	try {
 		const res = await api(event).GET('/v1/brokers');
-		const list = (res.response.ok ? (res.data as Array<{ provider?: string }> | undefined) : undefined) ?? [];
+		const list =
+			(res.response.ok ? (res.data as Array<{ provider?: string }> | undefined) : undefined) ?? [];
 		const out: string[] = [];
 		for (const b of list) {
 			const p = (b.provider ?? '').trim();
@@ -55,13 +57,26 @@ export async function loadCSVProviders(event: RequestEvent): Promise<string[]> {
 }
 
 type PreviewResponse = {
-	items: Array<{ line: number; symbol: string; shares?: number | null; buyPrice?: number | null; buyDate?: string | null }>;
+	items: Array<{
+		line: number;
+		symbol: string;
+		shares?: number | null;
+		buyPrice?: number | null;
+		buyDate?: string | null;
+	}>;
 	errors: Array<{ line: number; message: string }>;
 };
-type CommitResponse = { inserted: unknown[]; updated: unknown[]; errors: Array<{ line: number; message: string }> };
+type CommitResponse = {
+	inserted: unknown[];
+	updated: unknown[];
+	errors: Array<{ line: number; message: string }>;
+};
 
 /** processCSVUpload(commit) */
-export async function processCSVUpload(event: RequestEvent, commit: boolean): Promise<CSVPreviewVM> {
+export async function processCSVUpload(
+	event: RequestEvent,
+	commit: boolean
+): Promise<CSVPreviewVM> {
 	const vm = emptyPreview();
 	const len = Number(event.request.headers.get('content-length') ?? 0);
 	if (len > MAX_CSV_UPLOAD_BYTES) {
@@ -161,7 +176,8 @@ export function defaultManualPageVM(): ManualPageVM {
 export function manualPageVMFromQuery(url: URL): ManualPageVM {
 	const vm = defaultManualPageVM();
 	const n = Number.parseInt((url.searchParams.get('rows') ?? '').trim(), 10);
-	if (Number.isFinite(n) && n > 1) vm.rows = Array.from({ length: Math.min(n, MAX_MANUAL_IMPORT_ROWS) }, emptyRow);
+	if (Number.isFinite(n) && n > 1)
+		vm.rows = Array.from({ length: Math.min(n, MAX_MANUAL_IMPORT_ROWS) }, emptyRow);
 	return vm;
 }
 
@@ -171,29 +187,53 @@ const floatPattern = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 const parseFloatStrict = (raw: string) => (floatPattern.test(raw) ? Number(raw) : Number.NaN);
 
 export function parseBulkManualImport(form: FormData): {
-	stocks: Array<{ symbol: string; shares: number; buyPrice: number; buyDate: string; category: string }>;
+	stocks: Array<{
+		symbol: string;
+		shares: number;
+		buyPrice: number;
+		buyDate: string;
+		category: string;
+	}>;
 	vm: ManualPageVM;
 	error: string;
 } {
 	const get = (k: string) => String(form.get(k) ?? '').trim();
-	const vm: ManualPageVM = { rows: [], buyDate: get('buy_date'), category: get('category'), error: '', added: false };
+	const vm: ManualPageVM = {
+		rows: [],
+		buyDate: get('buy_date'),
+		category: get('category'),
+		error: '',
+		added: false
+	};
 	let rowCount = Number.parseInt(get('row_count'), 10);
 	if (!Number.isFinite(rowCount) || rowCount < 1) rowCount = 1;
 	if (rowCount > MAX_MANUAL_IMPORT_ROWS) rowCount = MAX_MANUAL_IMPORT_ROWS;
 
-	if (!/^\d{4}-\d{2}-\d{2}$/.test(vm.buyDate) || Number.isNaN(Date.parse(vm.buyDate))) vm.buyDate = today();
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(vm.buyDate) || Number.isNaN(Date.parse(vm.buyDate)))
+		vm.buyDate = today();
 	if (!ASSET_CATEGORIES.includes(vm.category)) vm.category = 'stock';
 	const category = vm.category;
 
-	const stocks: Array<{ symbol: string; shares: number; buyPrice: number; buyDate: string; category: string }> = [];
+	const stocks: Array<{
+		symbol: string;
+		shares: number;
+		buyPrice: number;
+		buyDate: string;
+		category: string;
+	}> = [];
 	for (let i = 0; i < rowCount; i++) {
-		const row = { symbol: get(`row_${i}_symbol`), shares: get(`row_${i}_shares`), buyPrice: get(`row_${i}_buy_price`) };
+		const row = {
+			symbol: get(`row_${i}_symbol`),
+			shares: get(`row_${i}_shares`),
+			buyPrice: get(`row_${i}_buy_price`)
+		};
 		vm.rows.push(row);
 		if (!row.symbol && !row.shares && !row.buyPrice) continue;
 		const symbol = row.symbol.toUpperCase();
 		if (!symbol) return { stocks: [], vm, error: `Row ${i + 1}: enter a symbol.` };
 		const shares = parseFloatStrict(row.shares);
-		if (!(shares > 0)) return { stocks: [], vm, error: `Row ${i + 1}: enter a valid share amount.` };
+		if (!(shares > 0))
+			return { stocks: [], vm, error: `Row ${i + 1}: enter a valid share amount.` };
 		const buyPrice = parseFloatStrict(row.buyPrice);
 		if (!(buyPrice > 0)) return { stocks: [], vm, error: `Row ${i + 1}: enter a valid buy price.` };
 		stocks.push({ symbol, shares, buyPrice, buyDate: vm.buyDate, category });
@@ -202,7 +242,11 @@ export function parseBulkManualImport(form: FormData): {
 	return { stocks, vm, error: '' };
 }
 
-type BulkResponse = { created: number; failed: number; results: Array<{ index: number; error?: string | null }> };
+type BulkResponse = {
+	created: number;
+	failed: number;
+	results: Array<{ index: number; error?: string | null }>;
+};
 
 /** BulkCreateStocks; returns '' on success or the bulkCreateErrorMessage. */
 export async function bulkCreateStocks(event: RequestEvent, stocks: unknown[]): Promise<string> {
@@ -222,7 +266,10 @@ export async function bulkCreateStocks(event: RequestEvent, stocks: unknown[]): 
 	} catch {
 		json = null;
 	}
-	const bulk = res.status === 200 && json && typeof json === 'object' && 'created' in json ? (json as BulkResponse) : null;
+	const bulk =
+		res.status === 200 && json && typeof json === 'object' && 'created' in json
+			? (json as BulkResponse)
+			: null;
 	if (bulk && bulk.created > 0) return '';
 	if (bulk && bulk.failed > 0) {
 		for (const item of bulk.results ?? []) {

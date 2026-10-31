@@ -4,7 +4,13 @@
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import Badge from '#lib/components/norviq/tui/Badge.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
-	import { directionKey, directionMarker, itemMarker, type MarketBriefItemVM, type MarketBriefVM } from './types.js';
+	import {
+		directionKey,
+		directionMarker,
+		itemMarker,
+		type MarketBriefItemVM,
+		type MarketBriefVM
+	} from './types.js';
 
 	let { vm }: { vm: MarketBriefVM } = $props();
 </script>
@@ -45,7 +51,10 @@
 			{#each group.rows as row, i (i)}
 				{#snippet flag()}<span class="text-subhead">{row.flag}</span>{/snippet}
 				{#snippet trailing()}
-					<vigil.RowTrailing value={row.level} caption={directionMarker(row.direction) + ' ' + row.change} />
+					<vigil.RowTrailing
+						value={row.level}
+						caption={directionMarker(row.direction) + ' ' + row.change}
+					/>
 					<span class="sr-only">{t(directionKey(row.direction))}</span>
 				{/snippet}
 				<vigil.ListRow icon={flag} title={row.name} subtitle={row.symbol} {trailing} />
@@ -71,4 +80,6 @@
 		</ol>
 	</section>
 {/if}
-<p class="mt-3 text-footnote text-muted-foreground">{t('AI-written from market data. Not financial advice.')}</p>
+<p class="mt-3 text-footnote text-muted-foreground">
+	{t('AI-written from market data. Not financial advice.')}
+</p>

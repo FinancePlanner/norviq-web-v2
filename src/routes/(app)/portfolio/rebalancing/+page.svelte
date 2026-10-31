@@ -24,7 +24,10 @@
 		signedBasisPoints,
 		signedTradeAmount
 	} from '#lib/features/portfolio/automation/format.js';
-	import type { RebalancingAllocationRow, RebalancingViewModel } from '#lib/features/portfolio/automation/types.js';
+	import type {
+		RebalancingAllocationRow,
+		RebalancingViewModel
+	} from '#lib/features/portfolio/automation/types.js';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -44,7 +47,10 @@
 	});
 	const sel = $derived(vm.selected);
 	const act = (name: string, extra: Record<string, string> = {}) =>
-		'/portfolio/rebalancing?' + new URLSearchParams({ portfolio: sel?.id ?? '', ...extra }).toString() + '&/' + name;
+		'/portfolio/rebalancing?' +
+		new URLSearchParams({ portfolio: sel?.id ?? '', ...extra }).toString() +
+		'&/' +
+		name;
 	const trades = $derived(vm.simulation?.trades ?? []);
 </script>
 
@@ -74,13 +80,16 @@
 		<td class={['py-3 font-medium', child && 'pl-5 text-xs']}
 			>{row.label}
 			{#if row.symbol}
-				<span class="ml-2 tabular-nums text-xs text-muted-foreground">{row.symbol}</span>
+				<span class="ml-2 text-xs text-muted-foreground tabular-nums">{row.symbol}</span>
 			{/if}
 		</td>
 		<td class="py-3 text-right tabular-nums">{basisPoints(row.currentBasisPoints)}</td><td
-			class="py-3 text-right tabular-nums text-muted-foreground">{basisPoints(row.targetBasisPoints)}</td
-		><td class={['py-3 text-right font-medium tabular-nums', driftTone(row.severity)]}>{signedBasisPoints(row.driftBasisPoints)}</td><td
-			class="py-3 text-right tabular-nums text-muted-foreground">{money(row.driftValue, currency)}</td
+			class="py-3 text-right text-muted-foreground tabular-nums"
+			>{basisPoints(row.targetBasisPoints)}</td
+		><td class={['py-3 text-right font-medium tabular-nums', driftTone(row.severity)]}
+			>{signedBasisPoints(row.driftBasisPoints)}</td
+		><td class="py-3 text-right text-muted-foreground tabular-nums"
+			>{money(row.driftValue, currency)}</td
 		>
 	</tr>
 {/snippet}
@@ -88,10 +97,20 @@
 <div id="rebalancing-page" class="app-page-content vigil-canvas-page portfolio-modern-page">
 	<vigil.ModernPageHeader title="Rebalancing" />
 	{#if vm.notice}
-		<div class="mt-5 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm" role="status">{vm.notice}</div>
+		<div
+			class="mt-5 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm"
+			role="status"
+		>
+			{vm.notice}
+		</div>
 	{/if}
 	{#if vm.error}
-		<div class="mt-5 rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm" role="alert">{vm.error}</div>
+		<div
+			class="mt-5 rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm"
+			role="alert"
+		>
+			{vm.error}
+		</div>
 	{/if}
 	<nav class="mt-5 flex flex-wrap gap-2" aria-label="Portfolio scope">
 		{#each vm.portfolios as item (item.id)}
@@ -110,9 +129,12 @@
 		<section class="mt-6 rounded-lg border border-dashed border-current/20 p-10 text-center">
 			<h2 class="text-xl font-semibold">Create a portfolio first</h2>
 			<p class="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
-				Allocation policies belong to a portfolio so cash, positions, and base currency stay isolated.
+				Allocation policies belong to a portfolio so cash, positions, and base currency stay
+				isolated.
 			</p>
-			<PrimaryButton href="/portfolios" class="mt-5 inline-flex" fullWidth>Open portfolios</PrimaryButton>
+			<PrimaryButton href="/portfolios" class="mt-5 inline-flex" fullWidth
+				>Open portfolios</PrimaryButton
+			>
 		</section>
 	{:else}
 		<div class="vigil-command-split mt-6">
@@ -121,21 +143,30 @@
 				<section class="glass-card overflow-hidden" aria-labelledby="drift-title">
 					<div class="grid gap-px bg-current/10 md:grid-cols-[1.1fr_.9fr]">
 						<div class="bg-[var(--color-card-bg)] p-6 md:p-8">
-							<p class="text-footnote font-semibold text-muted-foreground">{sel.name.toUpperCase()}</p>
+							<p class="text-footnote font-semibold text-muted-foreground">
+								{sel.name.toUpperCase()}
+							</p>
 							<div class="mt-4 flex flex-wrap items-end justify-between gap-4">
 								<div>
-									<p class="text-4xl font-semibold tabular-nums">{money(vm.overview.totalValue, vm.overview.baseCurrency)}</p>
+									<p class="text-4xl font-semibold tabular-nums">
+										{money(vm.overview.totalValue, vm.overview.baseCurrency)}
+									</p>
 									<p class="mt-2 text-sm text-muted-foreground">Current portfolio value</p>
 								</div>
 								<div class="text-right">
-									<p class={['text-3xl font-semibold tabular-nums', driftTone(vm.overview.severity)]}>
+									<p
+										class={['text-3xl font-semibold tabular-nums', driftTone(vm.overview.severity)]}
+									>
 										{basisPoints(vm.overview.totalDriftBasisPoints)}
 									</p>
 									<p class="mt-2 text-sm text-muted-foreground">total allocation drift</p>
 								</div>
 							</div>
 							<div class="mt-6 flex flex-wrap items-center gap-3 text-sm">
-								<span class={['rounded-lg px-2.5 py-1 font-medium', driftBadge(vm.overview.severity)]}>{severityLabel(vm.overview.severity)}</span>
+								<span
+									class={['rounded-lg px-2.5 py-1 font-medium', driftBadge(vm.overview.severity)]}
+									>{severityLabel(vm.overview.severity)}</span
+								>
 								<span class="opacity-55">Prices: {vm.overview.priceQuality}</span>
 								{#if vm.overview.pricedAt}
 									<span class="opacity-55">as of {vm.overview.pricedAt}</span>
@@ -146,7 +177,8 @@
 							<h2 id="drift-title" class="text-lg font-semibold">Current vs target</h2>
 							{#if !vm.overview.model}
 								<p class="mt-3 text-sm leading-6 text-muted-foreground">
-									Set a policy allocation to turn portfolio tracking into a repeatable review process.
+									Set a policy allocation to turn portfolio tracking into a repeatable review
+									process.
 								</p>
 							{:else}
 								<div class="mt-4 space-y-4">
@@ -154,7 +186,9 @@
 										<div>
 											<div class="flex justify-between gap-3 text-sm">
 												<span>{row.label}</span><span class="tabular-nums opacity-65"
-													>{basisPoints(row.currentBasisPoints)} / {basisPoints(row.targetBasisPoints)}</span
+													>{basisPoints(row.currentBasisPoints)} / {basisPoints(
+														row.targetBasisPoints
+													)}</span
 												>
 											</div>
 											<div class="mt-2 grid grid-cols-2 gap-2">
@@ -190,17 +224,21 @@
 						<div class="flex items-end justify-between gap-4">
 							<div>
 								<h2 id="allocation-drift-title" class="text-lg font-semibold">Allocation drift</h2>
-								<p class="mt-1 text-sm text-muted-foreground">Positive drift is overweight; negative drift is underweight.</p>
+								<p class="mt-1 text-sm text-muted-foreground">
+									Positive drift is overweight; negative drift is underweight.
+								</p>
 							</div>
-							<span class="text-sm tabular-nums text-muted-foreground">{vm.overview.openAlertCount} alerts</span>
+							<span class="text-sm text-muted-foreground tabular-nums"
+								>{vm.overview.openAlertCount} alerts</span
+							>
 						</div>
 						<div class="mt-5 overflow-x-auto">
 							<vigil.DataTable>
 								<thead
 									><tr
-										><th>Group / holding</th><th class="text-right">Current</th><th class="text-right">Target</th><th class="text-right"
-											>Drift</th
-										><th class="text-right">Value gap</th></tr
+										><th>Group / holding</th><th class="text-right">Current</th><th
+											class="text-right">Target</th
+										><th class="text-right">Drift</th><th class="text-right">Value gap</th></tr
 									></thead
 								>
 								<tbody>
@@ -220,15 +258,22 @@
 							<div>
 								<h2 id="simulator-title" class="text-lg font-semibold">What-if simulator</h2>
 								<p class="mt-1 max-w-2xl text-sm text-muted-foreground">
-									Adjust cash flow or exact trade amounts. Calculations never submit an order or modify a holding.
+									Adjust cash flow or exact trade amounts. Calculations never submit an order or
+									modify a holding.
 								</p>
 							</div>
-							<span class="rounded-lg bg-current/5 px-2.5 py-1 text-xs font-medium">Planning only</span>
+							<span class="rounded-lg bg-current/5 px-2.5 py-1 text-xs font-medium"
+								>Planning only</span
+							>
 						</div>
 						<form
 							method="POST"
 							action={act('simulate')}
-							use:enhance={withSpinner(() => async ({ update }) => update({ reset: false }))}
+							use:enhance={withSpinner(
+								() =>
+									async ({ update }) =>
+										update({ reset: false })
+							)}
 							class="mt-5"
 						>
 							{@render simulationHidden()}
@@ -245,22 +290,44 @@
 							</div>
 							{#if vm.simulation}
 								<div class="mt-6 grid gap-3 sm:grid-cols-4">
-									{@render simMetric('Drift before', basisPoints(vm.simulation.driftBeforeBasisPoints))}
-									{@render simMetric('Drift after', basisPoints(vm.simulation.driftAfterBasisPoints))}
-									{@render simMetric('Estimated fees', money(vm.simulation.estimatedFees, vm.simulation.baseCurrency))}
-									{@render simMetric('Est. realized G/L', money(vm.simulation.estimatedRealizedGainLoss, vm.simulation.baseCurrency))}
+									{@render simMetric(
+										'Drift before',
+										basisPoints(vm.simulation.driftBeforeBasisPoints)
+									)}
+									{@render simMetric(
+										'Drift after',
+										basisPoints(vm.simulation.driftAfterBasisPoints)
+									)}
+									{@render simMetric(
+										'Estimated fees',
+										money(vm.simulation.estimatedFees, vm.simulation.baseCurrency)
+									)}
+									{@render simMetric(
+										'Est. realized G/L',
+										money(vm.simulation.estimatedRealizedGainLoss, vm.simulation.baseCurrency)
+									)}
 								</div>
 								<div class="mt-5 space-y-2">
 									{#each trades as trade, i (i)}
-										<div class="grid items-center gap-3 rounded-lg bg-current/5 px-4 py-3 sm:grid-cols-[5rem_1fr_8rem_10rem]">
-											<span class={['text-xs font-semibold', trade.side === 'buy' && 'text-success', trade.side === 'sell' && 'text-warning']}
-												>{trade.side.toUpperCase()}</span
+										<div
+											class="grid items-center gap-3 rounded-lg bg-current/5 px-4 py-3 sm:grid-cols-[5rem_1fr_8rem_10rem]"
+										>
+											<span
+												class={[
+													'text-xs font-semibold',
+													trade.side === 'buy' && 'text-success',
+													trade.side === 'sell' && 'text-warning'
+												]}>{trade.side.toUpperCase()}</span
 											>
 											<div>
-												<p class="tabular-nums font-semibold">{trade.symbol}</p>
-												<p class="text-xs text-muted-foreground">{fixed(trade.quantity, 4)} shares @ {money(trade.price, trade.currency)}</p>
+												<p class="font-semibold tabular-nums">{trade.symbol}</p>
+												<p class="text-xs text-muted-foreground">
+													{fixed(trade.quantity, 4)} shares @ {money(trade.price, trade.currency)}
+												</p>
 											</div>
-											<span class="text-right tabular-nums">{money(trade.notional, trade.currency)}</span><label
+											<span class="text-right tabular-nums"
+												>{money(trade.notional, trade.currency)}</span
+											><label
 												><span class="sr-only">Override {trade.symbol} amount</span><NativeInput
 													name="overrideAmount[]"
 													type="number"
@@ -268,7 +335,11 @@
 													class="w-full text-right tabular-nums"
 													step="0.01"
 													aria-label="Override amount"
-												/><input type="hidden" name="overrideSymbol[]" value={trade.symbol} /></label
+												/><input
+													type="hidden"
+													name="overrideSymbol[]"
+													value={trade.symbol}
+												/></label
 											>
 										</div>
 									{/each}
@@ -285,11 +356,19 @@
 								{@render simulationHidden()}
 								{#each trades as trade, i (i)}
 									<input type="hidden" name="overrideSymbol[]" value={trade.symbol} />
-									<input type="hidden" name="overrideAmount[]" value={fixed(signedTradeAmount(trade), 2)} />
+									<input
+										type="hidden"
+										name="overrideAmount[]"
+										value={fixed(signedTradeAmount(trade), 2)}
+									/>
 								{/each}
-								<Field name="name" label="Plan name" placeholder="Plan name (optional)" class="w-full" wrapperClass="flex-1" /><SubmitButton
-									>Save planning record</SubmitButton
-								>
+								<Field
+									name="name"
+									label="Plan name"
+									placeholder="Plan name (optional)"
+									class="w-full"
+									wrapperClass="flex-1"
+								/><SubmitButton>Save planning record</SubmitButton>
 							</form>
 						{/if}
 					</section>
@@ -305,7 +384,9 @@
 						<div class="flex items-center justify-between gap-4">
 							<div>
 								<h2 class="text-lg font-semibold">Drift alerts</h2>
-								<p class="mt-1 text-sm text-muted-foreground">Resolve automatically below 80% of the threshold.</p>
+								<p class="mt-1 text-sm text-muted-foreground">
+									Resolve automatically below 80% of the threshold.
+								</p>
 							</div>
 							<span class="text-2xl font-semibold tabular-nums">{vm.alerts.length}</span>
 						</div>
@@ -316,12 +397,22 @@
 										<div>
 											<p class="font-medium">{alert.scopeName}</p>
 											<p class="mt-1 text-xs text-muted-foreground">
-												{signedBasisPoints(alert.driftBasisPoints)} · threshold {basisPoints(alert.thresholdBasisPoints)}
+												{signedBasisPoints(alert.driftBasisPoints)} · threshold {basisPoints(
+													alert.thresholdBasisPoints
+												)}
 											</p>
 										</div>
 										{#if alert.status === 'open'}
-											<form method="POST" action={act('acknowledge', { alert: alert.id })} use:enhance={withSpinner()}>
-												<NativeButton type="submit" class="text-xs font-medium text-muted-foreground hover:opacity-100">Acknowledge</NativeButton>
+											<form
+												method="POST"
+												action={act('acknowledge', { alert: alert.id })}
+												use:enhance={withSpinner()}
+											>
+												<NativeButton
+													type="submit"
+													class="text-xs font-medium text-muted-foreground hover:opacity-100"
+													>Acknowledge</NativeButton
+												>
 											</form>
 										{/if}
 									</div>
@@ -347,10 +438,19 @@
 						<h2 class="text-lg font-semibold">Discipline record</h2>
 						<div class="mt-4 grid grid-cols-2 gap-3">
 							{@render simMetric('Completed', String(vm.history.completedCount))}
-							{@render simMetric('Avg. drift before', basisPoints(vm.history.averageDriftBeforeBasisPoints))}
-							{@render simMetric('Avg. drift after', basisPoints(vm.history.averageDriftAfterBasisPoints))}
+							{@render simMetric(
+								'Avg. drift before',
+								basisPoints(vm.history.averageDriftBeforeBasisPoints)
+							)}
+							{@render simMetric(
+								'Avg. drift after',
+								basisPoints(vm.history.averageDriftAfterBasisPoints)
+							)}
 							{#if vm.history.averageDaysBetweenRebalances !== null && vm.history.averageDaysBetweenRebalances !== undefined}
-								{@render simMetric('Avg. cadence', `${fixed(vm.history.averageDaysBetweenRebalances, 0)} days`)}
+								{@render simMetric(
+									'Avg. cadence',
+									`${fixed(vm.history.averageDaysBetweenRebalances, 0)} days`
+								)}
 							{/if}
 						</div>
 					</section>
@@ -358,10 +458,12 @@
 			</vigil.CommandSplitAside>
 		</div>
 		<!-- rebalancingPlanHistory -->
-		<section class="mt-5 glass-card p-5 md:p-6" aria-labelledby="plan-history-title">
+		<section class="glass-card mt-5 p-5 md:p-6" aria-labelledby="plan-history-title">
 			<div>
 				<h2 id="plan-history-title" class="text-lg font-semibold">Plan history</h2>
-				<p class="mt-1 text-sm text-muted-foreground">Exports are instructions for manual review. Norviq never places these orders.</p>
+				<p class="mt-1 text-sm text-muted-foreground">
+					Exports are instructions for manual review. Norviq never places these orders.
+				</p>
 			</div>
 			<div class="mt-5 grid gap-3 lg:grid-cols-2">
 				{#each vm.plans as plan (plan.id)}
@@ -371,7 +473,8 @@
 								<h3 class="font-semibold">{defaultPlanName(plan.name)}</h3>
 								<p class="mt-1 text-xs text-muted-foreground">{plan.createdAt}</p>
 							</div>
-							<span class="rounded-lg bg-current/5 px-2 py-1 text-xs capitalize">{plan.status}</span>
+							<span class="rounded-lg bg-current/5 px-2 py-1 text-xs capitalize">{plan.status}</span
+							>
 						</div>
 						<div class="mt-4 grid grid-cols-3 gap-3 text-sm">
 							<div>
@@ -380,24 +483,41 @@
 							</div>
 							<div>
 								<p class="text-xs text-muted-foreground">Before</p>
-								<p class="mt-1 font-semibold tabular-nums">{basisPoints(plan.driftBeforeBasisPoints)}</p>
+								<p class="mt-1 font-semibold tabular-nums">
+									{basisPoints(plan.driftBeforeBasisPoints)}
+								</p>
 							</div>
 							<div>
 								<p class="text-xs text-muted-foreground">After</p>
-								<p class="mt-1 font-semibold tabular-nums">{basisPoints(plan.driftAfterBasisPoints)}</p>
+								<p class="mt-1 font-semibold tabular-nums">
+									{basisPoints(plan.driftAfterBasisPoints)}
+								</p>
 							</div>
 						</div>
 						<div class="mt-4 flex flex-wrap gap-2">
-							<a class="btn-secondary" data-sveltekit-reload href={`/portfolio/rebalancing/${sel.id}/plans/${plan.id}/export.csv`}>CSV</a><a
+							<a
+								class="btn-secondary"
+								data-sveltekit-reload
+								href={`/portfolio/rebalancing/${sel.id}/plans/${plan.id}/export.csv`}>CSV</a
+							><a
 								class="btn-secondary"
 								data-sveltekit-reload
 								href={`/portfolio/rebalancing/${sel.id}/plans/${plan.id}/export.pdf`}>PDF</a
 							>
 							{#if plan.status === 'draft' || plan.status === 'exported'}
-								<form method="POST" action={act('complete', { plan: plan.id })} use:enhance={withSpinner()} class="flex flex-1 gap-2">
-									<Field name="note" placeholder="Completion note" class="min-w-0" wrapperClass="flex-1" aria-label="Completion note" /><SubmitButton
-										>Log complete</SubmitButton
-									>
+								<form
+									method="POST"
+									action={act('complete', { plan: plan.id })}
+									use:enhance={withSpinner()}
+									class="flex flex-1 gap-2"
+								>
+									<Field
+										name="note"
+										placeholder="Completion note"
+										class="min-w-0"
+										wrapperClass="flex-1"
+										aria-label="Completion note"
+									/><SubmitButton>Log complete</SubmitButton>
 								</form>
 							{/if}
 						</div>
@@ -407,7 +527,9 @@
 			{#if vm.plans.length === 0}
 				<div class="mt-5 rounded-lg border border-dashed border-current/20 p-8 text-center">
 					<p class="font-medium">No planning records yet</p>
-					<p class="mt-2 text-sm text-muted-foreground">Run the simulator, review the exact trades, then save a plan.</p>
+					<p class="mt-2 text-sm text-muted-foreground">
+						Run the simulator, review the exact trades, then save a plan.
+					</p>
 				</div>
 			{/if}
 		</section>

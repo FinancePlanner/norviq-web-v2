@@ -2,14 +2,23 @@
 	// boards.templ banners(viewer, notice, errorText).
 	import type { Viewer } from './boards.js';
 
-	let { viewer, notice = '', errorText = '' }: { viewer: Viewer; notice?: string; errorText?: string } = $props();
+	let {
+		viewer,
+		notice = '',
+		errorText = ''
+	}: { viewer: Viewer; notice?: string; errorText?: string } = $props();
 </script>
 
 {#if notice}
-	<p class="mb-4 rounded-lg border border-[var(--color-border)] px-4 py-3 text-sm" role="status">{notice}</p>
+	<p class="mb-4 rounded-lg border border-[var(--color-border)] px-4 py-3 text-sm" role="status">
+		{notice}
+	</p>
 {/if}
 {#if errorText}
-	<p class="mb-4 rounded-lg border border-[var(--color-danger)] px-4 py-3 text-sm text-[var(--color-danger)]" role="alert">
+	<p
+		class="mb-4 rounded-lg border border-[var(--color-danger)] px-4 py-3 text-sm text-[var(--color-danger)]"
+		role="alert"
+	>
 		{errorText}
 	</p>
 {/if}

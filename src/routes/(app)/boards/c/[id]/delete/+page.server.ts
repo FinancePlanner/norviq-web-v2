@@ -1,7 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { boardReturnTo, pathEscape, withNotice } from '#lib/features/social/boards/boards.js';
-import { boardsFailure, deleteBoardComment, formValue, methodNotAllowed } from '#lib/features/social/boards/boards.server.js';
+import {
+	boardsFailure,
+	deleteBoardComment,
+	formValue,
+	methodNotAllowed
+} from '#lib/features/social/boards/boards.server.js';
 
 // POST /boards/c/{id}/delete (handlers.BoardsDeleteComment). Also posted to by
 // /admin/community with return_to. POST-only, as in Go.

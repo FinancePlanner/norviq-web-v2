@@ -26,7 +26,10 @@
 	<p class="onboarding-lead mt-2">Choose how you want to populate your portfolio.</p>
 	<div class="onboarding-choice-grid mt-8 grid gap-4 md:grid-cols-3">
 		{#each choices as c (c.href)}
-			<a href={c.href} class="onboarding-choice onboarding-step-card glass-card p-6 transition hover:brightness-[1.02]">
+			<a
+				href={c.href}
+				class="onboarding-choice onboarding-step-card glass-card p-6 transition hover:brightness-[1.02]"
+			>
 				<span class="onboarding-choice-icon" aria-hidden="true">
 					<Icon name={c.icon} class="h-5 w-5" />
 				</span>
@@ -34,7 +37,11 @@
 				<p class="mt-2 text-sm text-muted-foreground">{c.description}</p>
 			</a>
 		{/each}
-		<form method="POST" action="/onboarding/skip" class="onboarding-choice onboarding-step-card glass-card p-6">
+		<form
+			method="POST"
+			action="/onboarding/skip"
+			class="onboarding-choice onboarding-step-card glass-card p-6"
+		>
 			<input type="hidden" name="step" value="import" />
 			<span class="onboarding-choice-icon opacity-40" aria-hidden="true">
 				<Icon name="arrow-right" class="h-5 w-5" />

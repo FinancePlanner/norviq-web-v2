@@ -22,10 +22,15 @@ type Locals = Pick<App.Locals, 'session'>;
  * before redirecting, e.g. after login: ('user_logged_in', { method: 'email' }).
  * Go also renewed the session token here; the sealed cookie is re-issued anyway.
  */
-export async function setPostHogCaptureOnce(locals: Locals, event: string, properties?: Record<string, unknown> | null): Promise<void> {
+export async function setPostHogCaptureOnce(
+	locals: Locals,
+	event: string,
+	properties?: Record<string, unknown> | null
+): Promise<void> {
 	const session = locals.session;
 	session.data.flags[KEY_POSTHOG_CAPTURE_EVENT] = event;
-	if (!properties || Object.keys(properties).length === 0) delete session.data.flags[KEY_POSTHOG_CAPTURE_PROPS];
+	if (!properties || Object.keys(properties).length === 0)
+		delete session.data.flags[KEY_POSTHOG_CAPTURE_PROPS];
 	else session.data.flags[KEY_POSTHOG_CAPTURE_PROPS] = JSON.stringify(properties);
 	await session.save();
 }
@@ -61,12 +66,17 @@ export async function runtimeConfig(event: Pick<RequestEvent, 'locals'>): Promis
 	const cfg = config();
 	const payload: RuntimeConfig = {};
 	if (cfg.sentryDSN) {
-		payload.sentry = { dsn: cfg.sentryDSN, environment: cfg.sentryEnvironment, tracesSampleRate: DEFAULT_TRACES_SAMPLE_RATE };
+		payload.sentry = {
+			dsn: cfg.sentryDSN,
+			environment: cfg.sentryEnvironment,
+			tracesSampleRate: DEFAULT_TRACES_SAMPLE_RATE
+		};
 	}
 	if (cfg.postHogProjectToken) {
 		const session = event.locals.session;
 		payload.posthog = { token: cfg.postHogProjectToken, host: cfg.postHogHost };
-		if (session.isAuthenticated && session.auth?.userId) payload.posthog.userId = session.auth.userId;
+		if (session.isAuthenticated && session.auth?.userId)
+			payload.posthog.userId = session.auth.userId;
 		const capture = await takePostHogCaptureOnce(event.locals);
 		if (capture) payload.posthog.captureOnce = capture;
 	}

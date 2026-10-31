@@ -18,7 +18,10 @@ import {
 	type PortfolioMember,
 	type PortfolioPage
 } from '#lib/features/portfolio/workspace/api.server.js';
-import { pilotFollowingByPortfolio, pilotsEnabled } from '#lib/features/portfolio/workspace/pilots.server.js';
+import {
+	pilotFollowingByPortfolio,
+	pilotsEnabled
+} from '#lib/features/portfolio/workspace/pilots.server.js';
 import { goTimeFormat } from '#lib/features/portfolio/workspace/dates.js';
 
 // handlers/portfolio_workspace.go — GET /portfolios and its POST forms.
@@ -52,11 +55,14 @@ export const load: PageServerLoad = async (event) => {
 	vm.selected = vm.portfolios.find((p) => p.id === selectedID) ?? null;
 	if (vm.selected) {
 		const base = '/v1/portfolios/' + escapePath(vm.selected.id);
-		const quiet = <T>(path: string, fallback: T) => apiJSON<T>(event, 'GET', path).catch(() => fallback);
+		const quiet = <T>(path: string, fallback: T) =>
+			apiJSON<T>(event, 'GET', path).catch(() => fallback);
 		const [members, cash, invitations] = await Promise.all([
 			quiet<PortfolioMember[]>(base + '/members', []),
 			quiet<PortfolioCashPosition[]>(base + '/cash', []),
-			vm.selected.capabilities?.canManageMembers ? quiet<PortfolioInvitation[]>(base + '/invitations', []) : Promise.resolve([])
+			vm.selected.capabilities?.canManageMembers
+				? quiet<PortfolioInvitation[]>(base + '/invitations', [])
+				: Promise.resolve([])
 		]);
 		vm.members = members ?? [];
 		vm.cash = cash ?? [];
@@ -71,7 +77,8 @@ function redirectWorkspace(portfolioID: string, message: string): never {
 	const values: Record<string, string> = {};
 	if (portfolioID) values.portfolio = portfolioID;
 	const lower = message.toLowerCase();
-	if (['could not', 'invalid', 'requires', 'limit'].some((w) => lower.includes(w))) values.error = message;
+	if (['could not', 'invalid', 'requires', 'limit'].some((w) => lower.includes(w)))
+		values.error = message;
 	else values.notice = message;
 	const encoded = encodeQuery(values);
 	safeRedirect(303, '/portfolios' + (encoded ? '?' + encoded : ''));
@@ -120,10 +127,18 @@ export const actions: Actions = {
 		await requireFeature(event, Feature.AdvancedPortfolios, 'Extra portfolios');
 		const id = portfolioID(await formData(event));
 		if (id === '') redirectWorkspace('', 'Invalid portfolio.');
-		const input = { name: 'What if - ' + goTimeFormat(new Date(), '2 Jan 2006'), copyRetirementPlan: true };
+		const input = {
+			name: 'What if - ' + goTimeFormat(new Date(), '2 Jan 2006'),
+			copyRetirementPlan: true
+		};
 		let created: ManagedPortfolio;
 		try {
-			created = await apiJSON<ManagedPortfolio>(event, 'POST', '/v1/portfolios/' + escapePath(id) + '/clone', input);
+			created = await apiJSON<ManagedPortfolio>(
+				event,
+				'POST',
+				'/v1/portfolios/' + escapePath(id) + '/clone',
+				input
+			);
 		} catch (err) {
 			redirectWorkspace(id, portfolioAPIErrorMessage(err, 'Could not create sandbox.'));
 		}

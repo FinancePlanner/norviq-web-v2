@@ -55,7 +55,10 @@ export function parseIntGo(value: FormDataEntryValue | null | undefined): number
 }
 
 /** parseOptionalFloat: "" → undefined, invalid → error. */
-export function parseOptionalFloat(raw: FormDataEntryValue | null | undefined): { value?: number; error?: true } {
+export function parseOptionalFloat(raw: FormDataEntryValue | null | undefined): {
+	value?: number;
+	error?: true;
+} {
 	const s = String(raw ?? '').trim();
 	if (s === '') return {};
 	if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s)) return { error: true };
@@ -70,7 +73,9 @@ export function formChoice(value: string, ...allowed: string[]): string {
 /** validUUID (uuid.Parse); returns the canonical lower-case form. */
 export function validUUID(raw: string | null | undefined): string | null {
 	const v = (raw ?? '').trim();
-	return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) ? v.toLowerCase() : null;
+	return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
+		? v.toLowerCase()
+		: null;
 }
 
 export const formString = (form: FormData, key: string) => String(form.get(key) ?? '');

@@ -8,7 +8,11 @@
 </script>
 
 <div class="groups-channels-header">
-	<a href={'/groups/' + vm.groupId + '/settings'} class="min-w-0 flex-1 truncate font-semibold" title="Group info">
+	<a
+		href={'/groups/' + vm.groupId + '/settings'}
+		class="min-w-0 flex-1 truncate font-semibold"
+		title="Group info"
+	>
 		{#if vm.emoji}
 			<span aria-hidden="true">{vm.emoji}</span>
 		{/if}
@@ -36,7 +40,10 @@
 	</a>
 {/if}
 {#if vm.canInvite}
-	<a href={'/groups/' + vm.groupId + '/settings#invite'} class="btn-secondary mx-3 mt-4 flex items-center justify-center gap-2 px-3">
+	<a
+		href={'/groups/' + vm.groupId + '/settings#invite'}
+		class="btn-secondary mx-3 mt-4 flex items-center justify-center gap-2 px-3"
+	>
 		<Icon name="user-plus" class="h-4 w-4" />
 		Invite friends
 	</a>

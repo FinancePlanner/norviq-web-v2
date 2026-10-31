@@ -1,9 +1,23 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
-import { formatCurrency, formatFloat, formatPercentValue as formatPercent, formatSignedCurrency, formatSignedPercent } from '#lib/format.js';
+import {
+	formatCurrency,
+	formatFloat,
+	formatPercentValue as formatPercent,
+	formatSignedCurrency,
+	formatSignedPercent
+} from '#lib/format.js';
 import { loadEarningsVisualizerViewModel } from '../earningsviz/visualizer.server.js';
 import { emptyVisualizer } from '../earningsviz/types.js';
-import { civilDate, formatISODate, formatJan2, labelTitle, MONTH_NAMES, monthAbbrev, tryJSON } from './fetch.server.js';
+import {
+	civilDate,
+	formatISODate,
+	formatJan2,
+	labelTitle,
+	MONTH_NAMES,
+	monthAbbrev,
+	tryJSON
+} from './fetch.server.js';
 import type {
 	DividendsViewModel,
 	EarningsDayVM,
@@ -31,7 +45,11 @@ export async function loadSectorGainsViewModel(event: RequestEvent): Promise<Sec
 		hasData: false,
 		loadError: false
 	};
-	const res = await tryJSON<S['SectorGainsResponse']>(event, 'GET', '/v1/statistics/stocks/sector-gains');
+	const res = await tryJSON<S['SectorGainsResponse']>(
+		event,
+		'GET',
+		'/v1/statistics/stocks/sector-gains'
+	);
 	if (!res.data) {
 		vm.loadError = true;
 		return vm;
@@ -41,20 +59,21 @@ export async function loadSectorGainsViewModel(event: RequestEvent): Promise<Sec
 	vm.totalMarketValue = formatCurrency(payload.totalMarketValue);
 
 	const sectors = payload.sectors ?? [];
-	vm.rows = sectors.map(
-		(sector): SectorGainsRowVM => ({
-			sector: sector.sector,
-			marketValue: formatCurrency(sector.marketValue),
-			costBasis: formatCurrency(sector.costBasis),
-			unrealizedPnl: formatSignedCurrency(sector.unrealizedPnl),
-			unrealizedPnlPercent: formatSignedPercent(sector.unrealizedPnlPercent),
-			weightPercent: formatPercent(sector.weightPercent),
-			positive: sector.unrealizedPnl >= 0
-		})
-	);
+	vm.rows = sectors.map((sector): SectorGainsRowVM => ({
+		sector: sector.sector,
+		marketValue: formatCurrency(sector.marketValue),
+		costBasis: formatCurrency(sector.costBasis),
+		unrealizedPnl: formatSignedCurrency(sector.unrealizedPnl),
+		unrealizedPnlPercent: formatSignedPercent(sector.unrealizedPnlPercent),
+		weightPercent: formatPercent(sector.weightPercent),
+		positive: sector.unrealizedPnl >= 0
+	}));
 	vm.hasData = vm.rows.length > 0;
 	if (vm.hasData) {
-		vm.chart = { labels: sectors.map((s) => s.sector), values: sectors.map((s) => s.unrealizedPnl) };
+		vm.chart = {
+			labels: sectors.map((s) => s.sector),
+			values: sectors.map((s) => s.unrealizedPnl)
+		};
 		vm.subtitle = `${vm.rows.length} sectors · unrealized P/L by sector`;
 	}
 	return vm;
@@ -70,7 +89,11 @@ export function emptyEarningsViewModel(now = new Date()): EarningsViewModel {
 	};
 }
 
-export async function loadEarningsViewModel(event: RequestEvent, selectedSymbol: string, selectedFiling: string): Promise<EarningsViewModel> {
+export async function loadEarningsViewModel(
+	event: RequestEvent,
+	selectedSymbol: string,
+	selectedFiling: string
+): Promise<EarningsViewModel> {
 	const now = new Date();
 	const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
 	const monthEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0));
@@ -90,7 +113,12 @@ export async function loadEarningsViewModel(event: RequestEvent, selectedSymbol:
 	const eventsByDay = new Map<number, S['EarningsResponse'][]>();
 	for (const ev of events) {
 		const d = civilDate(ev.date);
-		if (!d || d.getUTCMonth() !== monthStart.getUTCMonth() || d.getUTCFullYear() !== monthStart.getUTCFullYear()) continue;
+		if (
+			!d ||
+			d.getUTCMonth() !== monthStart.getUTCMonth() ||
+			d.getUTCFullYear() !== monthStart.getUTCFullYear()
+		)
+			continue;
 		const day = d.getUTCDate();
 		eventsByDay.set(day, [...(eventsByDay.get(day) ?? []), ev]);
 	}
@@ -99,15 +127,34 @@ export async function loadEarningsViewModel(event: RequestEvent, selectedSymbol:
 	vm.upcoming = mapUpcomingEarnings(events, holdings, now);
 	let visualizerSymbol = selectedSymbol.trim().toUpperCase();
 	if (visualizerSymbol === '' && vm.upcoming.length > 0) visualizerSymbol = vm.upcoming[0].symbol;
-	vm.visualizer = await loadEarningsVisualizerViewModel(event, visualizerSymbol, selectedFiling, '/portfolio/earnings');
+	vm.visualizer = await loadEarningsVisualizerViewModel(
+		event,
+		visualizerSymbol,
+		selectedFiling,
+		'/portfolio/earnings'
+	);
 	return vm;
 }
 
-function buildEarningsCalendar(monthStart: Date, monthEnd: Date, today: Date, eventsByDay: Map<number, S['EarningsResponse'][]>): EarningsDayVM[] {
-	const pad = (): EarningsDayVM => ({ day: 0, inMonth: false, hasEvents: false, isToday: false, eventCount: 0, symbols: [] });
+function buildEarningsCalendar(
+	monthStart: Date,
+	monthEnd: Date,
+	today: Date,
+	eventsByDay: Map<number, S['EarningsResponse'][]>
+): EarningsDayVM[] {
+	const pad = (): EarningsDayVM => ({
+		day: 0,
+		inMonth: false,
+		hasEvents: false,
+		isToday: false,
+		eventCount: 0,
+		symbols: []
+	});
 	const cells: EarningsDayVM[] = [];
 	for (let i = 0; i < monthStart.getUTCDay(); i++) cells.push(pad());
-	const sameMonth = today.getUTCFullYear() === monthStart.getUTCFullYear() && today.getUTCMonth() === monthStart.getUTCMonth();
+	const sameMonth =
+		today.getUTCFullYear() === monthStart.getUTCFullYear() &&
+		today.getUTCMonth() === monthStart.getUTCMonth();
 	for (let day = 1; day <= monthEnd.getUTCDate(); day++) {
 		const dayEvents = eventsByDay.get(day) ?? [];
 		const symbols = dayEvents
@@ -126,9 +173,15 @@ function buildEarningsCalendar(monthStart: Date, monthEnd: Date, today: Date, ev
 	return cells;
 }
 
-function mapUpcomingEarnings(events: S['EarningsResponse'][], holdings: Set<string> | null, now: Date): EarningsEventVM[] {
+function mapUpcomingEarnings(
+	events: S['EarningsResponse'][],
+	holdings: Set<string> | null,
+	now: Date
+): EarningsEventVM[] {
 	const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-	const dated = events.map((ev) => ({ ev, date: civilDate(ev.date) })).filter((x): x is { ev: S['EarningsResponse']; date: Date } => x.date !== null);
+	const dated = events
+		.map((ev) => ({ ev, date: civilDate(ev.date) }))
+		.filter((x): x is { ev: S['EarningsResponse']; date: Date } => x.date !== null);
 	dated.sort((a, b) => a.date.getTime() - b.date.getTime());
 
 	const out: EarningsEventVM[] = [];
@@ -141,7 +194,8 @@ function mapUpcomingEarnings(events: S['EarningsResponse'][], holdings: Set<stri
 			hasPortfolio: holdings?.has(ev.symbol.toUpperCase()) ?? false,
 			detailURL: '/portfolio/' + ev.symbol.toLowerCase() + '/earnings'
 		};
-		if (ev.epsEstimated !== null && ev.epsEstimated !== undefined) row.epsEstimate = '$' + formatFloat(ev.epsEstimated, 2);
+		if (ev.epsEstimated !== null && ev.epsEstimated !== undefined)
+			row.epsEstimate = '$' + formatFloat(ev.epsEstimated, 2);
 		out.push(row);
 		if (out.length >= 12) break;
 	}
@@ -154,7 +208,11 @@ export function emptyDividendsViewModel(): DividendsViewModel {
 
 export async function loadDividendsViewModel(event: RequestEvent): Promise<DividendsViewModel> {
 	const vm = emptyDividendsViewModel();
-	const res = await tryJSON<S['PortfolioDividendsResponse']>(event, 'GET', '/v1/portfolio/dividends');
+	const res = await tryJSON<S['PortfolioDividendsResponse']>(
+		event,
+		'GET',
+		'/v1/portfolio/dividends'
+	);
 	if (res.failed) {
 		vm.loadError = true;
 		return vm;
@@ -188,7 +246,10 @@ export async function loadDividendsViewModel(event: RequestEvent): Promise<Divid
 
 const NEWS_FILTERS = new Set(['holdings', 'watchlist', 'sectors', 'market', 'saved']);
 
-export async function loadNewsViewModel(event: RequestEvent, filterRaw: string): Promise<NewsViewModel> {
+export async function loadNewsViewModel(
+	event: RequestEvent,
+	filterRaw: string
+): Promise<NewsViewModel> {
 	let filter = filterRaw.trim().toLowerCase();
 	if (!NEWS_FILTERS.has(filter)) filter = 'for_you';
 	const vm: NewsViewModel = { articles: [], filter, loadError: false, isPro: false };
@@ -203,7 +264,13 @@ export async function loadNewsViewModel(event: RequestEvent, filterRaw: string):
 		return vm;
 	}
 
-	const res = await tryJSON<S['ThesisWatchFeedResponse']>(event, 'GET', '/v1/news/thesis-watch', undefined, { query: { scope: filter, limit: 30 } });
+	const res = await tryJSON<S['ThesisWatchFeedResponse']>(
+		event,
+		'GET',
+		'/v1/news/thesis-watch',
+		undefined,
+		{ query: { scope: filter, limit: 30 } }
+	);
 	if (!res.data) {
 		vm.loadError = true;
 		return vm;
@@ -218,7 +285,8 @@ const trimmed = (v: string | null | undefined) => (v ?? '').trim();
 function mapThesisWatchArticleVM(story: S['ThesisWatchStory']): NewsArticleVM {
 	let summary = '';
 	if (story.summary !== undefined && story.summary !== null) summary = story.summary.trim();
-	else if (story.providerSummary !== undefined && story.providerSummary !== null) summary = story.providerSummary.trim();
+	else if (story.providerSummary !== undefined && story.providerSummary !== null)
+		summary = story.providerSummary.trim();
 	return {
 		id: story.id,
 		headline: story.headline,

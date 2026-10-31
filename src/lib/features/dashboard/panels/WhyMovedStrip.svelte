@@ -47,10 +47,18 @@
 			<div class="why-moved-chips why-moved-chips-timeline">
 				{#each vm.moverChips as chip, i (i)}
 					<a class="why-moved-chip row-hover" href={'/portfolio/' + chip.symbol}>
-						<span class="tabular-nums font-bold">{chip.symbol}</span>
-						<span class={['tabular-nums font-semibold', chip.changePct >= 0 && 'text-success', chip.changePct < 0 && 'text-danger']}>{chip.change}</span>
+						<span class="font-bold tabular-nums">{chip.symbol}</span>
+						<span
+							class={[
+								'font-semibold tabular-nums',
+								chip.changePct >= 0 && 'text-success',
+								chip.changePct < 0 && 'text-danger'
+							]}>{chip.change}</span
+						>
 						{#if chip.sentimentLabel}
-							<span class={['why-moved-sentiment', sentimentClass(chip.sentimentLabel)]}>{chip.sentimentLabel} · {chip.postCount}</span>
+							<span class={['why-moved-sentiment', sentimentClass(chip.sentimentLabel)]}
+								>{chip.sentimentLabel} · {chip.postCount}</span
+							>
 						{/if}
 					</a>
 				{/each}
@@ -61,11 +69,19 @@
 				{#each vm.indexChips as index, i (i)}
 					<span class="why-moved-index">
 						{index.label}
-						<span class={['tabular-nums', index.changePct >= 0 && 'text-success', index.changePct < 0 && 'text-danger']}>{index.change}</span>
+						<span
+							class={[
+								'tabular-nums',
+								index.changePct >= 0 && 'text-success',
+								index.changePct < 0 && 'text-danger'
+							]}>{index.change}</span
+						>
 					</span>
 				{/each}
 				{#if !vm.isPro && vm.moverChips.length > 0}
-					<a href="/settings/subscription" class="why-moved-teaser">See the posts behind the sentiment →</a>
+					<a href="/settings/subscription" class="why-moved-teaser"
+						>See the posts behind the sentiment →</a
+					>
 				{/if}
 			</div>
 		{/if}

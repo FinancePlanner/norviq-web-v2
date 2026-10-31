@@ -4,7 +4,11 @@
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
 import { portfolioAPIErrorMessage } from '#lib/features/dashboard/goals/form.server.js';
-import type { GrowthProjectionResponse, PlanningPrefill, RetirementPlanningResponse } from './types.js';
+import type {
+	GrowthProjectionResponse,
+	PlanningPrefill,
+	RetirementPlanningResponse
+} from './types.js';
 import {
 	defaultGrowDraft,
 	defaultRetireDraft,
@@ -85,7 +89,12 @@ export async function growPreview(event: RequestEvent): Promise<{ vm: GrowViewMo
 		return { vm };
 	}
 	try {
-		const response = await apiJSON<GrowthProjectionResponse>(event, 'POST', planningBase + '/projection', parsed.request);
+		const response = await apiJSON<GrowthProjectionResponse>(
+			event,
+			'POST',
+			planningBase + '/projection',
+			parsed.request
+		);
 		vm.result = growResultViewModel(response, vm.draft, vm.currency);
 		vm.chart = growChart(response);
 	} catch (err) {
@@ -130,7 +139,8 @@ export async function loadRetireViewModel(event: RequestEvent): Promise<RetireVi
 		vm.draft.initialAmount = formatRoundedAmount(prefill.portfolioValue);
 		vm.prefilledValue = true;
 	}
-	if (prefill.suggestedRetirementAge != null) vm.draft.retirementAge = String(prefill.suggestedRetirementAge);
+	if (prefill.suggestedRetirementAge != null)
+		vm.draft.retirementAge = String(prefill.suggestedRetirementAge);
 	return vm;
 }
 
@@ -161,7 +171,12 @@ export async function retirePreview(event: RequestEvent): Promise<{ vm: RetireVi
 		return { vm };
 	}
 	try {
-		const response = await apiJSON<RetirementPlanningResponse>(event, 'POST', planningBase + '/retirement', parsed.request);
+		const response = await apiJSON<RetirementPlanningResponse>(
+			event,
+			'POST',
+			planningBase + '/retirement',
+			parsed.request
+		);
 		vm.result = retireResultViewModel(response, vm.currency);
 		vm.chart = retireChart(response);
 	} catch (err) {

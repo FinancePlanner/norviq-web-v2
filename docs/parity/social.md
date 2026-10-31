@@ -44,6 +44,7 @@ so it 404s exactly where Go does. Boards have no flag in Go and none here.
 - [x] POST /groups/{g}/delete → [groupID]/delete/+server.ts
 
 Notes:
+
 - Live chat: Go streams SSE, so v2 keeps SSE (EventSource on /groups/events) rather than polling.
   Rows are built once on the server (`view.ts buildRows`, viewer timezone from the `tz` cookie) and
   rendered by `MessageRowView.svelte`; day-separator dedupe, scroll anchoring on older pages,
@@ -51,7 +52,7 @@ Notes:
   mark-read throttle and sidebar refresh are ported from groups-chat.js.
 - Backend ids are upper-case UUIDs; path ids are normalised to lower case, so ids compare
   case-insensitively (`sameID`).
-- Deviation: a community ban on a *form post* redirects back with the banned text as ?error=
+- Deviation: a community ban on a _form post_ redirects back with the banned text as ?error=
   (Go rendered the banned page in place; a +server endpoint can't render a page). Page loads still
   render the banned page via (app)/groups/+error.svelte.
 - Not in scope: GET /g/{code} (GroupsRedeemInvite / invite page) — public prefix, other domain.

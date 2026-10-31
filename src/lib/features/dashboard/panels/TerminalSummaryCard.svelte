@@ -35,7 +35,9 @@
 						<p class="text-title3 font-semibold tabular-nums">{vm.monthlyAutobuyTotal}</p>
 					</div>
 				{/if}
-				<p class="text-subhead text-muted-foreground">Pick a future market cap and share count, and see how many shares your target takes.</p>
+				<p class="text-subhead text-muted-foreground">
+					Pick a future market cap and share count, and see how many shares your target takes.
+				</p>
 				<div class="mt-3">
 					<SecondaryButton href="/terminal">Plan a position</SecondaryButton>
 				</div>
@@ -55,11 +57,16 @@
 						<li class="space-y-1">
 							<div class="flex justify-between gap-2 text-subhead">
 								<span class="font-semibold">{row.ticker}</span>
-								<span class="tabular-nums text-muted-foreground">{row.sharesNeeded} shares at {row.terminalSharePrice}</span>
+								<span class="text-muted-foreground tabular-nums"
+									>{row.sharesNeeded} shares at {row.terminalSharePrice}</span
+								>
 							</div>
 							<div class="flex items-center gap-2">
 								<div class="h-1 flex-1 overflow-hidden rounded-full bg-muted">
-									<div class="h-full rounded-full bg-primary" style={`width:${formatFloat(row.progressPct, 1)}%`}></div>
+									<div
+										class="h-full rounded-full bg-primary"
+										style={`width:${formatFloat(row.progressPct, 1)}%`}
+									></div>
 								</div>
 								<span class="text-footnote tabular-nums">{row.progressLabel}</span>
 							</div>

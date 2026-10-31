@@ -13,7 +13,11 @@ export const AI_CONSENT_REQUIRED_REASON = 'AI_CONSENT_REQUIRED';
 /** true when consent is granted, or when the lookup failed (defer to backend). */
 export async function aiConsentGranted(event: RequestEvent): Promise<boolean> {
 	try {
-		const consent = await apiJSON<{ consentedAt?: string | null }>(event, 'GET', '/v1/users/ai-consent');
+		const consent = await apiJSON<{ consentedAt?: string | null }>(
+			event,
+			'GET',
+			'/v1/users/ai-consent'
+		);
 		return !!consent?.consentedAt;
 	} catch (err) {
 		console.warn('ai consent lookup failed; deferring to backend', event.url.pathname, err);

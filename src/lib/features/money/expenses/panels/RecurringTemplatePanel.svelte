@@ -9,7 +9,13 @@
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import SubmitButton from '#lib/components/norviq/SubmitButton.svelte';
 	import { panelEnhance } from '../panel.js';
-	import { categoryOptions, frequencyOptions, pillarOptions, splitModeOptions, type RecurringTemplateFormVM } from '../vm.js';
+	import {
+		categoryOptions,
+		frequencyOptions,
+		pillarOptions,
+		splitModeOptions,
+		type RecurringTemplateFormVM
+	} from '../vm.js';
 	import PanelHeader from './PanelHeader.svelte';
 	import CancelButton from './CancelButton.svelte';
 
@@ -17,8 +23,12 @@
 	let vm = $state(untrack(() => initial));
 	let failure = $state('');
 
-	const action = $derived(vm.isEdit ? `/expenses/recurring/${vm.templateID}?/update` : '/expenses/recurring');
-	const deleteAction = $derived(`/expenses/recurring/${vm.templateID}?/delete&month=${encodeURIComponent(vm.monthQuery)}`);
+	const action = $derived(
+		vm.isEdit ? `/expenses/recurring/${vm.templateID}?/update` : '/expenses/recurring'
+	);
+	const deleteAction = $derived(
+		`/expenses/recurring/${vm.templateID}?/delete&month=${encodeURIComponent(vm.monthQuery)}`
+	);
 </script>
 
 <div id="expense-action-panel" class="vigil-modal-body">
@@ -31,13 +41,47 @@
 			class="portfolio-form mt-6 space-y-6"
 			method="POST"
 			{action}
-			use:enhance={panelEnhance<RecurringTemplateFormVM>((next) => (vm = next), (_, msg) => (failure = msg || 'Could not save recurring template.'))}
+			use:enhance={panelEnhance<RecurringTemplateFormVM>(
+				(next) => (vm = next),
+				(_, msg) => (failure = msg || 'Could not save recurring template.')
+			)}
 		>
 			<input type="hidden" name="month" value={vm.monthQuery} />
-			<Field id="recurring-title" name="title" label="Title" value={vm.title} required wrapperClass="space-y-2" />
-			<Field id="recurring-amount" name="amount" label="Amount" type="number" value={vm.amount} required wrapperClass="space-y-2" min="0.01" step="0.01" />
-			<SelectField id="recurring-pillar" name="pillar" label="Pillar" required wrapperClass="space-y-2" options={pillarOptions(vm.pillar)} />
-			<SelectField id="recurring-frequency" name="frequency" label="Frequency" required wrapperClass="space-y-2" options={frequencyOptions(vm.frequency)} />
+			<Field
+				id="recurring-title"
+				name="title"
+				label="Title"
+				value={vm.title}
+				required
+				wrapperClass="space-y-2"
+			/>
+			<Field
+				id="recurring-amount"
+				name="amount"
+				label="Amount"
+				type="number"
+				value={vm.amount}
+				required
+				wrapperClass="space-y-2"
+				min="0.01"
+				step="0.01"
+			/>
+			<SelectField
+				id="recurring-pillar"
+				name="pillar"
+				label="Pillar"
+				required
+				wrapperClass="space-y-2"
+				options={pillarOptions(vm.pillar)}
+			/>
+			<SelectField
+				id="recurring-frequency"
+				name="frequency"
+				label="Frequency"
+				required
+				wrapperClass="space-y-2"
+				options={frequencyOptions(vm.frequency)}
+			/>
 			{#if vm.categories.length > 0}
 				<SelectField
 					id="recurring-category"
@@ -48,7 +92,13 @@
 				/>
 			{/if}
 			{#if vm.hasPartner}
-				<SelectField id="recurring-split" name="split_mode" label="Split" wrapperClass="space-y-2" options={splitModeOptions(vm.splitMode)} />
+				<SelectField
+					id="recurring-split"
+					name="split_mode"
+					label="Split"
+					wrapperClass="space-y-2"
+					options={splitModeOptions(vm.splitMode)}
+				/>
 				<Field
 					id="recurring-share"
 					name="user_share_percent"

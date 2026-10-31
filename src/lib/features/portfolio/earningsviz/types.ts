@@ -41,7 +41,14 @@ export interface VisualizerVM {
 	netIncome: FlowMetricVM;
 }
 
-export const emptyFlowMetric = (): FlowMetricVM => ({ label: '', value: '', subtext: '', tone: '', widthPercent: '', visible: false });
+export const emptyFlowMetric = (): FlowMetricVM => ({
+	label: '',
+	value: '',
+	subtext: '',
+	tone: '',
+	widthPercent: '',
+	visible: false
+});
 
 export function emptyVisualizer(): VisualizerVM {
 	return {

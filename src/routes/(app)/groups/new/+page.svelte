@@ -17,7 +17,10 @@
 
 <GroupsMeta title="New group - Norviq" />
 <div class="app-page-content vigil-document-page groups-new-page">
-	<vigil.ModernPageHeader title="New group" subtitle="It starts with #general. You can add channels and invite friends next." />
+	<vigil.ModernPageHeader
+		title="New group"
+		subtitle="It starts with #general. You can add channels and invite friends next."
+	/>
 	<Notices error={vm.error} />
 	<form method="post" action="/groups/new" class="glass-card dash-panel space-y-5 p-5">
 		<fieldset>
@@ -25,7 +28,13 @@
 			<div class="mt-2 flex flex-wrap gap-2">
 				{#each topics as option (option.value)}
 					<label class="groups-topic-chip">
-						<input type="radio" name="topic" value={option.value} class="sr-only" bind:group={topic} />
+						<input
+							type="radio"
+							name="topic"
+							value={option.value}
+							class="sr-only"
+							bind:group={topic}
+						/>
 						<span>{option.label}</span>
 					</label>
 				{/each}
@@ -41,19 +50,44 @@
 			/>
 		</div>
 		<Field name="name" label="Name" value={vm.form.name} required placeholder="AAPL holders" />
-		<Field name="emoji" label="Icon" value={vm.form.emoji} placeholder="🍎" description="One emoji. Leave it empty to use the first letter." />
+		<Field
+			name="emoji"
+			label="Icon"
+			value={vm.form.emoji}
+			placeholder="🍎"
+			description="One emoji. Leave it empty to use the first letter."
+		/>
 		<TextareaField name="description" label="What it's for" value={vm.form.description} rows={3} />
 		<fieldset>
 			<legend class="field-label">Who can join</legend>
 			<div class="mt-2 space-y-2">
 				<label class="flex items-start gap-3">
-					<NativeInput name="visibility" type="radio" value="private" checked={vm.form.visibility !== 'public'} />
-					<span><span class="font-medium">Private</span><span class="block text-sm text-muted-foreground">Only people you invite.</span></span>
+					<NativeInput
+						name="visibility"
+						type="radio"
+						value="private"
+						checked={vm.form.visibility !== 'public'}
+					/>
+					<span
+						><span class="font-medium">Private</span><span
+							class="block text-sm text-muted-foreground">Only people you invite.</span
+						></span
+					>
 				</label>
 				{#if vm.publicAllowed}
 					<label class="flex items-start gap-3">
-						<NativeInput name="visibility" type="radio" value="public" checked={vm.form.visibility === 'public'} />
-						<span><span class="font-medium">Public</span><span class="block text-sm text-muted-foreground">Anyone can find it in Discover and join.</span></span>
+						<NativeInput
+							name="visibility"
+							type="radio"
+							value="public"
+							checked={vm.form.visibility === 'public'}
+						/>
+						<span
+							><span class="font-medium">Public</span><span
+								class="block text-sm text-muted-foreground"
+								>Anyone can find it in Discover and join.</span
+							></span
+						>
 					</label>
 				{/if}
 			</div>

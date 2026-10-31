@@ -37,20 +37,23 @@ class DraftError extends Error {}
 
 function parseAmount(raw: string, label: string): number {
 	const value = goParseFloat(emptyAsZero(raw));
-	if (value === null || value < 0) throw new DraftError(`${label} must be a number of zero or more.`);
+	if (value === null || value < 0)
+		throw new DraftError(`${label} must be a number of zero or more.`);
 	return value;
 }
 
 /** parsePercent converts what the user typed (7) into what the API wants (0.07). */
 function parsePercent(raw: string, label: string): number {
 	const value = goParseFloat(emptyAsZero(raw));
-	if (value === null || value <= -100 || value > 100) throw new DraftError(`${label} must be a percentage greater than -100.`);
+	if (value === null || value <= -100 || value > 100)
+		throw new DraftError(`${label} must be a percentage greater than -100.`);
 	return value / 100;
 }
 
 function parseAge(raw: string, label: string): number {
 	const value = goAtoi(raw);
-	if (value === null || value < 0 || value > 120) throw new DraftError(`${label} must be a whole number between 0 and 120.`);
+	if (value === null || value < 0 || value > 120)
+		throw new DraftError(`${label} must be a whole number between 0 and 120.`);
 	return value;
 }
 
@@ -71,7 +74,8 @@ function attempt<T>(build: () => T): Parsed<T> {
 /** handlers.formatBudgetCurrency: symbol + formatWithCommas of the magnitude. */
 export function formatBudgetCurrency(value: number, code: string): string {
 	const upper = (code ?? '').toUpperCase();
-	const symbol = ({ USD: '$', EUR: '€', GBP: '£', JPY: '¥' } as Record<string, string>)[upper] || upper + ' ';
+	const symbol =
+		({ USD: '$', EUR: '€', GBP: '£', JPY: '¥' } as Record<string, string>)[upper] || upper + ' ';
 	return symbol + formatWithCommas(Math.abs(value));
 }
 
@@ -160,7 +164,8 @@ export function growRequest(d: GrowDraft): Parsed<GrowthProjectionRequest> {
 		const initial = parseAmount(d.initialAmount, 'Initial amount');
 		const monthly = parseAmount(d.monthlyContribution, 'Monthly contribution');
 		const years = goAtoi(emptyAsZero(d.years));
-		if (years === null || years < 0 || years > 100) throw new DraftError('Years must be a whole number between 0 and 100.');
+		if (years === null || years < 0 || years > 100)
+			throw new DraftError('Years must be a whole number between 0 and 100.');
 		const returnRate = parsePercent(d.returnPercent, 'Expected return');
 		const growth = parsePercent(d.contributionGrowth, 'Contribution increase');
 		const inflation = parsePercent(d.inflationPercent, 'Inflation');
@@ -178,7 +183,8 @@ export function growRequest(d: GrowDraft): Parsed<GrowthProjectionRequest> {
 }
 
 /** growPrefillHint */
-export const growPrefillHint = (vm: Pick<GrowViewModel, 'prefilled'>) => (vm.prefilled ? 'Taken from your portfolio. Change it freely.' : '');
+export const growPrefillHint = (vm: Pick<GrowViewModel, 'prefilled'>) =>
+	vm.prefilled ? 'Taken from your portfolio. Change it freely.' : '';
 
 /** growHorizonLabel */
 export function growHorizonLabel(vm: Pick<GrowViewModel, 'result' | 'draft'>): string {
@@ -190,10 +196,15 @@ export function growHorizonLabel(vm: Pick<GrowViewModel, 'result' | 'draft'>): s
 }
 
 /** handlers.growResultViewModel */
-export function growResultViewModel(response: GrowthProjectionResponse, draft: GrowDraft, currency: string): GrowResult {
+export function growResultViewModel(
+	response: GrowthProjectionResponse,
+	draft: GrowDraft,
+	currency: string
+): GrowResult {
 	const result = response.result;
 	let growthShare = 0;
-	if (result.endingValueNominal > 0) growthShare = (result.totalGrowth / result.endingValueNominal) * 100;
+	if (result.endingValueNominal > 0)
+		growthShare = (result.totalGrowth / result.endingValueNominal) * 100;
 	const base = result.assumptions?.annualReturnRate ?? 0;
 	return {
 		endingValue: formatBudgetCurrency(result.endingValueNominal, currency),
@@ -314,24 +325,30 @@ export function retireRequest(d: RetireDraft): Parsed<RetirementPlanningRequest>
 		const currentAge = parseAge(d.currentAge, 'Current age');
 		const retirementAge = parseAge(d.retirementAge, 'Retirement age');
 		const longevityAge = parseAge(d.longevityAge, 'Plan-to age');
-		if (retirementAge <= currentAge) throw new DraftError('Retirement age must be after your current age.');
-		if (longevityAge <= retirementAge) throw new DraftError('Plan-to age must be after your retirement age.');
+		if (retirementAge <= currentAge)
+			throw new DraftError('Retirement age must be after your current age.');
+		if (longevityAge <= retirementAge)
+			throw new DraftError('Plan-to age must be after your retirement age.');
 
 		const monthlyCost = parseAmount(d.monthlyCost, 'Monthly cost of life');
 		const monthlyHousing = parseAmount(d.monthlyHousing, 'Housing');
 		if (monthlyHousing > monthlyCost)
-			throw new DraftError('Housing cannot be more than your total cost of life — it is part of it, not on top of it.');
+			throw new DraftError(
+				'Housing cannot be more than your total cost of life — it is part of it, not on top of it.'
+			);
 		const monthlyOther = parseAmount(d.monthlyOther, 'Other retirement income');
 		const initial = parseAmount(d.initialAmount, 'Invested today');
 		const monthlyContribution = parseAmount(d.monthlyContribution, 'Monthly contribution');
 
 		const inflation = parsePercent(d.inflationPercent, 'Inflation');
 		const withdrawal = parsePercent(d.withdrawalRate, 'Withdrawal rate');
-		if (withdrawal <= 0 || withdrawal > 0.2) throw new DraftError('Withdrawal rate must be between 0% and 20%.');
+		if (withdrawal <= 0 || withdrawal > 0.2)
+			throw new DraftError('Withdrawal rate must be between 0% and 20%.');
 		const returnRate = parsePercent(d.returnPercent, 'Expected return');
 
 		let housingEnds: number | undefined;
-		if (d.housingEndsAtAge !== '') housingEnds = parseAge(d.housingEndsAtAge, 'Housing ends at age');
+		if (d.housingEndsAtAge !== '')
+			housingEnds = parseAge(d.housingEndsAtAge, 'Housing ends at age');
 
 		return {
 			need: {
@@ -360,12 +377,16 @@ export function retireRequest(d: RetireDraft): Parsed<RetirementPlanningRequest>
 
 /** retireCostHint */
 export const retireCostHint = (vm: Pick<RetireViewModel, 'prefilledCost'>) =>
-	vm.prefilledCost ? 'Taken from your budget. Change it freely.' : 'What a month costs you today, including housing.';
+	vm.prefilledCost
+		? 'Taken from your budget. Change it freely.'
+		: 'What a month costs you today, including housing.';
 
 /** retireValueHint */
-export const retireValueHint = (vm: Pick<RetireViewModel, 'prefilledValue'>) => (vm.prefilledValue ? 'Taken from your portfolio.' : '');
+export const retireValueHint = (vm: Pick<RetireViewModel, 'prefilledValue'>) =>
+	vm.prefilledValue ? 'Taken from your portfolio.' : '';
 
-const hasShortfall = (need: RetirementNeed) => need.shortfallAge !== undefined && need.shortfallAge !== null;
+const hasShortfall = (need: RetirementNeed) =>
+	need.shortfallAge !== undefined && need.shortfallAge !== null;
 
 /**
  * gapTone: amber is the case worth having (target missed, money still lasts),
@@ -385,7 +406,8 @@ export function retireVerdict(lever: PlanLever, need: RetirementNeed): string {
 }
 
 /** retireDelayLabel */
-export const retireDelayLabel = (years: number) => (years === 1 ? 'Retire 1 year later' : `Retire ${years} years later`);
+export const retireDelayLabel = (years: number) =>
+	years === 1 ? 'Retire 1 year later' : `Retire ${years} years later`;
 
 /** leverRows: the solved gap as sentences a person can act on. */
 export function leverRows(lever: PlanLever, currency: string): LeverRow[] {
@@ -398,7 +420,10 @@ export function leverRows(lever: PlanLever, currency: string): LeverRow[] {
 		});
 	}
 	if (lever.delayYears != null && lever.delayYears > 0) {
-		rows.push({ label: retireDelayLabel(lever.delayYears), detail: 'more years of saving, and fewer to fund' });
+		rows.push({
+			label: retireDelayLabel(lever.delayYears),
+			detail: 'more years of saving, and fewer to fund'
+		});
 	}
 	if (lever.spendingReductionMonthly != null && lever.spendingReductionMonthly > 0) {
 		rows.push({
@@ -410,7 +435,10 @@ export function leverRows(lever: PlanLever, currency: string): LeverRow[] {
 }
 
 /** handlers.retireResultViewModel */
-export function retireResultViewModel(response: RetirementPlanningResponse, currency: string): RetireResult {
+export function retireResultViewModel(
+	response: RetirementPlanningResponse,
+	currency: string
+): RetireResult {
 	const need = response.need;
 	const lever = response.lever;
 	return {
@@ -423,7 +451,9 @@ export function retireResultViewModel(response: RetirementPlanningResponse, curr
 		runwayYears: String(need.runwayYears),
 		shortfallAge: hasShortfall(need) ? String(need.shortfallAge) : '',
 		probability:
-			response.readinessProbability != null ? formatFloat(goRound(response.readinessProbability * 100), 0) + '%' : '',
+			response.readinessProbability != null
+				? formatFloat(goRound(response.readinessProbability * 100), 0) + '%'
+				: '',
 		levers: leverRows(lever, currency),
 		depletion: (need.depletion ?? []).map((year) => ({
 			age: String(year.age),

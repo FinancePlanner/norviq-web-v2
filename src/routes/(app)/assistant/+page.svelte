@@ -11,7 +11,10 @@
 		<title>Allow AI features - Norviq</title>
 	{:else}
 		<title>Assistant - Norviq</title>
-		<meta name="description" content="Private AI guidance grounded in your Norviq financial data." />
+		<meta
+			name="description"
+			content="Private AI guidance grounded in your Norviq financial data."
+		/>
 	{/if}
 </svelte:head>
 

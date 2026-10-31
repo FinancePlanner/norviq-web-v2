@@ -35,7 +35,9 @@
 		<p role="status" class="mt-4 rounded-lg border border-border p-3 text-sm">{vm.notice}</p>
 	{/if}
 	{#if vm.cards.length === 0}
-		<p class="mt-8 text-muted-foreground">No articles yet. <a href="/articles/new" class="underline">Write the first one.</a></p>
+		<p class="mt-8 text-muted-foreground">
+			No articles yet. <a href="/articles/new" class="underline">Write the first one.</a>
+		</p>
 	{:else}
 		<ol class="mt-8 space-y-4">
 			{#each vm.cards as c (c.url)}

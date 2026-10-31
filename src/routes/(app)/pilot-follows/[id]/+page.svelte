@@ -13,9 +13,15 @@
 	const vm = $derived(data.vm);
 	// Go built charts.WealthLine("pilot_follow_value", …) server-side; a failed
 	// build fell back to "The value chart is unavailable right now."
-	const chart = $derived(vm.chartLabels.length >= 2 ? wealthLine('pilot_follow_value', vm.chartLabels, vm.chartValues) : null);
+	const chart = $derived(
+		vm.chartLabels.length >= 2
+			? wealthLine('pilot_follow_value', vm.chartLabels, vm.chartValues)
+			: null
+	);
 	const chartNote = $derived(
-		vm.chartLabels.length >= 2 && !chart ? 'The value chart is unavailable right now.' : vm.chartNote
+		vm.chartLabels.length >= 2 && !chart
+			? 'The value chart is unavailable right now.'
+			: vm.chartNote
 	);
 
 	const stopConfirm =
@@ -28,9 +34,13 @@
 
 {#snippet followDetailActions()}
 	{#if vm.targetHref}
-		<a href={vm.targetHref} class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">{vm.targetLinkLabel}</a>
+		<a href={vm.targetHref} class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+			>{vm.targetLinkLabel}</a
+		>
 	{/if}
-	<a href={vm.pilot.href} class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">{'About ' + vm.pilot.name}</a>
+	<a href={vm.pilot.href} class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+		>{'About ' + vm.pilot.name}</a
+	>
 {/snippet}
 
 <vigil.CanvasPage
@@ -40,17 +50,29 @@
 	actions={followDetailActions}
 >
 	{#if vm.notice}
-		<div class="mt-2 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm" role="status">{vm.notice}</div>
+		<div
+			class="mt-2 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm"
+			role="status"
+		>
+			{vm.notice}
+		</div>
 	{/if}
 	{#if vm.error}
-		<div class="mt-2 rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm" role="alert">{vm.error}</div>
+		<div
+			class="mt-2 rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm"
+			role="alert"
+		>
+			{vm.error}
+		</div>
 	{/if}
 	<div class="mt-4 rounded-lg bg-current/5 px-4 py-3 text-sm" role="note">
 		<p class="font-medium">Simulated trades</p>
 		<p class="mt-1 text-muted-foreground">{DISCLAIMER}</p>
 	</div>
 	{#if vm.paused}
-		<p class="mt-4 text-sm" role="status">Paused. Norviq is not copying new trades until you resume.</p>
+		<p class="mt-4 text-sm" role="status">
+			Paused. Norviq is not copying new trades until you resume.
+		</p>
 	{/if}
 	{#if vm.waiting}
 		<p class="mt-4 text-sm text-muted-foreground">
@@ -66,7 +88,11 @@
 			</vigil.MetricStrip>
 		</div>
 		<vigil.Panel class="mt-6 p-5 md:p-6" titleID="pilot-follow-value-title">
-			<vigil.PanelHeader id="pilot-follow-value-title" title="Simulated value" desc="Daily, from the copied trades" />
+			<vigil.PanelHeader
+				id="pilot-follow-value-title"
+				title="Simulated value"
+				desc="Daily, from the copied trades"
+			/>
 			{#if chart}
 				<EChart {...chart} />
 			{:else}
@@ -81,7 +107,9 @@
 			desc="Newest first. Priced when Norviq saw the disclosure."
 		/>
 		{#if vm.eventsError}
-			<p class="mt-4 text-sm text-muted-foreground">The trade log is unavailable right now. Try again shortly.</p>
+			<p class="mt-4 text-sm text-muted-foreground">
+				The trade log is unavailable right now. Try again shortly.
+			</p>
 		{:else if vm.events.length === 0}
 			<p class="mt-4 text-sm text-muted-foreground">No trades copied yet.</p>
 		{:else}
@@ -101,13 +129,18 @@
 						<tr>
 							<td class="whitespace-nowrap tabular-nums">{row.when}</td>
 							<td>
-								<span class={{ 'text-success': row.tone === 'positive', 'text-danger': row.tone === 'negative' }}
-									>{row.label}</span
+								<span
+									class={{
+										'text-success': row.tone === 'positive',
+										'text-danger': row.tone === 'negative'
+									}}>{row.label}</span
 								>
 							</td>
-							<td class="font-semibold vigil-mono"><SymbolLink symbol={row.symbol} href={row.symbolHref} /></td>
-							<td class="tabular-nums vigil-mono">{row.quantity}</td>
-							<td class="tabular-nums vigil-mono">{row.price}</td>
+							<td class="vigil-mono font-semibold"
+								><SymbolLink symbol={row.symbol} href={row.symbolHref} /></td
+							>
+							<td class="vigil-mono tabular-nums">{row.quantity}</td>
+							<td class="vigil-mono tabular-nums">{row.price}</td>
 							<td class="text-muted-foreground">{row.note}</td>
 						</tr>
 					{/each}
@@ -139,8 +172,8 @@
 			</form>
 		</div>
 		<p class="mt-3 text-xs text-muted-foreground">
-			Stopping keeps the portfolio or watchlist and everything already copied into it. While you follow, hand edits to
-			the portfolio are blocked so the simulation stays consistent.
+			Stopping keeps the portfolio or watchlist and everything already copied into it. While you
+			follow, hand edits to the portfolio are blocked so the simulation stays consistent.
 		</p>
 	</vigil.Panel>
 </vigil.CanvasPage>

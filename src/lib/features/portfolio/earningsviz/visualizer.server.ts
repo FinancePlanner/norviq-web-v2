@@ -31,15 +31,27 @@ export async function loadEarningsVisualizerViewModel(
 	auth: 'session' | 'public' = 'session'
 ): Promise<VisualizerVM> {
 	const symbol = symbolRaw.trim().toUpperCase();
-	const vm: VisualizerVM = { ...emptyVisualizer(), symbol, inputSymbol: symbol, action, filing: filing.trim() };
+	const vm: VisualizerVM = {
+		...emptyVisualizer(),
+		symbol,
+		inputSymbol: symbol,
+		action,
+		filing: filing.trim()
+	};
 	if (!symbol) return vm;
 
 	let statements: IncomeStatement[] | null = null;
 	try {
-		statements = await apiJSON<IncomeStatement[]>(event, 'GET', `/v1/market/income-statement/${encodeURIComponent(symbol)}`, undefined, {
-			query: { limit: 4, period: 'quarter' },
-			auth
-		});
+		statements = await apiJSON<IncomeStatement[]>(
+			event,
+			'GET',
+			`/v1/market/income-statement/${encodeURIComponent(symbol)}`,
+			undefined,
+			{
+				query: { limit: 4, period: 'quarter' },
+				auth
+			}
+		);
 	} catch {
 		statements = null;
 	}
@@ -58,7 +70,11 @@ export async function loadEarningsVisualizerViewModel(
 	vm.filing = dateValue(selected.date);
 	for (const row of statements) {
 		const value = dateValue(row.date);
-		vm.filings.push({ label: incomeStatementFilingLabel(row), value, selected: value === vm.filing });
+		vm.filings.push({
+			label: incomeStatementFilingLabel(row),
+			value,
+			selected: value === vm.filing
+		});
 	}
 	return mapIncomeStatementVisualizer(selected, vm);
 }
@@ -74,7 +90,11 @@ export function mapIncomeStatementVisualizer(row: IncomeStatement, vm: Visualize
 	const costOfRevenue = firstNonZero(row.costOfRevenue, diff(row.revenue, grossProfit));
 	const operatingIncome = firstNonZero(row.operatingIncome, row.ebit);
 	const operatingExpenses = firstNonZero(row.operatingExpenses, diff(grossProfit, operatingIncome));
-	const netIncome = firstNonZero(row.netIncome, row.bottomLineNetIncome, row.netIncomeFromContinuingOperations);
+	const netIncome = firstNonZero(
+		row.netIncome,
+		row.bottomLineNetIncome,
+		row.netIncomeFromContinuingOperations
+	);
 	const tax = row.incomeTaxExpense;
 	const other = firstNonZero(row.totalOtherIncomeExpensesNet, diff(operatingIncome, netIncome));
 
@@ -84,25 +104,65 @@ export function mapIncomeStatementVisualizer(row: IncomeStatement, vm: Visualize
 	if (row.eps !== undefined && row.eps !== null) vm.eps = '$' + formatFloat(row.eps, 2);
 
 	vm.revenue = flowMetric('Revenue', row.revenue, '', 'source', revenue);
-	vm.grossProfit = flowMetric('Gross profit', grossProfit, marginText(grossProfit, revenue), 'positive', revenue);
-	vm.costOfRevenue = flowMetric('Cost of revenue', costOfRevenue, marginText(costOfRevenue, revenue), 'negative', revenue);
-	vm.operatingIncome = flowMetric('Operating income', operatingIncome, marginText(operatingIncome, revenue), 'positive', revenue);
-	vm.operatingExpenses = flowMetric('Operating expenses', operatingExpenses, marginText(operatingExpenses, revenue), 'negative', revenue);
+	vm.grossProfit = flowMetric(
+		'Gross profit',
+		grossProfit,
+		marginText(grossProfit, revenue),
+		'positive',
+		revenue
+	);
+	vm.costOfRevenue = flowMetric(
+		'Cost of revenue',
+		costOfRevenue,
+		marginText(costOfRevenue, revenue),
+		'negative',
+		revenue
+	);
+	vm.operatingIncome = flowMetric(
+		'Operating income',
+		operatingIncome,
+		marginText(operatingIncome, revenue),
+		'positive',
+		revenue
+	);
+	vm.operatingExpenses = flowMetric(
+		'Operating expenses',
+		operatingExpenses,
+		marginText(operatingExpenses, revenue),
+		'negative',
+		revenue
+	);
 	vm.researchDev = flowMetric('R&D', row.researchAndDevelopmentExpenses, '', 'negative', revenue);
 	vm.sga = flowMetric(
 		'SG&A',
-		firstNonZero(row.sellingGeneralAndAdministrativeExpenses, row.generalAndAdministrativeExpenses, row.sellingAndMarketingExpenses),
+		firstNonZero(
+			row.sellingGeneralAndAdministrativeExpenses,
+			row.generalAndAdministrativeExpenses,
+			row.sellingAndMarketingExpenses
+		),
 		'',
 		'negative',
 		revenue
 	);
 	vm.tax = flowMetric('Tax', tax, marginText(tax, revenue), 'negative', revenue);
 	vm.other = flowMetric('Other', other, marginText(other, revenue), 'neutral', revenue);
-	vm.netIncome = flowMetric('Net income', netIncome, marginText(netIncome, revenue), 'positive-strong', revenue);
+	vm.netIncome = flowMetric(
+		'Net income',
+		netIncome,
+		marginText(netIncome, revenue),
+		'positive-strong',
+		revenue
+	);
 	return vm;
 }
 
-function flowMetric(label: string, value: Num, subtext: string, tone: string, maxValue: number): FlowMetricVM {
+function flowMetric(
+	label: string,
+	value: Num,
+	subtext: string,
+	tone: string,
+	maxValue: number
+): FlowMetricVM {
 	if (value === null || value === undefined || Math.abs(value) < 0.000001) {
 		return { label, value: '', subtext: '', tone, widthPercent: '', visible: false };
 	}

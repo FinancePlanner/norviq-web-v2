@@ -44,7 +44,9 @@ export const load: PageServerLoad = async (event) => {
 	(a.bulletPoints ?? []).slice(0, 3).forEach((b, i) => (form.bullets[i] = b));
 	form.coverImageID = a.coverImageId ?? '';
 	event.setHeaders({ 'cache-control': SIGNED_IN_CACHE_CONTROL });
-	return { vm: withPreview(composeVM('Edit article', '/articles/' + code + '/edit', 'Save', form)) };
+	return {
+		vm: withPreview(composeVM('Edit article', '/articles/' + code + '/edit', 'Save', form))
+	};
 };
 
 export const actions: Actions = {

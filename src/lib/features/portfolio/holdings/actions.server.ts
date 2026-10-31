@@ -50,7 +50,9 @@ async function readForm(event: RequestEvent): Promise<FormData | null> {
 }
 
 /** middleware.RequireFeature(TargetAlerts, "Price alerts"): 402 the page ignores. */
-async function targetAlertsGate(event: RequestEvent): Promise<{ blocked: Response | null; pro: boolean }> {
+async function targetAlertsGate(
+	event: RequestEvent
+): Promise<{ blocked: Response | null; pro: boolean }> {
 	const billing = await loadBillingContext(event);
 	if (!isFeatureAvailable(billing, Feature.TargetAlerts)) {
 		return { blocked: text('Price alerts', { status: 402 }), pro: false };
@@ -63,20 +65,38 @@ async function targetAlertsGate(event: RequestEvent): Promise<{ blocked: Respons
 
 export async function createPosition(event: RequestEvent): Promise<Response> {
 	const f = await readForm(event);
-	if (!f) return panel({ panel: 'add', form: addPositionFormDefaults({ ...emptyAdd(), error: 'Invalid form submission.' }) });
+	if (!f)
+		return panel({
+			panel: 'add',
+			form: addPositionFormDefaults({ ...emptyAdd(), error: 'Invalid form submission.' })
+		});
 	const { req, form, error } = parseAddPositionRequest(f);
 	if (!req) return panel({ panel: 'add', form: addPositionFormDefaults({ ...form, error }) });
 
 	const res = await rawCall(event, 'POST', '/v1/stocks', req);
 	if (!(res.status === 200 || res.status === 201)) {
-		return panel({ panel: 'add', form: addPositionFormDefaults({ ...form, error: createStockErrorMessage(res) }) });
+		return panel({
+			panel: 'add',
+			form: addPositionFormDefaults({ ...form, error: createStockErrorMessage(res) })
+		});
 	}
 	await noteGuidedAction(event, 'add_holding');
 	return redirectTo(portfolioRedirectURLForPortfolio(form.range, form.portfolioID));
 }
 
 function emptyAdd(): AddPositionFormVM {
-	return { portfolioID: '', symbol: '', category: '', shares: '', buyPrice: '', buyDate: '', notes: '', range: '', error: '', currentPortfolioValue: 0 };
+	return {
+		portfolioID: '',
+		symbol: '',
+		category: '',
+		shares: '',
+		buyPrice: '',
+		buyDate: '',
+		notes: '',
+		range: '',
+		error: '',
+		currentPortfolioValue: 0
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -95,7 +115,11 @@ export async function updatePosition(event: RequestEvent, id: string): Promise<R
 	const stockID = parseUUID(id);
 	if (!stockID) return text('Invalid position', { status: 400 });
 	const f = await readForm(event);
-	if (!f) return panel({ panel: 'edit', form: { ...emptyEdit(stockID), error: 'Invalid form submission.' } });
+	if (!f)
+		return panel({
+			panel: 'edit',
+			form: { ...emptyEdit(stockID), error: 'Invalid form submission.' }
+		});
 
 	// parseEditPositionRequest: the add-position parser, with the hidden symbol.
 	const form: EditPositionFormVM = {
@@ -114,12 +138,23 @@ export async function updatePosition(event: RequestEvent, id: string): Promise<R
 	const req = { ...parsed.req, symbol: form.symbol };
 
 	const res = await rawCall(event, 'PUT', `/v1/stocks/id/${stockID}`, req);
-	if (res.status !== 200 || !res.body) return panel({ panel: 'edit', form: { ...form, error: updateStockErrorMessage(res) } });
+	if (res.status !== 200 || !res.body)
+		return panel({ panel: 'edit', form: { ...form, error: updateStockErrorMessage(res) } });
 	return redirectTo(portfolioRedirectURL(form.range));
 }
 
 function emptyEdit(id: string): EditPositionFormVM {
-	return { id, symbol: '', category: '', shares: '', buyPrice: '', buyDate: '', notes: '', range: '', error: '' };
+	return {
+		id,
+		symbol: '',
+		category: '',
+		shares: '',
+		buyPrice: '',
+		buyDate: '',
+		notes: '',
+		range: '',
+		error: ''
+	};
 }
 
 // DELETE /portfolio/positions/{id}
@@ -144,7 +179,9 @@ export async function deletePosition(event: RequestEvent, id: string): Promise<R
 		console.warn('delete stock failed', { stockID, status: res.status });
 		return text('Could not delete this position.', { status: 502 });
 	}
-	return redirectTo(portfolioRedirectURL(normalizePortfolioTimeRange(event.url.searchParams.get('range'))));
+	return redirectTo(
+		portfolioRedirectURL(normalizePortfolioTimeRange(event.url.searchParams.get('range')))
+	);
 }
 
 // ---------------------------------------------------------------------------
@@ -172,7 +209,16 @@ export async function sellPosition(event: RequestEvent, id: string): Promise<Res
 	const stockID = parseUUID(id);
 	if (!stockID) return text('Invalid position', { status: 400 });
 	const f = await readForm(event);
-	const blank: SellPositionFormVM = { id: stockID, symbol: '', maxShares: '', shares: '', sellPrice: '', sellDate: '', range: '', error: '' };
+	const blank: SellPositionFormVM = {
+		id: stockID,
+		symbol: '',
+		maxShares: '',
+		shares: '',
+		sellPrice: '',
+		sellDate: '',
+		range: '',
+		error: ''
+	};
 	if (!f) return panel({ panel: 'sell', form: { ...blank, error: 'Invalid form submission.' } });
 
 	// parseSellPositionRequest
@@ -248,7 +294,16 @@ export async function saveAlert(event: RequestEvent, id: string): Promise<Respon
 	if (!f) {
 		return panel({
 			panel: 'alert',
-			form: { stockID: loaded.stockID, symbol, targetID: '', targetPrice: '', direction: '', range: '', error: 'Invalid form submission.', showProGate: false }
+			form: {
+				stockID: loaded.stockID,
+				symbol,
+				targetID: '',
+				targetPrice: '',
+				direction: '',
+				range: '',
+				error: 'Invalid form submission.',
+				showProGate: false
+			}
 		});
 	}
 
@@ -264,7 +319,8 @@ export async function saveAlert(event: RequestEvent, id: string): Promise<Respon
 		showProGate: false
 	};
 	const price = goParseFloat(form.targetPrice);
-	if (price === null || !(price > 0)) return panel({ panel: 'alert', form: { ...form, error: 'Enter a target price above 0.' } });
+	if (price === null || !(price > 0))
+		return panel({ panel: 'alert', form: { ...form, error: 'Enter a target price above 0.' } });
 
 	const existing = await lookupTargetForSymbol(event, symbol);
 	if (existing) await rawCall(event, 'DELETE', `/v1/targets/${existing.id}`);
@@ -277,7 +333,8 @@ export async function saveAlert(event: RequestEvent, id: string): Promise<Respon
 		targetPrice: price,
 		rationale: `Portfolio alert for ${form.symbol}`
 	});
-	if (res.status !== 201 || !res.body) return panel({ panel: 'alert', form: { ...form, error: createTargetErrorMessage(res) } });
+	if (res.status !== 201 || !res.body)
+		return panel({ panel: 'alert', form: { ...form, error: createTargetErrorMessage(res) } });
 	return redirectTo(portfolioRedirectURL(form.range));
 }
 
@@ -294,7 +351,8 @@ export async function deleteTargetAlert(event: RequestEvent, id: string): Promis
 	const targetID = parseUUID(id);
 	if (!targetID) return text('Invalid alert', { status: 400 });
 	const res = await rawCall(event, 'DELETE', `/v1/targets/${targetID}`);
-	if (res.networkError || (res.status !== 204 && res.status !== 200)) return text('Failed to remove alert', { status: 502 });
+	if (res.networkError || (res.status !== 204 && res.status !== 200))
+		return text('Failed to remove alert', { status: 502 });
 	// redirectPortfolio with the raw (un-normalized) range, as Go did.
 	return redirectTo(portfolioRedirectURL(event.url.searchParams.get('range') ?? ''));
 }

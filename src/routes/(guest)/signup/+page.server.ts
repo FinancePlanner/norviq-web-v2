@@ -10,7 +10,9 @@ import {
 } from '#lib/features/auth-onboarding/auth.server.js';
 
 // auth.go SignupPage
-export const load: PageServerLoad = async ({ url }) => ({ next: safeNextPath(url.searchParams.get('next')) });
+export const load: PageServerLoad = async ({ url }) => ({
+	next: safeNextPath(url.searchParams.get('next'))
+});
 
 const authError = (message: string) => fail(422, { error: message });
 
@@ -27,7 +29,10 @@ export const actions: Actions = {
 
 		const msg = validateSignup(username, email, password, confirmPassword, dateOfBirth);
 		if (msg) return authError(msg);
-		if (!/^\d{4}-\d{2}-\d{2}$/.test(dateOfBirth) || Number.isNaN(Date.parse(dateOfBirth + 'T00:00:00Z'))) {
+		if (
+			!/^\d{4}-\d{2}-\d{2}$/.test(dateOfBirth) ||
+			Number.isNaN(Date.parse(dateOfBirth + 'T00:00:00Z'))
+		) {
 			return authError('Enter a valid date of birth.');
 		}
 

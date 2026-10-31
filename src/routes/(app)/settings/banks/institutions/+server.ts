@@ -15,10 +15,17 @@ export const GET: RequestHandler = async (event) => {
 	const country = (event.url.searchParams.get('country') ?? '').trim().toUpperCase() || 'PT';
 	let list: BankInstitution[] = [];
 	try {
-		list = (await apiJSON<BankInstitution[]>(event, 'GET', '/v1/banks/institutions', undefined, { query: { country } })) ?? [];
+		list =
+			(await apiJSON<BankInstitution[]>(event, 'GET', '/v1/banks/institutions', undefined, {
+				query: { country }
+			})) ?? [];
 	} catch (err) {
 		console.error('bank institutions', err);
 	}
-	const institutions: BankInstitutionRow[] = list.map((inst) => ({ id: inst.id, name: inst.name, beta: inst.beta === true }));
+	const institutions: BankInstitutionRow[] = list.map((inst) => ({
+		id: inst.id,
+		name: inst.name,
+		beta: inst.beta === true
+	}));
 	return json({ institutions });
 };

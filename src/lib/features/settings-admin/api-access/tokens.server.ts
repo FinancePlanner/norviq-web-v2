@@ -17,8 +17,14 @@ export interface CreatePATResult extends PersonalAccessToken {
 	token: string;
 }
 
-export async function listPersonalAccessTokens(event: RequestEvent): Promise<PersonalAccessToken[]> {
-	const envelope = await apiJSON<{ items?: PersonalAccessToken[] | null }>(event, 'GET', '/v1/tokens');
+export async function listPersonalAccessTokens(
+	event: RequestEvent
+): Promise<PersonalAccessToken[]> {
+	const envelope = await apiJSON<{ items?: PersonalAccessToken[] | null }>(
+		event,
+		'GET',
+		'/v1/tokens'
+	);
 	return envelope?.items ?? [];
 }
 

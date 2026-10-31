@@ -1,7 +1,13 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { apiFetch, apiJSON } from '#lib/server/api.js';
-import { formatCurrency, formatFloat, formatPercentValue, formatSignedCurrency, formatSignedPercent } from '#lib/format.js';
+import {
+	formatCurrency,
+	formatFloat,
+	formatPercentValue,
+	formatSignedCurrency,
+	formatSignedPercent
+} from '#lib/format.js';
 import {
 	fetchPnlBySymbol,
 	fetchQuoteBatch,
@@ -70,7 +76,9 @@ export function targetAlertDirection(scenario: string): string {
 	return scenario.trim().toLowerCase() === 'bear' ? 'below' : 'above';
 }
 
-function mapTargetAlertsBySymbol(targets: ScenarioTargetResponse[]): Map<string, ScenarioTargetResponse> {
+function mapTargetAlertsBySymbol(
+	targets: ScenarioTargetResponse[]
+): Map<string, ScenarioTargetResponse> {
 	const out = new Map<string, ScenarioTargetResponse>();
 	for (const t of targets) {
 		const key = t.symbol.trim().toUpperCase();
@@ -163,7 +171,8 @@ export function mapPositionRow(
 			row.totalGL = formatSignedCurrency(p.unrealizedPnl);
 			row.totalPositive = p.unrealizedPnl >= 0;
 			row.rawGain = p.unrealizedPnl;
-			if (p.unrealizedPnlPercent != null) row.totalGLPct = formatSignedPercent(p.unrealizedPnlPercent);
+			if (p.unrealizedPnlPercent != null)
+				row.totalGLPct = formatSignedPercent(p.unrealizedPnlPercent);
 		}
 		if (p.weightPercent != null) {
 			row.weightPct = formatPercentValue(p.weightPercent);
@@ -202,7 +211,11 @@ function emptyAddPosition(range: string): AddPositionFormVM {
 }
 
 /** LoadHoldingsViewModelForPortfolio */
-export async function loadHoldingsViewModel(event: RequestEvent, timeRange: string | null, portfolioID: string): Promise<HoldingsViewModel> {
+export async function loadHoldingsViewModel(
+	event: RequestEvent,
+	timeRange: string | null,
+	portfolioID: string
+): Promise<HoldingsViewModel> {
 	const selectedTimeRange = normalizePortfolioTimeRange(timeRange);
 	const vm: HoldingsViewModel = {
 		sentiment: buildSentimentRollup('', null, 0, 0, 0, 0, '', '', ''),
@@ -242,11 +255,21 @@ export async function loadHoldingsViewModel(event: RequestEvent, timeRange: stri
 	// roll-up is computed server-side from the portfolio, not from the symbols,
 	// so it starts here instead of waiting for the holdings.
 	const [stocksRes, summary, performance, pnl, targetsRes, rollup] = await Promise.all([
-		apiJSON<StockListItem[]>(event, 'GET', '/v1/stocks', undefined, { query: q }).catch(fail('stocks')),
-		apiJSON<Schemas['PortfolioSummaryResponse']>(event, 'GET', '/v1/portfolio/summary', undefined, { query: q }).catch(fail('summary')),
-		apiJSON<Schemas['PortfolioPerformanceResponse']>(event, 'GET', '/v1/portfolio/performance', undefined, {
-			query: { ...q, range: selectedTimeRange }
-		}).catch(fail('performance')),
+		apiJSON<StockListItem[]>(event, 'GET', '/v1/stocks', undefined, { query: q }).catch(
+			fail('stocks')
+		),
+		apiJSON<Schemas['PortfolioSummaryResponse']>(event, 'GET', '/v1/portfolio/summary', undefined, {
+			query: q
+		}).catch(fail('summary')),
+		apiJSON<Schemas['PortfolioPerformanceResponse']>(
+			event,
+			'GET',
+			'/v1/portfolio/performance',
+			undefined,
+			{
+				query: { ...q, range: selectedTimeRange }
+			}
+		).catch(fail('performance')),
 		fetchPnlBySymbol(event, listID),
 		apiJSON<ScenarioTargetResponse[]>(event, 'GET', '/v1/targets').catch(fail('targets')),
 		loadPortfolioSentimentRollup(event, portfolioID)
@@ -297,7 +320,9 @@ export async function loadHoldingsViewModel(event: RequestEvent, timeRange: stri
 	]);
 	vm.sentiment = rollup;
 	const quoteMap = quoteBySymbol(quotes);
-	vm.positions = stocks.map((s, i) => mapPositionRow(s, targetsBySymbol, quoteMap, pnl, sparklines, sentiments, i));
+	vm.positions = stocks.map((s, i) =>
+		mapPositionRow(s, targetsBySymbol, quoteMap, pnl, sparklines, sentiments, i)
+	);
 	vm.addPosition.range = vm.selectedTimeRange;
 	return vm;
 }
@@ -313,15 +338,24 @@ export async function loadHoldingsQuoteRows(event: RequestEvent): Promise<Positi
 	}
 	stocks = sortStocksBySymbol(stocks);
 	const symbols = stockSymbols(stocks);
-	const [quotes, pnl] = await Promise.all([fetchQuoteBatch(event, symbols), fetchPnlBySymbol(event, null)]);
+	const [quotes, pnl] = await Promise.all([
+		fetchQuoteBatch(event, symbols),
+		fetchPnlBySymbol(event, null)
+	]);
 	const quoteMap = quoteBySymbol(quotes);
 	return stocks.map((s, i) => mapPositionRow(s, null, quoteMap, pnl, null, null, i));
 }
 
 /** GET /v1/portfolios (hand-written api.PortfolioPage). null on failure. */
-export async function loadPortfolioOptions(event: RequestEvent): Promise<PortfolioOptionVM[] | null> {
+export async function loadPortfolioOptions(
+	event: RequestEvent
+): Promise<PortfolioOptionVM[] | null> {
 	try {
-		const page = await apiJSON<{ items?: { id: string; name: string; mode: string }[] }>(event, 'GET', '/v1/portfolios');
+		const page = await apiJSON<{ items?: { id: string; name: string; mode: string }[] }>(
+			event,
+			'GET',
+			'/v1/portfolios'
+		);
 		return (page?.items ?? []).map((i) => ({ id: i.id, name: i.name, mode: i.mode }));
 	} catch {
 		return null;
@@ -362,7 +396,12 @@ export interface RawResult {
 	networkError: boolean;
 }
 
-export async function rawCall(event: RequestEvent, method: string, path: string, input?: unknown): Promise<RawResult> {
+export async function rawCall(
+	event: RequestEvent,
+	method: string,
+	path: string,
+	input?: unknown
+): Promise<RawResult> {
 	try {
 		const res = await apiFetch(
 			event,
@@ -380,8 +419,11 @@ export async function rawCall(event: RequestEvent, method: string, path: string,
 
 function goParseFloat(raw: string): number | null {
 	const s = raw.trim();
-	if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s) && !/^[+-]?(inf|infinity|nan)$/i.test(s)) return null;
-	const v = Number(s.replace(/^\+?inf(inity)?$/i, 'Infinity').replace(/^-inf(inity)?$/i, '-Infinity'));
+	if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s) && !/^[+-]?(inf|infinity|nan)$/i.test(s))
+		return null;
+	const v = Number(
+		s.replace(/^\+?inf(inity)?$/i, 'Infinity').replace(/^-inf(inity)?$/i, '-Infinity')
+	);
 	return Number.isNaN(v) && !/nan/i.test(s) ? null : v;
 }
 
@@ -405,7 +447,11 @@ export interface StockRequest {
 }
 
 /** parseAddPositionRequest */
-export function parseAddPositionRequest(f: FormData): { req: StockRequest | null; form: AddPositionFormVM; error: string } {
+export function parseAddPositionRequest(f: FormData): {
+	req: StockRequest | null;
+	form: AddPositionFormVM;
+	error: string;
+} {
 	const form: AddPositionFormVM = {
 		portfolioID: formStr(f, 'portfolio'),
 		symbol: formStr(f, 'symbol'),
@@ -424,13 +470,22 @@ export function parseAddPositionRequest(f: FormData): { req: StockRequest | null
 	const symbol = form.symbol.toUpperCase();
 	if (symbol === '') return { req: null, form, error: 'Enter a symbol.' };
 	const shares = goParseFloat(form.shares);
-	if (shares === null || !(shares > 0)) return { req: null, form, error: 'Enter a valid share amount.' };
+	if (shares === null || !(shares > 0))
+		return { req: null, form, error: 'Enter a valid share amount.' };
 	const buyPrice = goParseFloat(form.buyPrice);
-	if (buyPrice === null || !(buyPrice > 0)) return { req: null, form, error: 'Enter a valid buy price.' };
+	if (buyPrice === null || !(buyPrice > 0))
+		return { req: null, form, error: 'Enter a valid buy price.' };
 	if (!validDate(form.buyDate)) return { req: null, form, error: 'Enter a valid buy date.' };
-	if (!['stock', 'etf', 'crypto'].includes(form.category)) return { req: null, form, error: 'Choose a valid category.' };
+	if (!['stock', 'etf', 'crypto'].includes(form.category))
+		return { req: null, form, error: 'Choose a valid category.' };
 
-	const req: StockRequest = { symbol, shares, buyPrice, buyDate: form.buyDate, category: form.category };
+	const req: StockRequest = {
+		symbol,
+		shares,
+		buyPrice,
+		buyDate: form.buyDate,
+		category: form.category
+	};
 	if (form.notes !== '') req.notes = form.notes;
 	const listID = parseUUID(form.portfolioID);
 	if (listID) req.portfolioListId = listID;
@@ -452,7 +507,9 @@ export function createStockErrorMessage(res: RawResult): string {
 		// bodies without a boolean "error" reach this branch.
 		try {
 			const payload = JSON.parse(res.body) as Record<string, unknown>;
-			const okShape = ['reason', 'message', 'error'].every((k) => payload[k] === undefined || payload[k] === null || typeof payload[k] === 'string');
+			const okShape = ['reason', 'message', 'error'].every(
+				(k) => payload[k] === undefined || payload[k] === null || typeof payload[k] === 'string'
+			);
 			if (okShape) {
 				for (const k of ['reason', 'message', 'error']) if (payload[k]) return payload[k] as string;
 			}
@@ -466,7 +523,9 @@ export function createStockErrorMessage(res: RawResult): string {
 
 export function updateStockErrorMessage(res: RawResult): string {
 	if (res.networkError) return 'Failed to update position. Check your connection and try again.';
-	return pilotManagedReason(res.status, res.body) || `Failed to update position (HTTP ${res.status}).`;
+	return (
+		pilotManagedReason(res.status, res.body) || `Failed to update position (HTTP ${res.status}).`
+	);
 }
 
 export function sellStockErrorMessage(res: RawResult): string {
@@ -482,7 +541,9 @@ export function createTargetErrorMessage(res: RawResult): string {
 
 /** portfolioRedirectURL */
 export function portfolioRedirectURL(timeRange: string): string {
-	return timeRange !== '' && timeRange !== '1M' ? '/portfolio?range=' + encodeURIComponent(timeRange) : '/portfolio';
+	return timeRange !== '' && timeRange !== '1M'
+		? '/portfolio?range=' + encodeURIComponent(timeRange)
+		: '/portfolio';
 }
 
 /** portfolioRedirectURLForPortfolio (url.Values.Encode sorts keys). */
@@ -499,7 +560,10 @@ export function portfolioRedirectURLForPortfolio(timeRange: string, portfolioID:
 export async function loadPositionForm(
 	event: RequestEvent,
 	rawID: string
-): Promise<{ ok: true; stockID: string; form: EditPositionFormVM } | { ok: false; status: number; message: string }> {
+): Promise<
+	| { ok: true; stockID: string; form: EditPositionFormVM }
+	| { ok: false; status: number; message: string }
+> {
 	const stockID = parseUUID(rawID);
 	if (!stockID) return { ok: false, status: 400, message: 'Invalid position' };
 	let stock: StockListItem;
@@ -526,7 +590,10 @@ export async function loadPositionForm(
 	};
 }
 
-export async function lookupTargetForSymbol(event: RequestEvent, symbol: string): Promise<ScenarioTargetResponse | null> {
+export async function lookupTargetForSymbol(
+	event: RequestEvent,
+	symbol: string
+): Promise<ScenarioTargetResponse | null> {
 	try {
 		const targets = await apiJSON<ScenarioTargetResponse[]>(event, 'GET', '/v1/targets');
 		const key = symbol.trim().toUpperCase();
@@ -543,7 +610,10 @@ export { goParseFloat, validDate, formStr };
 
 export const ONE_PAGE_MAX_ROWS = 12;
 
-export function buildOnePageRows(rows: PositionRowVM[], maxRows: number): { rows: OnePageRowVM[]; other: string } {
+export function buildOnePageRows(
+	rows: PositionRowVM[],
+	maxRows: number
+): { rows: OnePageRowVM[]; other: string } {
 	const sorted = [...rows].sort((a, b) => b.rawWeight - a.rawWeight);
 	const out: OnePageRowVM[] = [];
 	let rest = 0;
@@ -581,7 +651,11 @@ interface PortfolioShareLink {
 function otherShareLinks(links: PortfolioShareLink[], scope: string): OtherShareLinkVM[] {
 	return links
 		.filter((l) => l.scope !== scope)
-		.map((l) => ({ scope: l.scope, url: l.url, label: l.scope === 'all' ? 'All portfolios' : 'A single portfolio' }));
+		.map((l) => ({
+			scope: l.scope,
+			url: l.url,
+			label: l.scope === 'all' ? 'All portfolios' : 'A single portfolio'
+		}));
 }
 
 export async function loadShareLink(event: RequestEvent, scope: string): Promise<ShareLinkVM> {
@@ -600,7 +674,11 @@ export async function loadShareLink(event: RequestEvent, scope: string): Promise
 
 export async function createShareLink(event: RequestEvent, scope: string): Promise<ShareLinkVM> {
 	try {
-		const link = await apiJSON<PortfolioShareLink>(event, 'POST', '/v1/portfolio/share-links/' + scope);
+		const link = await apiJSON<PortfolioShareLink>(
+			event,
+			'POST',
+			'/v1/portfolio/share-links/' + scope
+		);
 		const vm = await loadShareLink(event, scope);
 		vm.url = link?.url ?? '';
 		return vm;
@@ -612,7 +690,11 @@ export async function createShareLink(event: RequestEvent, scope: string): Promi
 	}
 }
 
-export async function revokeShareLink(event: RequestEvent, scope: string, target: string): Promise<ShareLinkVM> {
+export async function revokeShareLink(
+	event: RequestEvent,
+	scope: string,
+	target: string
+): Promise<ShareLinkVM> {
 	let failed = false;
 	try {
 		await apiJSON(event, 'DELETE', '/v1/portfolio/share-links/' + target);

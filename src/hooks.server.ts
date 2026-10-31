@@ -29,9 +29,15 @@ async function refreshIfNeeded(event: Parameters<Handle>[0]['event']) {
 		return;
 	}
 	try {
-		const resp = await apiJSON<AuthResponse>(event, 'POST', '/v1/auth/refresh', {
-			refreshToken: auth.refreshToken
-		}, { auth: 'none' });
+		const resp = await apiJSON<AuthResponse>(
+			event,
+			'POST',
+			'/v1/auth/refresh',
+			{
+				refreshToken: auth.refreshToken
+			},
+			{ auth: 'none' }
+		);
 		await event.locals.session.saveAuth(resp);
 	} catch (err) {
 		console.error('refresh session token', err);
@@ -59,7 +65,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 			headers: { 'WWW-Authenticate': 'Basic realm="Norviq staging", charset="UTF-8"' }
 		});
 	}
-	const locale = resolveRequestLanguage(event.cookies.get(LANG_COOKIE), event.request.headers.get('accept-language'));
+	const locale = resolveRequestLanguage(
+		event.cookies.get(LANG_COOKIE),
+		event.request.headers.get('accept-language')
+	);
 	event.locals.locale = locale;
 	event.locals.t = translator(locale);
 	event.locals.session = await Session.load(event.cookies, {
@@ -78,7 +87,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const group = event.route.id ?? '';
 	const authed = event.locals.session.isAuthenticated;
 	if (group.startsWith('/(app)') || group.startsWith('/(onboarding)')) {
-		if (!authed) redirect(303, '/login?next=' + encodeURIComponent(event.url.pathname + event.url.search));
+		if (!authed)
+			redirect(303, '/login?next=' + encodeURIComponent(event.url.pathname + event.url.search));
 		if (group.startsWith('/(app)')) {
 			const path = await resume(event);
 			if (path) redirect(303, path);

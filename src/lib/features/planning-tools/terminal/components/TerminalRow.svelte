@@ -34,9 +34,22 @@
 	const iconButtonClass =
 		'inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40';
 
-	type Editable = 'ticker' | 'sharesOutstanding' | 'terminalShareCount' | 'terminalMarketCap' | 'valueWanted' | 'sharesOwned' | 'currentSharePrice';
-	type Compactable = 'sharesOutstanding' | 'terminalShareCount' | 'terminalMarketCap' | 'valueWanted';
-	const compactable: Compactable[] = ['sharesOutstanding', 'terminalShareCount', 'terminalMarketCap', 'valueWanted'];
+	type Editable =
+		| 'ticker'
+		| 'sharesOutstanding'
+		| 'terminalShareCount'
+		| 'terminalMarketCap'
+		| 'valueWanted'
+		| 'sharesOwned'
+		| 'currentSharePrice';
+	type Compactable =
+		'sharesOutstanding' | 'terminalShareCount' | 'terminalMarketCap' | 'valueWanted';
+	const compactable: Compactable[] = [
+		'sharesOutstanding',
+		'terminalShareCount',
+		'terminalMarketCap',
+		'valueWanted'
+	];
 
 	// The row is created once per workspace render (Go replaced the whole
 	// workspace); from then on only cell answers change these.
@@ -76,7 +89,8 @@
 		const next = res.row;
 		for (const name of res.fields as Editable[]) {
 			values[name] = next[name];
-			if ((compactable as string[]).includes(name)) compacts[name as Compactable] = next[`${name as Compactable}Compact`];
+			if ((compactable as string[]).includes(name))
+				compacts[name as Compactable] = next[`${name as Compactable}Compact`];
 		}
 		if (res.fields.includes('ticker')) {
 			head = next;
@@ -105,11 +119,15 @@
 	}
 
 	async function ai(kind: 'facts' | 'scenario') {
-		const res = await terminalSend<SuggestionResult>('POST', `/terminal/positions/${id}/ai/${kind}`, {
-			ticker: head.ticker,
-			symbol: head.currencySymbol,
-			currency: head.currency
-		});
+		const res = await terminalSend<SuggestionResult>(
+			'POST',
+			`/terminal/positions/${id}/ai/${kind}`,
+			{
+				ticker: head.ticker,
+				symbol: head.currencySymbol,
+				currency: head.currency
+			}
+		);
 		if (res) suggestion = res;
 	}
 </script>
@@ -133,24 +151,60 @@
 					aria-label="Ticker"
 					autocomplete="off"
 					onchange={(e: Event) =>
-						edit({ ticker: (e.currentTarget as HTMLInputElement).value, isFirst: String(head.isFirst), isLast: String(head.isLast) })}
+						edit({
+							ticker: (e.currentTarget as HTMLInputElement).value,
+							isFirst: String(head.isFirst),
+							isLast: String(head.isLast)
+						})}
 				/>
 			</div>
 		</td>
 		<td>
-			<CompactCell rowID={id} name="sharesOutstanding" label="Shares outstanding" symbol="" bind:value={values.sharesOutstanding} bind:compact={compacts.sharesOutstanding} onchange={cell('sharesOutstanding')} />
+			<CompactCell
+				rowID={id}
+				name="sharesOutstanding"
+				label="Shares outstanding"
+				symbol=""
+				bind:value={values.sharesOutstanding}
+				bind:compact={compacts.sharesOutstanding}
+				onchange={cell('sharesOutstanding')}
+			/>
 		</td>
 		<td>
-			<CompactCell rowID={id} name="terminalShareCount" label="Terminal share count" symbol="" bind:value={values.terminalShareCount} bind:compact={compacts.terminalShareCount} onchange={cell('terminalShareCount')} />
+			<CompactCell
+				rowID={id}
+				name="terminalShareCount"
+				label="Terminal share count"
+				symbol=""
+				bind:value={values.terminalShareCount}
+				bind:compact={compacts.terminalShareCount}
+				onchange={cell('terminalShareCount')}
+			/>
 		</td>
 		<td>
-			<CompactCell rowID={id} name="terminalMarketCap" label="Terminal market cap" symbol={initial.currencySymbol} bind:value={values.terminalMarketCap} bind:compact={compacts.terminalMarketCap} onchange={cell('terminalMarketCap')} />
+			<CompactCell
+				rowID={id}
+				name="terminalMarketCap"
+				label="Terminal market cap"
+				symbol={initial.currencySymbol}
+				bind:value={values.terminalMarketCap}
+				bind:compact={compacts.terminalMarketCap}
+				onchange={cell('terminalMarketCap')}
+			/>
 		</td>
 		<td class="tabular-nums">
 			<span id={`tp-${id}-derived-terminalSharePrice`}>{calc.terminalSharePrice}</span>
 		</td>
 		<td>
-			<CompactCell rowID={id} name="valueWanted" label="Value wanted" symbol={initial.currencySymbol} bind:value={values.valueWanted} bind:compact={compacts.valueWanted} onchange={cell('valueWanted')} />
+			<CompactCell
+				rowID={id}
+				name="valueWanted"
+				label="Value wanted"
+				symbol={initial.currencySymbol}
+				bind:value={values.valueWanted}
+				bind:compact={compacts.valueWanted}
+				onchange={cell('valueWanted')}
+			/>
 		</td>
 		<td class="tabular-nums">
 			<span id={`tp-${id}-derived-sharesNeeded`}>
@@ -168,7 +222,8 @@
 					aria-label="Shares owned"
 					autocomplete="off"
 					inputmode="decimal"
-					onchange={(e: Event) => edit({ sharesOwned: (e.currentTarget as HTMLInputElement).value })}
+					onchange={(e: Event) =>
+						edit({ sharesOwned: (e.currentTarget as HTMLInputElement).value })}
 				/>
 			</div>
 		</td>
@@ -181,22 +236,43 @@
 			<div id={`tp-${id}-derived-stillNeeded`}>
 				<ShareCount full={calc.stillNeeded} whole={calc.stillNeededWhole} />
 				{#if calc.valid}
-					<span class="block text-footnote text-muted-foreground">≈ {calc.gapValueAtTerminal} at terminal</span>
+					<span class="block text-footnote text-muted-foreground"
+						>≈ {calc.gapValueAtTerminal} at terminal</span
+					>
 				{/if}
 			</div>
 		</td>
 		<td>
 			<div id={`tp-${id}-actions-slot`} class="flex items-center gap-1">
-				<NativeButton class={iconButtonClass} onclick={() => (open = !open)} aria-expanded={open} aria-label={'Details for ' + head.ticker}>
+				<NativeButton
+					class={iconButtonClass}
+					onclick={() => (open = !open)}
+					aria-expanded={open}
+					aria-label={'Details for ' + head.ticker}
+				>
 					<Icon name="chevron-down" class="h-4 w-4" />
 				</NativeButton>
-				<NativeButton class={iconButtonClass} disabled={head.isFirst} aria-label={'Move ' + head.ticker + ' up'} onclick={() => move('up')}>
+				<NativeButton
+					class={iconButtonClass}
+					disabled={head.isFirst}
+					aria-label={'Move ' + head.ticker + ' up'}
+					onclick={() => move('up')}
+				>
 					<Icon name="arrow-up" class="h-4 w-4" />
 				</NativeButton>
-				<NativeButton class={iconButtonClass} disabled={head.isLast} aria-label={'Move ' + head.ticker + ' down'} onclick={() => move('down')}>
+				<NativeButton
+					class={iconButtonClass}
+					disabled={head.isLast}
+					aria-label={'Move ' + head.ticker + ' down'}
+					onclick={() => move('down')}
+				>
 					<Icon name="arrow-down" class="h-4 w-4" />
 				</NativeButton>
-				<NativeButton class={iconButtonClass} aria-label={'Duplicate ' + head.ticker} onclick={() => workspaceAction(`/terminal/positions/${id}/duplicate`)}>
+				<NativeButton
+					class={iconButtonClass}
+					aria-label={'Duplicate ' + head.ticker}
+					onclick={() => workspaceAction(`/terminal/positions/${id}/duplicate`)}
+				>
 					<Icon name="copy" class="h-4 w-4" />
 				</NativeButton>
 				<NativeButton class={iconButtonClass} aria-label={'Delete ' + head.ticker} onclick={remove}>
@@ -230,14 +306,21 @@
 							aria-label="Current share price"
 							autocomplete="off"
 							inputmode="decimal"
-							onchange={(e: Event) => edit({ currentSharePrice: (e.currentTarget as HTMLInputElement).value })}
+							onchange={(e: Event) =>
+								edit({ currentSharePrice: (e.currentTarget as HTMLInputElement).value })}
 						/>
 					</div>
 					<div id={`tp-${id}-derived-capitalToday`}>
 						{#if calc.capitalAtTodayPrice}
-							<p class="text-footnote">Capital at today's price: <span class="font-semibold tabular-nums">{calc.capitalAtTodayPrice}</span></p>
+							<p class="text-footnote">
+								Capital at today's price: <span class="font-semibold tabular-nums"
+									>{calc.capitalAtTodayPrice}</span
+								>
+							</p>
 						{:else}
-							<p class="text-footnote text-muted-foreground">Add a current price to see what these shares cost today.</p>
+							<p class="text-footnote text-muted-foreground">
+								Add a current price to see what these shares cost today.
+							</p>
 						{/if}
 					</div>
 				</div>
@@ -256,7 +339,11 @@
 						{#if suggestion?.kind === 'consent'}
 							<AIConsentCard next={suggestion.next} dismissible />
 						{:else if suggestion?.kind === 'suggestion'}
-							<Suggestion vm={suggestion.vm} onaccept={(vals) => edit(vals)} ondismiss={() => (suggestion = null)} />
+							<Suggestion
+								vm={suggestion.vm}
+								onaccept={(vals) => edit(vals)}
+								ondismiss={() => (suggestion = null)}
+							/>
 						{/if}
 					</div>
 				</div>

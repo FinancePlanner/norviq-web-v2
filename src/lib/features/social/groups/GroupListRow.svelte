@@ -8,7 +8,11 @@
 	let { group }: { group: GroupCard } = $props();
 </script>
 
-<a href={group.href} class="flex items-center gap-3 p-4 hover:bg-black/5 dark:hover:bg-white/5" data-group-row>
+<a
+	href={group.href}
+	class="flex items-center gap-3 p-4 hover:bg-black/5 dark:hover:bg-white/5"
+	data-group-row
+>
 	<GroupTile {group} size="size-11 text-xl" />
 	<div class="min-w-0 flex-1">
 		<div class="flex items-baseline gap-2">
@@ -32,6 +36,8 @@
 		</p>
 	</div>
 	{#if group.unread > 0}
-		<span class="groups-unread-badge" aria-label={group.unread + ' unread'}>{badgeText(group.unread)}</span>
+		<span class="groups-unread-badge" aria-label={group.unread + ' unread'}
+			>{badgeText(group.unread)}</span
+		>
 	{/if}
 </a>

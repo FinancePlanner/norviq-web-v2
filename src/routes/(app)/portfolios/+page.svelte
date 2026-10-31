@@ -34,12 +34,25 @@
 {/snippet}
 
 <div class="app-page-content vigil-canvas-page portfolio-workspace portfolio-modern-page">
-	<vigil.ModernPageHeader title="Portfolios" actions={data.pilotsEnabled ? pilotsLink : undefined} />
+	<vigil.ModernPageHeader
+		title="Portfolios"
+		actions={data.pilotsEnabled ? pilotsLink : undefined}
+	/>
 	{#if data.notice}
-		<div class="mt-5 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm" role="status">{data.notice}</div>
+		<div
+			class="mt-5 rounded-lg border border-success/25 bg-success/10 px-4 py-3 text-sm"
+			role="status"
+		>
+			{data.notice}
+		</div>
 	{/if}
 	{#if data.error}
-		<div class="mt-5 rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm" role="alert">{data.error}</div>
+		<div
+			class="mt-5 rounded-lg border border-danger/25 bg-danger/10 px-4 py-3 text-sm"
+			role="alert"
+		>
+			{data.error}
+		</div>
 	{/if}
 	<div class="vigil-command-split mt-6">
 		<div class="vigil-command-split-main">
@@ -47,9 +60,13 @@
 				<div class="flex items-start justify-between gap-4">
 					<div>
 						<h2 id="portfolio-list-title" class="text-lg font-semibold">Your portfolios</h2>
-						<p class="mt-1 text-sm text-muted-foreground">Actual portfolios affect totals. Sandboxes stay separate.</p>
+						<p class="mt-1 text-sm text-muted-foreground">
+							Actual portfolios affect totals. Sandboxes stay separate.
+						</p>
 					</div>
-					<span class="text-sm tabular-nums text-muted-foreground">{`${data.portfolios.length} / 25`}</span>
+					<span class="text-sm text-muted-foreground tabular-nums"
+						>{`${data.portfolios.length} / 25`}</span
+					>
 				</div>
 				<div class="mt-5 grid gap-3 sm:grid-cols-2">
 					{#each data.portfolios as item (item.id)}
@@ -66,13 +83,21 @@
 							<div class="flex items-start justify-between gap-3">
 								<div>
 									<p class="font-semibold">{item.name}</p>
-									<p class="mt-1 text-xs capitalize text-muted-foreground">{item.purpose} · {item.ownership}</p>
+									<p class="mt-1 text-xs text-muted-foreground capitalize">
+										{item.purpose} · {item.ownership}
+									</p>
 								</div>
-								<span class="rounded-full bg-current/5 px-2 py-1 text-xs capitalize">{item.mode}</span>
+								<span class="rounded-full bg-current/5 px-2 py-1 text-xs capitalize"
+									>{item.mode}</span
+								>
 							</div>
-							<p class="mt-4 text-xs text-muted-foreground">{item.baseCurrency} · {item.currentUserRole}</p>
+							<p class="mt-4 text-xs text-muted-foreground">
+								{item.baseCurrency} · {item.currentUserRole}
+							</p>
 							{#if following}
-								<p class="mt-2 text-xs font-medium text-[var(--color-tint)]">{'Following ' + following.pilotName}</p>
+								<p class="mt-2 text-xs font-medium text-[var(--color-tint)]">
+									{'Following ' + following.pilotName}
+								</p>
 							{/if}
 						</a>
 					{/each}
@@ -80,7 +105,9 @@
 				{#if data.portfolios.length === 0}
 					<div class="mt-5 rounded-lg border border-dashed border-current/20 p-8 text-center">
 						<p class="font-medium">Create your first portfolio</p>
-						<p class="mt-2 text-sm text-muted-foreground">Start with one personal actual portfolio.</p>
+						<p class="mt-2 text-sm text-muted-foreground">
+							Start with one personal actual portfolio.
+						</p>
 					</div>
 				{/if}
 			</vigil.Panel>
@@ -126,11 +153,20 @@
 								{ value: 'hypothetical', label: 'What if' }
 							]}
 						/>
-						<Field name="currency" label="Currency" value="USD" required class="w-full" wrapperClass="block text-sm" maxlength={3} />
+						<Field
+							name="currency"
+							label="Currency"
+							value="USD"
+							required
+							class="w-full"
+							wrapperClass="block text-sm"
+							maxlength={3}
+						/>
 					</div>
 					{#if !data.isPro}
 						<p class="text-xs text-muted-foreground">
-							Free includes one personal actual portfolio. Retirement, joint, and hypothetical portfolios require Pro.
+							Free includes one personal actual portfolio. Retirement, joint, and hypothetical
+							portfolios require Pro.
 						</p>
 					{/if}
 					<SubmitButton class="w-full">Create portfolio</SubmitButton>
@@ -140,18 +176,24 @@
 	</div>
 	{#if selected}
 		{@const following = pilotFollowingFor(data.pilotFollows, selected.id)}
-		<section class="mt-5 glass-card p-5 md:p-6">
+		<section class="glass-card mt-5 p-5 md:p-6">
 			<div class="flex flex-wrap items-start justify-between gap-4">
 				<div>
 					<p class="text-footnote font-semibold text-muted-foreground">Selected portfolio</p>
 					<h2 class="mt-2 text-2xl font-semibold">{selected.name}</h2>
-					<p class="mt-1 text-sm capitalize text-muted-foreground">{selected.purpose} · {selected.ownership} · {selected.mode}</p>
+					<p class="mt-1 text-sm text-muted-foreground capitalize">
+						{selected.purpose} · {selected.ownership} · {selected.mode}
+					</p>
 				</div>
 				<div class="flex flex-wrap gap-2">
 					<a class="btn-secondary" href={'/portfolio?portfolio=' + selected.id}>Open holdings</a>
-					<a class="btn-secondary" href={'/portfolio/rebalancing?portfolio=' + selected.id}>Rebalancing</a>
+					<a class="btn-secondary" href={'/portfolio/rebalancing?portfolio=' + selected.id}
+						>Rebalancing</a
+					>
 					{#if selected.purpose === 'retirement'}
-						<a class="btn-secondary" href={'/portfolio/retirement?portfolio=' + selected.id}>Retirement plan</a>
+						<a class="btn-secondary" href={'/portfolio/retirement?portfolio=' + selected.id}
+							>Retirement plan</a
+						>
 					{/if}
 					{#if selected.capabilities?.canEdit}
 						<form method="post" action="?/clone" use:enhance={withSpinner()}>
@@ -171,7 +213,9 @@
 						{#each data.cash as cash (cash.id)}
 							<div class="rounded-lg bg-current/5 px-4 py-3">
 								<div class="flex justify-between gap-3">
-									<span>{cash.label}</span><strong>{`${cash.currency} ${formatFloat(cash.balance, 2)}`}</strong>
+									<span>{cash.label}</span><strong
+										>{`${cash.currency} ${formatFloat(cash.balance, 2)}`}</strong
+									>
 								</div>
 								<p class="mt-1 text-xs text-muted-foreground">As of {cash.asOf}</p>
 							</div>
@@ -218,9 +262,19 @@
 						{/each}
 					</div>
 					{#if selected.capabilities?.canManageMembers}
-						<form method="post" action="?/invite" class="mt-4 space-y-3" use:enhance={withSpinner()}>
+						<form
+							method="post"
+							action="?/invite"
+							class="mt-4 space-y-3"
+							use:enhance={withSpinner()}
+						>
 							<input type="hidden" name="id" value={selected.id} />
-							{@render workspaceField('Invite by verified email', 'email', 'person@example.com', 'email')}
+							{@render workspaceField(
+								'Invite by verified email',
+								'email',
+								'person@example.com',
+								'email'
+							)}
 							<SecondarySubmitButton class="w-full">Invite editor</SecondarySubmitButton>
 						</form>
 					{/if}

@@ -61,7 +61,10 @@ export interface TelegramPreference {
 	timezone?: string;
 }
 
-export async function loadIntegrationsVM(event: RequestEvent, query: URLSearchParams | null): Promise<IntegrationsViewModel> {
+export async function loadIntegrationsVM(
+	event: RequestEvent,
+	query: URLSearchParams | null
+): Promise<IntegrationsViewModel> {
 	const vm: IntegrationsViewModel = {
 		brokers: [],
 		ibkr: emptyIBKRVM(),
@@ -80,7 +83,10 @@ export async function loadIntegrationsVM(event: RequestEvent, query: URLSearchPa
 	} catch (err) {
 		console.warn('list brokers failed', err);
 		vm.hasLoadError = true;
-		vm.errorMessage = integrationsErrorOrDefault(vm.errorMessage, 'Could not load broker connections.');
+		vm.errorMessage = integrationsErrorOrDefault(
+			vm.errorMessage,
+			'Could not load broker connections.'
+		);
 		return vm;
 	}
 	vm.brokers = brokers.map(mapBrokerRow);
@@ -145,7 +151,8 @@ function atoi(raw: string | null): number {
 }
 
 export function formatIBKRSyncMessage(inserted: number, updated: number, removed: number): string {
-	if (inserted === 0 && updated === 0 && removed === 0) return 'IBKR sync completed. Holdings are up to date.';
+	if (inserted === 0 && updated === 0 && removed === 0)
+		return 'IBKR sync completed. Holdings are up to date.';
 	return [
 		'IBKR sync completed.',
 		formatSyncCount('added', inserted),
@@ -254,7 +261,11 @@ export async function loadMCPStatusVM(event: RequestEvent, isPro: boolean): Prom
 	}
 	let tokens: PersonalAccessToken[];
 	try {
-		const envelope = await apiJSON<{ items?: PersonalAccessToken[] | null }>(event, 'GET', '/v1/tokens');
+		const envelope = await apiJSON<{ items?: PersonalAccessToken[] | null }>(
+			event,
+			'GET',
+			'/v1/tokens'
+		);
 		tokens = envelope?.items ?? [];
 	} catch (err) {
 		console.warn('list PAT for mcp status failed', err);
@@ -312,7 +323,8 @@ export async function loadMCPStatusVM(event: RequestEvent, isPro: boolean): Prom
 		return an < bn ? -1 : an > bn ? 1 : 0;
 	});
 
-	const state = (fam: string) => (scopeLive.has(fam) ? 'live' : scopeReady.has(fam) ? 'ready' : 'off');
+	const state = (fam: string) =>
+		scopeLive.has(fam) ? 'live' : scopeReady.has(fam) ? 'ready' : 'off';
 	vm.scopes = [
 		{ label: 'Expense tools', state: state('expenses') },
 		{ label: 'Reports / spend', state: state('reports') },

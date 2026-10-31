@@ -22,7 +22,9 @@ export function resultJSON(result: unknown): string {
 
 export function objectArray(value: unknown): Obj[] {
 	if (!Array.isArray(value)) return [];
-	return value.filter((item): item is Obj => typeof item === 'object' && item !== null && !Array.isArray(item));
+	return value.filter(
+		(item): item is Obj => typeof item === 'object' && item !== null && !Array.isArray(item)
+	);
 }
 
 export function objectFrom(value: unknown): Obj {
@@ -51,9 +53,12 @@ export function signedFixed(value: number, prec: number): string {
 	return s.startsWith('-') ? s : '+' + s;
 }
 
-export const formatOptionalPercent = (value: number | null) => (value === null ? '—' : formatFloat(value * 100, 1) + '%');
-export const formatOptionalMonths = (value: number | null) => (value === null ? '—' : formatFloat(value, 1) + ' mo');
-export const formatOptionalMoney = (value: number | null) => (value === null ? '—' : signedFixed(value, 0) + ' / mo');
+export const formatOptionalPercent = (value: number | null) =>
+	value === null ? '—' : formatFloat(value * 100, 1) + '%';
+export const formatOptionalMonths = (value: number | null) =>
+	value === null ? '—' : formatFloat(value, 1) + ' mo';
+export const formatOptionalMoney = (value: number | null) =>
+	value === null ? '—' : signedFixed(value, 0) + ' / mo';
 
 function goExponent(mantissa: string, exp: number): string {
 	const abs = Math.abs(exp);

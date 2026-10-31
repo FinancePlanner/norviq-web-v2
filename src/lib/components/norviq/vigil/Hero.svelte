@@ -13,8 +13,12 @@
 	// on the page surface (not a card). `delta` is usually <HeroDelta>.
 	import type { Snippet } from 'svelte';
 
-	let { label, value, delta, children }: { label: string; value: string; delta?: Snippet; children?: Snippet } =
-		$props();
+	let {
+		label,
+		value,
+		delta,
+		children
+	}: { label: string; value: string; delta?: Snippet; children?: Snippet } = $props();
 </script>
 
 <section class="nq-hero">

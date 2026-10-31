@@ -19,7 +19,10 @@ import type {
 import { boardCommentRows, boardNotice, boardPostRow, pathEscape } from './boards.js';
 import { boardsFailure } from '#lib/features/settings-admin/admin/boards-admin.server.js';
 
-export { boardsErrorText, boardsFailure } from '#lib/features/settings-admin/admin/boards-admin.server.js';
+export {
+	boardsErrorText,
+	boardsFailure
+} from '#lib/features/settings-admin/admin/boards-admin.server.js';
 
 // Calls from norviq-web internal/api/boards.go (doBoardsRequest). A non-2xx
 // arrives as APIError carrying the backend's {code, reason} envelope, which
@@ -30,7 +33,8 @@ export const isBoardsCode = (err: unknown, code: string) => isAPIError(err) && e
 /** api.IsBoardsNotFound */
 export const isBoardsNotFound = (err: unknown) => isAPIError(err) && err.status === 404;
 
-export const communityViewer = (e: RequestEvent) => apiJSON<CommunityViewerStatus>(e, 'GET', '/v1/community/me');
+export const communityViewer = (e: RequestEvent) =>
+	apiJSON<CommunityViewerStatus>(e, 'GET', '/v1/community/me');
 
 export async function acceptCommunityGuidelines(e: RequestEvent): Promise<void> {
 	await apiJSON(e, 'POST', '/v1/community/guidelines/accept');
@@ -53,7 +57,10 @@ export const listBoardPosts = (
 	e: RequestEvent,
 	slug: string,
 	q: { sort: string; kind: string; tag: string; cursor: string }
-) => apiJSON<BoardPostPage>(e, 'GET', '/v1/boards/' + pathEscape(slug) + '/posts', undefined, { query: q });
+) =>
+	apiJSON<BoardPostPage>(e, 'GET', '/v1/boards/' + pathEscape(slug) + '/posts', undefined, {
+		query: q
+	});
 
 export const createBoardPost = (e: RequestEvent, slug: string, req: CreateBoardPostRequest) =>
 	apiJSON<BoardPostSummary>(e, 'POST', '/v1/boards/' + pathEscape(slug) + '/posts', req);
@@ -68,8 +75,16 @@ export async function deleteBoardPost(e: RequestEvent, id: string): Promise<void
 export const voteBoardPost = (e: RequestEvent, id: string) =>
 	apiJSON<BoardVoteResponse>(e, 'POST', '/v1/board-posts/' + pathEscape(id) + '/vote');
 
-export const createBoardComment = (e: RequestEvent, postID: string, parentId: string | null, body: string) =>
-	apiJSON<BoardComment>(e, 'POST', '/v1/board-posts/' + pathEscape(postID) + '/comments', { parentId, body });
+export const createBoardComment = (
+	e: RequestEvent,
+	postID: string,
+	parentId: string | null,
+	body: string
+) =>
+	apiJSON<BoardComment>(e, 'POST', '/v1/board-posts/' + pathEscape(postID) + '/comments', {
+		parentId,
+		body
+	});
 
 export async function deleteBoardComment(e: RequestEvent, id: string): Promise<void> {
 	await apiJSON(e, 'DELETE', '/v1/board-comments/' + pathEscape(id));
@@ -91,23 +106,34 @@ export async function adminDeleteBoard(e: RequestEvent, slug: string): Promise<v
 }
 
 export const listBoardNotifications = (e: RequestEvent, cursor: string) =>
-	apiJSON<BoardNotificationPage>(e, 'GET', '/v1/community/notifications', undefined, { query: { cursor } });
+	apiJSON<BoardNotificationPage>(e, 'GET', '/v1/community/notifications', undefined, {
+		query: { cursor }
+	});
 
 export async function boardUnreadCount(e: RequestEvent): Promise<number> {
-	const out = await apiJSON<{ unreadCount?: number }>(e, 'GET', '/v1/community/notifications/unread-count');
+	const out = await apiJSON<{ unreadCount?: number }>(
+		e,
+		'GET',
+		'/v1/community/notifications/unread-count'
+	);
 	return out?.unreadCount ?? 0;
 }
 
 /** Marks the given ids read, or everything when ids is null. */
-export async function markBoardNotificationsRead(e: RequestEvent, ids: string[] | null): Promise<void> {
+export async function markBoardNotificationsRead(
+	e: RequestEvent,
+	ids: string[] | null
+): Promise<void> {
 	await apiJSON(e, 'POST', '/v1/community/notifications/read', { ids });
 }
 
 export const boardNotificationSettings = (e: RequestEvent) =>
 	apiJSON<BoardNotificationSettings>(e, 'GET', '/v1/community/notification-settings');
 
-export const updateBoardNotificationSettings = (e: RequestEvent, settings: BoardNotificationSettings) =>
-	apiJSON<BoardNotificationSettings>(e, 'PUT', '/v1/community/notification-settings', settings);
+export const updateBoardNotificationSettings = (
+	e: RequestEvent,
+	settings: BoardNotificationSettings
+) => apiJSON<BoardNotificationSettings>(e, 'PUT', '/v1/community/notification-settings', settings);
 
 /**
  * loadBoardsViewer fetches /community/me. A ban renders the banned page (403,
@@ -133,7 +159,9 @@ export async function loadBoardsViewer(event: RequestEvent): Promise<Viewer> {
 	if (s && !status.isAdmin) {
 		if (s.kind === 'ban') error(403, BOARDS_BANNED);
 		// sanctionRow renders an expiry as Go's "until Jan 2, 15:04".
-		viewer.mutedUntil = s.expiresAt ? sanctionRow({ ...s, revokedAt: null }, new Date()).expires : 'indefinitely';
+		viewer.mutedUntil = s.expiresAt
+			? sanctionRow({ ...s, revokedAt: null }, new Date()).expires
+			: 'indefinitely';
 	}
 	viewer.canWrite = viewer.mutedUntil === '' && !viewer.needsUsername && !viewer.needsSetup;
 	return viewer;

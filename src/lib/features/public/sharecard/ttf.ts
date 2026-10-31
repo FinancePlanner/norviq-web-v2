@@ -29,7 +29,12 @@ export class TTFont {
 		const n = v.getUint16(4);
 		for (let i = 0; i < n; i++) {
 			const rec = 12 + 16 * i;
-			const tag = String.fromCharCode(v.getUint8(rec), v.getUint8(rec + 1), v.getUint8(rec + 2), v.getUint8(rec + 3));
+			const tag = String.fromCharCode(
+				v.getUint8(rec),
+				v.getUint8(rec + 1),
+				v.getUint8(rec + 2),
+				v.getUint8(rec + 3)
+			);
 			this.tables.set(tag, { offset: v.getUint32(rec + 8), length: v.getUint32(rec + 12) });
 		}
 		const head = this.table('head');
@@ -180,7 +185,8 @@ export class TTFont {
 		let first = 0;
 		for (const last of endPts) {
 			const pts: { x: number; y: number; on: boolean }[] = [];
-			for (let i = first; i <= last; i++) pts.push({ x: xs[i], y: ys[i], on: (flags[i] & 1) === 1 });
+			for (let i = first; i <= last; i++)
+				pts.push({ x: xs[i], y: ys[i], on: (flags[i] & 1) === 1 });
 			first = last + 1;
 			if (pts.length > 0) contours.push(toContour(pts));
 		}
@@ -226,7 +232,10 @@ export class TTFont {
 			}
 			const tf = (q: Point): Point => ({ x: a * q.x + c * q.y + dx, y: b * q.x + d * q.y + dy });
 			for (const ct of this.readGlyph(glyph, depth + 1)) {
-				out.push({ start: tf(ct.start), segs: ct.segs.map((s) => ({ c: s.c && tf(s.c), p: tf(s.p) })) });
+				out.push({
+					start: tf(ct.start),
+					segs: ct.segs.map((s) => ({ c: s.c && tf(s.c), p: tf(s.p) }))
+				});
 			}
 			if (!(flags & 0x20)) break;
 		}

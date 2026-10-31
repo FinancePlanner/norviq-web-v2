@@ -26,7 +26,9 @@
 	let pending = $state(false);
 
 	// Without JS the actions re-render the page with `form`.
-	const panel = $derived<ImportPanel | null>(local ?? (form?.panel as ImportPanel | undefined) ?? null);
+	const panel = $derived<ImportPanel | null>(
+		local ?? (form?.panel as ImportPanel | undefined) ?? null
+	);
 
 	// htmx swapped #import-review with whatever the handler rendered; the
 	// result replaces the local panel the same way, and #import-loading shows
@@ -54,10 +56,19 @@
 <svelte:head><title>Import spreadsheet - Norviq</title></svelte:head>
 
 <div class="app-page-content">
-	<vigil.ModernPageHeader title="Import spreadsheet" subtitle="Bring your expenses across from Excel." />
+	<vigil.ModernPageHeader
+		title="Import spreadsheet"
+		subtitle="Bring your expenses across from Excel."
+	/>
 	<section class="glass-card">
 		<FormErrorBanner message="" />
-		<form id="import-form" method="POST" action="?/analyze" enctype="multipart/form-data" use:enhance={submit}>
+		<form
+			id="import-form"
+			method="POST"
+			action="?/analyze"
+			enctype="multipart/form-data"
+			use:enhance={submit}
+		>
 			<label class="field-label" for="file">Spreadsheet</label>
 			<input
 				id="file"
@@ -67,7 +78,9 @@
 				accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 				required
 			/>
-			<p class="field-hint">.xlsx only, up to 8 MB. Nothing is imported until you have checked what we found.</p>
+			<p class="field-hint">
+				.xlsx only, up to 8 MB. Nothing is imported until you have checked what we found.
+			</p>
 			<SubmitButton>Analyze spreadsheet</SubmitButton>
 		</form>
 	</section>

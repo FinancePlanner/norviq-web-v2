@@ -13,7 +13,10 @@ export function parseWatchlistSort(raw: string | null | undefined): WatchlistSor
 /** Go read dataset values back with Number(); data-gain etc. were "%f" strings. */
 const num = (v: number) => Number(v.toFixed(6));
 
-export const watchlistComparators: Record<WatchlistSort, (a: WatchlistRowVM, b: WatchlistRowVM) => number> = {
+export const watchlistComparators: Record<
+	WatchlistSort,
+	(a: WatchlistRowVM, b: WatchlistRowVM) => number
+> = {
 	name: (a, b) => a.symbol.localeCompare(b.symbol),
 	gains: (a, b) => {
 		// Unheld symbols have no portfolio gains — keep them after held rows.

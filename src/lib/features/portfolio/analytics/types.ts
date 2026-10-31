@@ -189,4 +189,11 @@ export const emptyNewsArticleForm = (): NewsArticleFormVM => ({
 	error: ''
 });
 
-export const emptyListForm = (): ListFormVM => ({ listID: '', name: '', isEdit: false, isDefault: false, canDelete: false, error: '' });
+export const emptyListForm = (): ListFormVM => ({
+	listID: '',
+	name: '',
+	isEdit: false,
+	isDefault: false,
+	canDelete: false,
+	error: ''
+});

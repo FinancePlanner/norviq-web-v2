@@ -19,7 +19,11 @@ export const load: LayoutServerLoad = async (event) => {
 		features: availableFeatures(ctx.billing),
 		social: ctx.social,
 		articles: ctx.articles,
-		sidebarItems: sidebarItemsFor(event.locals.t, { social: ctx.social, articles: ctx.articles, locked: ctx.locked }),
+		sidebarItems: sidebarItemsFor(event.locals.t, {
+			social: ctx.social,
+			articles: ctx.articles,
+			locked: ctx.locked
+		}),
 		// Go renderShell → withGuidedStepLayer: the open guided-start step, if any.
 		guidedStep: await guidedStepLayer(event)
 	};

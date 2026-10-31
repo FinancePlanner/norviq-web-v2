@@ -1,6 +1,10 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { adminDeleteBoard, boardsFailure, methodNotAllowed } from '#lib/features/social/boards/boards.server.js';
+import {
+	adminDeleteBoard,
+	boardsFailure,
+	methodNotAllowed
+} from '#lib/features/social/boards/boards.server.js';
 
 // POST /boards/{slug}/delete (handlers.BoardsDeleteBoard). POST-only, as in Go.
 export const load: PageServerLoad = () => methodNotAllowed();

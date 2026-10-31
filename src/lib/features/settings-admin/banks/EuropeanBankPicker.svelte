@@ -34,7 +34,13 @@
 	<summary class="cursor-pointer text-sm font-semibold">Connect a European bank</summary>
 	<div class="mt-3 space-y-3">
 		<label class="field-label" for="bank-country">Country</label>
-		<select id="bank-country" name="country" class="field-input" bind:value={country} onchange={() => loadInstitutions(country)}>
+		<select
+			id="bank-country"
+			name="country"
+			class="field-input"
+			bind:value={country}
+			onchange={() => loadInstitutions(country)}
+		>
 			{#each bankCountries as [code, label] (code)}
 				<option value={code}>{label}</option>
 			{/each}
@@ -56,7 +62,10 @@
 										<span>
 											{inst.name}
 											{#if inst.beta}
-												<span class="ml-2 rounded-full border border-[var(--border)] px-1.5 py-0.5 text-xs opacity-70">Beta</span>
+												<span
+													class="ml-2 rounded-full border border-[var(--border)] px-1.5 py-0.5 text-xs opacity-70"
+													>Beta</span
+												>
 											{/if}
 										</span>
 										<span class="opacity-50">Connect →</span>

@@ -15,9 +15,19 @@ export interface PillarSlice {
 /** Neutral placeholder; theme.ts resolves colorVar against the live appearance. */
 export const pillarSeriesColor = '#8D8371';
 
-export function pillarTooltip(info: { value?: unknown; marker?: unknown; seriesName?: string }): string {
+export function pillarTooltip(info: {
+	value?: unknown;
+	marker?: unknown;
+	seriesName?: string;
+}): string {
 	const v = Number(info.value || 0);
-	return info.marker + ' ' + info.seriesName + ': $' + v.toLocaleString(undefined, { maximumFractionDigits: 0 });
+	return (
+		info.marker +
+		' ' +
+		info.seriesName +
+		': $' +
+		v.toLocaleString(undefined, { maximumFractionDigits: 0 })
+	);
 }
 
 /**
@@ -32,7 +42,14 @@ export function spendPillarBar(chartID: string, slices: readonly PillarSlice[]):
 	const option = {
 		backgroundColor: 'transparent',
 		grid: { left: '0%', right: '0%', top: '0%', bottom: '0%', containLabel: false },
-		legend: { show: true, bottom: 0, icon: 'roundRect', itemWidth: 10, itemHeight: 10, textStyle: { color: colorMuted, fontSize: 11 } },
+		legend: {
+			show: true,
+			bottom: 0,
+			icon: 'roundRect',
+			itemWidth: 10,
+			itemHeight: 10,
+			textStyle: { color: colorMuted, fontSize: 11 }
+		},
 		tooltip: { trigger: 'item', triggerOn: 'mousemove|click', formatter: pillarTooltip },
 		xAxis: { type: 'value', show: false, max: 'dataMax' },
 		yAxis: { type: 'category', show: false, data: [''] },
@@ -62,7 +79,12 @@ export function heatmapTooltip(info: { value?: unknown }): string {
 function isoDay(d: Date | string, timeZone: string): string {
 	if (typeof d === 'string') return d.slice(0, 10);
 	// en-CA formats as YYYY-MM-DD.
-	return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+	return new Intl.DateTimeFormat('en-CA', {
+		timeZone,
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
+	}).format(d);
 }
 
 /**
@@ -82,7 +104,10 @@ export function activityHeatmap(
 	const entries = counts ? (counts instanceof Map ? [...counts] : Object.entries(counts)) : [];
 	const fromDay = isoDay(from, timeZone);
 	const toDay = isoDay(to, timeZone);
-	const inverted = typeof from === 'string' || typeof to === 'string' ? toDay < fromDay : (to as Date).getTime() < (from as Date).getTime();
+	const inverted =
+		typeof from === 'string' || typeof to === 'string'
+			? toDay < fromDay
+			: (to as Date).getTime() < (from as Date).getTime();
 	if (entries.length === 0 || inverted) return null;
 
 	const data: Array<[string, number]> = [];

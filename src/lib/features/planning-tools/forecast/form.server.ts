@@ -47,9 +47,11 @@ export function forecastRequestFromForm(form: FormData): NetWorthForecastUpsertR
 	const name = value(form, 'name').trim();
 	if (name === '') fail('name is required');
 	const baseCurrency = value(form, 'base_currency').trim().toUpperCase();
-	if (new TextEncoder().encode(baseCurrency).length !== 3) fail('base currency must be a 3-letter code');
+	if (new TextEncoder().encode(baseCurrency).length !== 3)
+		fail('base currency must be a 3-letter code');
 	const horizon = atoi(value(form, 'horizon').trim()) ?? fail('horizon must be a number');
-	const pathCount = atoi(value(form, 'path_count').trim()) ?? fail('simulation paths must be a number');
+	const pathCount =
+		atoi(value(form, 'path_count').trim()) ?? fail('simulation paths must be a number');
 	if (horizon < 12 || horizon > 600) fail('horizon must be between 12 and 600 months');
 	if (pathCount < 100 || pathCount > 10_000) fail('simulation paths must be between 100 and 10000');
 	const income = parseOptionalFloat(value(form, 'income'));
@@ -65,8 +67,10 @@ export function forecastRequestFromForm(form: FormData): NetWorthForecastUpsertR
 		const n = parseFloatStrict(raw);
 		return n === null ? null : n / 100;
 	};
-	const incomeGrowth = percent(value(form, 'income_growth')) ?? fail('income growth must be a number');
-	const spendingGrowth = percent(value(form, 'spending_growth')) ?? fail('spending growth must be a number');
+	const incomeGrowth =
+		percent(value(form, 'income_growth')) ?? fail('income growth must be a number');
+	const spendingGrowth =
+		percent(value(form, 'spending_growth')) ?? fail('spending growth must be a number');
 	const inflation = percent(value(form, 'inflation'));
 	if (inflation === null || inflation < 0) fail('inflation must be a non-negative number');
 	const body: NetWorthForecastUpsertRequest = {

@@ -18,7 +18,10 @@
 	<meta property="og:site_name" content="Norviq" />
 	<meta property="og:url" content={vm.canonicalURL} />
 	<meta property="og:title" content="Join my group on Norviq" />
-	<meta property="og:description" content="Chat with friends about the stocks, ETFs and topics you follow." />
+	<meta
+		property="og:description"
+		content="Chat with friends about the stocks, ETFs and topics you follow."
+	/>
 	<meta property="og:image" content={vm.ogImageURL} />
 	<meta property="og:image:type" content="image/png" />
 	<meta property="og:image:width" content="1200" />
@@ -35,7 +38,10 @@
 		</div>
 	{/if}
 	{#if vm.groupName}
-		<section class="mt-8 rounded-[var(--radius)] border bg-card-bg p-6 text-center" data-group-invite-join>
+		<section
+			class="mt-8 rounded-[var(--radius)] border bg-card-bg p-6 text-center"
+			data-group-invite-join
+		>
 			{#if vm.groupEmoji}
 				<p class="text-4xl" aria-hidden="true">{vm.groupEmoji}</p>
 			{/if}
@@ -54,12 +60,20 @@
 			</p>
 			{#if vm.openURL}
 				<p class="mt-4 text-sm text-muted-foreground">You're already in this group.</p>
-				<a href={vm.openURL} class="mt-6 block rounded-[var(--radius-control)] bg-tint px-4 py-3 text-center font-medium text-white">Open group</a>
+				<a
+					href={vm.openURL}
+					class="mt-6 block rounded-[var(--radius-control)] bg-tint px-4 py-3 text-center font-medium text-white"
+					>Open group</a
+				>
 			{:else}
 				<form method="post" action={'/g/' + vm.code + '/join'} class="mt-6">
 					<SubmitButton fullWidth>Join group</SubmitButton>
 				</form>
-				<a href="/groups" class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium">Not now</a>
+				<a
+					href="/groups"
+					class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium"
+					>Not now</a
+				>
 			{/if}
 		</section>
 	{:else if vm.signupURL || !vm.inviteError}
@@ -68,16 +82,22 @@
 			<p class="mt-2 text-sm text-muted-foreground">
 				A friend wants you in their group chat. Open the invite in the Norviq app to join.
 			</p>
-			<a href={vm.appURL} class="mt-6 block rounded-[var(--radius-control)] bg-tint px-4 py-3 text-center font-medium text-white" data-group-invite-open
-				>Open in Norviq</a
+			<a
+				href={vm.appURL}
+				class="mt-6 block rounded-[var(--radius-control)] bg-tint px-4 py-3 text-center font-medium text-white"
+				data-group-invite-open>Open in Norviq</a
 			>
-			<a href={vm.appStoreURL} class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium" rel="noopener"
-				>Get Norviq on the App Store</a
+			<a
+				href={vm.appStoreURL}
+				class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium"
+				rel="noopener">Get Norviq on the App Store</a
 			>
 			{#if vm.signupURL}
 				<p class="mt-6 text-sm text-muted-foreground">Or use Norviq on the web</p>
-				<a href={vm.signupURL} class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium" data-group-invite-signup
-					>Create an account</a
+				<a
+					href={vm.signupURL}
+					class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium"
+					data-group-invite-signup>Create an account</a
 				>
 				<p class="mt-3 text-sm text-muted-foreground">
 					Already have one? <a href={vm.loginURL} class="font-medium underline">Log in</a>

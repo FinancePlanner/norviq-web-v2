@@ -2,7 +2,12 @@
 // recording, session marks) and internal/session/onboarding.go.
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
-import { OnboardingKey, requiresPaywall, requiresQuestionnaire, resumeStep } from '#lib/server/onboarding.js';
+import {
+	OnboardingKey,
+	requiresPaywall,
+	requiresQuestionnaire,
+	resumeStep
+} from '#lib/server/onboarding.js';
 
 // handlers onboardingCallTimeout: no funnel call is worth hanging a page for.
 const CALL_TIMEOUT_MS = 3000;
@@ -22,7 +27,9 @@ export interface OnboardingProgressPatch {
 	guidedStartDismissed?: boolean;
 }
 
-export async function getOnboardingProgress(event: RequestEvent): Promise<OnboardingProgress | null> {
+export async function getOnboardingProgress(
+	event: RequestEvent
+): Promise<OnboardingProgress | null> {
 	try {
 		return await apiJSON<OnboardingProgress>(event, 'GET', '/v1/onboarding', undefined, {
 			signal: AbortSignal.timeout(CALL_TIMEOUT_MS)
@@ -108,7 +115,8 @@ export const isOnboardingPaywallPath = (path: string) =>
 	path === '/onboarding/paywall' || path === '/onboarding/paywall/continue';
 
 /** funnelStepAfterWelcome: is a stored step past welcome? */
-export const funnelStepAfterWelcome = (step: string) => step === 'import' || step === 'budget' || step === 'done';
+export const funnelStepAfterWelcome = (step: string) =>
+	step === 'import' || step === 'budget' || step === 'done';
 
 /**
  * afterOnboardingPath: the next path sign-in set aside for onboarding
@@ -128,8 +136,10 @@ export async function afterOnboardingPath(event: RequestEvent): Promise<string> 
  */
 export async function guardInProgress(event: RequestEvent): Promise<string> {
 	const path = event.url.pathname;
-	if (requiresQuestionnaire(event) && path !== '/onboarding/questionnaire') redirect(303, '/onboarding/questionnaire');
-	if (requiresPaywall(event) && !isOnboardingPaywallPath(path)) redirect(303, '/onboarding/paywall');
+	if (requiresQuestionnaire(event) && path !== '/onboarding/questionnaire')
+		redirect(303, '/onboarding/questionnaire');
+	if (requiresPaywall(event) && !isOnboardingPaywallPath(path))
+		redirect(303, '/onboarding/paywall');
 	if (isOnboardingPaywallPath(path)) return '';
 	if (path === '/onboarding/done') return '';
 	const { step, needs } = await resumeStep(event);
@@ -143,5 +153,7 @@ export async function guardInProgress(event: RequestEvent): Promise<string> {
 
 /** redirectAfterImport target: the budget step, or back to Settings → Integrations once onboarded. */
 export function afterImportPath(event: RequestEvent, source: 'csv' | 'manual'): string {
-	return isOnboardingComplete(event) ? '/settings/integrations?import=' + source : '/onboarding/budget';
+	return isOnboardingComplete(event)
+		? '/settings/integrations?import=' + source
+		: '/onboarding/budget';
 }

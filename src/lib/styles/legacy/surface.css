@@ -25,230 +25,230 @@
 
 .app-frame,
 .app-main {
-  position: relative;
+	position: relative;
 }
 
 .overview-holdings-stat {
-  display: flex;
-  align-items: baseline;
-  gap: 0.45rem;
-  margin-top: 0.75rem;
+	display: flex;
+	align-items: baseline;
+	gap: 0.45rem;
+	margin-top: 0.75rem;
 }
 
 .why-moved-chips-timeline {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 0.85rem;
-  padding-left: 1.25rem;
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.55rem;
+	margin-top: 0.85rem;
+	padding-left: 1.25rem;
 }
 
 /* The rail is what makes the chips read as a timeline rather than a wrapped
  * pill list, so it is base. Vigil replaces the flat fill with a gradient. */
 .why-moved-chips-timeline::before {
-  content: '';
-  position: absolute;
-  left: 0.35rem;
-  top: 0.35rem;
-  bottom: 0.35rem;
-  width: 2px;
-  border-radius: 999px;
-  background: var(--color-tint);
-  opacity: 0.85;
+	content: '';
+	position: absolute;
+	left: 0.35rem;
+	top: 0.35rem;
+	bottom: 0.35rem;
+	width: 2px;
+	border-radius: 999px;
+	background: var(--color-tint);
+	opacity: 0.85;
 }
 
 .settings-integrations .mcp-engine-room,
 .settings-api-access .mcp-engine-room {
-  position: relative;
-  overflow: hidden;
+	position: relative;
+	overflow: hidden;
 }
 
 .settings-api-access .btn-revoke {
-  border: 1px solid var(--color-danger);
-  color: var(--color-danger);
-  background: transparent;
-  font-size: 0.72rem;
-  font-weight: 700;
+	border: 1px solid var(--color-danger);
+	color: var(--color-danger);
+	background: transparent;
+	font-size: 0.72rem;
+	font-weight: 700;
 }
 
 .stock-thesis-grid {
-  display: grid;
-  gap: 1rem;
+	display: grid;
+	gap: 1rem;
 }
 
 /* Two scoped rules declare this at min-width:1024px (the later one wins under
  * Vigil); the base repeats the winner. */
 @media (min-width: 1024px) {
-  .stock-thesis-grid {
-    grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 22rem);
-    align-items: start;
-  }
+	.stock-thesis-grid {
+		grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 22rem);
+		align-items: start;
+	}
 }
 
 .stock-sub-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  padding: 0.35rem;
-  border-radius: 0.65rem;
-  border: 1px solid var(--border);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	padding: 0.35rem;
+	border-radius: 0.65rem;
+	border: 1px solid var(--border);
 }
 
 .stock-sub-nav a {
-  font-size: 0.68rem;
-  padding: 0.4rem 0.65rem;
-  border-radius: 0.45rem;
+	font-size: 0.68rem;
+	padding: 0.4rem 0.65rem;
+	border-radius: 0.45rem;
 }
 
 .stock-sub-nav a[aria-current='page'] {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 
 .auth-container,
 .onboarding-page {
-  position: relative;
+	position: relative;
 }
 
 .assistant-tools-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
 }
 
 .assistant-tool-tiles {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-top: auto;
-  padding-top: 0.5rem;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.45rem;
+	margin-top: auto;
+	padding-top: 0.5rem;
 }
 
 .assistant-tool-tiles .mcp-tool-tile {
-  min-height: 3.5rem;
-  font-size: 0.58rem;
+	min-height: 3.5rem;
+	font-size: 0.58rem;
 }
 
 .expenses-command-deck {
-  margin-bottom: 1.25rem;
+	margin-bottom: 1.25rem;
 }
 
 .vigil-command-deck.expenses-command-deck {
-  display: grid;
-  gap: 1rem;
+	display: grid;
+	gap: 1rem;
 }
 
 @media (min-width: 1024px) {
-  .vigil-command-deck.expenses-command-deck.is-3col {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 1fr);
-    align-items: stretch;
-  }
+	.vigil-command-deck.expenses-command-deck.is-3col {
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 1fr);
+		align-items: stretch;
+	}
 }
 
 .expenses-deck-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1rem 1.1rem;
-  min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	padding: 1rem 1.1rem;
+	min-height: 100%;
 }
 
 .expenses-dca-gauge {
-  position: relative;
-  height: 5.5rem;
-  margin: 0.5rem auto;
-  max-width: 14rem;
-  border-radius: 999px 999px 0 0;
-  border: 1px solid var(--border);
-  overflow: hidden;
+	position: relative;
+	height: 5.5rem;
+	margin: 0.5rem auto;
+	max-width: 14rem;
+	border-radius: 999px 999px 0 0;
+	border: 1px solid var(--border);
+	overflow: hidden;
 }
 
 .expenses-dca-gauge-fill {
-  position: absolute;
-  inset: auto 0 0;
-  height: var(--dca-pct, 50%);
-  background: var(--color-tint);
-  opacity: 0.55;
+	position: absolute;
+	inset: auto 0 0;
+	height: var(--dca-pct, 50%);
+	background: var(--color-tint);
+	opacity: 0.55;
 }
 
 .vigil-command-deck {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+	display: grid;
+	gap: 1rem;
+	margin-bottom: 1.25rem;
 }
 
 @media (min-width: 768px) {
-  .vigil-command-deck.is-2col {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+	.vigil-command-deck.is-2col {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 @media (min-width: 1024px) {
-  .vigil-command-deck.is-3col {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 1fr);
-    align-items: stretch;
-  }
+	.vigil-command-deck.is-3col {
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 1fr);
+		align-items: stretch;
+	}
 
-  .vigil-command-split {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--rail);
-    gap: var(--gap);
-    align-items: start;
-  }
+	.vigil-command-split {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) var(--rail);
+		gap: var(--gap);
+		align-items: start;
+	}
 
-  .vigil-command-split.is-aside-first {
-    grid-template-columns: minmax(16rem, 22rem) minmax(0, 1.35fr);
-  }
+	.vigil-command-split.is-aside-first {
+		grid-template-columns: minmax(16rem, 22rem) minmax(0, 1.35fr);
+	}
 }
 
 .vigil-command-deck.is-2col .glass-card,
 .vigil-command-deck.is-2col .dash-panel {
-  height: 100%;
+	height: 100%;
 }
 
 .vigil-command-split-main,
 .vigil-command-split-aside {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 .vigil-form-deck {
-  display: grid;
-  gap: 1rem;
+	display: grid;
+	gap: 1rem;
 }
 
 @media (min-width: 768px) {
-  .vigil-form-deck.is-2col {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+	.vigil-form-deck.is-2col {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 /* /portfolio holdings and the expenses activity list are both built on this.
  * Under Classic the rows were plain blocks with no gap. */
 .vigil-dense-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
 }
 
 .trading-command-split {
-  min-height: calc(100vh - 140px);
+	min-height: calc(100vh - 140px);
 }
 
 .trading-command-split .vigil-command-split-aside {
-  order: 2;
+	order: 2;
 }
 
 @media (min-width: 1024px) {
-  .trading-command-split {
-    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 24rem);
-  }
+	.trading-command-split {
+		grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 24rem);
+	}
 
-  .trading-command-split .vigil-command-split-aside {
-    order: 0;
-  }
+	.trading-command-split .vigil-command-split-aside {
+		order: 0;
+	}
 }
 
 /* ---------- Typographic base ----------
@@ -262,8 +262,8 @@
  * font-family belongs to the base. */
 .vigil-mono,
 .mcp-status-value {
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.02em;
 }
 
 /* Small-caps labels. The mono face stays a Vigil signature; what makes these
@@ -272,110 +272,110 @@
 .mcp-status-label,
 .mcp-scope,
 .vigil-settings-back {
-  font-size: var(--label-size-sm);
-  font-weight: 600;
-  color: var(--muted-foreground);
+	font-size: var(--label-size-sm);
+	font-weight: 600;
+	color: var(--muted-foreground);
 }
 
 /* Deck panel title: the 17px card title, same as PanelHeader. */
 .deck-panel-title {
-  font-size: var(--label-size-lg);
-  font-weight: 600;
-  color: var(--foreground);
-  margin: 0 0 var(--space-3);
+	font-size: var(--label-size-lg);
+	font-weight: 600;
+	color: var(--foreground);
+	margin: 0 0 var(--space-3);
 }
 
 /* Back link: chevron + label in the tint, like a UINavigationBar back button. */
 .vigil-settings-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.125rem;
-  font-size: var(--label-size);
-  font-weight: 600;
-  color: var(--color-tint);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.125rem;
+	font-size: var(--label-size);
+	font-weight: 600;
+	color: var(--color-tint);
 }
 
 .mcp-status-title {
-  margin: 0;
-  font-size: var(--label-size-lg);
-  font-weight: 600;
-  color: var(--foreground);
+	margin: 0;
+	font-size: var(--label-size-lg);
+	font-weight: 600;
+	color: var(--foreground);
 }
 
 .mcp-last-activity,
 .mcp-agent-list {
-  font-size: 0.68rem;
-  color: var(--muted-foreground);
-  margin: 0.55rem 0 0;
+	font-size: 0.68rem;
+	color: var(--muted-foreground);
+	margin: 0.55rem 0 0;
 }
 
 .overview-holdings-stat-value {
-  font-size: 1.65rem;
-  font-weight: 700;
-  color: var(--color-tint);
+	font-size: 1.65rem;
+	font-weight: 700;
+	color: var(--color-tint);
 }
 
 .overview-holdings-stat-label {
-  font-size: 0.78rem;
-  opacity: 0.65;
+	font-size: 0.78rem;
+	opacity: 0.65;
 }
 
 .stock-thesis-title {
-  margin: 0.25rem 0 0;
-  font-size: clamp(1.25rem, 2vw, 1.65rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+	margin: 0.25rem 0 0;
+	font-size: clamp(1.25rem, 2vw, 1.65rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
 }
 
 /* Owns its own size, so call sites must not also pass text-3xl/md:text-4xl —
  * the scoped Vigil rule outranks a utility but the base does not, which would
  * make the two brands disagree on the heading size. */
 .auth-modern-title {
-  font-family: var(--font-sans);
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+	font-family: var(--font-sans);
+	font-size: 2rem;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
 }
 
 .expenses-dca-hero {
-  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
-  font-weight: 700;
-  color: var(--color-tint);
-  text-align: center;
+	font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+	font-weight: 700;
+	color: var(--color-tint);
+	text-align: center;
 }
 
 .expenses-deck-amount {
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  color: var(--color-danger);
+	font-variant-numeric: tabular-nums;
+	font-weight: 700;
+	color: var(--color-danger);
 }
 
 .vigil-modal-section-title,
 .vigil-modal-body .portfolio-form-header,
 .vigil-modal-body .portfolio-form-section-title {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--color-tint);
+	font-size: 0.72rem;
+	font-weight: 600;
+	color: var(--color-tint);
 }
 
 .mcp-terminal-line {
-  font-size: 0.8rem;
-  color: var(--color-tint);
-  opacity: 0.9;
+	font-size: 0.8rem;
+	color: var(--color-tint);
+	opacity: 0.9;
 }
 
 .mcp-code-block {
-  font-size: 0.78rem;
-  border: 1px solid var(--border);
+	font-size: 0.78rem;
+	border: 1px solid var(--border);
 }
 
 .mcp-tool-logs-terminal {
-  margin-top: 0.65rem;
-  padding: 0.85rem 1rem;
-  border-radius: 0.65rem;
-  border: 1px solid var(--border);
-  font-size: 0.72rem;
+	margin-top: 0.65rem;
+	padding: 0.85rem 1rem;
+	border-radius: 0.65rem;
+	border: 1px solid var(--border);
+	font-size: 0.72rem;
 }
 
 /* Connect panel: client tabs, mode toggle, snippets, and the verify step.
@@ -383,234 +383,235 @@
  * one declaration is correct in all four brand/appearance combos. */
 .mcp-connect-tabs,
 .mcp-connect-modes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
 }
 
 .mcp-connect-tab,
 .mcp-connect-mode {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.7rem;
-  border: 1px solid transparent;
-  border-radius: 0.6rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--muted-foreground);
-  text-decoration: none;
-  transition: color var(--motion-fast) var(--ease-standard),
-    background-color var(--motion-fast) var(--ease-standard);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.35rem 0.7rem;
+	border: 1px solid transparent;
+	border-radius: 0.6rem;
+	font-size: 0.82rem;
+	font-weight: 500;
+	color: var(--muted-foreground);
+	text-decoration: none;
+	transition:
+		color var(--motion-fast) var(--ease-standard),
+		background-color var(--motion-fast) var(--ease-standard);
 }
 
 .mcp-connect-tab:hover,
 .mcp-connect-mode:hover {
-  color: var(--foreground);
+	color: var(--foreground);
 }
 
 .mcp-connect-tab.is-active,
 .mcp-connect-mode.is-active {
-  border-color: var(--border);
-  color: var(--foreground);
+	border-color: var(--border);
+	color: var(--foreground);
 }
 
 /* Vendor marks carry their own fills (Claude is brand orange no matter the tab
    state), so the muted/active contrast the other tabs get from `color` has to come
    from opacity instead. */
 .mcp-connect-tab-icon {
-  display: inline-flex;
-  opacity: 0.55;
-  transition: opacity 0.15s ease;
+	display: inline-flex;
+	opacity: 0.55;
+	transition: opacity 0.15s ease;
 }
 
 .mcp-connect-tab:hover .mcp-connect-tab-icon,
 .mcp-connect-tab.is-active .mcp-connect-tab-icon {
-  opacity: 1;
+	opacity: 1;
 }
 
 .mcp-connect-mode {
-  font-size: 0.76rem;
-  padding: 0.25rem 0.55rem;
+	font-size: 0.76rem;
+	padding: 0.25rem 0.55rem;
 }
 
 .mcp-connect-body {
-  display: grid;
-  gap: 1.25rem;
+	display: grid;
+	gap: 1.25rem;
 }
 
 @media (min-width: 48rem) {
-  .mcp-connect-body {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  }
+	.mcp-connect-body {
+		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+	}
 }
 
 .mcp-connect-step {
-  display: flex;
-  gap: 0.7rem;
-  align-items: flex-start;
-  min-width: 0;
+	display: flex;
+	gap: 0.7rem;
+	align-items: flex-start;
+	min-width: 0;
 }
 
 .mcp-connect-step-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 1.5rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 1.5rem;
+	width: 1.5rem;
+	height: 1.5rem;
+	border: 1px solid var(--border);
+	border-radius: 50%;
+	font-size: 0.72rem;
+	font-weight: 600;
+	color: var(--muted-foreground);
 }
 
 .mcp-connect-step-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  min-width: 0;
-  flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	min-width: 0;
+	flex: 1 1 auto;
 }
 
 /* The copy button floats over the snippet's top-right corner, so the code
  * needs padding to keep text from running under it. */
 .mcp-snippet {
-  position: relative;
-  min-width: 0;
+	position: relative;
+	min-width: 0;
 }
 
 .mcp-snippet-code {
-  padding-right: 2.5rem;
-  max-height: 18rem;
-  overflow: auto;
+	padding-right: 2.5rem;
+	max-height: 18rem;
+	overflow: auto;
 }
 
 .mcp-snippet-copy {
-  position: absolute;
-  top: 0.35rem;
-  right: 0.35rem;
+	position: absolute;
+	top: 0.35rem;
+	right: 0.35rem;
 }
 
 .mcp-connect-verify {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
-  padding: 0.7rem 0.85rem;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  font-size: 0.82rem;
+	display: flex;
+	align-items: flex-start;
+	gap: 0.6rem;
+	margin-top: 0.5rem;
+	padding: 0.7rem 0.85rem;
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
+	font-size: 0.82rem;
 }
 
 .mcp-connect-verify-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+	min-width: 0;
 }
 
 .mcp-connect-verify-copy small {
-  font-size: 0.74rem;
-  color: var(--muted-foreground);
+	font-size: 0.74rem;
+	color: var(--muted-foreground);
 }
 
 .mcp-connect-verify-connected {
-  border-color: var(--color-success);
+	border-color: var(--color-success);
 }
 
 .mcp-connect-verify-connected .mcp-connect-verify-icon {
-  color: var(--color-success);
+	color: var(--color-success);
 }
 
 .mcp-connect-verify-timeout .mcp-connect-verify-icon {
-  color: var(--color-warning);
+	color: var(--color-warning);
 }
 
 .mcp-connect-verify-retry {
-  margin-left: auto;
-  flex: 0 0 auto;
+	margin-left: auto;
+	flex: 0 0 auto;
 }
 
 .mcp-connect-verify-spinner {
-  flex: 0 0 auto;
-  width: 0.9rem;
-  height: 0.9rem;
-  margin-top: 0.15rem;
-  border: 2px solid var(--border);
-  border-top-color: var(--color-tint);
-  border-radius: 50%;
-  animation: mcp-connect-spin 0.9s linear infinite;
+	flex: 0 0 auto;
+	width: 0.9rem;
+	height: 0.9rem;
+	margin-top: 0.15rem;
+	border: 2px solid var(--border);
+	border-top-color: var(--color-tint);
+	border-radius: 50%;
+	animation: mcp-connect-spin 0.9s linear infinite;
 }
 
 @keyframes mcp-connect-spin {
-  to {
-    transform: rotate(360deg);
-  }
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mcp-connect-verify-spinner {
-    animation: none;
-  }
+	.mcp-connect-verify-spinner {
+		animation: none;
+	}
 }
 
 /* AI providers (bring-your-own-key). Unscoped base: layout plus colour through
  * shared tokens only, so one declaration is right in all four brand and
  * appearance combinations. */
 .ai-provider-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.75rem;
 }
 
 .ai-provider-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font-size: 0.72rem;
-  white-space: nowrap;
-  color: var(--muted-foreground);
+	display: inline-flex;
+	align-items: center;
+	padding: 0.2rem 0.6rem;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	font-size: 0.72rem;
+	white-space: nowrap;
+	color: var(--muted-foreground);
 }
 
 .ai-provider-status-ok {
-  border-color: var(--color-success);
-  color: var(--color-success);
+	border-color: var(--color-success);
+	color: var(--color-success);
 }
 
 .ai-provider-status-warn {
-  border-color: var(--color-warning);
-  color: var(--color-warning);
+	border-color: var(--color-warning);
+	color: var(--color-warning);
 }
 
 .ai-provider-status-bad {
-  border-color: var(--color-danger);
-  color: var(--color-danger);
+	border-color: var(--color-danger);
+	color: var(--color-danger);
 }
 
 .ai-provider-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 .mcp-tool-log-line {
-  margin: 0.35rem 0 0;
-  color: var(--foreground);
+	margin: 0.35rem 0 0;
+	color: var(--foreground);
 }
 
 /* Bordered sub-panels. The box is base; Vigil tints the fill. */
 .mcp-active-scopes,
 .mcp-token-table-wrap {
-  border: 1px solid var(--border);
-  border-radius: 0.85rem;
-  padding: 0.9rem 1rem;
+	border: 1px solid var(--border);
+	border-radius: 0.85rem;
+	padding: 0.9rem 1rem;
 }
 
 /* ---------- State modifiers ----------
@@ -618,422 +619,422 @@
  * identically under Classic — a correctness bug, not a missing flourish. */
 
 .mcp-state {
-  font-weight: 700;
-  font-size: var(--label-size-sm);
+	font-weight: 700;
+	font-size: var(--label-size-sm);
 }
 
 .mcp-state.is-live {
-  color: var(--color-success);
+	color: var(--color-success);
 }
 
 .mcp-state.is-ready {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 
 .mcp-state.is-off {
-  color: var(--muted-foreground);
-  opacity: 0.75;
+	color: var(--muted-foreground);
+	opacity: 0.75;
 }
 
 .expenses-deck-amount.is-credit {
-  color: var(--color-success);
+	color: var(--color-success);
 }
 
 .expenses-ai-tag {
-  font-size: 0.62rem;
-  font-weight: 700;
-  padding: 0.15rem 0.45rem;
-  border-radius: 0.35rem;
-  border: 1px solid var(--border);
+	font-size: 0.62rem;
+	font-weight: 700;
+	padding: 0.15rem 0.45rem;
+	border-radius: 0.35rem;
+	border: 1px solid var(--border);
 }
 
 /* Colour comes from --pillar-color, set inline from the pillar's token, so the
  * chip, the planner card and the spend chart cannot disagree. */
 .expenses-ai-tag {
-  color: var(--pillar-color, var(--color-tint));
+	color: var(--pillar-color, var(--color-tint));
 }
 
 /* ---------- Command center rails (NOW / PULSE / LEDGER) ---------- */
 
 .command-center-page .cc-rail {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-  margin-bottom: var(--gap);
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+	margin-bottom: var(--gap);
 }
 
 /* Range control — links, not buttons, so the window stays in the URL. */
 .cc-range-control {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  padding: 0.25rem;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	padding: 0.25rem;
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
 }
 
 .cc-range-option {
-  padding: 0.3rem 0.7rem;
-  border-radius: 0.5rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--muted-foreground);
+	padding: 0.3rem 0.7rem;
+	border-radius: 0.5rem;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	line-height: 1.2;
+	color: var(--muted-foreground);
 }
 
 .cc-range-option[data-active='true'] {
-  color: var(--color-tint);
-  font-weight: 600;
+	color: var(--color-tint);
+	font-weight: 600;
 }
 
 /* Shared panel chrome for the two new panels. */
 .cc-panel-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.875rem;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-bottom: 0.875rem;
 }
 
 .cc-panel-head-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
 }
 
 .cc-panel-title {
-  font-size: var(--label-size-lg);
-  font-weight: 600;
-  line-height: 1.3;
+	font-size: var(--label-size-lg);
+	font-weight: 600;
+	line-height: 1.3;
 }
 
 .cc-panel-link {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-tint);
+	font-size: 0.8125rem;
+	font-weight: 500;
+	color: var(--color-tint);
 }
 
 .cc-action-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.5rem;
-  padding: 0.1rem 0.4rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.5rem;
+	padding: 0.1rem 0.4rem;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
 }
 
 /* Action queue */
 .cc-action-list,
 .cc-ledger-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 /* Flat rows with a hairline between them, like every list in the iOS app.
    Tone lives on the kind label, not on a stripe down a bordered box. */
 .cc-action-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
+	display: flex;
+	align-items: flex-start;
+	gap: 0.75rem;
+	padding: 0.75rem 0;
 }
 
 .cc-action-row + .cc-action-row {
-  border-top: 1px solid var(--border);
+	border-top: 1px solid var(--border);
 }
 
 .cc-action-row[data-tone='critical'] .cc-action-kind {
-  color: var(--color-danger);
+	color: var(--color-danger);
 }
 
 .cc-action-row[data-tone='warning'] .cc-action-kind {
-  color: var(--color-warning);
+	color: var(--color-warning);
 }
 
 .cc-action-row[data-tone='info'] .cc-action-kind {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 
 .cc-action-main {
-  display: grid;
-  flex: 1 1 auto;
-  gap: 0.15rem;
-  min-width: 0;
+	display: grid;
+	flex: 1 1 auto;
+	gap: 0.15rem;
+	min-width: 0;
 }
 
 /* A grouped run keeps the row's border and tone stripe but hands its padding to
    the <details> inside, so an open group reads as one block rather than a card
    full of cards. The nested rows drop their own border for the same reason. */
 .cc-action-group {
-  flex-direction: column;
-  padding: 0;
+	flex-direction: column;
+	padding: 0;
 }
 
 .cc-action-group-details {
-  width: 100%;
-  min-width: 0;
+	width: 100%;
+	min-width: 0;
 }
 
 .cc-action-group-summary {
-  position: relative;
-  display: grid;
-  gap: 0.15rem;
-  padding: 0.7rem 2rem 0.7rem 0.85rem;
-  cursor: pointer;
-  list-style: none;
+	position: relative;
+	display: grid;
+	gap: 0.15rem;
+	padding: 0.7rem 2rem 0.7rem 0.85rem;
+	cursor: pointer;
+	list-style: none;
 }
 
 .cc-action-group-summary::-webkit-details-marker {
-  display: none;
+	display: none;
 }
 
 .cc-action-group-summary::after {
-  content: '';
-  position: absolute;
-  right: 0.85rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-right: 1.5px solid var(--muted-foreground);
-  border-bottom: 1.5px solid var(--muted-foreground);
-  transform: translateY(0.5rem) rotate(45deg);
-  transition: transform var(--motion-fast) var(--ease-standard);
+	content: '';
+	position: absolute;
+	right: 0.85rem;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-right: 1.5px solid var(--muted-foreground);
+	border-bottom: 1.5px solid var(--muted-foreground);
+	transform: translateY(0.5rem) rotate(45deg);
+	transition: transform var(--motion-fast) var(--ease-standard);
 }
 
 .cc-action-group-details[open] .cc-action-group-summary::after {
-  transform: translateY(0.75rem) rotate(-135deg);
+	transform: translateY(0.75rem) rotate(-135deg);
 }
 
 .cc-action-sublist {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin: 0;
-  padding: 0 0.85rem 0.85rem;
-  list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0 0.85rem 0.85rem;
+	list-style: none;
 }
 
 .cc-action-sublist .cc-action-row {
-  border: 0;
-  border-left: 3px solid var(--border);
-  border-radius: 0;
-  padding: 0.35rem 0 0.35rem 0.6rem;
+	border: 0;
+	border-left: 3px solid var(--border);
+	border-radius: 0;
+	padding: 0.35rem 0 0.35rem 0.6rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cc-action-group-summary::after {
-    transition: none;
-  }
+	.cc-action-group-summary::after {
+		transition: none;
+	}
 }
 
 .cc-action-kind {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
+	font-size: 0.6875rem;
+	font-weight: 600;
+	color: var(--muted-foreground);
 }
 
 .cc-action-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  line-height: 1.35;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	line-height: 1.35;
 }
 
 .cc-action-body {
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  color: var(--muted-foreground);
+	font-size: 0.8125rem;
+	line-height: 1.45;
+	color: var(--muted-foreground);
 }
 
 .cc-action-time {
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
-  font-variant-numeric: tabular-nums;
+	font-size: 0.75rem;
+	color: var(--muted-foreground);
+	font-variant-numeric: tabular-nums;
 }
 
 .cc-action-dismiss {
-  flex: 0 0 auto;
+	flex: 0 0 auto;
 }
 
 .cc-panel-note {
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  color: var(--muted-foreground);
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--muted-foreground);
 }
 
 .cc-tax-figures {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+	margin-bottom: 0.75rem;
 }
 
 .cc-tax-figures dt {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
+	font-size: 0.6875rem;
+	font-weight: 600;
+	color: var(--muted-foreground);
 }
 
 .cc-tax-figures dd {
-  font-size: 1.125rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+	font-size: 1.125rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
 }
 
 .cc-tax-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 .cc-tax-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  align-items: baseline;
-  gap: 0.6rem;
-  padding: 0.35rem 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.8125rem;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	align-items: baseline;
+	gap: 0.6rem;
+	padding: 0.35rem 0;
+	border-bottom: 1px solid var(--border);
+	font-size: 0.8125rem;
 }
 
 .cc-tax-symbol {
-  font-weight: 600;
+	font-weight: 600;
 }
 
 .cc-tax-loss {
-  color: var(--color-danger);
-  font-variant-numeric: tabular-nums;
+	color: var(--color-danger);
+	font-variant-numeric: tabular-nums;
 }
 
 .cc-tax-benefit {
-  color: var(--color-success);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+	color: var(--color-success);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
 }
 
 /* PULSE chart cluster */
 .cc-pulse-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 1rem;
+	margin-bottom: 1rem;
 }
 
 .cc-pulse-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  line-height: 1.3;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	line-height: 1.3;
 }
 
 /* Ledger */
 .cc-ledger-days {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
 }
 
 .cc-ledger-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-bottom: 0.75rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin-bottom: 0.75rem;
 }
 
 .cc-ledger-filter {
-  padding: 0.25rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1.3;
-  color: var(--muted-foreground);
+	padding: 0.25rem 0.6rem;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.3;
+	color: var(--muted-foreground);
 }
 
 .cc-ledger-filter[data-active='true'] {
-  color: var(--color-tint);
-  font-weight: 600;
+	color: var(--color-tint);
+	font-weight: 600;
 }
 
 .cc-ledger-day-label {
-  margin-bottom: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
+	margin-bottom: 0.5rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--muted-foreground);
 }
 
 .cc-ledger-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--border);
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.55rem 0;
+	border-bottom: 1px solid var(--border);
 }
 
 .cc-ledger-badge {
-  padding: 0.15rem 0.45rem;
-  border: 1px solid var(--border);
-  border-radius: 0.4rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
+	padding: 0.15rem 0.45rem;
+	border: 1px solid var(--border);
+	border-radius: 0.4rem;
+	font-size: 0.6875rem;
+	font-weight: 600;
 }
 
 .cc-ledger-copy {
-  display: grid;
-  gap: 0.1rem;
-  min-width: 0;
+	display: grid;
+	gap: 0.1rem;
+	min-width: 0;
 }
 
 .cc-ledger-title {
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.35;
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 1.35;
 }
 
 .cc-ledger-subtitle {
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
+	font-size: 0.75rem;
+	color: var(--muted-foreground);
 }
 
 .cc-ledger-amount {
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+	font-size: 0.875rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
 }
 
 .cc-ledger-amount[data-direction='up'] {
-  color: var(--color-success);
+	color: var(--color-success);
 }
 
 .cc-ledger-amount[data-direction='down'] {
-  color: var(--color-danger);
+	color: var(--color-danger);
 }
 
 .cc-ledger-time {
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+	font-size: 0.75rem;
+	color: var(--muted-foreground);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
 }
 
 @media (max-width: 640px) {
-  .cc-ledger-row {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
+	.cc-ledger-row {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
 
-  .cc-ledger-amount,
-  .cc-ledger-time {
-    grid-column: 2;
-  }
+	.cc-ledger-amount,
+	.cc-ledger-time {
+		grid-column: 2;
+	}
 }
 
 /* ===================== end STRUCTURAL BASE ============================== */
@@ -1046,12 +1047,12 @@ html .glass-card,
 html .dash-panel,
 html .overview-modern-page .dash-panel,
 html .overview-modern-page .economy-pulse-panel {
-  border-color: var(--border);
+	border-color: var(--border);
 }
 
 html .card-hover:hover,
 html .screenshot-card:hover {
-  border-color: var(--border);
+	border-color: var(--border);
 }
 
 /* ---------- Sidebar: command nav ---------- */
@@ -1062,10 +1063,10 @@ html .screenshot-card:hover {
  * voice on group labels and the tint-washed active row. */
 
 html .app-sidebar-group-label {
-  color: var(--muted-foreground);
-  font-size: var(--label-size-sm);
-  font-weight: 600;
-  /* No `opacity` here. This rule is unlayered, and unlayered CSS beats anything
+	color: var(--muted-foreground);
+	font-size: var(--label-size-sm);
+	font-weight: 600;
+	/* No `opacity` here. This rule is unlayered, and unlayered CSS beats anything
    * in @layer utilities regardless of specificity — so an opacity declared here
    * would defeat sidebar-collapsed:opacity-0 and leave the group labels visible
    * on top of the collapsed icon rail. Opacity is the utility's to own. */
@@ -1073,19 +1074,19 @@ html .app-sidebar-group-label {
 
 html .app-sidebar-link-active,
 html a.app-sidebar-link[aria-current='page'] {
-  color: var(--color-tint);
-  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+	color: var(--color-tint);
+	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
 }
 
 /* ---------- Command center chrome ---------- */
 
 html .overview-modern-page.app-page-content {
-  max-width: 92rem;
+	max-width: 92rem;
 }
 
 html .overview-modern-page .overview-title {
-  font-size: clamp(1.55rem, 2.4vw, 2.15rem);
-  letter-spacing: -0.03em;
+	font-size: clamp(1.55rem, 2.4vw, 2.15rem);
+	letter-spacing: -0.03em;
 }
 
 /* STRUCTURE, NOT SURFACE — deliberately unscoped.
@@ -1099,345 +1100,345 @@ html .overview-modern-page .overview-title {
  * The Classic look is a plain metric row: correct spacing and stacking, using
  * the shared card tokens rather than the Vigil gradient. */
 .command-status-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.25rem;
-  align-items: center;
-  margin: 0.85rem 0 1.1rem;
-  padding: 0.7rem 0.95rem;
-  border-radius: 0.85rem;
-  border: 1px solid var(--border);
-  background: var(--color-card-bg);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem 1.25rem;
+	align-items: center;
+	margin: 0.85rem 0 1.1rem;
+	padding: 0.7rem 0.95rem;
+	border-radius: 0.85rem;
+	border: 1px solid var(--border);
+	background: var(--color-card-bg);
 }
 
 .command-metric {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: var(--metric-col);
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+	min-width: var(--metric-col);
 }
 
 .command-metric-value {
-  font-variant-numeric: tabular-nums;
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  color: var(--foreground);
+	font-variant-numeric: tabular-nums;
+	font-size: 1.5rem;
+	font-weight: 600;
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+	color: var(--foreground);
 }
 
 .command-metric-value.is-positive {
-  color: var(--color-success);
+	color: var(--color-success);
 }
 
 .command-metric-value.is-negative {
-  color: var(--color-danger);
+	color: var(--color-danger);
 }
 
 .command-metric-label {
-  font-size: var(--label-size-sm);
-  font-weight: 600;
-  color: var(--muted-foreground);
+	font-size: var(--label-size-sm);
+	font-weight: 600;
+	color: var(--muted-foreground);
 }
 
 /* Page layout grammar — Canvas / Deck / Document.
  * Specificity beats .app-page-content { max-w-5xl } in shell.css. */
 .app-page-content.vigil-canvas-page,
 .app-page-content.vigil-deck-page {
-  max-width: var(--page-max);
+	max-width: var(--page-max);
 }
 
 .app-page-content.vigil-document-page {
-  width: min(100%, 54rem);
-  max-width: 54rem;
+	width: min(100%, 54rem);
+	max-width: 54rem;
 }
 
 /* KPI strip: type on the page, no rule under it. Columns pack by content. */
 .vigil-metric-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: var(--gap);
-  margin-bottom: var(--stack-gap);
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+	gap: var(--gap);
+	margin-bottom: var(--stack-gap);
 }
 
 .vigil-list-region {
-  display: grid;
-  gap: 0;
-  margin-top: var(--gap);
-  border-top: 1px solid var(--hairline);
+	display: grid;
+	gap: 0;
+	margin-top: var(--gap);
+	border-top: 1px solid var(--hairline);
 }
 
 .vigil-list-region > * {
-  min-width: 0;
-  padding: 1.15rem 0;
-  border-bottom: 1px solid var(--hairline);
+	min-width: 0;
+	padding: 1.15rem 0;
+	border-bottom: 1px solid var(--hairline);
 }
 
 @media (min-width: 900px) {
-  .vigil-list-region {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+	.vigil-list-region {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 
-  .vigil-list-region > *:nth-child(odd) {
-    padding-right: var(--gap);
-    border-right: 1px solid var(--hairline);
-  }
+	.vigil-list-region > *:nth-child(odd) {
+		padding-right: var(--gap);
+		border-right: 1px solid var(--hairline);
+	}
 
-  .vigil-list-region > *:nth-child(even) {
-    padding-left: var(--gap);
-  }
+	.vigil-list-region > *:nth-child(even) {
+		padding-left: var(--gap);
+	}
 }
 
 html .command-status-bar {
-  border-color: var(--border);
-  background: color-mix(in srgb, var(--color-tint) 6%, transparent);
+	border-color: var(--border);
+	background: color-mix(in srgb, var(--color-tint) 6%, transparent);
 }
 
 html .command-metric-value.is-positive {
-  color: var(--color-success);
+	color: var(--color-success);
 }
 
 html .command-metric-value.is-negative {
-  color: var(--color-danger);
+	color: var(--color-danger);
 }
 
 @keyframes vigil-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(0.92);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
+	0%,
+	100% {
+		opacity: 0.55;
+		transform: scale(0.92);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.08);
+	}
 }
 
 html .overview-holdings-stat {
-  display: flex;
-  align-items: baseline;
-  gap: 0.45rem;
-  margin-top: 0.75rem;
+	display: flex;
+	align-items: baseline;
+	gap: 0.45rem;
+	margin-top: 0.75rem;
 }
 
 html .overview-holdings-stat-value {
-  font-size: 1.65rem;
-  font-weight: 700;
-  color: var(--color-tint);
+	font-size: 1.65rem;
+	font-weight: 700;
+	color: var(--color-tint);
 }
 
 html .overview-holdings-stat-label {
-  font-size: 0.78rem;
-  opacity: 0.65;
+	font-size: 0.78rem;
+	opacity: 0.65;
 }
 
 .mcp-status-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  padding: 1rem 1.1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+	padding: 1rem 1.1rem;
 }
 
 html .mcp-status-title {
-  margin: 0;
-  font-size: 0.78rem;
-  color: var(--color-tint);
+	margin: 0;
+	font-size: 0.78rem;
+	color: var(--color-tint);
 }
 
 .mcp-status-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.4rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 0.4rem;
 }
 .mcp-status-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  font-size: 0.78rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	font-size: 0.78rem;
 }
 
 html .mcp-status-list .mcp-scope {
-  color: var(--muted-foreground);
-  font-size: 0.68rem;
+	color: var(--muted-foreground);
+	font-size: 0.68rem;
 }
 
 html .mcp-status-list .mcp-state {
-  font-weight: 700;
-  font-size: 0.68rem;
+	font-weight: 700;
+	font-size: 0.68rem;
 }
 
 html .mcp-state.is-live {
-  color: var(--color-secondary-tint);
+	color: var(--color-secondary-tint);
 }
 
 html .mcp-state.is-ready {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 .mcp-status-cta {
-  margin-top: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.35rem;
-  border-radius: 0.65rem;
-  border: 1px solid var(--border);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition:
-    background var(--motion-fast) var(--ease-standard),
-    box-shadow var(--motion-fast) var(--ease-standard);
+	margin-top: auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.35rem;
+	border-radius: 0.65rem;
+	border: 1px solid var(--border);
+	font-size: 0.72rem;
+	font-weight: 700;
+	text-decoration: none;
+	transition:
+		background var(--motion-fast) var(--ease-standard),
+		box-shadow var(--motion-fast) var(--ease-standard);
 }
 
 html .mcp-status-cta {
-  border: 1px solid color-mix(in srgb, var(--color-tint) 40%, transparent);
-  color: var(--color-tint);
+	border: 1px solid color-mix(in srgb, var(--color-tint) 40%, transparent);
+	color: var(--color-tint);
 }
 
 html .mcp-status-cta:hover {
-  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
 }
 
 /* ---------- Agentic intelligence feed (Why Moved) ---------- */
 
 html .why-moved-strip {
-  position: relative;
-  overflow: hidden;
+	position: relative;
+	overflow: hidden;
 }
 
 html .why-moved-strip::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--color-tint);
+	content: '';
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 3px;
+	background: var(--color-tint);
 }
 
 html .why-moved-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--color-tint);
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: var(--color-tint);
 }
 
 html .why-moved-summary {
-  position: relative;
-  padding-left: 1.5rem;
-  border-left: 1px solid color-mix(in srgb, var(--color-tint) 25%, transparent);
-  margin-top: 0.85rem;
+	position: relative;
+	padding-left: 1.5rem;
+	border-left: 1px solid color-mix(in srgb, var(--color-tint) 25%, transparent);
+	margin-top: 0.85rem;
 }
 
 html .why-moved-spark {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 
 html .why-moved-chip {
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--color-tint) 8%, transparent);
-  border-radius: 0.65rem;
+	border: 1px solid var(--border);
+	background: color-mix(in srgb, var(--color-tint) 8%, transparent);
+	border-radius: 0.65rem;
 }
 
 html .why-moved-chips-timeline {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 0.85rem;
-  padding-left: 1.25rem;
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.55rem;
+	margin-top: 0.85rem;
+	padding-left: 1.25rem;
 }
 
 html .why-moved-chips-timeline::before {
-  content: '';
-  position: absolute;
-  left: 0.35rem;
-  top: 0.35rem;
-  bottom: 0.35rem;
-  width: 2px;
-  border-radius: 999px;
-  background: var(--color-tint);
-  opacity: 0.85;
+	content: '';
+	position: absolute;
+	left: 0.35rem;
+	top: 0.35rem;
+	bottom: 0.35rem;
+	width: 2px;
+	border-radius: 999px;
+	background: var(--color-tint);
+	opacity: 0.85;
 }
 
 html .why-moved-chip:hover {
-  border-color: color-mix(in srgb, var(--color-tint) 55%, transparent);
+	border-color: color-mix(in srgb, var(--color-tint) 55%, transparent);
 }
 
 html .why-moved-sentiment-bullish {
-  color: var(--color-secondary-tint);
-  background: color-mix(in srgb, var(--color-secondary-tint) 14%, transparent);
+	color: var(--color-secondary-tint);
+	background: color-mix(in srgb, var(--color-secondary-tint) 14%, transparent);
 }
 
 html .why-moved-sentiment-bearish {
-  color: var(--color-danger);
-  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
+	color: var(--color-danger);
+	background: color-mix(in srgb, var(--color-danger) 14%, transparent);
 }
 
 /* ---------- MCP Engine Room (integrations) ---------- */
 
 html .settings-integrations .mcp-engine-room {
-  position: relative;
-  overflow: hidden;
+	position: relative;
+	overflow: hidden;
 }
 
 .settings-integrations .mcp-tool-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
-  gap: 0.55rem;
-  margin-top: 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+	gap: 0.55rem;
+	margin-top: 1rem;
 }
 .settings-integrations .mcp-tool-tile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  min-height: 4.25rem;
-  padding: 0.55rem;
-  border-radius: 0.7rem;
-  border: 1px solid var(--border);
-  font-size: 0.62rem;
-  font-weight: 700;
-  text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	min-height: 4.25rem;
+	padding: 0.55rem;
+	border-radius: 0.7rem;
+	border: 1px solid var(--border);
+	font-size: 0.62rem;
+	font-weight: 700;
+	text-align: center;
 }
 
 html .settings-integrations .mcp-tool-tile {
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--color-tint) 7%, transparent);
-  color: var(--color-tint);
+	border: 1px solid var(--border);
+	background: color-mix(in srgb, var(--color-tint) 7%, transparent);
+	color: var(--color-tint);
 }
 
 html .settings-integrations .mcp-tool-tile span.icon {
-  font-size: 1.05rem;
-  line-height: 1;
+	font-size: 1.05rem;
+	line-height: 1;
 }
 
 html .mcp-tool-logs-terminal {
-  margin-top: 0.65rem;
-  padding: 0.85rem 1rem;
-  border-radius: 0.65rem;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, #020608 88%, var(--color-tint) 4%);
-  font-size: 0.72rem;
+	margin-top: 0.65rem;
+	padding: 0.85rem 1rem;
+	border-radius: 0.65rem;
+	border: 1px solid var(--border);
+	background: color-mix(in srgb, #020608 88%, var(--color-tint) 4%);
+	font-size: 0.72rem;
 }
 
 html .mcp-tool-log-line {
-  margin: 0.35rem 0 0;
-  color: color-mix(in srgb, var(--foreground) 88%, transparent);
+	margin: 0.35rem 0 0;
+	color: color-mix(in srgb, var(--foreground) 88%, transparent);
 }
 .mcp-tool-log-ts {
-  display: inline-block;
-  min-width: 4.5rem;
-  margin-right: 0.5rem;
-  opacity: 0.85;
+	display: inline-block;
+	min-width: 4.5rem;
+	margin-right: 0.5rem;
+	opacity: 0.85;
 }
 
 html .mcp-tool-log-ts {
-  color: var(--color-secondary-tint);
+	color: var(--color-secondary-tint);
 }
 .stock-thesis-drift-panel .mcp-status-cta {
-  display: inline-flex;
+	display: inline-flex;
 }
 
 /* ---------- Primary buttons / pills ---------- */
@@ -1451,46 +1452,46 @@ html .mcp-tool-log-ts {
 html .btn-primary,
 html .dash-btn-primary,
 html [data-nq-btn='primary'] {
-  background: var(--color-tint);
-  color: var(--primary-foreground);
-  border: 1px solid color-mix(in srgb, var(--color-tint) 70%, transparent);
+	background: var(--color-tint);
+	color: var(--primary-foreground);
+	border: 1px solid color-mix(in srgb, var(--color-tint) 70%, transparent);
 }
 
 html.dark:root .btn-primary,
 html.dark:root .dash-btn-primary,
 html.dark:root [data-nq-btn='primary'] {
-  color: #021018;
+	color: #021018;
 }
 
 html .overview-hero-primary,
 html .instrument-action,
 html .assistant-new,
 html .focus-points-add-btn {
-  background: color-mix(in srgb, var(--color-tint) 9%, var(--color-card-bg));
-  color: var(--color-tint);
-  border: 1px solid var(--border);
-  box-shadow: none;
+	background: color-mix(in srgb, var(--color-tint) 9%, var(--color-card-bg));
+	color: var(--color-tint);
+	border: 1px solid var(--border);
+	box-shadow: none;
 }
 
 html.dark:root .overview-hero-primary,
 html.dark:root .instrument-action,
 html.dark:root .assistant-new,
 html.dark:root .focus-points-add-btn {
-  color: var(--color-tint);
-  background: color-mix(in srgb, var(--color-tint) 10%, var(--color-card-bg));
+	color: var(--color-tint);
+	background: color-mix(in srgb, var(--color-tint) 10%, var(--color-card-bg));
 }
 
 html .overview-change-positive {
-  color: var(--color-success);
-  border-color: color-mix(in srgb, var(--color-success) 40%, transparent);
-  background: color-mix(in srgb, var(--color-success) 12%, transparent);
+	color: var(--color-success);
+	border-color: color-mix(in srgb, var(--color-success) 40%, transparent);
+	background: color-mix(in srgb, var(--color-success) 12%, transparent);
 }
 
 /* ---------- Spending / dense tables ---------- */
 
 html table,
 html .data-table {
-  font-variant-numeric: tabular-nums;
+	font-variant-numeric: tabular-nums;
 }
 
 html .font-display,
@@ -1498,175 +1499,170 @@ html .font-display,
 
 html .mcp-last-activity,
 html .mcp-agent-list {
-  font-size: 0.68rem;
-  color: var(--muted-foreground);
-  margin: 0.55rem 0 0;
+	font-size: 0.68rem;
+	color: var(--muted-foreground);
+	margin: 0.55rem 0 0;
 }
 .mcp-agent-list {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: 0.35rem;
+	list-style: none;
+	padding: 0;
+	display: grid;
+	gap: 0.35rem;
 }
 
 html .mcp-state.is-off {
-  color: var(--muted-foreground);
-  opacity: 0.75;
+	color: var(--muted-foreground);
+	opacity: 0.75;
 }
 
 .mcp-engine-layout {
-  display: grid;
-  gap: 1rem;
+	display: grid;
+	gap: 1rem;
 }
 
 @media (min-width: 900px) {
-  .mcp-engine-layout {
-    grid-template-columns: minmax(12rem, 0.85fr) minmax(0, 1.4fr);
-    align-items: start;
-  }
+	.mcp-engine-layout {
+		grid-template-columns: minmax(12rem, 0.85fr) minmax(0, 1.4fr);
+		align-items: start;
+	}
 }
 
 html .mcp-active-scopes,
 html .mcp-token-table-wrap {
-  border: 1px solid var(--border);
-  border-radius: 0.85rem;
-  padding: 0.9rem 1rem;
-  background: color-mix(in srgb, var(--color-tint) 5%, transparent);
+	border: 1px solid var(--border);
+	border-radius: 0.85rem;
+	padding: 0.9rem 1rem;
+	background: color-mix(in srgb, var(--color-tint) 5%, transparent);
 }
 
 html.dark:root .mcp-active-scopes {
-  border-color: color-mix(
-    in srgb,
-    var(--color-secondary-tint) 42%,
-    var(--border)
-  );
-  background: color-mix(in srgb, var(--color-secondary-tint) 6%, transparent);
+	border-color: color-mix(in srgb, var(--color-secondary-tint) 42%, var(--border));
+	background: color-mix(in srgb, var(--color-secondary-tint) 6%, transparent);
 }
 
 html .mcp-token-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.78rem;
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.78rem;
 }
 
 html .mcp-token-table td:first-child {
-  font-size: 0.72rem;
+	font-size: 0.72rem;
 }
 
 html .mcp-token-table th,
 html .mcp-token-table td {
-  text-align: left;
-  padding: 0.4rem 0.35rem;
-  border-top: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
-  vertical-align: top;
+	text-align: left;
+	padding: 0.4rem 0.35rem;
+	border-top: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+	vertical-align: top;
 }
 
 html .settings-api-access .mcp-engine-room {
-  position: relative;
-  overflow: hidden;
+	position: relative;
+	overflow: hidden;
 }
 
 html .settings-api-access .mcp-code-block {
-  font-size: 0.78rem;
-  /* Was mixed against a flat rgba(0,0,0,0.35), which is appearance-agnostic: in
+	font-size: 0.78rem;
+	/* Was mixed against a flat rgba(0,0,0,0.35), which is appearance-agnostic: in
    * light x vigil that put --foreground (near-black) on a 35%-black box. Mixing
    * against the elevated-card token keeps the tint wash and lets the surface
    * follow the scope. */
-  background: color-mix(in srgb, var(--color-tint) 6%, var(--color-elevated-card));
-  color: var(--foreground);
-  border: 1px solid var(--border);
+	background: color-mix(in srgb, var(--color-tint) 6%, var(--color-elevated-card));
+	color: var(--foreground);
+	border: 1px solid var(--border);
 }
 
 html .settings-api-access .btn-revoke {
-  border-color: color-mix(in srgb, var(--color-danger) 55%, transparent);
-  color: var(--color-danger);
-  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
-  font-size: 0.72rem;
-  font-weight: 700;
+	border-color: color-mix(in srgb, var(--color-danger) 55%, transparent);
+	color: var(--color-danger);
+	background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+	font-size: 0.72rem;
+	font-weight: 700;
 }
 
 html .settings-api-access .btn-revoke:hover {
-  background: color-mix(in srgb, var(--color-danger) 18%, transparent);
+	background: color-mix(in srgb, var(--color-danger) 18%, transparent);
 }
 
 html .mcp-token-table th {
-  font-size: 0.62rem;
-  color: var(--color-tint);
-  border-top: 0;
+	font-size: 0.62rem;
+	color: var(--color-tint);
+	border-top: 0;
 }
 
 html .overview-wealth-value {
-  font-variant-numeric: tabular-nums;
+	font-variant-numeric: tabular-nums;
 }
 
 html.dark:root .activity-panel {
-  position: relative;
+	position: relative;
 }
 
 html.dark:root .activity-panel .overview-activity-list {
-  position: relative;
-  padding-left: 0.35rem;
+	position: relative;
+	padding-left: 0.35rem;
 }
 
 html .stock-detail-grid dd {
-  font-variant-numeric: tabular-nums;
+	font-variant-numeric: tabular-nums;
 }
 
 html .expenses-modern-page .expenses-budget-value,
 html .expenses-modern-page .tabular-nums,
 html .expenses-plan-table td {
-  font-variant-numeric: tabular-nums;
+	font-variant-numeric: tabular-nums;
 }
 
 html .expenses-modern-page .expenses-budget-ring-card {
-  position: relative;
-  overflow: hidden;
+	position: relative;
+	overflow: hidden;
 }
 
 html .stock-thesis-title {
-  margin: 0.25rem 0 0;
-  font-size: clamp(1.25rem, 2vw, 1.65rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+	margin: 0.25rem 0 0;
+	font-size: clamp(1.25rem, 2vw, 1.65rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
 }
 
 html .stock-thesis-grid {
-  display: grid;
-  gap: 1rem;
+	display: grid;
+	gap: 1rem;
 }
 
 @media (min-width: 1024px) {
-  html .stock-thesis-grid {
-    grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.9fr);
-    align-items: start;
-  }
+	html .stock-thesis-grid {
+		grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.9fr);
+		align-items: start;
+	}
 }
 
 html .stock-detail-page .pressure-reading {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 
 html .stock-detail-page .pressure-track {
-  box-shadow: inset 0 0 0 1px
-    color-mix(in srgb, var(--color-tint) 25%, transparent);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-tint) 25%, transparent);
 }
 
 html .stock-detail-page .stock-notes-label,
 html .stock-detail-page .stock-section-title {
-  font-size: 0.72rem;
-  color: var(--color-tint);
+	font-size: 0.72rem;
+	color: var(--color-tint);
 }
 
 html .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
 
 /* ---------- Global modern page shell ---------- */
@@ -1674,198 +1670,189 @@ html .sr-only {
 html [class*='-modern-page'] .tabular-nums,
 html [class*='-modern-page'] .vigil-data-table td:first-child,
 html [class*='-modern-page'] .vigil-data-table .vigil-mono {
-  font-variant-numeric: tabular-nums;
+	font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Auth / onboarding ---------- */
 
 html .auth-container,
 html .onboarding-page {
-  position: relative;
+	position: relative;
 }
 
 html .auth-modern-header .command-metric-label {
-  margin-bottom: 0.35rem;
+	margin-bottom: 0.35rem;
 }
 
 html.dark:root .auth-modern-title {
-  color: var(--foreground);
+	color: var(--foreground);
 }
 
 html .onboarding-modern-page .onboarding-title {
-  letter-spacing: -0.02em;
+	letter-spacing: -0.02em;
 }
 
 html .legal-modern-page.legal-prose h1,
 html .legal-modern-page.legal-prose h2 {
-  letter-spacing: -0.02em;
+	letter-spacing: -0.02em;
 }
 
 html.dark:root .legal-modern-page.legal-prose,
 html.dark:root .legal-modern-page.legal-prose p,
 html.dark:root .legal-modern-page.legal-prose li {
-  color: color-mix(in srgb, var(--foreground) 92%, transparent);
+	color: color-mix(in srgb, var(--foreground) 92%, transparent);
 }
 
 html .assistant-modern-page.assistant-page {
-  padding: 0;
+	padding: 0;
 }
 
 html .assistant-modern-page .command-metric-label {
-  color: var(--color-tint);
+	color: var(--color-tint);
 }
 
 /* ---------- Assistant (Intelligence Watch) ---------- */
 
 html .assistant-page {
-  min-height: calc(100dvh - var(--app-tabbar-height, 2.75rem));
+	min-height: calc(100dvh - var(--app-tabbar-height, 2.75rem));
 }
 
 html .assistant-rail,
 html .assistant-context {
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--color-tint) 4%, var(--color-card-bg));
+	border: 1px solid var(--border);
+	background: color-mix(in srgb, var(--color-tint) 4%, var(--color-card-bg));
 }
 
 html .assistant-kicker {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--color-tint);
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: var(--color-tint);
 }
 
 html .assistant-main {
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--color-tint) 3%, var(--color-card-bg));
+	border: 1px solid var(--border);
+	background: color-mix(in srgb, var(--color-tint) 3%, var(--color-card-bg));
 }
 
 html .assistant-card {
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 0.85rem;
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
+	padding: 0.85rem;
 }
 
 html .assistant-conversation {
-  font-size: 0.78rem;
+	font-size: 0.78rem;
 }
 
 html .assistant-conversation.active {
-  border-color: color-mix(in srgb, var(--color-tint) 45%, transparent);
+	border-color: color-mix(in srgb, var(--color-tint) 45%, transparent);
 }
 
 html .assistant-conversation time {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.65;
+	font-variant-numeric: tabular-nums;
+	opacity: 0.65;
 }
 
 html .assistant-tools-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
 }
 
 html .assistant-tool-tiles {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-top: auto;
-  padding-top: 0.5rem;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.45rem;
+	margin-top: auto;
+	padding-top: 0.5rem;
 }
 
 html .assistant-tool-tiles .mcp-tool-tile {
-  min-height: 3.5rem;
-  font-size: 0.58rem;
+	min-height: 3.5rem;
+	font-size: 0.58rem;
 }
 
 /* ---------- Expenses command deck (Watch II) ---------- */
 
 html .expenses-command-deck {
-  margin-bottom: 1.25rem;
+	margin-bottom: 1.25rem;
 }
 
 html .vigil-command-deck.expenses-command-deck {
-  display: grid;
-  gap: 1rem;
+	display: grid;
+	gap: 1rem;
 }
 
 @media (min-width: 1024px) {
-  html .vigil-command-deck.expenses-command-deck.is-3col {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 1fr);
-    align-items: stretch;
-  }
+	html .vigil-command-deck.expenses-command-deck.is-3col {
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 1fr);
+		align-items: stretch;
+	}
 }
 
 html .expenses-deck-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 1rem 1.1rem;
-  min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	padding: 1rem 1.1rem;
+	min-height: 100%;
 }
 
 html .expenses-deck-amount {
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  color: var(--color-danger);
+	font-variant-numeric: tabular-nums;
+	font-weight: 700;
+	color: var(--color-danger);
 }
 
 html .expenses-deck-amount.is-credit {
-  color: var(--color-success);
+	color: var(--color-success);
 }
 
 html .expenses-ai-tag {
-  font-size: 0.62rem;
-  font-weight: 700;
-  padding: 0.15rem 0.45rem;
-  border-radius: 0.35rem;
-  border: 1px solid
-    color-mix(in srgb, var(--pillar-color, var(--color-tint)) 30%, transparent);
+	font-size: 0.62rem;
+	font-weight: 700;
+	padding: 0.15rem 0.45rem;
+	border-radius: 0.35rem;
+	border: 1px solid color-mix(in srgb, var(--pillar-color, var(--color-tint)) 30%, transparent);
 }
 
 html .expenses-ai-tag {
-  color: var(--pillar-color, var(--color-tint));
-  background: color-mix(
-    in srgb,
-    var(--pillar-color, var(--color-tint)) 12%,
-    transparent
-  );
+	color: var(--pillar-color, var(--color-tint));
+	background: color-mix(in srgb, var(--pillar-color, var(--color-tint)) 12%, transparent);
 }
 
 html .expenses-dca-hero {
-  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
-  font-weight: 700;
-  color: var(--color-tint);
-  text-align: center;
+	font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+	font-weight: 700;
+	color: var(--color-tint);
+	text-align: center;
 }
 
 html .expenses-dca-gauge {
-  position: relative;
-  height: 5.5rem;
-  margin: 0.5rem auto;
-  max-width: 14rem;
-  border-radius: 999px 999px 0 0;
-  border: 1px solid color-mix(in srgb, var(--color-tint) 35%, transparent);
-  overflow: hidden;
-  background: color-mix(in srgb, var(--color-tint) 4%, transparent);
+	position: relative;
+	height: 5.5rem;
+	margin: 0.5rem auto;
+	max-width: 14rem;
+	border-radius: 999px 999px 0 0;
+	border: 1px solid color-mix(in srgb, var(--color-tint) 35%, transparent);
+	overflow: hidden;
+	background: color-mix(in srgb, var(--color-tint) 4%, transparent);
 }
 
 html .expenses-dca-gauge-fill {
-  position: absolute;
-  inset: auto 0 0;
-  height: var(--dca-pct, 50%);
-  background: linear-gradient(
-    180deg,
-    var(--color-secondary-tint),
-    var(--color-tint)
-  );
-  opacity: 0.55;
+	position: absolute;
+	inset: auto 0 0;
+	height: var(--dca-pct, 50%);
+	background: linear-gradient(180deg, var(--color-secondary-tint), var(--color-tint));
+	opacity: 0.55;
 }
 
 html .expenses-tax-teaser-chart {
-  min-height: 7rem;
-  border: 1px solid var(--border);
-  border-radius: 0.65rem;
-  padding: 0.65rem;
-  font-size: 0.72rem;
+	min-height: 7rem;
+	border: 1px solid var(--border);
+	border-radius: 0.65rem;
+	padding: 0.65rem;
+	font-size: 0.72rem;
 }
 
 /* ---------- Automation / tax / reports ---------- */
@@ -1873,144 +1860,139 @@ html .expenses-tax-teaser-chart {
 html .automation-modern-page .glass-card,
 html .tax-modern-page .glass-card,
 html .reports-modern-page .glass-card {
-  border: 1px solid var(--border);
+	border: 1px solid var(--border);
 }
 
 html .automation-modern-page input,
 html .automation-modern-page select,
 html .tax-modern-page .field-input {
-  font-variant-numeric: tabular-nums;
+	font-variant-numeric: tabular-nums;
 }
 
 html .vigil-data-table-wrap {
-  overflow-x: auto;
+	overflow-x: auto;
 }
 
 html .vigil-data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.78rem;
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.78rem;
 }
 
 html .vigil-data-table th {
-  font-size: var(--label-size-sm);
-  color: var(--muted-foreground);
-  text-align: left;
-  padding: 0.45rem 0.35rem;
-  border-bottom: 1px solid var(--border);
+	font-size: var(--label-size-sm);
+	color: var(--muted-foreground);
+	text-align: left;
+	padding: 0.45rem 0.35rem;
+	border-bottom: 1px solid var(--border);
 }
 
 html .vigil-data-table td {
-  padding: 0.4rem 0.35rem;
-  border-top: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
-  vertical-align: top;
+	padding: 0.4rem 0.35rem;
+	border-top: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
+	vertical-align: top;
 }
 
 /* ---------- Shared modals / gates ---------- */
 
 html .pines-modal-panel,
 html .pro-gate-card {
-  border: 1px solid var(--border);
-  box-shadow: var(--panel-shadow-lg);
+	border: 1px solid var(--border);
+	box-shadow: var(--panel-shadow-lg);
 }
 
 html .trial-banner {
-  border-color: color-mix(
-    in srgb,
-    var(--color-secondary-tint) 40%,
-    transparent
-  );
-  background: color-mix(in srgb, var(--color-secondary-tint) 10%, transparent);
+	border-color: color-mix(in srgb, var(--color-secondary-tint) 40%, transparent);
+	background: color-mix(in srgb, var(--color-secondary-tint) 10%, transparent);
 }
 
 html .pro-gate-eyebrow,
 html .pro-gate-title {
-  letter-spacing: -0.02em;
+	letter-spacing: -0.02em;
 }
 
 html .vigil-topbar {
-  border-bottom: 1px solid
-    var(--border);
-  background: color-mix(in srgb, var(--color-top-bar) 94%, transparent);
+	border-bottom: 1px solid var(--border);
+	background: color-mix(in srgb, var(--color-top-bar) 94%, transparent);
 }
 
 html .portfolio-modal-panel.vigil-modal-panel,
 html .portfolio-modal .portfolio-modal-panel {
-  border: 1px solid var(--border);
-  box-shadow: var(--panel-shadow-lg);
+	border: 1px solid var(--border);
+	box-shadow: var(--panel-shadow-lg);
 }
 
 html .vigil-modal-body .portfolio-form-header,
 html .vigil-modal-body .portfolio-form-section-title,
 html .vigil-modal-section-title {
-  font-size: 0.72rem;
-  color: var(--color-tint);
+	font-size: 0.72rem;
+	color: var(--color-tint);
 }
 
 html .automation-modern-page section.glass-card {
-  border: 1px solid var(--border);
+	border: 1px solid var(--border);
 }
 
 html .oauth-consent .vigil-auth-shell {
-  min-height: auto;
+	min-height: auto;
 }
 
 /* ---------- Layout primitives (command deck / split / form deck) ---------- */
 
 html .vigil-command-deck {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+	display: grid;
+	gap: 1rem;
+	margin-bottom: 1.25rem;
 }
 
 @media (min-width: 768px) {
-  html .vigil-command-deck.is-2col {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+	html .vigil-command-deck.is-2col {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 @media (min-width: 1024px) {
-  html .vigil-command-deck.is-3col {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 1fr);
-    align-items: stretch;
-  }
+	html .vigil-command-deck.is-3col {
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 1fr);
+		align-items: stretch;
+	}
 
-  html .vigil-command-split {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--rail);
-    gap: var(--gap);
-    align-items: start;
-  }
+	html .vigil-command-split {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) var(--rail);
+		gap: var(--gap);
+		align-items: start;
+	}
 }
 
 html .vigil-command-split-main {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 html .vigil-command-split-aside {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 html .vigil-form-deck {
-  display: grid;
-  gap: 1rem;
+	display: grid;
+	gap: 1rem;
 }
 
 @media (min-width: 768px) {
-  html .vigil-form-deck.is-2col {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+	html .vigil-form-deck.is-2col {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 .vigil-settings-shell {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 /* Header rhythm inside the settings shell.
@@ -2023,11 +2005,11 @@ html .vigil-form-deck {
  * These are unlayered, so they win over the header's mb-6 utility by design —
  * see internal/pages/components/instrument.templ for why that ordering holds. */
 .vigil-settings-shell > .vigil-settings-back {
-  margin-bottom: -0.5rem;
+	margin-bottom: -0.5rem;
 }
 
 .vigil-settings-shell > header {
-  margin-bottom: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 
 /* STRUCTURE, NOT SURFACE — deliberately unscoped.
@@ -2042,16 +2024,16 @@ html .vigil-form-deck {
  * The .vigil-* class names are kept because templ and tests reference them;
  * the prefix reflects where the layout was introduced, not who it applies to. */
 .vigil-auth-shell {
-  display: grid;
-  gap: 1.5rem;
-  min-height: min(88vh, 56rem);
-  align-items: stretch;
+	display: grid;
+	gap: 1.5rem;
+	min-height: min(88vh, 56rem);
+	align-items: stretch;
 }
 
 @media (min-width: 1024px) {
-  .vigil-auth-shell {
-    grid-template-columns: minmax(0, 1fr) minmax(22rem, 28rem);
-  }
+	.vigil-auth-shell {
+		grid-template-columns: minmax(0, 1fr) minmax(22rem, 28rem);
+	}
 }
 
 /* ONE OWNER FOR THE BREAKPOINT.
@@ -2069,17 +2051,17 @@ html .vigil-form-deck {
  * AuthMobileBrand (brand.templ, lg:hidden) supplies the mobile brand mark, so
  * nothing is lost below the breakpoint. */
 .vigil-auth-brand-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem;
-  border-radius: var(--radius-lg);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 2rem;
+	border-radius: var(--radius-lg);
 }
 
 @media (max-width: 1023.98px) {
-  .vigil-auth-brand-panel {
-    display: none;
-  }
+	.vigil-auth-brand-panel {
+		display: none;
+	}
 }
 
 /* Vigil auth brand panel: no accent override — flat, identical to Classic
@@ -2087,129 +2069,129 @@ html .vigil-form-deck {
  * a brand-specific treatment here. */
 
 html .vigil-dense-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
 }
 
 html .stock-thesis-grid {
-  display: grid;
-  gap: 1rem;
+	display: grid;
+	gap: 1rem;
 }
 
 @media (min-width: 1024px) {
-  html .stock-thesis-grid {
-    grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 22rem);
-    align-items: start;
-  }
+	html .stock-thesis-grid {
+		grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 22rem);
+		align-items: start;
+	}
 }
 
 html .stock-sub-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  padding: 0.35rem;
-  border-radius: 0.65rem;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--color-tint) 4%, var(--color-card-bg));
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	padding: 0.35rem;
+	border-radius: 0.65rem;
+	border: 1px solid var(--border);
+	background: color-mix(in srgb, var(--color-tint) 4%, var(--color-card-bg));
 }
 
 html .stock-sub-nav a {
-  font-size: 0.68rem;
-  padding: 0.4rem 0.65rem;
-  border-radius: 0.45rem;
+	font-size: 0.68rem;
+	padding: 0.4rem 0.65rem;
+	border-radius: 0.45rem;
 }
 
 html .stock-sub-nav a[aria-current='page'] {
-  color: var(--color-tint);
-  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+	color: var(--color-tint);
+	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
 }
 
 /* Wealth routes: aside-first split (watchlist sidebar, chart builder metrics) */
 @media (min-width: 1024px) {
-  html .vigil-command-split.is-aside-first {
-    grid-template-columns: minmax(16rem, 22rem) minmax(0, 1.35fr);
-  }
+	html .vigil-command-split.is-aside-first {
+		grid-template-columns: minmax(16rem, 22rem) minmax(0, 1.35fr);
+	}
 }
 
 html .trading-command-split {
-  min-height: calc(100vh - 140px);
+	min-height: calc(100vh - 140px);
 }
 
 html .trading-command-split .vigil-command-split-aside {
-  order: 2;
+	order: 2;
 }
 
 @media (min-width: 1024px) {
-  html .trading-command-split {
-    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 24rem);
-  }
+	html .trading-command-split {
+		grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 24rem);
+	}
 
-  html .trading-command-split .vigil-command-split-aside {
-    order: 0;
-  }
+	html .trading-command-split .vigil-command-split-aside {
+		order: 0;
+	}
 }
 
 html .vigil-command-deck.is-2col .glass-card,
 html .vigil-command-deck.is-2col .dash-panel {
-  height: 100%;
+	height: 100%;
 }
 
 /* Hide circuit mesh when reduced motion / print */
 @media print {
-  html.dark:root .app-frame::before {
-    display: none;
-  }
+	html.dark:root .app-frame::before {
+		display: none;
+	}
 }
 
 html .cc-range-control {
-  border-color: var(--border);
-  background: var(--color-card-bg);
+	border-color: var(--border);
+	background: var(--color-card-bg);
 }
 
 html .cc-range-option {
-  transition: color var(--motion-fast) var(--ease-standard);
+	transition: color var(--motion-fast) var(--ease-standard);
 }
 
 html .cc-range-option[data-active='true'] {
-  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
 }
 
 html .cc-ledger-badge {
-  border-color: var(--border);
+	border-color: var(--border);
 }
 
 html .cc-ledger-row {
-  border-bottom-color: var(--border);
+	border-bottom-color: var(--border);
 }
 
 html .cc-tax-row {
-  border-bottom-color: var(--border);
+	border-bottom-color: var(--border);
 }
 
 html .cc-ledger-filter {
-  border-color: var(--border);
+	border-color: var(--border);
 }
 
 html .cc-ledger-filter[data-active='true'] {
-  background: color-mix(in srgb, var(--color-tint) 12%, transparent);
+	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
 }
 
 /* One-page portfolio: print just the table on a single A4 sheet. */
 @media print {
-  .app-sidebar,
-  .app-topbar,
-  .portfolio-onepage-actions,
-  .portfolio-onepage-share {
-    display: none !important;
-  }
+	.app-sidebar,
+	.app-topbar,
+	.portfolio-onepage-actions,
+	.portfolio-onepage-share {
+		display: none !important;
+	}
 
-  .portfolio-onepage {
-    font-size: 11px;
-  }
+	.portfolio-onepage {
+		font-size: 11px;
+	}
 
-  @page {
-    size: A4;
-    margin: 12mm;
-  }
+	@page {
+		size: A4;
+		margin: 12mm;
+	}
 }

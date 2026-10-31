@@ -9,6 +9,9 @@
 	</a>
 	<nav class="flex items-center gap-4 text-sm">
 		<a href="/articles" class="hover:underline">Articles</a>
-		<a href="/articles/new" class="rounded-lg border border-border px-3 py-1.5 font-medium hover:bg-muted">Write</a>
+		<a
+			href="/articles/new"
+			class="rounded-lg border border-border px-3 py-1.5 font-medium hover:bg-muted">Write</a
+		>
 	</nav>
 </header>

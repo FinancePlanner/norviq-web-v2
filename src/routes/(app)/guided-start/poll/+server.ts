@@ -32,7 +32,11 @@ export const GET: RequestHandler = async (event) => {
 	}
 	if (elapsed >= STEP_TIMEOUT_MS) {
 		await clearGuidedStep(event);
-		return json({ state: 'ended', event: 'guided_start_step_timed_out', outcome } satisfies PollResult);
+		return json({
+			state: 'ended',
+			event: 'guided_start_step_timed_out',
+			outcome
+		} satisfies PollResult);
 	}
 	return json({ state: 'pending' } satisfies PollResult);
 };

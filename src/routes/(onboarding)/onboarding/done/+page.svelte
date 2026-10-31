@@ -13,7 +13,8 @@
 		</div>
 		<h1 class="onboarding-title mt-6">You're ready</h1>
 		<p class="onboarding-lead mx-auto mt-4 max-w-md">
-			Your workspace is set up. Open the dashboard to see wealth, activity, and insights in one place.
+			Your workspace is set up. Open the dashboard to see wealth, activity, and insights in one
+			place.
 		</p>
 		<form method="POST" action="/onboarding/complete" class="mt-8">
 			<SubmitButton class="inline-flex w-auto px-8">Go to dashboard</SubmitButton>

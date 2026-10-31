@@ -1,7 +1,16 @@
 import type { PageServerLoad } from './$types';
 import { facebookImportOn, requireSocial, xImportOn } from '#lib/features/social/gates.server.js';
-import { searchUsers, socialDo, socialErrorMessage } from '#lib/features/social/friends/friends.server.js';
-import type { SearchVM, SocialFriendRequests, SocialFriendsList, SocialUserSummary } from '#lib/features/social/friends/types.js';
+import {
+	searchUsers,
+	socialDo,
+	socialErrorMessage
+} from '#lib/features/social/friends/friends.server.js';
+import type {
+	SearchVM,
+	SocialFriendRequests,
+	SocialFriendsList,
+	SocialUserSummary
+} from '#lib/features/social/friends/types.js';
 
 // Port of norviq-web handlers.Friends (internal/handlers/social.go): incoming
 // requests, friends, sent requests, and the add-friend search. A ?q= renders
@@ -17,7 +26,10 @@ export const load: PageServerLoad = async (event) => {
 		socialDo<SocialFriendsList>(event, 'GET', '/v1/social/friends')
 	]);
 	if (reqResult.status === 'fulfilled') {
-		requests = { incoming: reqResult.value?.incoming ?? [], outgoing: reqResult.value?.outgoing ?? [] };
+		requests = {
+			incoming: reqResult.value?.incoming ?? [],
+			outgoing: reqResult.value?.outgoing ?? []
+		};
 	} else {
 		errorMessage ||= socialErrorMessage(reqResult.reason, 'Could not load friend requests.');
 	}

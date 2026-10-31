@@ -16,7 +16,11 @@ export interface BudgetPageVM {
 }
 
 const thisMonth = () => new Date().toISOString().slice(0, 7);
-export const budgetPageVM = (error = ''): BudgetPageVM => ({ pillars: BUDGET_PILLARS, month: thisMonth(), error });
+export const budgetPageVM = (error = ''): BudgetPageVM => ({
+	pillars: BUDGET_PILLARS,
+	month: thisMonth(),
+	error
+});
 
 const floatPattern = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 /** parsePositiveFloat: comma decimals allowed. */

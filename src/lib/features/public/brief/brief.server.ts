@@ -17,10 +17,22 @@ import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { apiFetch } from '#lib/server/api.js';
 import { config } from '#lib/server/env.js';
-import { normalizeLanguage, translator, LANGUAGE_ENGLISH, LANGUAGE_PTPT, type Locale } from '#lib/i18n/index.js';
+import {
+	normalizeLanguage,
+	translator,
+	LANGUAGE_ENGLISH,
+	LANGUAGE_PTPT,
+	type Locale
+} from '#lib/i18n/index.js';
 import { build as buildShareLinks, tag, type Links } from '#lib/sharelinks.js';
-import { mapMarketBrief, parseMarketBriefQuery } from '#lib/features/dashboard/market-brief/load.server.js';
-import { marketBriefTitleKey, type MarketBriefVM } from '#lib/features/dashboard/market-brief/types.js';
+import {
+	mapMarketBrief,
+	parseMarketBriefQuery
+} from '#lib/features/dashboard/market-brief/load.server.js';
+import {
+	marketBriefTitleKey,
+	type MarketBriefVM
+} from '#lib/features/dashboard/market-brief/types.js';
 
 type BriefResponse = components['schemas']['MarketBriefResponse'];
 
@@ -75,7 +87,11 @@ export function urlLang(url: URL): Locale {
  * parseMarketBriefPermalink: the {date}/{slot} segments under the card's
  * ?slot=&date= rules, and only the canonical spelling of the date.
  */
-export function parsePermalink(date: string, slot: string, now = new Date()): { slot: string; date: string } | null {
+export function parsePermalink(
+	date: string,
+	slot: string,
+	now = new Date()
+): { slot: string; date: string } | null {
 	const key = parseMarketBriefQuery(new URLSearchParams({ slot, date }), now);
 	if (!key || !key.slot || key.date !== date) return null;
 	return key;
@@ -90,10 +106,15 @@ async function fetchBrief(event: RequestEvent, key: Key): Promise<Entry> {
 			signal: AbortSignal.timeout(FETCH_TIMEOUT)
 		});
 		if (res.status === 200) {
-			return { vm: mapMarketBrief((await res.json()) as BriefResponse, key.lang), failed: false, expires: Date.now() + CACHE_TTL };
+			return {
+				vm: mapMarketBrief((await res.json()) as BriefResponse, key.lang),
+				failed: false,
+				expires: Date.now() + CACHE_TTL
+			};
 		}
 		await res.body?.cancel().catch(() => {});
-		if (res.status === 404 && key.slot) return { vm: null, failed: false, expires: Date.now() + CACHE_TTL };
+		if (res.status === 404 && key.slot)
+			return { vm: null, failed: false, expires: Date.now() + CACHE_TTL };
 		console.warn('load market brief', key, `market brief returned status ${res.status}`);
 	} catch (err) {
 		console.warn('load market brief', key, err);
@@ -133,7 +154,8 @@ export async function findBrief(event: RequestEvent, key: Key): Promise<MarketBr
 	const vm = entry.vm;
 	if (!vm || !vm.slot || !vm.tradingDateISO) throw new BriefNotFound('market brief not found');
 	// Never serve one brief under another's URL.
-	if (key.slot && (vm.slot !== key.slot || vm.tradingDateISO !== key.date)) throw new BriefNotFound('market brief not found');
+	if (key.slot && (vm.slot !== key.slot || vm.tradingDateISO !== key.date))
+		throw new BriefNotFound('market brief not found');
 	return vm;
 }
 
@@ -207,7 +229,11 @@ export function goJSON(value: unknown): string {
 
 /** Go json.Marshal of a map sorts the keys. */
 function sortedKeys<T extends Record<string, unknown>>(obj: T): T {
-	return Object.fromEntries(Object.keys(obj).sort().map((k) => [k, obj[k]])) as T;
+	return Object.fromEntries(
+		Object.keys(obj)
+			.sort()
+			.map((k) => [k, obj[k]])
+	) as T;
 }
 
 export function shareProps(vm: MarketBriefVM, lang: string, surface: string): string {
@@ -267,7 +293,10 @@ export function pageVM(lang: Locale, brief: MarketBriefVM, signedIn: boolean): B
 		ogLocaleAlternate: pt ? 'en_US' : 'pt_PT',
 		publishedISO: brief.generatedAtISO,
 		jsonLD: '',
-		previousURL: brief.previousSlot && brief.previousDate ? briefPath(brief.previousDate, brief.previousSlot) + langQuery(lang) : '',
+		previousURL:
+			brief.previousSlot && brief.previousDate
+				? briefPath(brief.previousDate, brief.previousSlot) + langQuery(lang)
+				: '',
 		latestURL: '',
 		otherLanguageURL: pt ? path : path + langQuery(LANGUAGE_PTPT),
 		otherLanguageCode: pt ? LANGUAGE_ENGLISH : LANGUAGE_PTPT,
@@ -313,7 +342,11 @@ function jsonLD(vm: BriefPageVM, base: string, lang: string): string {
 		Array.isArray(v)
 			? v.map(sortDeep)
 			: v && typeof v === 'object'
-				? Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortDeep((v as Record<string, unknown>)[k])]))
+				? Object.fromEntries(
+						Object.keys(v)
+							.sort()
+							.map((k) => [k, sortDeep((v as Record<string, unknown>)[k])])
+					)
 				: v;
 	return goJSON(sortDeep(data));
 }
@@ -335,6 +368,9 @@ export async function briefSitemapPaths(event: RequestEvent): Promise<string[]> 
 
 /** marketBriefShortHost: the base URL as people type it, "norviq.org". */
 export function shortHost(base: string): string {
-	const host = base.replace(/^https:\/\//, '').replace(/^http:\/\//, '').replace(/^www\./, '');
+	const host = base
+		.replace(/^https:\/\//, '')
+		.replace(/^http:\/\//, '')
+		.replace(/^www\./, '');
 	return host || 'norviq.org';
 }

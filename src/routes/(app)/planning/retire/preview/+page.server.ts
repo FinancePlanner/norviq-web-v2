@@ -1,5 +1,9 @@
 import type { Actions, PageServerLoad } from './$types';
-import { retirePreview, loadRetireViewModel, previewGetGuard } from '#lib/features/planning-tools/planning/planning.server.js';
+import {
+	retirePreview,
+	loadRetireViewModel,
+	previewGetGuard
+} from '#lib/features/planning-tools/planning/planning.server.js';
 
 // POST /planning/retire/preview (PlanningRetirePreview). With JS the form posts
 // here through use:enhance and swaps the results panel only; without it this

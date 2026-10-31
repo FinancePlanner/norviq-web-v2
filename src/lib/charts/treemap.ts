@@ -35,7 +35,11 @@ function round(v: number): number {
  * Maps a % value to the Finviz red→neutral→green ramp, saturating at
  * ±scaleMax (change) or across -scaleMax…0 (ATH distance).
  */
-export function heatColorScaled(pct: number, scaleMax: number, mode: HeatmapColorMode | string): string {
+export function heatColorScaled(
+	pct: number,
+	scaleMax: number,
+	mode: HeatmapColorMode | string
+): string {
 	if (scaleMax <= 0) scaleMax = 3;
 	let t: number;
 	if (mode === 'athDistance') t = 1 + (2 * Math.max(-scaleMax, Math.min(0, pct))) / scaleMax;
@@ -46,7 +50,10 @@ export function heatColorScaled(pct: number, scaleMax: number, mode: HeatmapColo
 		target = [0xf2, 0x36, 0x45];
 		t = -t;
 	}
-	const hex = (a: number, b: number) => round(a + (b - a) * t).toString(16).padStart(2, '0');
+	const hex = (a: number, b: number) =>
+		round(a + (b - a) * t)
+			.toString(16)
+			.padStart(2, '0');
 	return '#' + hex(neutral[0], target[0]) + hex(neutral[1], target[1]) + hex(neutral[2], target[2]);
 }
 
@@ -91,7 +98,11 @@ export function marketHeatmap(chartID: string, tiles: readonly HeatmapTile[]): C
 }
 
 /** A sector / market-cap treemap, one node per sector in first-seen order. */
-export function marketHeatmapWithOptions(chartID: string, tiles: readonly HeatmapTile[], opts: HeatmapOptions = {}): ChartSpec | null {
+export function marketHeatmapWithOptions(
+	chartID: string,
+	tiles: readonly HeatmapTile[],
+	opts: HeatmapOptions = {}
+): ChartSpec | null {
 	if (tiles.length === 0) return null;
 	const id = normalizeChartID(chartID);
 	const scaleMaxPct = opts.scaleMaxPct && opts.scaleMaxPct > 0 ? opts.scaleMaxPct : 3;
@@ -113,7 +124,11 @@ export function marketHeatmapWithOptions(chartID: string, tiles: readonly Heatma
 		if (list) list.push(node);
 		else bySector.set(tile.sector, [node]);
 	}
-	const roots = [...bySector].map(([sector, children]) => ({ name: sector, changePct: 0, children }));
+	const roots = [...bySector].map(([sector, children]) => ({
+		name: sector,
+		changePct: 0,
+		children
+	}));
 
 	const option = {
 		tooltip: {
@@ -130,7 +145,13 @@ export function marketHeatmapWithOptions(chartID: string, tiles: readonly Heatma
 				width: '100%',
 				height: '100%',
 				breadcrumb: { show: true, top: 0 },
-				label: { show: true, formatter: treemapLabel, fontSize: 12, fontWeight: 'bold', color: '#ffffff' },
+				label: {
+					show: true,
+					formatter: treemapLabel,
+					fontSize: 12,
+					fontWeight: 'bold',
+					color: '#ffffff'
+				},
 				upperLabel: { show: true, height: 22, formatter: '{b}', color: '#ffffff', fontSize: 11 },
 				itemStyle: { borderColor: 'rgba(0,0,0,0.35)', borderWidth: 1, gapWidth: 1 },
 				levels: [

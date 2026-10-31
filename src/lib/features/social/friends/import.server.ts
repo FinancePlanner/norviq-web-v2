@@ -39,7 +39,12 @@ export async function startImport(event: RequestEvent, p: ImportProvider): Promi
 	const redirectURI = config().publicBaseURL + p.callbackPath;
 	let start: SocialXImportStartResponse;
 	try {
-		start = await socialDo<SocialXImportStartResponse>(event, 'POST', `/v1/social/discovery/${p.name}/start`, { redirectURI });
+		start = await socialDo<SocialXImportStartResponse>(
+			event,
+			'POST',
+			`/v1/social/discovery/${p.name}/start`,
+			{ redirectURI }
+		);
 	} catch (err) {
 		console.warn(`${p.name} import start failed`, { redirectURI, err });
 		redirectWith('/friends', '', socialErrorMessage(err, p.failure));
@@ -54,7 +59,10 @@ export async function startImport(event: RequestEvent, p: ImportProvider): Promi
 }
 
 /** session.Pop*ImportFlow: read and clear, so a replayed callback finds nothing. */
-export async function popImportFlow(event: RequestEvent, p: ImportProvider): Promise<{ flowID: string; redirectURI: string }> {
+export async function popImportFlow(
+	event: RequestEvent,
+	p: ImportProvider
+): Promise<{ flowID: string; redirectURI: string }> {
 	const flowID = String(event.locals.session.get<string>(p.flowKey) ?? '');
 	const redirectURI = String(event.locals.session.get<string>(p.redirectKey) ?? '');
 	if (flowID || redirectURI) await event.locals.session.remove(p.flowKey, p.redirectKey);

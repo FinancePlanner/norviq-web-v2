@@ -20,7 +20,10 @@ export const activityPageMaxLimit = 100;
 export const activityPageStep = 20;
 export const recentSpendLimit = 3;
 
-export function mapActivities(items: UserActivity[] | null | undefined, now: Date = new Date()): ActivityItemVM[] {
+export function mapActivities(
+	items: UserActivity[] | null | undefined,
+	now: Date = new Date()
+): ActivityItemVM[] {
 	const out: ActivityItemVM[] = [];
 	for (const a of items ?? []) {
 		const created = parseTime(a.createdAt);

@@ -65,7 +65,8 @@ export const actions: Actions = {
 		try {
 			post = await createBoardPost(event, event.params.slug, req);
 		} catch (err) {
-			if (isBoardsNotFound(err) || isBoardsCode(err, 'community_banned')) boardsFailure(err, 'board');
+			if (isBoardsNotFound(err) || isBoardsCode(err, 'community_banned'))
+				boardsFailure(err, 'board');
 			return fail(422, { error: boardsErrorText(err), ...vm, kindOptions: kindOptions(vm.kind) });
 		}
 		redirect(303, '/boards/' + pathEscape(post.boardSlug) + '/p/' + pathEscape(post.id));

@@ -35,7 +35,9 @@ function updateThemeColor(mode: ThemeMode) {
 	// app.html ships one theme-color meta per OS scheme; the stored appearance can
 	// disagree with the OS, so both get the resolved colour.
 	const color = resolveIsDark(mode) ? THEME_COLORS['vigil-dark'] : THEME_COLORS['vigil-light'];
-	document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => meta.setAttribute('content', color));
+	document
+		.querySelectorAll('meta[name="theme-color"]')
+		.forEach((meta) => meta.setAttribute('content', color));
 }
 
 // Starts at the server-rendered defaults so hydration matches; initTheme()

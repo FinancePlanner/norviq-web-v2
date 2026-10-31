@@ -42,7 +42,8 @@ export async function proxyWebAuthn(
 	}
 	const text = await resp.text().catch(() => '');
 	const ok = resp.status === 200 || (finish && resp.status === 204);
-	if (!ok) return json({ error: apiErrorMessage(text, fallbacks.failure) }, { status: resp.status });
+	if (!ok)
+		return json({ error: apiErrorMessage(text, fallbacks.failure) }, { status: resp.status });
 	if (finish) return json({ message: 'Passkey registered.' });
 	return new Response(text, { status: 200, headers: { 'Content-Type': 'application/json' } });
 }

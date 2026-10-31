@@ -33,8 +33,14 @@ function wantsPortuguese(header: string | null): boolean {
 		.some((tag) => tag === 'pt' || tag.startsWith('pt-'));
 }
 
-export function resolveRequestLanguage(cookie: string | undefined, acceptLanguage: string | null): Locale {
-	return normalizeLanguage(cookie) ?? (wantsPortuguese(acceptLanguage) ? LANGUAGE_PTPT : LANGUAGE_ENGLISH);
+export function resolveRequestLanguage(
+	cookie: string | undefined,
+	acceptLanguage: string | null
+): Locale {
+	return (
+		normalizeLanguage(cookie) ??
+		(wantsPortuguese(acceptLanguage) ? LANGUAGE_PTPT : LANGUAGE_ENGLISH)
+	);
 }
 
 export function translate(locale: Locale, id: string): string {
@@ -47,7 +53,8 @@ export function format(template: string, ...args: unknown[]): string {
 	return template.replace(/%(\.\d+)?[@sdf]|%%/g, (m, prec: string | undefined) => {
 		if (m === '%%') return '%';
 		const v = args[i++];
-		if (m.endsWith('f') && typeof v === 'number') return v.toFixed(prec ? Number(prec.slice(1)) : 6);
+		if (m.endsWith('f') && typeof v === 'number')
+			return v.toFixed(prec ? Number(prec.slice(1)) : 6);
 		return String(v ?? '');
 	});
 }

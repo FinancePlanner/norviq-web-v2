@@ -22,11 +22,15 @@ function baseOrRequest(event: Pick<RequestEvent, 'url' | 'request'>): string {
 	const base = publicBase();
 	if (base) return base;
 	const forwarded = event.request.headers.get('x-forwarded-proto') ?? '';
-	const scheme = event.url.protocol === 'https:' || forwarded.startsWith('https') ? 'https' : 'http';
+	const scheme =
+		event.url.protocol === 'https:' || forwarded.startsWith('https') ? 'https' : 'http';
 	return scheme + '://' + event.url.host;
 }
 
-const textHeaders = { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' };
+const textHeaders = {
+	'Content-Type': 'text/plain; charset=utf-8',
+	'Cache-Control': 'public, max-age=86400'
+};
 
 export function robotsTxt(): Response {
 	const cfg = config();
@@ -36,7 +40,17 @@ export function robotsTxt(): Response {
 	// thing here a crawler is meant to spend its budget on, and the line
 	// disappears with the feature rather than pointing at 404s.
 	if (publicPagesEnabled(cfg)) b += 'Allow: /s/\n';
-	for (const p of ['/dashboard', '/portfolio', '/expenses', '/settings', '/onboarding', '/auth/', '/oauth/', '/billing', '/runtime-config.js']) {
+	for (const p of [
+		'/dashboard',
+		'/portfolio',
+		'/expenses',
+		'/settings',
+		'/onboarding',
+		'/auth/',
+		'/oauth/',
+		'/billing',
+		'/runtime-config.js'
+	]) {
 		b += 'Disallow: ' + p + '\n';
 	}
 	const base = publicBase();
@@ -49,18 +63,33 @@ export function robotsTxt(): Response {
 
 /** encoding/xml escaping of character data (EscapeText). */
 function xmlEscape(s: string): string {
-	return s.replace(/[&<>"'\t\n\r]/g, (c) =>
-		({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&#34;', "'": '&#39;', '\t': '&#x9;', '\n': '&#xA;', '\r': '&#xD;' })[c]!
+	return s.replace(
+		/[&<>"'\t\n\r]/g,
+		(c) =>
+			({
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&#34;',
+				"'": '&#39;',
+				'\t': '&#x9;',
+				'\n': '&#xA;',
+				'\r': '&#xD;'
+			})[c]!
 	);
 }
 
 /** extra lists further public paths (articles, market brief). */
-export function sitemapXML(event: Pick<RequestEvent, 'url' | 'request'>, extra: string[]): Response {
+export function sitemapXML(
+	event: Pick<RequestEvent, 'url' | 'request'>,
+	extra: string[]
+): Response {
 	const base = baseOrRequest(event);
 	const locs = publicSitemapPaths.map((p) => base + p);
 	// Only when the token is configured: without it /s/ answers 404, and a
 	// sitemap full of soft-404s is worse than no ticker pages at all.
-	if (publicPagesEnabled(config())) for (const symbol of publicSymbols()) locs.push(base + '/s/' + symbol);
+	if (publicPagesEnabled(config()))
+		for (const symbol of publicSymbols()) locs.push(base + '/s/' + symbol);
 	for (const p of extra) locs.push(base + p);
 	// xml.Header + xml.NewEncoder(w).Encode(set): one line, no trailing newline.
 	const body =
@@ -68,7 +97,12 @@ export function sitemapXML(event: Pick<RequestEvent, 'url' | 'request'>, extra: 
 		'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
 		locs.map((loc) => '<url><loc>' + xmlEscape(loc) + '</loc></url>').join('') +
 		'</urlset>';
-	return new Response(body, { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=86400' } });
+	return new Response(body, {
+		headers: {
+			'Content-Type': 'application/xml; charset=utf-8',
+			'Cache-Control': 'public, max-age=86400'
+		}
+	});
 }
 
 export function llmsTxt(event: Pick<RequestEvent, 'url' | 'request'>): Response {
@@ -86,7 +120,8 @@ export function llmsTxt(event: Pick<RequestEvent, 'url' | 'request'>): Response 
 	b += '- Security: ' + base + '/security\n';
 	b += '- X: https://x.com/NorviqPlanner\n';
 	b += '- Discord: ' + DiscordURL + '\n\n';
-	b += 'The product app (dashboard, portfolio, expenses) is behind authentication and should not be indexed.\n';
+	b +=
+		'The product app (dashboard, portfolio, expenses) is behind authentication and should not be indexed.\n';
 	return new Response(b, { headers: textHeaders });
 }
 
@@ -110,7 +145,9 @@ const appleAppSiteAssociation = `{
 `;
 
 export function appleAppSiteAssociationResponse(): Response {
-	return new Response(appleAppSiteAssociation, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' } });
+	return new Response(appleAppSiteAssociation, {
+		headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' }
+	});
 }
 
 /**

@@ -18,7 +18,13 @@
 		title,
 		subtitle = '',
 		children
-	}: { backHref?: string; backLabel?: string; title: string; subtitle?: string; children?: Snippet } = $props();
+	}: {
+		backHref?: string;
+		backLabel?: string;
+		title: string;
+		subtitle?: string;
+		children?: Snippet;
+	} = $props();
 </script>
 
 <div class="vigil-settings-shell">

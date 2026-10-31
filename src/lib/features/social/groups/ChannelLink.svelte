@@ -9,7 +9,11 @@
 
 <a
 	href={channel.href}
-	class={['groups-channel-link', channel.active && 'is-active', channel.unread > 0 && !channel.active && 'has-unread']}
+	class={[
+		'groups-channel-link',
+		channel.active && 'is-active',
+		channel.unread > 0 && !channel.active && 'has-unread'
+	]}
 	aria-current={channel.active ? 'page' : undefined}
 	data-channel={channel.id}
 >

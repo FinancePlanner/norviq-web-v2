@@ -1,17 +1,36 @@
 <script lang="ts">
 	// tax.notificationForm (POST /tax/notifications → /tax?/notifications).
 	import { enhance } from '$app/forms';
-	import { CheckboxField, Field, SecondarySubmitButton, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		CheckboxField,
+		Field,
+		SecondarySubmitButton,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import { optionalFloat } from '../helpers.js';
 	import type { TaxPageViewModel } from '../types.js';
 
 	let { vm }: { vm: TaxPageViewModel } = $props();
 </script>
 
-<form method="POST" action="/tax?/notifications" use:enhance={withSpinner()} class="glass-card self-start p-6">
+<form
+	method="POST"
+	action="/tax?/notifications"
+	use:enhance={withSpinner()}
+	class="glass-card self-start p-6"
+>
 	<h2 class="text-xl font-semibold">Opportunity alerts</h2>
-	<CheckboxField name="enabled" label="Notify me about actionable opportunities" checked={vm.notifications.enabled} wrapperClass="mt-4" />
-	<input type="hidden" name="jurisdiction" value={vm.jurisdiction} /><input type="hidden" name="taxYear" value={vm.taxYear} />
+	<CheckboxField
+		name="enabled"
+		label="Notify me about actionable opportunities"
+		checked={vm.notifications.enabled}
+		wrapperClass="mt-4"
+	/>
+	<input type="hidden" name="jurisdiction" value={vm.jurisdiction} /><input
+		type="hidden"
+		name="taxYear"
+		value={vm.taxYear}
+	/>
 	<Field
 		name="minimumBenefit"
 		label="Minimum benefit"

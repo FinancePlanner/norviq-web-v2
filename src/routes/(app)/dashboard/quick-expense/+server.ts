@@ -32,7 +32,11 @@ export const POST: RequestHandler = async (event) => {
 	if (amount === null) return fail('Enter a valid amount.');
 
 	let occurredOn = isoDate(new Date());
-	if (/^\d{4}-\d{2}-\d{2}$/.test(occurredRaw) && !Number.isNaN(new Date(occurredRaw + 'T00:00:00Z').getTime())) occurredOn = occurredRaw;
+	if (
+		/^\d{4}-\d{2}-\d{2}$/.test(occurredRaw) &&
+		!Number.isNaN(new Date(occurredRaw + 'T00:00:00Z').getTime())
+	)
+		occurredOn = occurredRaw;
 
 	// parseExpenseSplit: the modal has no split control, so this is personal/100.
 	const shared = field('split_mode').toLowerCase() === 'shared';

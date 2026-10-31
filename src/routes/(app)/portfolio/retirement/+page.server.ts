@@ -67,7 +67,10 @@ function defaultRetirementPlan(item: ManagedPortfolio): RetirementPlan {
 	};
 }
 
-async function loadRetirementViewModelFor(event: RequestEvent, id: string): Promise<RetirementViewModel | null> {
+async function loadRetirementViewModelFor(
+	event: RequestEvent,
+	id: string
+): Promise<RetirementViewModel | null> {
 	if (id === '') return null;
 	let portfolio: ManagedPortfolio;
 	try {
@@ -75,11 +78,23 @@ async function loadRetirementViewModelFor(event: RequestEvent, id: string): Prom
 	} catch {
 		return null;
 	}
-	const vm: RetirementViewModel = { portfolio, portfolios: [], plan: defaultRetirementPlan(portfolio), projection: null, notice: '', error: '' };
+	const vm: RetirementViewModel = {
+		portfolio,
+		portfolios: [],
+		plan: defaultRetirementPlan(portfolio),
+		projection: null,
+		notice: '',
+		error: ''
+	};
 	try {
-		vm.plan = await apiJSON<RetirementPlan>(event, 'GET', '/v1/portfolios/' + escapePath(id) + '/retirement-plan');
+		vm.plan = await apiJSON<RetirementPlan>(
+			event,
+			'GET',
+			'/v1/portfolios/' + escapePath(id) + '/retirement-plan'
+		);
 	} catch (err) {
-		if (!(isAPIError(err) && err.status === 404)) vm.error = portfolioAPIErrorMessage(err, 'Could not load retirement plan.');
+		if (!(isAPIError(err) && err.status === 404))
+			vm.error = portfolioAPIErrorMessage(err, 'Could not load retirement plan.');
 		vm.plan = defaultRetirementPlan(portfolio);
 	}
 	return vm;
@@ -90,14 +105,23 @@ export const load: PageServerLoad = async (event): Promise<RetirementData> => {
 	try {
 		page = await apiJSON<PortfolioPage>(event, 'GET', '/v1/portfolios');
 	} catch (err) {
-		return { picker: true, items: [], errorMessage: portfolioAPIErrorMessage(err, 'Could not load portfolios.') };
+		return {
+			picker: true,
+			items: [],
+			errorMessage: portfolioAPIErrorMessage(err, 'Could not load portfolios.')
+		};
 	}
 	const items = page.items ?? [];
 	let id = (event.url.searchParams.get('portfolio') ?? '').trim();
 	if (id === '' && items.length > 0) id = items[0].id;
 	if (id === '') return { picker: true, items, errorMessage: '' };
 	const vm = await loadRetirementViewModelFor(event, id);
-	if (!vm) return { picker: true, items, errorMessage: 'Could not load a retirement plan for that portfolio.' };
+	if (!vm)
+		return {
+			picker: true,
+			items,
+			errorMessage: 'Could not load a retirement plan for that portfolio.'
+		};
 	vm.portfolios = items;
 	vm.notice = event.url.searchParams.get('notice') ?? '';
 	vm.error = event.url.searchParams.get('error') ?? '';
@@ -136,7 +160,12 @@ function retirementInputFromForm(form: FormData): RetirementPlanInput {
 		otherAnnualRetirementIncome: 0
 	};
 	if (pensionAmount > 0) {
-		input.publicPension = { annualAmount: pensionAmount, startAge: parseIntGo(v('pensionAge')), annualIndexationRate: 0.02, currency };
+		input.publicPension = {
+			annualAmount: pensionAmount,
+			startAge: parseIntGo(v('pensionAge')),
+			annualIndexationRate: 0.02,
+			currency
+		};
 	}
 	return input;
 }
@@ -162,11 +191,14 @@ export const actions: Actions = {
 		const path = '/v1/portfolios/' + escapePath(id) + '/retirement-plan';
 		let saved: RetirementPlan;
 		try {
-			saved = await apiJSON<RetirementPlan>(event, 'PUT', path, { input: retirementInputFromForm(form) });
+			saved = await apiJSON<RetirementPlan>(event, 'PUT', path, {
+				input: retirementInputFromForm(form)
+			});
 		} catch (err) {
 			redirectRetirement(id, '', portfolioAPIErrorMessage(err, 'Could not save retirement plan.'));
 		}
-		if (formValue(form, 'intent') !== 'project') redirectRetirement(id, 'Retirement plan saved.', '');
+		if (formValue(form, 'intent') !== 'project')
+			redirectRetirement(id, 'Retirement plan saved.', '');
 		let projection: RetirementProjection;
 		try {
 			projection = await apiJSON<RetirementProjection>(event, 'POST', path + '/project', {
@@ -182,7 +214,12 @@ export const actions: Actions = {
 		// Go re-renders in place: the saved plan, the projection, a notice — and
 		// no portfolio switcher, because vm.Portfolios is not reloaded here.
 		return {
-			projected: { ...vm, plan: saved, projection, notice: 'Projection updated from your saved assumptions.' } satisfies RetirementViewModel
+			projected: {
+				...vm,
+				plan: saved,
+				projection,
+				notice: 'Projection updated from your saved assumptions.'
+			} satisfies RetirementViewModel
 		};
 	}
 };

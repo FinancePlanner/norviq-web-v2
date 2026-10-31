@@ -20,7 +20,11 @@
 	const isEditing = (item: AutobuyVM) => editing[item.id] ?? vm.editingID === item.id;
 
 	async function setActive(item: AutobuyVM, checked: boolean) {
-		const next = await terminalSend<AutobuysVM>('POST', `/terminal/autobuys/${item.id}/active`, checked ? { active: 'true' } : {});
+		const next = await terminalSend<AutobuysVM>(
+			'POST',
+			`/terminal/autobuys/${item.id}/active`,
+			checked ? { active: 'true' } : {}
+		);
 		if (next) onpanel(next);
 	}
 
@@ -32,8 +36,12 @@
 </script>
 
 <div id="terminal-autobuys">
-	<vigil.Panel class="p-5 space-y-4" titleID="terminal-autobuys-title">
-		<vigil.PanelHeader id="terminal-autobuys-title" title="Autobuys" desc="Recurring buys, shown as a monthly amount." />
+	<vigil.Panel class="space-y-4 p-5" titleID="terminal-autobuys-title">
+		<vigil.PanelHeader
+			id="terminal-autobuys-title"
+			title="Autobuys"
+			desc="Recurring buys, shown as a monthly amount."
+		/>
 		{#if vm.loadError}
 			<p class="text-footnote text-muted-foreground">Autobuys are unavailable right now.</p>
 		{:else}
@@ -44,7 +52,10 @@
 				<ul class="space-y-2">
 					{#each vm.items as item (item.id)}
 						<li id={'terminal-autobuy-' + item.id} class="rounded-xl border border-border p-3">
-							<div class="flex items-start justify-between gap-3" style:display={isEditing(item) ? 'none' : undefined}>
+							<div
+								class="flex items-start justify-between gap-3"
+								style:display={isEditing(item) ? 'none' : undefined}
+							>
 								<div class="min-w-0">
 									<p class="font-semibold">
 										{item.label}
@@ -52,12 +63,18 @@
 											<span class="text-muted-foreground">· {item.ticker}</span>
 										{/if}
 										{#if !item.active}
-											<span class="ml-1 rounded bg-muted px-1.5 py-0.5 text-[0.65rem] font-semibold">Paused</span>
+											<span class="ml-1 rounded bg-muted px-1.5 py-0.5 text-[0.65rem] font-semibold"
+												>Paused</span
+											>
 										{/if}
 									</p>
-									<p class="text-footnote text-muted-foreground">{item.amountLabel} · {item.cadenceLabel}</p>
+									<p class="text-footnote text-muted-foreground">
+										{item.amountLabel} · {item.cadenceLabel}
+									</p>
 									{#if item.needsBase}
-										<p class="text-footnote text-muted-foreground">Add a monthly base to count this one.</p>
+										<p class="text-footnote text-muted-foreground">
+											Add a monthly base to count this one.
+										</p>
 									{:else}
 										<p class="text-footnote tabular-nums">{item.monthlyEquivalent} a month</p>
 									{/if}
@@ -69,18 +86,31 @@
 										value="true"
 										checked={item.active}
 										aria-label="Active"
-										onchange={(e: Event) => setActive(item, (e.currentTarget as HTMLInputElement).checked)}
+										onchange={(e: Event) =>
+											setActive(item, (e.currentTarget as HTMLInputElement).checked)}
 									/>
-									<NativeButton class={iconButtonClass} aria-label={'Edit ' + item.label} onclick={() => (editing[item.id] = true)}>
+									<NativeButton
+										class={iconButtonClass}
+										aria-label={'Edit ' + item.label}
+										onclick={() => (editing[item.id] = true)}
+									>
 										<Icon name="pencil" class="h-4 w-4" />
 									</NativeButton>
-									<NativeButton class={iconButtonClass} aria-label={'Delete ' + item.label} onclick={() => remove(item)}>
+									<NativeButton
+										class={iconButtonClass}
+										aria-label={'Delete ' + item.label}
+										onclick={() => remove(item)}
+									>
 										<Icon name="trash-2" class="h-4 w-4" />
 									</NativeButton>
 								</div>
 							</div>
 							<div style:display={isEditing(item) ? undefined : 'none'}>
-								<AutobuyForm form={autobuyFormFor(vm, item)} {onpanel} oncancel={() => (editing[item.id] = false)} />
+								<AutobuyForm
+									form={autobuyFormFor(vm, item)}
+									{onpanel}
+									oncancel={() => (editing[item.id] = false)}
+								/>
 							</div>
 						</li>
 					{/each}
@@ -91,7 +121,9 @@
 				</p>
 				<AutobuyForm form={vm.form} {onpanel} />
 			{:else}
-				<p class="text-footnote text-muted-foreground">No autobuys yet. Start from an example, then adjust it.</p>
+				<p class="text-footnote text-muted-foreground">
+					No autobuys yet. Start from an example, then adjust it.
+				</p>
 				<AutobuyForm form={vm.form} chips={autobuyChips(vm.currencySymbol)} {onpanel} />
 			{/if}
 		{/if}

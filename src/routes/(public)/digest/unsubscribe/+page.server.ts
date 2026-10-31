@@ -29,7 +29,11 @@ export const actions: Actions = {
 			await unsubscribeDigest(event, token);
 		} catch (err) {
 			console.error('digest unsubscribe', err);
-			return fail(502, { token, error: "We couldn't unsubscribe you just now. Please try again.", done: false });
+			return fail(502, {
+				token,
+				error: "We couldn't unsubscribe you just now. Please try again.",
+				done: false
+			});
 		}
 		return { done: true, token: '', error: '' };
 	}

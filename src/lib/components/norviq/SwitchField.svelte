@@ -28,7 +28,14 @@
 </script>
 
 <form.ItemFlex class={wrapperClass}>
-	<Switch bind:checked id={cid || undefined} {name} class={className} data-nq-control="switch" {...rest} />
+	<Switch
+		bind:checked
+		id={cid || undefined}
+		{name}
+		class={className}
+		data-nq-control="switch"
+		{...rest}
+	/>
 	{#if label}
 		<form.Label for={cid || undefined}>
 			{label}

@@ -6,5 +6,9 @@
 	let { data, form }: PageProps = $props();
 </script>
 
-<AuthMeta title="Sign in - Norviq" keywords="Norviq sign in" description="Securely access your Norviq account." />
+<AuthMeta
+	title="Sign in - Norviq"
+	keywords="Norviq sign in"
+	description="Securely access your Norviq account."
+/>
 <LoginPage isSignup errorMessage={form?.error ?? ''} nextPath={data.next} />

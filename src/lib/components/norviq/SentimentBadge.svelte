@@ -22,7 +22,10 @@
 		{/if}
 	</span>
 {:else}
-	<span class={['inline-flex items-center rounded-full px-2 py-0.5 text-xs', sentimentNoDataClass()]} title={vm.tooltip}>
+	<span
+		class={['inline-flex items-center rounded-full px-2 py-0.5 text-xs', sentimentNoDataClass()]}
+		title={vm.tooltip}
+	>
 		{vm.label}
 	</span>
 {/if}

@@ -114,7 +114,8 @@ export const actions: Actions = {
 		}
 		const token = String(form.get('token') ?? '').trim();
 		const queryId = String(form.get('queryId') ?? '').trim();
-		if (token === '' || queryId === '') redirect(303, integrationsErrorURL('Token and query ID are required.'));
+		if (token === '' || queryId === '')
+			redirect(303, integrationsErrorURL('Token and query ID are required.'));
 		try {
 			await apiJSON(event, 'POST', '/v1/brokers/ibkr/connect/credentials', { token, queryId });
 		} catch (err) {
@@ -123,7 +124,10 @@ export const actions: Actions = {
 				redirect(303, integrationsErrorURL('Could not reach broker service.'));
 			}
 			console.warn('ibkr credentials connect rejected', err.status);
-			redirect(303, integrationsErrorURL(apiErrorMessage(err.body, 'Could not save IBKR credentials.')));
+			redirect(
+				303,
+				integrationsErrorURL(apiErrorMessage(err.body, 'Could not save IBKR credentials.'))
+			);
 		}
 		redirect(303, '/settings/integrations?ibkr=connected');
 	},

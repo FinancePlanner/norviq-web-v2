@@ -23,17 +23,32 @@
 			class="portfolio-form mt-6 space-y-6"
 			method="POST"
 			action="/expenses/salary"
-			use:enhance={panelEnhance<SalaryFormVM>((next) => (vm = next), (_, msg) => (vm = { ...vm, error: msg || 'Could not save salary and targets.' }))}
+			use:enhance={panelEnhance<SalaryFormVM>(
+				(next) => (vm = next),
+				(_, msg) => (vm = { ...vm, error: msg || 'Could not save salary and targets.' })
+			)}
 		>
 			<input type="hidden" name="month" value={vm.monthQuery} />
 			{#if vm.snapshotID}
 				<input type="hidden" name="snapshot_id" value={vm.snapshotID} />
 			{/if}
-			<Field id="net-salary" name="net_salary" label="Monthly net salary" type="number" value={vm.salary} required wrapperClass="space-y-2" min="0" step="0.01" />
+			<Field
+				id="net-salary"
+				name="net_salary"
+				label="Monthly net salary"
+				type="number"
+				value={vm.salary}
+				required
+				wrapperClass="space-y-2"
+				min="0"
+				step="0.01"
+			/>
 			<section class="space-y-4">
 				<p class="field-label">Pillar split (%)</p>
 				{#each vm.shares as share (share.key)}
-					<div class="budget-pillar-field rounded-lg border border-black/5 p-4 dark:border-white/10">
+					<div
+						class="budget-pillar-field rounded-lg border border-black/5 p-4 dark:border-white/10"
+					>
 						<p class="font-semibold">{share.label}</p>
 						<p class="text-xs text-muted-foreground">{share.hint}</p>
 						<Field

@@ -35,7 +35,11 @@ interface PortfolioShareHolding {
 
 interface PublicPortfolioShare {
 	asOf: string;
-	totals: { unrealizedPnlPercent: number | null; dayChangePercent: number | null; ytdPercent: number | null };
+	totals: {
+		unrealizedPnlPercent: number | null;
+		dayChangePercent: number | null;
+		ytdPercent: number | null;
+	};
 	holdings: PortfolioShareHolding[] | null;
 	otherWeightPercent: number | null;
 }
@@ -108,17 +112,28 @@ export function cachedPortfolioShare(event: RequestEvent, slug: string): Promise
 async function renderPortfolioShare(event: RequestEvent, slug: string): Promise<PortfolioShareVM> {
 	let share: PublicPortfolioShare;
 	try {
-		share = await apiJSON<PublicPortfolioShare>(event, 'GET', '/v1/public/portfolio-shares/' + slug, undefined, {
-			auth: 'none',
-			signal: AbortSignal.timeout(renderTimeoutMs)
-		});
+		share = await apiJSON<PublicPortfolioShare>(
+			event,
+			'GET',
+			'/v1/public/portfolio-shares/' + slug,
+			undefined,
+			{
+				auth: 'none',
+				signal: AbortSignal.timeout(renderTimeoutMs)
+			}
+		);
 	} catch (err) {
 		if (isAPIError(err) && err.status === 404) throw new ShareNotFound('portfolio share not found');
-		if (isAPIError(err) && err.status === 429) throw new ShareUnavailable('portfolio share backend is rate limiting');
+		if (isAPIError(err) && err.status === 429)
+			throw new ShareUnavailable('portfolio share backend is rate limiting');
 		throw err;
 	}
 	const base = config().publicBaseURL;
-	return buildPortfolioShareVM(share, publicAbsoluteURL(base, '/p/' + slug), publicAbsoluteURL(base, '/static/images/og.png'));
+	return buildPortfolioShareVM(
+		share,
+		publicAbsoluteURL(base, '/p/' + slug),
+		publicAbsoluteURL(base, '/static/images/og.png')
+	);
 }
 
 /** formatSharePct: "+1.23%" / "-1.23%" / "—", and whether it is >= 0. */
@@ -127,7 +142,11 @@ function formatSharePct(v: number | null | undefined): [string, boolean] {
 	return [(v >= 0 ? '+' : '') + formatFloat(v, 2) + '%', v >= 0];
 }
 
-export function buildPortfolioShareVM(share: PublicPortfolioShare, canonical: string, ogImage: string): PortfolioShareVM {
+export function buildPortfolioShareVM(
+	share: PublicPortfolioShare,
+	canonical: string,
+	ogImage: string
+): PortfolioShareVM {
 	const [totalPnl, totalPnlUp] = formatSharePct(share.totals?.unrealizedPnlPercent);
 	const [totalDay, totalDayUp] = formatSharePct(share.totals?.dayChangePercent);
 	const [ytd, ytdUp] = formatSharePct(share.totals?.ytdPercent);
@@ -148,12 +167,21 @@ export function buildPortfolioShareVM(share: PublicPortfolioShare, canonical: st
 		otherColor: '',
 		slices: []
 	};
-	if (vm.totalPnl !== '—') vm.metaDescription = `Total return ${vm.totalPnl}. Allocation and returns, shared from Norviq.`;
+	if (vm.totalPnl !== '—')
+		vm.metaDescription = `Total return ${vm.totalPnl}. Allocation and returns, shared from Norviq.`;
 	(share.holdings ?? []).forEach((holding, i) => {
 		const [pnl, pnlPositive] = formatSharePct(holding.unrealizedPnlPercent);
 		const [day, dayPositive] = formatSharePct(holding.dayChangePercent);
 		const color = allocationColor(i);
-		vm.rows.push({ symbol: holding.symbol, color, weight: formatFloat(holding.weightPercent, 1) + '%', pnl, pnlPositive, day, dayPositive });
+		vm.rows.push({
+			symbol: holding.symbol,
+			color,
+			weight: formatFloat(holding.weightPercent, 1) + '%',
+			pnl,
+			pnlPositive,
+			day,
+			dayPositive
+		});
 		vm.slices.push({ label: holding.symbol, weight: holding.weightPercent, color });
 	});
 	if (share.otherWeightPercent != null) {

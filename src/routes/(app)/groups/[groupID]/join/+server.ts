@@ -1,6 +1,10 @@
 import { redirect, type RequestHandler } from '@sveltejs/kit';
 import { requireGroups } from '#lib/features/social/gates.server.js';
-import { groupsID, groupsRedirectError, joinGroup } from '#lib/features/social/groups/groups.server.js';
+import {
+	groupsID,
+	groupsRedirectError,
+	joinGroup
+} from '#lib/features/social/groups/groups.server.js';
 import { groupLanding, withNotice } from '#lib/features/social/groups/view.js';
 import type { GroupDetail } from '#lib/features/social/groups/types.js';
 

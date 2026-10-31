@@ -3,12 +3,22 @@
 	// step. Preview (?/preview) and commit (?/commit) both post this form; the
 	// result replaces #portfolio-screenshot-preview like the htmx swap did.
 	import { enhance } from '$app/forms';
-	import { AIConsentCard, Field, NativeButton, SubmitButton, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		AIConsentCard,
+		Field,
+		NativeButton,
+		SubmitButton,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import { closeDialog } from '#lib/components/norviq/tui/dialog/index.js';
 	import ScreenshotImportPreviewPanel from './ScreenshotImportPreviewPanel.svelte';
 	import type { ScreenshotImportVM } from './screenshot.js';
 
-	let { vm, preview, consentNext = '' }: { vm: ScreenshotImportVM; preview: ScreenshotImportVM; consentNext?: string } = $props();
+	let {
+		vm,
+		preview,
+		consentNext = ''
+	}: { vm: ScreenshotImportVM; preview: ScreenshotImportVM; consentNext?: string } = $props();
 
 	// hx-indicator="#portfolio-screenshot-spinner" (htmx's injected opacity rule).
 	let reading = $state(false);
@@ -28,8 +38,8 @@
 		</NativeButton>
 	</div>
 	<p class="mt-2 text-sm text-muted-foreground">
-		Upload up to {vm.maxImages} screenshots of your broker's holdings or trade history. Everything read from them is shown for
-		you to check before anything is saved.
+		Upload up to {vm.maxImages} screenshots of your broker's holdings or trade history. Everything read
+		from them is shown for you to check before anything is saved.
 	</p>
 	<form
 		id="portfolio-screenshot-form"

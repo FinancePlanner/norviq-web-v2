@@ -14,11 +14,19 @@
 
 	let { data, form }: PageProps = $props();
 
-	const options = $derived(data.providers.map((p) => ({ value: p, label: p, selected: p === data.provider })));
+	const options = $derived(
+		data.providers.map((p) => ({ value: p, label: p, selected: p === data.provider }))
+	);
 	const vm = $derived(form?.preview ?? null);
 	const importSummary = (inserted: number, updated: number) =>
-		inserted === 0 && updated === 0 ? 'No positions were changed.' : 'Added or updated your portfolio.';
-	const submit = withSpinner(() => async ({ update }) => update({ reset: false }));
+		inserted === 0 && updated === 0
+			? 'No positions were changed.'
+			: 'Added or updated your portfolio.';
+	const submit = withSpinner(
+		() =>
+			async ({ update }) =>
+				update({ reset: false })
+	);
 </script>
 
 <svelte:head><title>CSV import - Norviq</title></svelte:head>
@@ -38,7 +46,14 @@
 		enctype="multipart/form-data"
 		use:enhance={submit}
 	>
-		<SelectField id="provider" name="provider" label="Broker format" required wrapperClass="space-y-2" {options} />
+		<SelectField
+			id="provider"
+			name="provider"
+			label="Broker format"
+			required
+			wrapperClass="space-y-2"
+			{options}
+		/>
 		<Field
 			id="file"
 			name="file"
@@ -60,7 +75,9 @@
 					<p class="font-semibold text-[var(--color-success)]">Import complete</p>
 					<p class="mt-2 text-sm text-muted-foreground">{importSummary(vm.inserted, vm.updated)}</p>
 					{#if vm.errors.length > 0}
-						<p class="mt-4 text-sm font-semibold text-[var(--color-warning)]">Some rows were skipped:</p>
+						<p class="mt-4 text-sm font-semibold text-[var(--color-warning)]">
+							Some rows were skipped:
+						</p>
 						<ul class="mt-1 space-y-1 text-sm text-[var(--color-warning)]">
 							{#each vm.errors as msg, i (i)}
 								<li>{msg}</li>

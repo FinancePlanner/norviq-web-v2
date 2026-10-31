@@ -11,7 +11,9 @@
 	const query = createQuery(() => ({
 		queryKey: ['dashboard-news-ticker'],
 		queryFn: async (): Promise<NewsTickerVM | null> => {
-			const res = await fetch('/api/v1/news/ticker?limit=12', { headers: { accept: 'application/json' } });
+			const res = await fetch('/api/v1/news/ticker?limit=12', {
+				headers: { accept: 'application/json' }
+			});
 			if (!res.ok) return null;
 			return mapNewsTicker((await res.json()) as components['schemas']['NewsTickerResponse']);
 		},

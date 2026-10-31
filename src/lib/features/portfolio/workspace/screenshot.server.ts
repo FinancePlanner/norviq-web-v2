@@ -4,7 +4,12 @@ import { apiFetch } from '#lib/server/api.js';
 import { formatFloat } from '#lib/format.js';
 import { AI_CONSENT_REQUIRED_REASON } from '../ai-consent.server.js';
 import { formValue } from './api.server.js';
-import { MAX_SCREENSHOT_IMAGES, newScreenshotImportVM, type ScreenshotImportRowVM, type ScreenshotImportVM } from './screenshot.js';
+import {
+	MAX_SCREENSHOT_IMAGES,
+	newScreenshotImportVM,
+	type ScreenshotImportRowVM,
+	type ScreenshotImportVM
+} from './screenshot.js';
 
 // handlers/portfolio_screenshot_import.go + api/portfolio_screenshot.go.
 
@@ -28,7 +33,8 @@ class ConsentRequired extends Error {}
 class MergeConflict extends Error {}
 
 export function screenshotVMFrom(form: FormData | URLSearchParams): ScreenshotImportVM {
-	const get = (n: string) => (form instanceof URLSearchParams ? (form.get(n) ?? '') : formValue(form, n));
+	const get = (n: string) =>
+		form instanceof URLSearchParams ? (form.get(n) ?? '') : formValue(form, n);
 	return newScreenshotImportVM(get('provider'), get('portfolio_list_id'));
 }
 
@@ -47,7 +53,8 @@ async function doScreenshotRequest<T>(res: Response): Promise<T> {
 	if (res.status === 403) {
 		const body = await res.text().catch(() => '');
 		try {
-			if ((JSON.parse(body) as { reason?: string }).reason === AI_CONSENT_REQUIRED_REASON) throw new ConsentRequired();
+			if ((JSON.parse(body) as { reason?: string }).reason === AI_CONSENT_REQUIRED_REASON)
+				throw new ConsentRequired();
 		} catch (err) {
 			if (err instanceof ConsentRequired) throw err;
 		}
@@ -69,11 +76,15 @@ function screenshotRowVMs(items: Row[] | null | undefined): ScreenshotImportRowV
 	}));
 }
 
-const screenshotErrorMessages = (errs: RowError[] | null | undefined) => (errs ?? []).map((e) => e.message);
+const screenshotErrorMessages = (errs: RowError[] | null | undefined) =>
+	(errs ?? []).map((e) => e.message);
 
 /** processScreenshotPreview. Returns 'consent' for a backend AI_CONSENT_REQUIRED refusal. */
-export async function processScreenshotPreview(event: RequestEvent): Promise<ScreenshotImportVM | 'consent'> {
-	const tooBig = Number(event.request.headers.get('content-length') ?? '0') > MAX_SCREENSHOT_UPLOAD_BYTES;
+export async function processScreenshotPreview(
+	event: RequestEvent
+): Promise<ScreenshotImportVM | 'consent'> {
+	const tooBig =
+		Number(event.request.headers.get('content-length') ?? '0') > MAX_SCREENSHOT_UPLOAD_BYTES;
 	let form: FormData | null = null;
 	if (!tooBig) {
 		try {
@@ -91,7 +102,9 @@ export async function processScreenshotPreview(event: RequestEvent): Promise<Scr
 
 	// Go's multipart reader treats a part with no filename as a value, so an
 	// empty file input uploads nothing.
-	const files = form.getAll('file').filter((v): v is File => typeof v !== 'string' && v.name !== '');
+	const files = form
+		.getAll('file')
+		.filter((v): v is File => typeof v !== 'string' && v.name !== '');
 	if (files.length === 0) {
 		vm.error = 'Select at least one screenshot.';
 		return vm;
@@ -121,7 +134,8 @@ export async function processScreenshotPreview(event: RequestEvent): Promise<Scr
 	vm.imageCount = resp.imageCount ?? 0;
 	vm.rows = screenshotRowVMs(resp.items);
 	vm.errors = screenshotErrorMessages(resp.errors);
-	if (vm.rows.length === 0 && vm.error === '' && vm.errors.length === 0) vm.error = 'Nothing could be read from these images.';
+	if (vm.rows.length === 0 && vm.error === '' && vm.errors.length === 0)
+		vm.error = 'Nothing could be read from these images.';
 	return vm;
 }
 
@@ -192,9 +206,15 @@ export async function processScreenshotCommit(event: RequestEvent): Promise<Scre
 
 	let resp: CommitResponse;
 	try {
-		const res = await apiFetch(event, 'POST', '/v1/brokers/import/screenshot/commit', JSON.stringify(payload), {
-			headers: { 'Content-Type': 'application/json' }
-		});
+		const res = await apiFetch(
+			event,
+			'POST',
+			'/v1/brokers/import/screenshot/commit',
+			JSON.stringify(payload),
+			{
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
 		resp = await doScreenshotRequest<CommitResponse>(res);
 	} catch (err) {
 		if (err instanceof MergeConflict) {

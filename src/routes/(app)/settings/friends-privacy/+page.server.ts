@@ -1,6 +1,11 @@
 import type { Actions, PageServerLoad } from './$types';
 import { facebookImportOn } from '#lib/nav.js';
-import { redirectWith, requireSocial, socialDo, socialErrorMessage } from '#lib/features/settings-admin/social/social.server.js';
+import {
+	redirectWith,
+	requireSocial,
+	socialDo,
+	socialErrorMessage
+} from '#lib/features/settings-admin/social/social.server.js';
 import {
 	formChoice,
 	privacySettingsFrom,
@@ -17,7 +22,9 @@ export const load: PageServerLoad = async (event) => {
 	let hasLoadError = false;
 	let errorMessage = event.url.searchParams.get('error') ?? '';
 	try {
-		settings = privacySettingsFrom(await socialDo<Partial<SocialPrivacySettings>>(event, 'GET', '/v1/social/privacy'));
+		settings = privacySettingsFrom(
+			await socialDo<Partial<SocialPrivacySettings>>(event, 'GET', '/v1/social/privacy')
+		);
 	} catch (err) {
 		hasLoadError = true;
 		errorMessage = socialErrorMessage(err, 'Could not load your privacy settings.');
@@ -41,9 +48,15 @@ export const actions: Actions = {
 		const form = await event.request.formData();
 		let current: SocialPrivacySettings;
 		try {
-			current = privacySettingsFrom(await socialDo<Partial<SocialPrivacySettings>>(event, 'GET', '/v1/social/privacy'));
+			current = privacySettingsFrom(
+				await socialDo<Partial<SocialPrivacySettings>>(event, 'GET', '/v1/social/privacy')
+			);
 		} catch (err) {
-			redirectWith('/settings/friends-privacy', '', socialErrorMessage(err, 'Could not save your privacy settings.'));
+			redirectWith(
+				'/settings/friends-privacy',
+				'',
+				socialErrorMessage(err, 'Could not save your privacy settings.')
+			);
 		}
 		current.searchVisibility = formChoice(
 			String(form.get('searchVisibility') ?? ''),
@@ -63,7 +76,11 @@ export const actions: Actions = {
 		try {
 			await socialDo(event, 'PUT', '/v1/social/privacy', current);
 		} catch (err) {
-			redirectWith('/settings/friends-privacy', '', socialErrorMessage(err, 'Could not save your privacy settings.'));
+			redirectWith(
+				'/settings/friends-privacy',
+				'',
+				socialErrorMessage(err, 'Could not save your privacy settings.')
+			);
 		}
 		redirectWith('/settings/friends-privacy', 'Privacy settings saved.', '');
 	}

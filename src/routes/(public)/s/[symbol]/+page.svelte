@@ -30,7 +30,11 @@
 
 {#snippet gate()}
 	<p class="public-stock-gate mt-6">
-		<a href={vm.gateHref} class="text-sm font-semibold underline underline-offset-4" data-public-gate>See the full analysis in Norviq →</a>
+		<a
+			href={vm.gateHref}
+			class="text-sm font-semibold underline underline-offset-4"
+			data-public-gate>See the full analysis in Norviq →</a
+		>
 	</p>
 {/snippet}
 
@@ -66,7 +70,7 @@
 			{#if vm.rangeLabel}
 				<p class="mt-1 text-sm text-muted-foreground">{vm.rangeLabel}</p>
 			{/if}
-			<div class="mt-4 fin-growth-sparkline">
+			<div class="fin-growth-sparkline mt-4">
 				<GrowthSparkline points={vm.sparkline.points} tone={vm.sparkline.tone} />
 			</div>
 			{@render gate()}
@@ -79,7 +83,7 @@
 			<p class="mt-3 flex flex-wrap items-center gap-3">
 				<span class="rounded-full border px-3 py-1 text-sm font-medium">{vm.sentiment.label}</span>
 				{#if vm.sentiment.score}
-					<span class="text-sm tabular-nums text-muted-foreground">{vm.sentiment.score}</span>
+					<span class="text-sm text-muted-foreground tabular-nums">{vm.sentiment.score}</span>
 				{/if}
 				<span class="text-sm text-muted-foreground">{postCountLabel(vm.sentiment.postCount)}</span>
 			</p>
@@ -94,7 +98,9 @@
 				<p class="mt-1 text-sm text-muted-foreground">Next report {vm.earnings.nextDate}</p>
 			{/if}
 			{#if vm.earnings.streakHeadline}
-				<p class={['mt-2 text-sm font-semibold', vm.earnings.streakTone]} data-earnings-streak>{vm.earnings.streakHeadline}</p>
+				<p class={['mt-2 text-sm font-semibold', vm.earnings.streakTone]} data-earnings-streak>
+					{vm.earnings.streakHeadline}
+				</p>
 			{/if}
 			{#if vm.earnings.quarters.length > 0}
 				<table class="mt-4 w-full text-left text-sm">
@@ -153,6 +159,8 @@
 	{/if}
 
 	<footer class="mt-14 border-t pt-6 text-sm text-muted-foreground">
-		<p>Market data for {vm.symbol} is provided for information only and is not investment advice.</p>
+		<p>
+			Market data for {vm.symbol} is provided for information only and is not investment advice.
+		</p>
 	</footer>
 </main>

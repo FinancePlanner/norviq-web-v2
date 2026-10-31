@@ -21,7 +21,16 @@ function metricLine(pdf: Fpdf, label: string, value: string) {
 	pdf.setFont('Helvetica', '', 10);
 }
 
-function drawLines(pdf: Fpdf, values: number[], x: number, y: number, width: number, height: number, minimum: number, span: number) {
+function drawLines(
+	pdf: Fpdf,
+	values: number[],
+	x: number,
+	y: number,
+	width: number,
+	height: number,
+	minimum: number,
+	span: number
+) {
 	for (let index = 1; index < values.length; index++) {
 		const x1 = x + (width * (index - 1)) / (values.length - 1);
 		const x2 = x + (width * index) / (values.length - 1);
@@ -102,7 +111,15 @@ function writeObjectTable(pdf: Fpdf, title: string, rows: Obj[]) {
 		ensurePDFSpace(pdf, 12);
 		pdf.cellFormat(90, 6, textFrom(row, 'key'), 'B', 0, 'L', false);
 		pdf.cellFormat(35, 6, formatFloat(numberFrom(row, 'amount'), 2), 'B', 0, 'R', false);
-		pdf.cellFormat(35, 6, formatFloat(numberFrom(row, 'percentage_points') * 100, 2) + '%', 'B', 1, 'R', false);
+		pdf.cellFormat(
+			35,
+			6,
+			formatFloat(numberFrom(row, 'percentage_points') * 100, 2) + '%',
+			'B',
+			1,
+			'R',
+			false
+		);
 	}
 	pdf.ln(4);
 }
@@ -134,7 +151,11 @@ function writeWarnings(pdf: Fpdf, rows: Obj[]) {
 }
 
 /** writeScenarioPDF(w, run, result). */
-export function buildScenarioPDF(run: ScenarioRun, result: ScenarioJSON, now = new Date()): Uint8Array {
+export function buildScenarioPDF(
+	run: ScenarioRun,
+	result: ScenarioJSON,
+	now = new Date()
+): Uint8Array {
 	const pdf = new Fpdf();
 	// fpdf.New: auto page break on, bottom margin 2 cm.
 	pdf.setAutoPageBreak(true, 20);
@@ -145,7 +166,15 @@ export function buildScenarioPDF(run: ScenarioRun, result: ScenarioJSON, now = n
 	pdf.setFont('Helvetica', '', 9);
 	pdf.setTextColor(95, 105, 115);
 	pdf.cellFormat(0, 6, 'Private report generated ' + rfc3339Now(now), '', 1, 'L', false);
-	pdf.cellFormat(0, 6, 'Engine ' + run.engineVersion + ' | catalog ' + run.catalogVersion + ' | seed ' + run.seed, '', 1, 'L', false);
+	pdf.cellFormat(
+		0,
+		6,
+		'Engine ' + run.engineVersion + ' | catalog ' + run.catalogVersion + ' | seed ' + run.seed,
+		'',
+		1,
+		'L',
+		false
+	);
 	pdf.ln(5);
 
 	pdf.setTextColor(20, 25, 30);
@@ -153,18 +182,32 @@ export function buildScenarioPDF(run: ScenarioRun, result: ScenarioJSON, now = n
 	pdf.cellFormat(0, 8, 'Highlights', '', 1, 'L', false);
 	pdf.setFont('Helvetica', '', 10);
 	metricLine(pdf, 'Ending value', formatFloat(numberFrom(result, 'ending_value'), 2));
-	metricLine(pdf, 'Portfolio change', signedFixed(numberFrom(result, 'portfolio_change_percent') * 100, 1) + '%');
-	metricLine(pdf, 'Maximum drawdown', formatFloat(numberFrom(result, 'maximum_drawdown') * 100, 1) + '%');
-	const optional = (key: string) => (typeof result[key] === 'number' ? (result[key] as number) : null);
+	metricLine(
+		pdf,
+		'Portfolio change',
+		signedFixed(numberFrom(result, 'portfolio_change_percent') * 100, 1) + '%'
+	);
+	metricLine(
+		pdf,
+		'Maximum drawdown',
+		formatFloat(numberFrom(result, 'maximum_drawdown') * 100, 1) + '%'
+	);
+	const optional = (key: string) =>
+		typeof result[key] === 'number' ? (result[key] as number) : null;
 	const goalDelay = optional('goal_delay_months');
 	if (goalDelay !== null) metricLine(pdf, 'Goal delay (months)', formatFloat(goalDelay, 1));
 	const contributionDelta = optional('contribution_delta');
-	if (contributionDelta !== null) metricLine(pdf, 'Contribution delta / mo', signedFixed(contributionDelta, 2));
+	if (contributionDelta !== null)
+		metricLine(pdf, 'Contribution delta / mo', signedFixed(contributionDelta, 2));
 	const recovery = optional('recovery_months');
 	if (recovery !== null) metricLine(pdf, 'Recovery (months)', formatFloat(recovery, 1));
 	const expenseImpact = optional('expense_impact_monthly');
 	if (expenseImpact !== null) metricLine(pdf, 'Expense cut / mo', signedFixed(expenseImpact, 2));
-	metricLine(pdf, 'Goal probability', formatFloat(numberFrom(result, 'goal_probability') * 100, 1) + '%');
+	metricLine(
+		pdf,
+		'Goal probability',
+		formatFloat(numberFrom(result, 'goal_probability') * 100, 1) + '%'
+	);
 	metricLine(pdf, 'Expected shortfall', formatFloat(numberFrom(result, 'expected_shortfall'), 2));
 	pdf.ln(5);
 

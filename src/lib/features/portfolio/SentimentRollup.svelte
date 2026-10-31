@@ -13,9 +13,17 @@
 				<span class="text-footnote text-muted-foreground">Retail sentiment</span>
 				<SentimentBadge vm={vm.badge} />
 			</div>
-			<a href="/markets/sentiment" class="text-xs underline text-muted-foreground hover:opacity-100">See what's trending</a>
+			<a href="/markets/sentiment" class="text-xs text-muted-foreground underline hover:opacity-100"
+				>See what's trending</a
+			>
 		</div>
-		<p class={['mt-1 text-xs', !vm.coverageThin && 'opacity-60', vm.coverageThin && 'text-amber-500']}>
+		<p
+			class={[
+				'mt-1 text-xs',
+				!vm.coverageThin && 'opacity-60',
+				vm.coverageThin && 'text-amber-500'
+			]}
+		>
 			{#if vm.coverageThin}
 				Based on {vm.coverageLabel} — too thin to speak for the whole portfolio.
 			{:else}

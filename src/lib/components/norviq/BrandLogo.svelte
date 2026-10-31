@@ -9,8 +9,18 @@
 
 	const art = $derived(
 		variant === 'icon'
-			? { light: '/static/icons/icon-light.webp', dark: '/static/icons/icon-dark.webp', w: '512', h: '512' }
-			: { light: '/static/images/logo-light.webp', dark: '/static/images/logo-dark.webp', w: '576', h: '192' }
+			? {
+					light: '/static/icons/icon-light.webp',
+					dark: '/static/icons/icon-dark.webp',
+					w: '512',
+					h: '512'
+				}
+			: {
+					light: '/static/images/logo-light.webp',
+					dark: '/static/images/logo-dark.webp',
+					w: '576',
+					h: '192'
+				}
 	);
 	const wrap = $derived(
 		variant === 'icon'

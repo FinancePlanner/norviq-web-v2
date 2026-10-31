@@ -36,7 +36,9 @@
 
 {#snippet snippetBlock(id: string, content: string)}
 	<div class="mcp-snippet">
-		<code {id} class="mcp-code-block mcp-snippet-code block rounded-xl p-3 text-xs font-mono whitespace-pre-wrap break-all"
+		<code
+			{id}
+			class="mcp-code-block mcp-snippet-code block rounded-xl p-3 font-mono text-xs break-all whitespace-pre-wrap"
 			>{content}</code
 		>
 		<span class="mcp-snippet-copy">
@@ -47,8 +49,10 @@
 
 <section class="glass-card mcp-connect-panel mt-6 p-6" aria-labelledby="mcp-connect-title">
 	<div>
-		<h2 id="mcp-connect-title" class="text-lg leading-none font-semibold tracking-tight">Connect your agent</h2>
-		<p class="text-sm leading-relaxed text-muted-foreground mt-2">
+		<h2 id="mcp-connect-title" class="text-lg leading-none font-semibold tracking-tight">
+			Connect your agent
+		</h2>
+		<p class="mt-2 text-sm leading-relaxed text-muted-foreground">
 			Pick your client, copy the snippet, paste it in. Scoped tools only — revoke any time.
 		</p>
 	</div>
@@ -121,8 +125,10 @@
 							{#if c.installer !== ''}
 								<div hidden={mode !== 'installer'}>
 									{@render snippetBlock('mcp-installer-' + c.id, c.installer)}
-									<p class="text-xs mt-2 text-muted-foreground">
-										<a href="/install.sh" class="underline" data-sveltekit-reload>Read the installer script</a>
+									<p class="mt-2 text-xs text-muted-foreground">
+										<a href="/install.sh" class="underline" data-sveltekit-reload
+											>Read the installer script</a
+										>
 										before piping it into your shell.
 									</p>
 								</div>
@@ -133,7 +139,9 @@
 						<span class="mcp-connect-step-num" aria-hidden="true">2</span>
 						<div class="mcp-connect-step-copy">
 							<strong>Connect and start working</strong>
-							<small class="opacity-70"> Then ask it something like “list my recent expenses” or “quote AAPL.” </small>
+							<small class="opacity-70">
+								Then ask it something like “list my recent expenses” or “quote AAPL.”
+							</small>
 							{#if verifyTokenID !== '' && verify}
 								<ConnectVerify vm={verify} />
 							{/if}
@@ -144,9 +152,9 @@
 		</div>
 	{/each}
 	{#if newToken === ''}
-		<p class="text-xs mt-4 text-muted-foreground">
-			Snippets show a placeholder because a token is only ever shown once. Create a token above to get one with your
-			real key filled in.
+		<p class="mt-4 text-xs text-muted-foreground">
+			Snippets show a placeholder because a token is only ever shown once. Create a token above to
+			get one with your real key filled in.
 		</p>
 	{/if}
 </section>

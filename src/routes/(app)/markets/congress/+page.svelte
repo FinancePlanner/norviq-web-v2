@@ -15,14 +15,25 @@
 
 {#snippet actions()}
 	{#if vm.pilotsEnabled}
-		<a href="/pilots" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">Follow a politician</a>
+		<a href="/pilots" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+			>Follow a politician</a
+		>
 	{/if}
-	<a href="/markets/earnings" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">Earnings calendar</a>
+	<a href="/markets/earnings" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+		>Earnings calendar</a
+	>
 {/snippet}
 
-<vigil.CanvasPage pageClass="markets-congress-page" title="Congressional trades" subtitle="Disclosures from both chambers, newest transaction first" {actions}>
+<vigil.CanvasPage
+	pageClass="markets-congress-page"
+	title="Congressional trades"
+	subtitle="Disclosures from both chambers, newest transaction first"
+	{actions}
+>
 	{#if vm.loadError}
-		<p class="mt-4 text-sm text-muted-foreground">No disclosures to show right now — the feed is unavailable. Try again shortly.</p>
+		<p class="mt-4 text-sm text-muted-foreground">
+			No disclosures to show right now — the feed is unavailable. Try again shortly.
+		</p>
 	{:else if vm.trades.length === 0}
 		<p class="mt-4 text-sm text-muted-foreground">No disclosures to show right now.</p>
 	{:else}
@@ -44,17 +55,21 @@
 						<tr>
 							<td>{trade.politician}</td>
 							<td class="text-muted-foreground">{trade.chamber}</td>
-							<td class="font-semibold vigil-mono">
+							<td class="vigil-mono font-semibold">
 								{#if trade.symbolHref}
-									<a class="hover:text-[var(--color-tint)]" href={trade.symbolHref}>{trade.symbol}</a>
+									<a class="hover:text-[var(--color-tint)]" href={trade.symbolHref}
+										>{trade.symbol}</a
+									>
 								{:else}
 									{trade.symbol}
 								{/if}
 							</td>
 							<td>{trade.type}</td>
-							<td class="tabular-nums vigil-mono">{trade.amountRange}</td>
+							<td class="vigil-mono tabular-nums">{trade.amountRange}</td>
 							<td class="whitespace-nowrap tabular-nums">{trade.transactionDate}</td>
-							<td class="whitespace-nowrap tabular-nums text-muted-foreground">{trade.disclosureDate}</td>
+							<td class="whitespace-nowrap text-muted-foreground tabular-nums"
+								>{trade.disclosureDate}</td
+							>
 						</tr>
 					{/each}
 				</tbody>

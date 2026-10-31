@@ -2,7 +2,12 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireSocial } from '#lib/features/social/gates.server.js';
 import { uuidParam } from '#lib/features/settings-admin/social/social.server.js';
-import { isFetch, respondRedirect, socialDo, socialErrorMessage } from '#lib/features/social/friends/friends.server.js';
+import {
+	isFetch,
+	respondRedirect,
+	socialDo,
+	socialErrorMessage
+} from '#lib/features/social/friends/friends.server.js';
 import { Friendship } from '#lib/features/social/friends/types.js';
 
 // POST /friends/requests (handlers.FriendRequestSend): adds a friend, or
@@ -22,9 +27,13 @@ export const POST: RequestHandler = async (event) => {
 	}
 	if (isFetch(event)) {
 		if (failure) return json({ error: failure });
-		return json({ status: previous === Friendship.IncomingPending ? Friendship.Friends : Friendship.OutgoingPending });
+		return json({
+			status:
+				previous === Friendship.IncomingPending ? Friendship.Friends : Friendship.OutgoingPending
+		});
 	}
 	if (failure) return respondRedirect(event, '/friends', '', failure);
-	if (previous === Friendship.IncomingPending) return respondRedirect(event, '/friends', "You're now friends.", '');
+	if (previous === Friendship.IncomingPending)
+		return respondRedirect(event, '/friends', "You're now friends.", '');
 	return respondRedirect(event, '/friends', 'Friend request sent.', '');
 };

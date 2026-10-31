@@ -17,7 +17,10 @@
 		try {
 			const res = await fetch(`/research/memos/${id}/bookmark`, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json'
+				},
 				body: new URLSearchParams({ bookmarked: String(!saved) })
 			});
 			// htmx swapped nothing on an error response; neither do we.

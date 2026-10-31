@@ -149,7 +149,12 @@ export function window(k: string, now: Date, timeZone = 'UTC'): { from: Date; to
  * Keeps the items whose timestamp falls in [from, to), preserving input order.
  * Used to date-filter backend collections that only accept a limit.
  */
-export function bucket<T>(items: readonly T[] | null | undefined, ts: (item: T) => Date, from: Date, to: Date): T[] {
+export function bucket<T>(
+	items: readonly T[] | null | undefined,
+	ts: (item: T) => Date,
+	from: Date,
+	to: Date
+): T[] {
 	if (!items || items.length === 0) return [];
 	const lo = from.getTime();
 	const hi = to.getTime();
@@ -172,7 +177,12 @@ const dayLabelFormatters = new Map<string, Intl.DateTimeFormat>();
 export function dayLabel(day: Date, timeZone = 'UTC'): string {
 	let f = dayLabelFormatters.get(timeZone);
 	if (!f) {
-		f = new Intl.DateTimeFormat('en-GB', { timeZone, weekday: 'short', day: 'numeric', month: 'short' });
+		f = new Intl.DateTimeFormat('en-GB', {
+			timeZone,
+			weekday: 'short',
+			day: 'numeric',
+			month: 'short'
+		});
 		dayLabelFormatters.set(timeZone, f);
 	}
 	const parts: Record<string, string> = {};
@@ -184,7 +194,11 @@ export function dayLabel(day: Date, timeZone = 'UTC'): string {
  * Buckets items into calendar days, newest day first and newest item first
  * within each day. Labels are absolute dates ("Mon 3 Aug").
  */
-export function groupByDay<T>(items: readonly T[] | null | undefined, ts: (item: T) => Date, timeZone = 'UTC'): DayGroup<T>[] {
+export function groupByDay<T>(
+	items: readonly T[] | null | undefined,
+	ts: (item: T) => Date,
+	timeZone = 'UTC'
+): DayGroup<T>[] {
 	return group(items, ts, timeZone, (day) => dayLabel(day, timeZone));
 }
 

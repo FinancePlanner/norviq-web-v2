@@ -15,6 +15,7 @@ Share images were compared visually with Go's output.
 ## Routes
 
 ### Machine files / static
+
 - [x] GET /robots.txt → `routes/robots.txt/+server.ts`
 - [x] GET /sitemap.xml → `routes/sitemap.xml/+server.ts` (articles + latest brief paths)
 - [x] GET /llms.txt → `routes/llms.txt/+server.ts` (includes the Discord line from ec05890)
@@ -28,20 +29,24 @@ Share images were compared visually with Go's output.
 - [x] HANDLE /thinking-orbs/js/* → **dead, not ported**: Go loads `orb.js` in AppLayout but no Go page renders an `orb.Orb` canvas.
 
 ### Landing and legal
+
 - [x] GET / → `(public)/+page.server.ts` + `features/public/landing/` (signed-in → `postAuthRedirect` 303; `IOS_STORE_REDIRECT_ENABLED` + iPhone/iPad UA → 302 to the App Store unless `?web=1` / `norviq_stay_web` cookie; `?web=1` sets the cookie; hero card wall, landing.css, CTA `cta_clicked` capture, scroll reveals via `#lib/motion.js` `initScrollTaste` = motion-reveal.js, market brief card via `MarketBriefShell` = market-brief.js; footer "Join us on Discord" link with `discord_link_clicked {surface: footer}` capture, as of norviq-web ec05890)
 - [x] GET /privacy, /terms, /legal, /security, /facebook-data-deletion → `(public)/<path>/+page.server.ts` + `features/public/legal/LegalPage.svelte`; text in `documents.json`, dumped from Go's `content.go`/`notices.go` with encoding/json (byte-identical; regenerate when the legal text changes)
 
 ### Market brief
+
 - [x] GET /market-brief → `(public)/market-brief/+server.ts` (JSON `{vm}` for `MarketBriefShell`, same contract as `/dashboard/market-brief`)
 - [x] GET /brief → `(public)/brief/+page.server.ts` (302 to the latest, in `?lang`; 404 page / 503)
 - [x] GET /brief/{date}/{slot} → `(public)/brief/[date]/[slot]/` + `features/public/brief/` (language from `?lang`, sets `locals.locale` so `<html lang>` and `t()` follow it; 404 page in `(public)/brief/+error.svelte`)
 - [x] GET /brief/{date}/{slot}/og.png, /card.png → `(public)/brief/[date]/[slot]/{og,card}.png/+server.ts`
 
 ### Weekly digest (added with norviq-web ec05890)
+
 - [x] GET /digest/unsubscribe → `(public)/digest/unsubscribe/+page.server.ts` load (404 on a malformed token; confirm button only, the GET never unsubscribes; `private, no-store`, noindex + no-referrer)
 - [x] POST /digest/unsubscribe → same file, default action (`POST /v1/digest/unsubscribe?token=` with no bearer; 502 + error banner on failure, "You're unsubscribed" on success; 404 on a malformed token)
 
 ### Articles (sub-agent)
+
 - [x] GET /articles → `(public)/articles/+page.server.ts`
 - [x] GET /articles/ticker/{symbol} → `(public)/articles/ticker/[symbol]/`
 - [x] GET /articles/images/{id} → `(public)/articles/images/[id]/+server.ts`
@@ -56,6 +61,7 @@ Share images were compared visually with Go's output.
 - [x] GET /u/{username}/articles → `(public)/u/[username]/articles/`
 
 ### Share pages (sub-agent)
+
 - [x] GET /s/{symbol} → `(public)/s/[symbol]/` + `features/public/stock/`
 - [x] GET /p/{slug} → `(public)/p/[slug]/` + `features/public/portfolio-share/` (30/min/IP limiter, 429)
 - [x] GET /i/{code} → `(public)/i/[code]/` + `features/public/invite/` (Accept posts to `/friends/invite/{code}/accept`, owned by the friends agent)
@@ -63,6 +69,7 @@ Share images were compared visually with Go's output.
 - [x] POST /g/{code}/join → `(app)/g/[code]/join/+server.ts`
 
 ## Deviations / notes
+
 - **Landing JSON-LD (Go bug, fixed in v2):** Go's `landing.templ` puts `@templ.Raw(StructuredData(vm))` inside `<script>`, so Go serves that literal text as JSON-LD. v2 serves the intended graph from `structuredData()` (approved 2026-10-29). See DEVIATIONS.md.
 - **Rendered-page caches** (Go `publicPageCache`) are not ported; data lookups are cached per isolate (brief, stock, invites, images) and the same `Cache-Control` lets the CDN share the HTML. Pages viewed with a session send `private, no-store` / `private` instead of Go's shared header, because every v2 page carries the root layout's user data.
 - **Share images:** `features/public/sharecard/` ports `internal/sharecard` with a small TrueType reader, rasteriser and PNG encoder (CompressionStream) and the Go fonts (BSD, ~300 KB in the server bundle). Layout/text fitting match Go; pixels differ only in anti-aliasing and compression. CPU per image is a few tens of ms on a cache miss.
@@ -70,17 +77,20 @@ Share images were compared visually with Go's output.
 - **POST /g/{code}/join when banned** redirects to `/boards` (shows the banned page) instead of rendering it inline.
 
 ## Shared files changed
+
 - `src/hooks.server.ts`: `<html lang>` uses `event.locals.locale` (so a page can set its own language).
 - `src/lib/features/dashboard/market-brief/`: `MarketBriefContent.svelte` split out of `MarketBriefCard.svelte` (same output), reused by `/brief/{date}/{slot}`.
 - `docs/parity/ROUTES.md`: rows ticked; `/digest` section added (route is newer than the inventory).
 - `src/lib/i18n/pt-PT.json`: one entry, "Join us on Discord" (from norviq-web `active.pt-PT.json`).
 
 ## Backend gaps (staging)
+
 - `/s/{symbol}`: market history returns empty bars; technicals "No price history"; insider/institutional/congress "provider rate limited"; recent earnings 503. Only the header and sentiment render on staging.
 - The public token is rate-limited on staging (429 under modest load); `/brief` and `/s` degrade exactly like Go (503 / missing sections, partial page cached for the TTL).
 - Article save with no key points sends `bulletPoints: null` (as Go); staging rejects it with a raw decoder error shown to the reader.
 
 ## Not verified
+
 - Article og/card PNG against a live article (no articles on staging; rendering covered by `sharecard.spec.ts`).
 - `/articles/new` past its guidelines gate (test user hasn't accepted the guidelines); browser-side vote/view beacon.
 - `/p/{slug}` with real holdings (test user has none); `/s` sections other than header/sentiment on a live page.

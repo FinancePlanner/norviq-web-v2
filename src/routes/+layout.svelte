@@ -18,7 +18,9 @@
 	onMount(rememberTimezone);
 
 	const queryClient = new QueryClient({
-		defaultOptions: { queries: { enabled: browser, staleTime: 30_000, refetchOnWindowFocus: false } }
+		defaultOptions: {
+			queries: { enabled: browser, staleTime: 30_000, refetchOnWindowFocus: false }
+		}
 	});
 
 	// Analytics (Go: posthog.js / sentry.js + /runtime-config.js). The first

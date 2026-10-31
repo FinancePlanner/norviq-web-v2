@@ -7,7 +7,12 @@ import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
 import { postAuthRedirect, safeNextPath } from '#lib/server/onboarding.js';
 import { setPostHogCaptureOnce } from '#lib/analytics/runtime.server.js';
-import { apiErrorMessage, parseLoginOutcome, saveMFAChallenge, type LoginOutcomeBody } from './auth.server.js';
+import {
+	apiErrorMessage,
+	parseLoginOutcome,
+	saveMFAChallenge,
+	type LoginOutcomeBody
+} from './auth.server.js';
 import { OAuthKey, clearOAuthFlow, oauthIntent, parseOAuthProvider } from './oauth.server.js';
 
 export type CallbackResult = { error: string; next: string };
@@ -34,13 +39,17 @@ export async function oauthCallbackGET(event: RequestEvent): Promise<CallbackRes
 	const code = (event.url.searchParams.get('code') ?? '').trim();
 	const state = (event.url.searchParams.get('state') ?? '').trim();
 	if (!code || !state) {
-		return handleCallbackError(event, 'Sign in was canceled or the provider response was incomplete.');
+		return handleCallbackError(
+			event,
+			'Sign in was canceled or the provider response was incomplete.'
+		);
 	}
 	return completeOAuthCallback(event, code, state);
 }
 
 export async function oauthCallbackPOST(event: RequestEvent): Promise<CallbackResult> {
-	if ((event.params.provider ?? '').trim().toLowerCase() !== 'apple') error(405, 'Method not allowed');
+	if ((event.params.provider ?? '').trim().toLowerCase() !== 'apple')
+		error(405, 'Method not allowed');
 	const form = await event.request.formData().catch(() => null);
 	if (!form) return handleCallbackError(event, 'Could not read Apple sign-in response.');
 	const code = String(form.get('code') ?? '').trim();
@@ -49,12 +58,19 @@ export async function oauthCallbackPOST(event: RequestEvent): Promise<CallbackRe
 		if (String(form.get('error') ?? '').trim()) {
 			return handleCallbackError(event, 'Sign in was canceled or denied by Apple.');
 		}
-		return handleCallbackError(event, 'Sign in was canceled or the provider response was incomplete.');
+		return handleCallbackError(
+			event,
+			'Sign in was canceled or the provider response was incomplete.'
+		);
 	}
 	return completeOAuthCallback(event, code, state);
 }
 
-async function completeOAuthCallback(event: RequestEvent, code: string, state: string): Promise<CallbackResult> {
+async function completeOAuthCallback(
+	event: RequestEvent,
+	code: string,
+	state: string
+): Promise<CallbackResult> {
 	const provider = parseOAuthProvider(event.params.provider);
 	if (!provider) error(400, 'Unsupported provider');
 
@@ -87,7 +103,8 @@ async function completeOAuthCallback(event: RequestEvent, code: string, state: s
 	await clearOAuthFlow(event);
 
 	const outcome = parseLoginOutcome(body);
-	if (outcome.kind === 'invalid') return pageError(event, 'Could not complete sign in. Please try again.');
+	if (outcome.kind === 'invalid')
+		return pageError(event, 'Could not complete sign in. Please try again.');
 	if (outcome.kind === 'mfa') {
 		if (!outcome.mfa) return pageError(event, 'Could not start verification. Please try again.');
 		await saveMFAChallenge(event.locals, outcome.mfa);
@@ -109,14 +126,21 @@ async function completeOAuthLinkCallback(
 ): Promise<CallbackResult> {
 	let failed: unknown = null;
 	try {
-		await apiJSON(event, 'POST', `/v1/auth/oauth/${provider}/link/exchange`, { flowId, code, state, redirectURI });
+		await apiJSON(event, 'POST', `/v1/auth/oauth/${provider}/link/exchange`, {
+			flowId,
+			code,
+			state,
+			redirectURI
+		});
 	} catch (err) {
 		failed = err ?? new Error('link exchange failed');
 	}
 	await clearOAuthFlow(event);
 	if (failed) {
 		if (!isAPIError(failed)) console.error('oauth link exchange', provider, failed);
-		redirectProfileOAuthError(apiErrorMessage(failed, 'Could not connect sign-in account. Please try again.'));
+		redirectProfileOAuthError(
+			apiErrorMessage(failed, 'Could not connect sign-in account. Please try again.')
+		);
 	}
 	redirect(303, '/settings/profile?connected=' + encodeURIComponent(provider));
 }

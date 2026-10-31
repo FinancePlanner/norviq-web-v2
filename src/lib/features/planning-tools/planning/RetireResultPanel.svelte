@@ -31,7 +31,9 @@
 		{#if result.onTrack}
 			<div class="mt-4 rounded-[var(--radius-control)] border border-border bg-muted/40 px-4 py-3">
 				<p class="command-metric-label">On track</p>
-				<p class="text-footnote text-muted-foreground">On these assumptions the plan already covers the life you described.</p>
+				<p class="text-footnote text-muted-foreground">
+					On these assumptions the plan already covers the life you described.
+				</p>
 			</div>
 		{:else if result.levers.length > 0}
 			<div class="mt-4 rounded-[var(--radius-control)] border border-border bg-muted/40 px-4 py-3">
@@ -51,8 +53,8 @@
 		{/if}
 		<p class="mt-4 text-footnote text-muted-foreground">
 			{#if result.shortfallAge !== ''}
-				At this rate the money runs out at {result.shortfallAge}, after {result.runwayYears} years of retirement. First-year spending
-				would be {result.annualSpending}.
+				At this rate the money runs out at {result.shortfallAge}, after {result.runwayYears} years of
+				retirement. First-year spending would be {result.annualSpending}.
 			{:else}
 				The money lasts the full {result.runwayYears} years. First-year spending would be {result.annualSpending}.
 			{/if}

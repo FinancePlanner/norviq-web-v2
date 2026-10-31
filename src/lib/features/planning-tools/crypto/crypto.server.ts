@@ -6,7 +6,13 @@ import { error, fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
 import { requireFeature } from '#lib/server/guards.js';
 import { Feature } from '#lib/billing.js';
-import { changeClass, formatCompactCurrency, formatCurrency, formatFloat, formatSignedPercent } from '#lib/format.js';
+import {
+	changeClass,
+	formatCompactCurrency,
+	formatCurrency,
+	formatFloat,
+	formatSignedPercent
+} from '#lib/format.js';
 import { parseUUID } from '#lib/features/dashboard/goals/form.server.js';
 import { cryptoChangePercent, formatCryptoPrice, formatShares } from './markets.js';
 import type {
@@ -25,7 +31,8 @@ import type {
 	PageViewModel
 } from './types.js';
 
-export const requireCrypto = (event: RequestEvent) => requireFeature(event, Feature.Crypto, 'Crypto');
+export const requireCrypto = (event: RequestEvent) =>
+	requireFeature(event, Feature.Crypto, 'Crypto');
 
 // ---------------------------------------------------------------------------
 // GET /crypto, /crypto/{tab}
@@ -51,7 +58,13 @@ async function loadCryptoMarket(event: RequestEvent, vm: PageViewModel) {
 		quoteBySymbol.set(q.symbol.toUpperCase(), { price: q.price, change: q.change ?? 0 });
 	}
 	for (const asset of (assets ?? []).slice(0, 12)) {
-		const row = { symbol: asset.symbol.toUpperCase(), name: asset.name, price: '-', changePct: '', changeClass: '' };
+		const row = {
+			symbol: asset.symbol.toUpperCase(),
+			name: asset.name,
+			price: '-',
+			changePct: '',
+			changeClass: ''
+		};
 		const q = quoteBySymbol.get(row.symbol);
 		if (q) {
 			row.price = formatCurrency(q.price);
@@ -82,7 +95,13 @@ async function loadCryptoSnapshot(event: RequestEvent, vm: PageViewModel): Promi
 	const coins = resp?.coins ?? [];
 	if (coins.length === 0) return false;
 	for (const coin of coins) {
-		const row = { symbol: coin.symbol, name: coin.name, price: formatCryptoPrice(coin.price), changePct: '', changeClass: '' };
+		const row = {
+			symbol: coin.symbol,
+			name: coin.name,
+			price: formatCryptoPrice(coin.price),
+			changePct: '',
+			changeClass: ''
+		};
 		if (coin.changePct != null) {
 			row.changePct = formatSignedPercent(coin.changePct);
 			row.changeClass = changeClass(coin.changePct);
@@ -96,7 +115,10 @@ async function loadCryptoSnapshot(event: RequestEvent, vm: PageViewModel): Promi
 async function loadCryptoNews(event: RequestEvent, vm: PageViewModel) {
 	let items: NewsItemResponse[];
 	try {
-		items = (await apiJSON<NewsItemResponse[]>(event, 'GET', '/v1/crypto/news', undefined, { query: { limit: 10 } })) ?? [];
+		items =
+			(await apiJSON<NewsItemResponse[]>(event, 'GET', '/v1/crypto/news', undefined, {
+				query: { limit: 10 }
+			})) ?? [];
 	} catch {
 		return;
 	}
@@ -115,9 +137,13 @@ async function loadCryptoNews(event: RequestEvent, vm: PageViewModel) {
 	}
 }
 
-async function listCryptoPortfolio(event: RequestEvent): Promise<CryptoPortfolioItemResponse[] | null> {
+async function listCryptoPortfolio(
+	event: RequestEvent
+): Promise<CryptoPortfolioItemResponse[] | null> {
 	try {
-		return (await apiJSON<CryptoPortfolioItemResponse[]>(event, 'GET', '/v1/crypto/portfolio')) ?? [];
+		return (
+			(await apiJSON<CryptoPortfolioItemResponse[]>(event, 'GET', '/v1/crypto/portfolio')) ?? []
+		);
 	} catch {
 		return null;
 	}
@@ -143,7 +169,11 @@ async function loadCryptoPortfolio(event: RequestEvent, vm: PageViewModel) {
 }
 
 /** LoadCryptoViewModel (Go loads the overview's three sources in series; these run together). */
-export async function loadCryptoViewModel(event: RequestEvent, tab: string, activePath: string): Promise<PageViewModel> {
+export async function loadCryptoViewModel(
+	event: RequestEvent,
+	tab: string,
+	activePath: string
+): Promise<PageViewModel> {
 	const vm: PageViewModel = {
 		tab: normalizeCryptoTab(tab),
 		markets: null,
@@ -238,10 +268,16 @@ function cryptoCoinStats(q: CryptoQuoteResponse): CoinStat[] {
 	add('Market cap', q.marketCap, formatCompactCurrency);
 	add('Volume (24h)', q.volume, formatCompactCurrency);
 	if (q.dayLow != null && q.dayHigh != null) {
-		stats.push({ label: 'Day range', value: formatCryptoPrice(q.dayLow) + ' – ' + formatCryptoPrice(q.dayHigh) });
+		stats.push({
+			label: 'Day range',
+			value: formatCryptoPrice(q.dayLow) + ' – ' + formatCryptoPrice(q.dayHigh)
+		});
 	}
 	if (q.yearLow != null && q.yearHigh != null) {
-		stats.push({ label: '52-week range', value: formatCryptoPrice(q.yearLow) + ' – ' + formatCryptoPrice(q.yearHigh) });
+		stats.push({
+			label: '52-week range',
+			value: formatCryptoPrice(q.yearLow) + ' – ' + formatCryptoPrice(q.yearHigh)
+		});
 	}
 	add('50-day average', q.priceAvg50, formatCryptoPrice);
 	add('200-day average', q.priceAvg200, formatCryptoPrice);
@@ -268,21 +304,26 @@ export async function loadCoinPage(event: RequestEvent, rawSymbol: string): Prom
 	};
 	for (const cr of cryptoCoinRanges) {
 		if (cr.value === rangeValue) vm.rangeLabel = cr.label;
-		vm.ranges.push({ label: cr.label, href: `/crypto/coin/${symbol}?range=${cr.value}`, active: cr.value === rangeValue });
+		vm.ranges.push({
+			label: cr.label,
+			href: `/crypto/coin/${symbol}?range=${cr.value}`,
+			active: cr.value === rangeValue
+		});
 	}
 
 	const from = cryptoCoinRangeStart(rangeValue, new Date()).toISOString().slice(0, 10);
 	const path = encodeURIComponent(symbol);
 	const [quotes, history] = await Promise.all([
 		apiJSON<CryptoQuoteResponse[]>(event, 'GET', `/v1/crypto/quote/${path}`).catch(() => null),
-		apiJSON<CryptoHistoricalPoint[]>(event, 'GET', `/v1/crypto/history/full/${path}`, undefined, { query: { from } }).catch(
-			() => null
-		)
+		apiJSON<CryptoHistoricalPoint[]>(event, 'GET', `/v1/crypto/history/full/${path}`, undefined, {
+			query: { from }
+		}).catch(() => null)
 	]);
 	const quote = quotes && quotes.length > 0 ? quotes[0] : null;
 	const points = history ?? [];
 
-	if (!quote && points.length === 0) vm.errorMessage = `Price data for ${symbol} isn’t available right now`;
+	if (!quote && points.length === 0)
+		vm.errorMessage = `Price data for ${symbol} isn’t available right now`;
 	if (quote) {
 		vm.name = quote.name;
 		vm.price = formatCryptoPrice(quote.price);
@@ -313,7 +354,10 @@ async function loadCryptoAssets(event: RequestEvent): Promise<CryptoAssetRespons
 }
 
 /** loadCryptoHoldingFormVM */
-export async function loadCryptoHoldingFormVM(event: RequestEvent, rawItemID: string): Promise<HoldingFormVM> {
+export async function loadCryptoHoldingFormVM(
+	event: RequestEvent,
+	rawItemID: string
+): Promise<HoldingFormVM> {
 	const assets = await loadCryptoAssets(event);
 	const vm: HoldingFormVM = {
 		itemID: '',
@@ -321,7 +365,10 @@ export async function loadCryptoHoldingFormVM(event: RequestEvent, rawItemID: st
 		name: '',
 		quantity: '',
 		avgCost: '',
-		assets: (assets ?? []).map((a): AssetOptionVM => ({ symbol: a.symbol.toUpperCase(), name: a.name })),
+		assets: (assets ?? []).map((a): AssetOptionVM => ({
+			symbol: a.symbol.toUpperCase(),
+			name: a.name
+		})),
 		isEdit: false,
 		error: ''
 	};
@@ -414,7 +461,12 @@ export async function submitCryptoHolding(event: RequestEvent, itemID: string) {
 		const parsed = parseUUID(itemID);
 		if (!parsed) return holdingError(event, form, itemID, 'Invalid holding.');
 		try {
-			await apiJSON<CryptoPortfolioItemResponse>(event, 'PUT', `/v1/crypto/portfolio/${parsed}`, built.body);
+			await apiJSON<CryptoPortfolioItemResponse>(
+				event,
+				'PUT',
+				`/v1/crypto/portfolio/${parsed}`,
+				built.body
+			);
 		} catch {
 			return holdingError(event, form, itemID, 'Could not update holding.');
 		}

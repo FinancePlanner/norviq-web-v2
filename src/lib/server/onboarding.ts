@@ -91,7 +91,9 @@ export async function resume(event: RequestEvent): Promise<string | null> {
 
 export function requiresQuestionnaire(event: RequestEvent): boolean {
 	const s = event.locals.session;
-	return !!s.get(OnboardingKey.QuestionnaireRequired) && !s.get(OnboardingKey.QuestionnaireComplete);
+	return (
+		!!s.get(OnboardingKey.QuestionnaireRequired) && !s.get(OnboardingKey.QuestionnaireComplete)
+	);
 }
 
 export function requiresPaywall(event: RequestEvent): boolean {
@@ -100,7 +102,10 @@ export function requiresPaywall(event: RequestEvent): boolean {
 }
 
 /** Where to send a reader who just signed in (gate.go PostAuthRedirect). */
-export async function postAuthRedirect(event: RequestEvent, nextRaw?: string | null): Promise<string> {
+export async function postAuthRedirect(
+	event: RequestEvent,
+	nextRaw?: string | null
+): Promise<string> {
 	const next = safeNextPath(nextRaw ?? event.url.searchParams.get('next'));
 	const detour = async (path: string) => {
 		if (next) await event.locals.session.set(OnboardingKey.PendingNext, next);

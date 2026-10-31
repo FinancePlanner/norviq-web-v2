@@ -12,7 +12,9 @@
 	const results = createQuery(() => ({
 		queryKey: ['dashboard-search', searched],
 		queryFn: async (): Promise<SearchResultVM[]> => {
-			const res = await fetch('/dashboard/search?q=' + encodeURIComponent(searched), { headers: { accept: 'application/json' } });
+			const res = await fetch('/dashboard/search?q=' + encodeURIComponent(searched), {
+				headers: { accept: 'application/json' }
+			});
 			if (!res.ok) return [];
 			return ((await res.json()) as { results: SearchResultVM[] }).results;
 		},
@@ -22,11 +24,15 @@
 
 	const spoken: Record<string, string> = { '3M': '3 month', '6M': '6 month', YTD: 'year to date' };
 	const orDash = (v: string) => (v.trim() === '' ? '—' : v);
-	const returnClass = (c: string) => (c === 'negative' ? 'is-negative' : c === 'positive' ? 'is-positive' : '');
+	const returnClass = (c: string) =>
+		c === 'negative' ? 'is-negative' : c === 'positive' ? 'is-positive' : '';
 </script>
 
 {#snippet chip(label: string, value: string, changeClass: string)}
-	<span class={['pines-search-return', returnClass(changeClass)]} aria-label={(spoken[label] ?? label) + ' ' + orDash(value)}>
+	<span
+		class={['pines-search-return', returnClass(changeClass)]}
+		aria-label={(spoken[label] ?? label) + ' ' + orDash(value)}
+	>
 		<span class="pines-search-return-label">{label}</span>
 		<span class="pines-search-return-value">{orDash(value)}</span>
 	</span>
@@ -64,4 +70,9 @@
 	{/if}
 {/snippet}
 
-<PinesSearchField resultsId="asset-search-results" bind:query onsearch={(q) => (searched = q)} results={list} />
+<PinesSearchField
+	resultsId="asset-search-results"
+	bind:query
+	onsearch={(q) => (searched = q)}
+	results={list}
+/>

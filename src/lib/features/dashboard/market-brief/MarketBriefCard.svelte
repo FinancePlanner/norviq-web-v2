@@ -10,7 +10,12 @@
 
 	let { vm, onnavigate }: { vm: MarketBriefVM; onnavigate?: (url: string) => void } = $props();
 
-	const subtitle = $derived(vm.tradingDate + (vm.generatedAt ? ' · ' + t('Updated at') + ' ' + vm.generatedAt + ' ' + t('(Lisbon time)') : ''));
+	const subtitle = $derived(
+		vm.tradingDate +
+			(vm.generatedAt
+				? ' · ' + t('Updated at') + ' ' + vm.generatedAt + ' ' + t('(Lisbon time)')
+				: '')
+	);
 
 	// assets/share.js data-share-native: the OS share sheet where there is one;
 	// otherwise the link navigates to the brief's page.
@@ -31,12 +36,20 @@
 {#snippet toggles()}
 	<div class="flex items-center gap-1">
 		{#if vm.previousURL}
-			<GhostButton class="h-8 px-2 text-footnote" aria-label={t('Show the previous market brief')} onclick={() => onnavigate?.(vm.previousURL)}>
+			<GhostButton
+				class="h-8 px-2 text-footnote"
+				aria-label={t('Show the previous market brief')}
+				onclick={() => onnavigate?.(vm.previousURL)}
+			>
 				{t('Previous')}
 			</GhostButton>
 		{/if}
 		{#if vm.latestURL}
-			<GhostButton class="h-8 px-2 text-footnote" aria-label={t('Show the latest market brief')} onclick={() => onnavigate?.(vm.latestURL)}>
+			<GhostButton
+				class="h-8 px-2 text-footnote"
+				aria-label={t('Show the latest market brief')}
+				onclick={() => onnavigate?.(vm.latestURL)}
+			>
 				{t('Latest')}
 			</GhostButton>
 		{/if}

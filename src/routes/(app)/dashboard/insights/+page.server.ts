@@ -1,7 +1,12 @@
 import type { Actions, PageServerLoad } from './$types';
 import { Feature } from '#lib/billing.js';
 import { loadAIInsights } from '#lib/features/dashboard/insights/ai.server.js';
-import { createGoal, deleteGoal, toggleGoal, updateGoal } from '#lib/features/dashboard/insights/goals.server.js';
+import {
+	createGoal,
+	deleteGoal,
+	toggleGoal,
+	updateGoal
+} from '#lib/features/dashboard/insights/goals.server.js';
 import { loadInsightsPage } from '#lib/features/dashboard/insights/load.server.js';
 
 // GET /dashboard/insights (handlers.DashboardInsights).

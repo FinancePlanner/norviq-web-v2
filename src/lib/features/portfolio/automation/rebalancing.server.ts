@@ -1,6 +1,13 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
-import { formAll, formChoice, formString, parseFloatGo, parseIntGo, portfolioAPIErrorMessage } from './common.server.js';
+import {
+	formAll,
+	formChoice,
+	formString,
+	parseFloatGo,
+	parseIntGo,
+	portfolioAPIErrorMessage
+} from './common.server.js';
 import type {
 	AllocationModel,
 	AllocationModelUpsertRequest,
@@ -20,7 +27,8 @@ import type {
 // Port of handlers/rebalancing.go.
 
 /** rebalancingBase */
-export const rebalancingBase = (portfolioID: string) => `/v1/portfolios/${encodeURIComponent(portfolioID)}/rebalancing`;
+export const rebalancingBase = (portfolioID: string) =>
+	`/v1/portfolios/${encodeURIComponent(portfolioID)}/rebalancing`;
 
 /** redirectRebalancing target. */
 export function rebalancingURL(portfolioID: string, message: string, isError: boolean): string {
@@ -50,7 +58,11 @@ export function emptyRebalancingVM(url: URL): RebalancingViewModel {
 		models: [],
 		simulation: null,
 		plans: [],
-		history: { completedCount: 0, averageDriftBeforeBasisPoints: 0, averageDriftAfterBasisPoints: 0 },
+		history: {
+			completedCount: 0,
+			averageDriftBeforeBasisPoints: 0,
+			averageDriftAfterBasisPoints: 0
+		},
 		alerts: [],
 		preferences: { portfolioId: '', pushEnabled: false },
 		cashFlow: 0,
@@ -59,7 +71,8 @@ export function emptyRebalancingVM(url: URL): RebalancingViewModel {
 	};
 }
 
-export const findPortfolio = (items: ManagedPortfolio[], id: string) => items.find((p) => p.id === id) ?? null;
+export const findPortfolio = (items: ManagedPortfolio[], id: string) =>
+	items.find((p) => p.id === id) ?? null;
 
 /** loadRebalancingViewModel */
 export async function loadRebalancingViewModel(event: RequestEvent): Promise<RebalancingViewModel> {
@@ -81,10 +94,16 @@ export async function loadRebalancingViewModel(event: RequestEvent): Promise<Reb
 }
 
 /** loadRebalancingData: overview is required; the rest degrade silently. */
-export async function loadRebalancingData(event: RequestEvent, vm: RebalancingViewModel): Promise<void> {
+export async function loadRebalancingData(
+	event: RequestEvent,
+	vm: RebalancingViewModel
+): Promise<void> {
 	const base = rebalancingBase(vm.selected!.id);
 	try {
-		vm.overview = { ...emptyOverview(), ...(await apiJSON<RebalancingOverview>(event, 'GET', base + '/overview')) };
+		vm.overview = {
+			...emptyOverview(),
+			...(await apiJSON<RebalancingOverview>(event, 'GET', base + '/overview'))
+		};
 	} catch (err) {
 		vm.error = portfolioAPIErrorMessage(err, 'Could not load drift data.');
 		return;
@@ -111,7 +130,8 @@ export async function loadRebalancingData(event: RequestEvent, vm: RebalancingVi
 }
 
 /** percentageBasisPoints: int(f*100 + 0.5) */
-const percentageBasisPoints = (value: FormDataEntryValue | null | undefined) => Math.trunc(parseFloatGo(value) * 100 + 0.5);
+const percentageBasisPoints = (value: FormDataEntryValue | null | undefined) =>
+	Math.trunc(parseFloatGo(value) * 100 + 0.5);
 
 /** formID */
 function formID(values: string[], index: number, prefix: string): string {
@@ -125,7 +145,8 @@ export class FormError extends Error {}
 export function parseAllocationModelForm(form: FormData): AllocationModelUpsertRequest {
 	const bucketNames = formAll(form, 'bucketName[]');
 	const bucketTargets = formAll(form, 'bucketTarget[]');
-	if (bucketNames.length === 0 || bucketNames.length !== bucketTargets.length) throw new FormError('add at least one allocation group');
+	if (bucketNames.length === 0 || bucketNames.length !== bucketTargets.length)
+		throw new FormError('add at least one allocation group');
 	const bucketIDs = formAll(form, 'bucketId[]');
 	const buckets: AllocationTargetBucket[] = [];
 	bucketNames.forEach((raw, index) => {
@@ -175,7 +196,8 @@ function appendAllocationLeaves(form: FormData, buckets: AllocationTargetBucket[
 		if (group < 0 || group >= buckets.length || names[index].trim() === '') return;
 		const kind = formChoice(kinds[index], 'security', 'cash');
 		const symbol = symbols[index].trim().toUpperCase();
-		if (kind === 'security' && symbol === '') throw new FormError('every security target needs a ticker');
+		if (kind === 'security' && symbol === '')
+			throw new FormError('every security target needs a ticker');
 		const leaves = buckets[group].leaves;
 		const leaf = {
 			id: formID(ids, index, 'leaf'),
@@ -202,5 +224,10 @@ export function parseSimulationForm(form: FormData): RebalancingSimulationReques
 		if (index >= amounts.length || symbol.trim() === '') return;
 		overrides.push({ symbol: symbol.trim().toUpperCase(), amount: parseFloatGo(amounts[index]) });
 	});
-	return { modelId: modelID, modelRevision: revision, cashFlow: parseFloatGo(form.get('cashFlow')), overrides };
+	return {
+		modelId: modelID,
+		modelRevision: revision,
+		cashFlow: parseFloatGo(form.get('cashFlow')),
+		overrides
+	};
 }

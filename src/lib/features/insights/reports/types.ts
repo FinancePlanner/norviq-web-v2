@@ -84,7 +84,8 @@ export interface BudgetPillarRowVM {
 }
 
 export const pillarIconName = (r: BudgetPillarRowVM) => r.icon || 'layers';
-export const pillarColorProperty = (r: BudgetPillarRowVM) => `--pillar-color: var(${r.colorVar || '--color-tint'})`;
+export const pillarColorProperty = (r: BudgetPillarRowVM) =>
+	`--pillar-color: var(${r.colorVar || '--color-tint'})`;
 
 export interface BudgetTrackingCardVM {
 	available: boolean;
@@ -163,7 +164,8 @@ export interface DeepDiveReportVM {
 	stocks: StockSummaryVM[];
 }
 
-export const statPillValueClassLocal = (positive: boolean) => (positive ? 'command-metric-value is-positive' : 'command-metric-value');
+export const statPillValueClassLocal = (positive: boolean) =>
+	positive ? 'command-metric-value is-positive' : 'command-metric-value';
 
 // ---------------------------------------------------------------------------
 // Advanced reporting (internal/api/portfolio_reporting.go)

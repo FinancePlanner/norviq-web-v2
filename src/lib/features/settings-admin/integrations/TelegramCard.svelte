@@ -3,7 +3,15 @@
 	// a freshly minted code, an established connection, or the invitation to
 	// start one. A deployment with no bot configured renders nothing at all.
 	import { enhance } from '$app/forms';
-	import { CardHeader, CheckboxField, FormErrorBanner, MCPStateBadge, NativeButton, VigIcon, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		CardHeader,
+		CheckboxField,
+		FormErrorBanner,
+		MCPStateBadge,
+		NativeButton,
+		VigIcon,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import { TELEGRAM_PRIVACY_WARNING, telegramToggleValue, type TelegramVM } from './types.js';
 
 	let { vm }: { vm: TelegramVM } = $props();
@@ -41,8 +49,17 @@
 					Valid for {vm.codeExpiresIn}. Shown once &mdash; generate a new one if you lose it.
 				</p>
 				<div class="flex flex-wrap items-center gap-3">
-					<a href={vm.deepLink} target="_blank" rel="noopener noreferrer" class="btn-primary px-5 py-2"> Open Telegram </a>
-					<span class="text-xs text-muted-foreground">or message {'@' + vm.botUsername} yourself</span>
+					<a
+						href={vm.deepLink}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="btn-primary px-5 py-2"
+					>
+						Open Telegram
+					</a>
+					<span class="text-xs text-muted-foreground"
+						>or message {'@' + vm.botUsername} yourself</span
+					>
 				</div>
 				{@render howTo()}
 			</div>
@@ -54,7 +71,9 @@
 						{#if vm.lastSeenAt !== ''}
 							<p class="text-xs text-muted-foreground">Last message · {vm.lastSeenAt}</p>
 						{:else}
-							<p class="text-xs text-muted-foreground">Connected {vm.connectedAt} · no messages yet</p>
+							<p class="text-xs text-muted-foreground">
+								Connected {vm.connectedAt} · no messages yet
+							</p>
 						{/if}
 					</div>
 					<MCPStateBadge state="live">Live</MCPStateBadge>
@@ -74,7 +93,11 @@
 										{/if}
 										<form method="POST" action="?/telegramAlerts" use:enhance={withSpinner()}>
 											<input type="hidden" name="kind" value={alert.kind} />
-											<input type="hidden" name="enabled" value={telegramToggleValue(alert.enabled)} />
+											<input
+												type="hidden"
+												name="enabled"
+												value={telegramToggleValue(alert.enabled)}
+											/>
 											<NativeButton type="submit" class="btn-ghost px-3 py-1 text-xs">
 												{#if alert.enabled}Turn off{:else}Turn on{/if}
 											</NativeButton>
@@ -92,14 +115,24 @@
 		{:else}
 			<!-- An explicit acknowledgement is required before a link code is minted; the action refuses the post without it. -->
 			<div class="mt-5 space-y-4">
-				<div class="settings-telegram-warning rounded-lg border border-[var(--color-border)] px-4 py-3 text-sm" role="note">
+				<div
+					class="settings-telegram-warning rounded-lg border border-[var(--color-border)] px-4 py-3 text-sm"
+					role="note"
+				>
 					<p class="font-medium">Before you connect</p>
 					<p class="mt-1 text-muted-foreground">
 						{TELEGRAM_PRIVACY_WARNING}
-						<a href="/privacy#telegram" class="underline" target="_blank" rel="noopener">Privacy policy</a>
+						<a href="/privacy#telegram" class="underline" target="_blank" rel="noopener"
+							>Privacy policy</a
+						>
 					</p>
 				</div>
-				<form method="POST" action="?/telegramConnect" class="space-y-4" use:enhance={withSpinner()}>
+				<form
+					method="POST"
+					action="?/telegramConnect"
+					class="space-y-4"
+					use:enhance={withSpinner()}
+				>
 					<CheckboxField
 						id="telegram-acknowledge-unencrypted"
 						name="acknowledge_unencrypted"

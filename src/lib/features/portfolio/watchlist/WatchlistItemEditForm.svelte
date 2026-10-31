@@ -29,9 +29,21 @@
 	>
 		<input type="hidden" name="item_id" value={vm.itemID} />
 		<input type="hidden" name="list_id" value={vm.listID} />
-		<TextareaField id="watchlist-note" name="note" label="Note" value={vm.note} wrapperClass="space-y-2" rows={4} />
+		<TextareaField
+			id="watchlist-note"
+			name="note"
+			label="Note"
+			value={vm.note}
+			wrapperClass="space-y-2"
+			rows={4}
+		/>
 		<div class="portfolio-form-actions">
-			<NativeButton class="portfolio-form-cancel" data-tui-dialog-close="" data-tui-dialog-target={DIALOG} onclick={() => closeDialog(DIALOG)}>Cancel</NativeButton>
+			<NativeButton
+				class="portfolio-form-cancel"
+				data-tui-dialog-close=""
+				data-tui-dialog-target={DIALOG}
+				onclick={() => closeDialog(DIALOG)}>Cancel</NativeButton
+			>
 			<SubmitButton class="portfolio-form-save">Save note</SubmitButton>
 		</div>
 	</form>

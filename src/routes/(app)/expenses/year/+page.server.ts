@@ -40,14 +40,20 @@ export const load: PageServerLoad = async (event) => {
 	const client = api(event);
 	const [monthRes, yearRes] = await Promise.all([
 		client
-			.GET('/v1/reports/expenses', { params: { query: { from: `${year}-01-01`, to: `${year}-12-31`, granularity: 'month' } } })
+			.GET('/v1/reports/expenses', {
+				params: { query: { from: `${year}-01-01`, to: `${year}-12-31`, granularity: 'month' } }
+			})
 			.catch(() => null),
 		client
-			.GET('/v1/reports/expenses', { params: { query: { from: `${year - 1}-01-01`, to: `${year}-12-31`, granularity: 'year' } } })
+			.GET('/v1/reports/expenses', {
+				params: { query: { from: `${year - 1}-01-01`, to: `${year}-12-31`, granularity: 'year' } }
+			})
 			.catch(() => null)
 	]);
-	const monthRows = (monthRes?.response.ok ? (monthRes.data as MonthRow[] | undefined) : undefined) ?? [];
-	const yearRows = (yearRes?.response.ok ? (yearRes.data as YearRow[] | undefined) : undefined) ?? [];
+	const monthRows =
+		(monthRes?.response.ok ? (monthRes.data as MonthRow[] | undefined) : undefined) ?? [];
+	const yearRows =
+		(yearRes?.response.ok ? (yearRes.data as YearRow[] | undefined) : undefined) ?? [];
 
 	const byMonth = new Map<number, MonthRow>();
 	let maxSpent = 0;

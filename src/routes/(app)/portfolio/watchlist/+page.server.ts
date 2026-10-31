@@ -3,7 +3,10 @@ import type { Actions, PageServerLoad } from './$types';
 import type { components } from '#lib/api/schema.js';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
 import { parseUUID, uuidString } from '#lib/features/portfolio/market.server.js';
-import { loadWatchlistViewModel, processWatchlistCSVUpload } from '#lib/features/portfolio/watchlist/watchlist.server.js';
+import {
+	loadWatchlistViewModel,
+	processWatchlistCSVUpload
+} from '#lib/features/portfolio/watchlist/watchlist.server.js';
 
 // GET /portfolio/watchlist (handlers.PortfolioWatchlist) plus the watchlist
 // mutations that were HTMX posts against sibling URLs:
@@ -38,7 +41,12 @@ async function submitWatchlistList(event: Parameters<Actions[string]>[0], listID
 	let redirectListID: string;
 	if (listID === '') {
 		try {
-			const created = await apiJSON<Schemas['WatchlistListResponse']>(event, 'POST', '/v1/watchlist/lists', { name });
+			const created = await apiJSON<Schemas['WatchlistListResponse']>(
+				event,
+				'POST',
+				'/v1/watchlist/lists',
+				{ name }
+			);
 			redirectListID = uuidString(created.id);
 		} catch {
 			return fail(502, { listID, listError: 'Could not create list.', name });
@@ -47,7 +55,12 @@ async function submitWatchlistList(event: Parameters<Actions[string]>[0], listID
 		const parsed = parseUUID(listID);
 		if (!parsed) return fail(400, { listID, listError: 'Invalid list.', name });
 		try {
-			const updated = await apiJSON<Schemas['WatchlistListResponse']>(event, 'PATCH', `/v1/watchlist/lists/${parsed}`, { name });
+			const updated = await apiJSON<Schemas['WatchlistListResponse']>(
+				event,
+				'PATCH',
+				`/v1/watchlist/lists/${parsed}`,
+				{ name }
+			);
 			redirectListID = uuidString(updated.id);
 		} catch {
 			return fail(502, { listID, listError: 'Could not update list.', name });

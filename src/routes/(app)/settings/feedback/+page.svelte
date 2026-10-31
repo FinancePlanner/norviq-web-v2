@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { FormErrorBanner, SelectField, SubmitButton, TextareaField, ToastBanner, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		FormErrorBanner,
+		SelectField,
+		SubmitButton,
+		TextareaField,
+		ToastBanner,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { capture } from '#lib/analytics/index.js';
@@ -22,7 +29,11 @@
 		<form
 			class="glass-card space-y-4 p-6"
 			method="POST"
-			use:enhance={withSpinner(() => async ({ update }) => update({ reset: false, invalidateAll: false }))}
+			use:enhance={withSpinner(
+				() =>
+					async ({ update }) =>
+						update({ reset: false, invalidateAll: false })
+			)}
 		>
 			<div id="feedback-result">
 				{#if form?.success}
@@ -37,7 +48,13 @@
 			</div>
 			<div class="space-y-2">
 				<label class="field-label" for="message">Message</label>
-				<TextareaField id="message" name="message" placeholder="Tell us what you think…" required class="min-h-32" />
+				<TextareaField
+					id="message"
+					name="message"
+					placeholder="Tell us what you think…"
+					required
+					class="min-h-32"
+				/>
 			</div>
 			<SubmitButton class="w-auto px-6">Send feedback</SubmitButton>
 		</form>
@@ -48,7 +65,8 @@
 				class="underline"
 				target="_blank"
 				rel="noopener noreferrer"
-				onclick={() => capture('discord_link_clicked', { surface: 'support' })}>{t('Join us on Discord')}</a
+				onclick={() => capture('discord_link_clicked', { surface: 'support' })}
+				>{t('Join us on Discord')}</a
 			>
 		</p>
 	</vigil.SettingsShell>

@@ -14,11 +14,38 @@ it('normalizes input', () => {
 });
 
 it('rejects unknown and empty', () => {
-	for (const sym of ['', ' ', 'NOTATICKER', 'ZZZZ', '../etc/passwd', 'AAPL;DROP']) expect(allowed(sym), sym).toBe(false);
+	for (const sym of ['', ' ', 'NOTATICKER', 'ZZZZ', '../etc/passwd', 'AAPL;DROP'])
+		expect(allowed(sym), sym).toBe(false);
 });
 
 it('includes the named index ETFs', () => {
-	const want = ['SPY', 'QQQ', 'IWM', 'DIA', 'VTI', 'VOO', 'VEA', 'VWO', 'BND', 'TLT', 'GLD', 'SLV', 'XLK', 'XLF', 'XLE', 'XLV', 'XLY', 'XLP', 'XLI', 'XLU', 'XLRE', 'XLB', 'XLC', 'ARKK', 'SMH'];
+	const want = [
+		'SPY',
+		'QQQ',
+		'IWM',
+		'DIA',
+		'VTI',
+		'VOO',
+		'VEA',
+		'VWO',
+		'BND',
+		'TLT',
+		'GLD',
+		'SLV',
+		'XLK',
+		'XLF',
+		'XLE',
+		'XLV',
+		'XLY',
+		'XLP',
+		'XLI',
+		'XLU',
+		'XLRE',
+		'XLB',
+		'XLC',
+		'ARKK',
+		'SMH'
+	];
 	const list = all();
 	for (const sym of want) expect(list).toContain(sym);
 });

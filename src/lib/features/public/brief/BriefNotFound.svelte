@@ -17,6 +17,10 @@
 <main id="main-content" class="mx-auto w-full max-w-3xl px-6 py-10">
 	<BriefNav {lang} signedIn={false} />
 	<h1 class="text-2xl font-semibold">{t("This market brief isn't available")}</h1>
-	<p class="mt-2 text-muted-foreground">{t('It may not have been written yet, or the link may be wrong.')}</p>
-	<a href={latestURL} class="mt-6 inline-block underline underline-offset-4">{t('Read the latest brief')}</a>
+	<p class="mt-2 text-muted-foreground">
+		{t('It may not have been written yet, or the link may be wrong.')}
+	</p>
+	<a href={latestURL} class="mt-6 inline-block underline underline-offset-4"
+		>{t('Read the latest brief')}</a
+	>
 </main>

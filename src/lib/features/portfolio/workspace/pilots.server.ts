@@ -37,12 +37,21 @@ interface PilotFollowResponse {
  * Lower-cased portfolio id → the pilot follow that writes it. Best effort:
  * null when pilots are off or the lookup fails (2s budget).
  */
-export async function pilotFollowingByPortfolio(event: RequestEvent, enabled?: boolean): Promise<Record<string, PilotFollowingVM> | null> {
+export async function pilotFollowingByPortfolio(
+	event: RequestEvent,
+	enabled?: boolean
+): Promise<Record<string, PilotFollowingVM> | null> {
 	if (!(enabled ?? (await pilotsEnabled(event)))) return null;
 	try {
-		const follows = await apiJSON<PilotFollowResponse[]>(event, 'GET', '/v1/pilot-follows', undefined, {
-			signal: AbortSignal.timeout(2000)
-		});
+		const follows = await apiJSON<PilotFollowResponse[]>(
+			event,
+			'GET',
+			'/v1/pilot-follows',
+			undefined,
+			{
+				signal: AbortSignal.timeout(2000)
+			}
+		);
 		const out: Record<string, PilotFollowingVM> = {};
 		for (const f of follows ?? []) {
 			if (!f.portfolioListId) continue;

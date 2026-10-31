@@ -3,4 +3,10 @@ import { friendRequestAction } from '#lib/features/social/friends/request-action
 
 // POST /friends/requests/{id}/decline (handlers.FriendRequestDecline)
 export const POST: RequestHandler = (event) =>
-	friendRequestAction(event, 'POST', '/decline', 'Request declined.', 'Could not decline the request.');
+	friendRequestAction(
+		event,
+		'POST',
+		'/decline',
+		'Request declined.',
+		'Could not decline the request.'
+	);

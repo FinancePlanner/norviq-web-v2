@@ -28,7 +28,15 @@ describe('session', () => {
 	it('saves auth and reloads it from cookies', async () => {
 		const { cookies } = jar();
 		const s = await Session.load(cookies, opts);
-		await s.saveAuth({ token: 'a', refreshToken: 'r', expiresIn: 60, refreshExpiresIn: 120, userId: 'u', username: 'n', email: 'e' });
+		await s.saveAuth({
+			token: 'a',
+			refreshToken: 'r',
+			expiresIn: 60,
+			refreshExpiresIn: 120,
+			userId: 'u',
+			username: 'n',
+			email: 'e'
+		});
 		const again = await Session.load(cookies, opts);
 		expect(again.accessToken).toBe('a');
 		expect(again.auth?.username).toBe('n');
@@ -45,7 +53,10 @@ describe('session', () => {
 	});
 
 	it('expires after the idle timeout', async () => {
-		const sealed = await seal({ flags: {}, lastSeen: Math.floor(Date.now() / 1000) - 121 * 60, auth: undefined }, opts.secret);
+		const sealed = await seal(
+			{ flags: {}, lastSeen: Math.floor(Date.now() / 1000) - 121 * 60, auth: undefined },
+			opts.secret
+		);
 		const { cookies } = jar({ [SESSION_COOKIE]: sealed });
 		const s = await Session.load(cookies, opts);
 		expect(s.data.lastSeen).toBe(0);

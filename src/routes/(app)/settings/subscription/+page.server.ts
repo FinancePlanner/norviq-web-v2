@@ -14,7 +14,9 @@ type CouponRedemptionResponse = components['schemas']['CouponRedemptionResponse'
 // invalidateAll(), which reruns this load.
 export const load: PageServerLoad = async (event) => {
 	const billing = await loadBillingContext(event);
-	return { vm: subscriptionVM(config(), event.locals.session.auth?.userId, billing, event.url.searchParams) };
+	return {
+		vm: subscriptionVM(config(), event.locals.session.auth?.userId, billing, event.url.searchParams)
+	};
 };
 
 export const actions: Actions = {

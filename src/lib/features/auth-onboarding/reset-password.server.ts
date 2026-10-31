@@ -18,7 +18,13 @@ export async function resetPasswordSubmit(event: RequestEvent): Promise<ResetRes
 		return bad('Enter the reset code and a password of at least 8 characters.');
 	}
 	try {
-		await apiJSON(event, 'POST', '/v1/auth/reset-password', { email, code, newPassword }, { auth: 'none' });
+		await apiJSON(
+			event,
+			'POST',
+			'/v1/auth/reset-password',
+			{ email, code, newPassword },
+			{ auth: 'none' }
+		);
 	} catch (err) {
 		if (isAPIError(err)) return bad('Invalid or expired reset code.');
 		console.error('reset password', err);
@@ -31,7 +37,8 @@ export async function resetPasswordResend(event: RequestEvent): Promise<ResetRes
 	const form = await event.request.formData().catch(() => null);
 	if (!form) return bad('Invalid form submission.');
 	const email = String(form.get('email') ?? '').trim();
-	if (!emailPattern.test(email)) return bad('Enter a valid email address to resend your reset code.');
+	if (!emailPattern.test(email))
+		return bad('Enter a valid email address to resend your reset code.');
 	let message = 'If an account exists for that email, we sent a new reset code.';
 	try {
 		const res = await apiJSON<{ message?: string } | undefined>(
@@ -43,7 +50,8 @@ export async function resetPasswordResend(event: RequestEvent): Promise<ResetRes
 		);
 		if (res?.message) message = res.message;
 	} catch (err) {
-		if (isAPIError(err)) return bad(apiErrorMessage(err, 'Could not resend reset email. Please try again.'));
+		if (isAPIError(err))
+			return bad(apiErrorMessage(err, 'Could not resend reset email. Please try again.'));
 		console.error('resend reset password', err);
 		return bad('Could not resend reset email. Please try again.');
 	}

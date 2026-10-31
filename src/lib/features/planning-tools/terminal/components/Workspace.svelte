@@ -22,7 +22,9 @@
 {#if vm.loadError}
 	<section id="terminal-workspace" aria-label="Terminal scenarios">
 		<vigil.Panel class="p-5">
-			<p role="alert" class="text-subhead">Terminal sizing is unavailable right now. Try again shortly.</p>
+			<p role="alert" class="text-subhead">
+				Terminal sizing is unavailable right now. Try again shortly.
+			</p>
 		</vigil.Panel>
 	</section>
 {:else}
@@ -51,11 +53,18 @@
 				<SampleRow row={vm.sample} {onworkspace} />
 			{/if}
 			{#each rows as row (row.id)}
-				<TerminalRow {row} onfooter={(f) => (footer = f)} ongone={() => (gone = [...gone, row.id])} {onworkspace} />
+				<TerminalRow
+					{row}
+					onfooter={(f) => (footer = f)}
+					ongone={() => (gone = [...gone, row.id])}
+					{onworkspace}
+				/>
 			{/each}
 		</vigil.DataTable>
 		{#if vm.rows.length === 0 && !vm.showSample}
-			<p class="text-subhead text-muted-foreground">No scenarios yet. Add one to see how many shares your target takes.</p>
+			<p class="text-subhead text-muted-foreground">
+				No scenarios yet. Add one to see how many shares your target takes.
+			</p>
 		{/if}
 		<Footer vm={footer} />
 	</section>

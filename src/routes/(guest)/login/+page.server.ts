@@ -38,14 +38,21 @@ export const actions: Actions = {
 
 		let body: LoginOutcomeBody;
 		try {
-			body = await apiJSON<LoginOutcomeBody>(event, 'POST', '/v1/auth/login', { email, password }, { auth: 'none' });
+			body = await apiJSON<LoginOutcomeBody>(
+				event,
+				'POST',
+				'/v1/auth/login',
+				{ email, password },
+				{ auth: 'none' }
+			);
 		} catch (err) {
 			if (!isAPIError(err)) console.error('auth login', err);
 			return authError(apiErrorMessage(err, 'Could not log in. Please try again.'));
 		}
 
 		const outcome = parseLoginOutcome(body);
-		if (outcome.kind === 'invalid') return authError('Could not complete sign in. Please try again.');
+		if (outcome.kind === 'invalid')
+			return authError('Could not complete sign in. Please try again.');
 		if (outcome.kind === 'mfa') {
 			if (!outcome.mfa) return authError('Could not start verification. Please try again.');
 			await saveMFAChallenge(event.locals, outcome.mfa);

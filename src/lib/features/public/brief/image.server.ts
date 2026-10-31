@@ -3,14 +3,45 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { config } from '#lib/server/env.js';
 import { translator } from '#lib/i18n/index.js';
-import { Down, Flat, Up, cachedImage, regionCode, renderBrief, type BriefCard, type Format } from '../sharecard/sharecard.server.js';
-import { marketBriefTitleKey, Down as VMDown, Up as VMUp } from '#lib/features/dashboard/market-brief/types.js';
-import { BriefNotFound, BriefUnavailable, IMAGE_CACHE_CONTROL, briefPath, findBrief, itemTexts, parsePermalink, shortHost, urlLang } from './brief.server.js';
+import {
+	Down,
+	Flat,
+	Up,
+	cachedImage,
+	regionCode,
+	renderBrief,
+	type BriefCard,
+	type Format
+} from '../sharecard/sharecard.server.js';
+import {
+	marketBriefTitleKey,
+	Down as VMDown,
+	Up as VMUp
+} from '#lib/features/dashboard/market-brief/types.js';
+import {
+	BriefNotFound,
+	BriefUnavailable,
+	IMAGE_CACHE_CONTROL,
+	briefPath,
+	findBrief,
+	itemTexts,
+	parsePermalink,
+	shortHost,
+	urlLang
+} from './brief.server.js';
 
-export async function serveBriefImage(event: RequestEvent, kind: 'og' | 'card', format: Format): Promise<Response> {
+export async function serveBriefImage(
+	event: RequestEvent,
+	kind: 'og' | 'card',
+	format: Format
+): Promise<Response> {
 	const lang = urlLang(event.url);
 	const key = parsePermalink(event.params.date ?? '', event.params.slot ?? '');
-	if (!key) return new Response('404 page not found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+	if (!key)
+		return new Response('404 page not found\n', {
+			status: 404,
+			headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+		});
 	let png: Uint8Array;
 	try {
 		png = await cachedImage(`${kind}|${lang}|${key.date}|${key.slot}`, async () => {
@@ -35,12 +66,24 @@ export async function serveBriefImage(event: RequestEvent, kind: 'og' | 'card', 
 			return renderBrief(card, format);
 		});
 	} catch (err) {
-		if (err instanceof BriefNotFound) return new Response('404 page not found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+		if (err instanceof BriefNotFound)
+			return new Response('404 page not found\n', {
+				status: 404,
+				headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+			});
 		if (err instanceof BriefUnavailable) {
-			return new Response('Temporarily unavailable\n', { status: 503, headers: { 'Retry-After': '60', 'Content-Type': 'text/plain; charset=utf-8' } });
+			return new Response('Temporarily unavailable\n', {
+				status: 503,
+				headers: { 'Retry-After': '60', 'Content-Type': 'text/plain; charset=utf-8' }
+			});
 		}
 		console.error('render market brief image', kind, err);
-		return new Response('Failed to render image\n', { status: 500, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+		return new Response('Failed to render image\n', {
+			status: 500,
+			headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+		});
 	}
-	return new Response(png as BodyInit, { headers: { 'Content-Type': 'image/png', 'Cache-Control': IMAGE_CACHE_CONTROL } });
+	return new Response(png as BodyInit, {
+		headers: { 'Content-Type': 'image/png', 'Cache-Control': IMAGE_CACHE_CONTROL }
+	});
 }

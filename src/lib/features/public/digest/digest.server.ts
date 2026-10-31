@@ -10,5 +10,8 @@ export const digestUnsubscribeTokenPattern = /^[A-Za-z0-9_-]{16,128}$/;
 export const DIGEST_UNSUBSCRIBE_CACHE_CONTROL = 'private, no-store';
 
 export async function unsubscribeDigest(event: RequestEvent, token: string): Promise<void> {
-	await apiJSON<{ unsubscribed: boolean }>(event, 'POST', '/v1/digest/unsubscribe', undefined, { auth: 'none', query: { token } });
+	await apiJSON<{ unsubscribed: boolean }>(event, 'POST', '/v1/digest/unsubscribe', undefined, {
+		auth: 'none',
+		query: { token }
+	});
 }

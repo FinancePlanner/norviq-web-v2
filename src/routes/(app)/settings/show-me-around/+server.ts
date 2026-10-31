@@ -18,13 +18,24 @@ interface OnboardingProgress {
 export const POST: RequestHandler = async (event) => {
 	let progress: OnboardingProgress | null = null;
 	try {
-		progress = await apiJSON<OnboardingProgress>(event, 'PATCH', '/v1/onboarding', { guidedStartDismissed: false }, { signal: AbortSignal.timeout(3000) });
+		progress = await apiJSON<OnboardingProgress>(
+			event,
+			'PATCH',
+			'/v1/onboarding',
+			{ guidedStartDismissed: false },
+			{ signal: AbortSignal.timeout(3000) }
+		);
 	} catch (err) {
 		console.warn('guided start: show me around', err);
 	}
 	const session = event.locals.session;
 	// guide.ProgressOf(progress).AllDone(): every step done.
-	if (progress && progress.addHoldingCompleted && progress.setBudgetCompleted && progress.setGoalCompleted) {
+	if (
+		progress &&
+		progress.addHoldingCompleted &&
+		progress.setBudgetCompleted &&
+		progress.setGoalCompleted
+	) {
 		await session.set(KEY_GUIDED_SHOW_COMPLETED, true);
 	}
 	await session.set(KEY_GUIDED_PENDING_SOURCE, 'settings');

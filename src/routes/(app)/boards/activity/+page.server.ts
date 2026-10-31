@@ -1,5 +1,11 @@
 import type { PageServerLoad } from './$types';
-import { boardAge, boardNotice, pathEscape, queryEscape, type ActivityRow } from '#lib/features/social/boards/boards.js';
+import {
+	boardAge,
+	boardNotice,
+	pathEscape,
+	queryEscape,
+	type ActivityRow
+} from '#lib/features/social/boards/boards.js';
 import {
 	boardNotificationSettings,
 	boardsFailure,

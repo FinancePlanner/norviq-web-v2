@@ -23,9 +23,18 @@
 			class="portfolio-form mt-6 space-y-6"
 			method="POST"
 			action="/expenses/partner"
-			use:enhance={panelEnhance<PartnerFormVM>((next) => (vm = next), (_, msg) => (vm = { ...vm, error: msg || 'Could not save partner profile.' }))}
+			use:enhance={panelEnhance<PartnerFormVM>(
+				(next) => (vm = next),
+				(_, msg) => (vm = { ...vm, error: msg || 'Could not save partner profile.' })
+			)}
 		>
-			<Field id="partner-name" name="display_name" label="Display name" value={vm.displayName} wrapperClass="space-y-2" />
+			<Field
+				id="partner-name"
+				name="display_name"
+				label="Display name"
+				value={vm.displayName}
+				wrapperClass="space-y-2"
+			/>
 			<Field
 				id="partner-default-share"
 				name="default_share_percent"
@@ -39,7 +48,8 @@
 				aria-describedby="partner-default-share-hint"
 			/>
 			<p id="partner-default-share-hint" class="text-sm text-muted-foreground">
-				New shared items start at this split. Leave blank to keep starting them at 100%. Existing items are not changed.
+				New shared items start at this split. Leave blank to keep starting them at 100%. Existing
+				items are not changed.
 			</p>
 			<div class="portfolio-form-actions">
 				<CancelButton />

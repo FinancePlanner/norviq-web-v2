@@ -5,7 +5,10 @@
 	import type { Option } from '#lib/components/norviq/types.js';
 	import type { PortfolioListSummary } from './types.js';
 
-	let { portfolios, onsubmitted }: { portfolios: PortfolioListSummary[]; onsubmitted?: () => void } = $props();
+	let {
+		portfolios,
+		onsubmitted
+	}: { portfolios: PortfolioListSummary[]; onsubmitted?: () => void } = $props();
 
 	const goalTypes: Option[] = [
 		{ value: 'financial_independence', label: 'Financial independence' },
@@ -21,7 +24,9 @@
 		{ value: 'aggressive', label: 'Aggressive · 8%' }
 	];
 	// goalPortfolioOptions: no blank entry, the field is required.
-	const portfolioOptions = $derived(portfolios.map((p): Option => ({ value: p.id, label: p.name })));
+	const portfolioOptions = $derived(
+		portfolios.map((p): Option => ({ value: p.id, label: p.name }))
+	);
 </script>
 
 <form
@@ -36,8 +41,20 @@
 	})}
 >
 	<div class="grid gap-4 sm:grid-cols-2">
-		<Field name="name" label="Goal name" required class="mt-2 w-full" wrapperClass="block text-sm font-medium sm:col-span-2" />
-		<SelectField name="goalType" label="Goal type" class="mt-2 w-full" wrapperClass="block text-sm font-medium" options={goalTypes} />
+		<Field
+			name="name"
+			label="Goal name"
+			required
+			class="mt-2 w-full"
+			wrapperClass="block text-sm font-medium sm:col-span-2"
+		/>
+		<SelectField
+			name="goalType"
+			label="Goal type"
+			class="mt-2 w-full"
+			wrapperClass="block text-sm font-medium"
+			options={goalTypes}
+		/>
 		<SelectField
 			name="riskProfile"
 			label="Risk profile"
@@ -55,7 +72,14 @@
 			min="1"
 			step="1"
 		/>
-		<Field name="targetDate" label="Target date" type="date" required class="mt-2 w-full" wrapperClass="block text-sm font-medium" />
+		<Field
+			name="targetDate"
+			label="Target date"
+			type="date"
+			required
+			class="mt-2 w-full"
+			wrapperClass="block text-sm font-medium"
+		/>
 		<Field
 			name="startingCapital"
 			label="Starting capital"
@@ -103,7 +127,8 @@
 		/>
 	</div>
 	<div class="rounded-lg bg-black/5 p-4 text-sm text-muted-foreground dark:bg-white/5">
-		Return assumptions map to the selected risk profile. Target amounts are nominal. No AI is used in this calculation.
+		Return assumptions map to the selected risk profile. Target amounts are nominal. No AI is used
+		in this calculation.
 	</div>
 	<SubmitButton>Create goal</SubmitButton>
 </form>

@@ -70,12 +70,23 @@ export function build(input: Input): Links {
 	if (input.disclaimer) caption += '\n' + input.disclaimer;
 
 	return {
-		x: 'https://x.com/intent/post?text=' + queryEscape(input.title + cashtags) + '&url=' + queryEscape(tag(input.canonical, 'x')),
-		linkedIn: 'https://www.linkedin.com/sharing/share-offsite/?url=' + queryEscape(tag(input.canonical, 'linkedin')),
-		reddit: 'https://www.reddit.com/submit?url=' + queryEscape(tag(input.canonical, 'reddit')) + '&title=' + escapeSpaces(input.title),
+		x:
+			'https://x.com/intent/post?text=' +
+			queryEscape(input.title + cashtags) +
+			'&url=' +
+			queryEscape(tag(input.canonical, 'x')),
+		linkedIn:
+			'https://www.linkedin.com/sharing/share-offsite/?url=' +
+			queryEscape(tag(input.canonical, 'linkedin')),
+		reddit:
+			'https://www.reddit.com/submit?url=' +
+			queryEscape(tag(input.canonical, 'reddit')) +
+			'&title=' +
+			escapeSpaces(input.title),
 		// wa.me takes the whole message in one parameter; the link goes last so
 		// WhatsApp unfurls it into a preview.
-		whatsApp: 'https://wa.me/?text=' + escapeSpaces(input.title + ' ' + tag(input.canonical, 'whatsapp')),
+		whatsApp:
+			'https://wa.me/?text=' + escapeSpaces(input.title + ' ' + tag(input.canonical, 'whatsapp')),
 		copy: tag(input.canonical, 'copy'),
 		discordText: discord,
 		instagramCaption: caption

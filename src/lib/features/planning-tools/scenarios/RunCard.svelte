@@ -73,7 +73,11 @@
 		<div class="h-full rounded-full bg-success" style="width: {formatFloat(progress, 1)}%"></div>
 	</div>
 	{#if active}
-		<NativeButton class="mt-4 text-sm font-medium text-danger" disabled={cancelling} onclick={cancel}>Cancel run</NativeButton>
+		<NativeButton
+			class="mt-4 text-sm font-medium text-danger"
+			disabled={cancelling}
+			onclick={cancel}>Cancel run</NativeButton
+		>
 	{/if}
 	{#if run.errorMessage != null}
 		<p class="mt-4 text-sm text-danger">{run.errorMessage}</p>
@@ -81,19 +85,38 @@
 	{#if run.result != null}
 		{@const result = run.result}
 		<div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
-			{@render metric('Portfolio Δ', formatOptionalPercent(optionalNumber(result, 'portfolio_change_percent')))}
-			{@render metric('Max drawdown', formatOptionalPercent(optionalNumber(result, 'maximum_drawdown')))}
-			{@render metric('Goal delay', formatOptionalMonths(optionalNumber(result, 'goal_delay_months')))}
-			{@render metric('Contribution Δ', formatOptionalMoney(optionalNumber(result, 'contribution_delta')))}
+			{@render metric(
+				'Portfolio Δ',
+				formatOptionalPercent(optionalNumber(result, 'portfolio_change_percent'))
+			)}
+			{@render metric(
+				'Max drawdown',
+				formatOptionalPercent(optionalNumber(result, 'maximum_drawdown'))
+			)}
+			{@render metric(
+				'Goal delay',
+				formatOptionalMonths(optionalNumber(result, 'goal_delay_months'))
+			)}
+			{@render metric(
+				'Contribution Δ',
+				formatOptionalMoney(optionalNumber(result, 'contribution_delta'))
+			)}
 			{@render metric('Recovery', formatOptionalMonths(optionalNumber(result, 'recovery_months')))}
-			{@render metric('Expense cut', formatOptionalMoney(optionalNumber(result, 'expense_impact_monthly')))}
+			{@render metric(
+				'Expense cut',
+				formatOptionalMoney(optionalNumber(result, 'expense_impact_monthly'))
+			)}
 		</div>
-		<a class="mt-4 inline-flex text-sm font-medium text-success" href={'/scenarios/runs/' + id + '/report.pdf'} data-sveltekit-reload
-			>Download private PDF</a
+		<a
+			class="mt-4 inline-flex text-sm font-medium text-success"
+			href={'/scenarios/runs/' + id + '/report.pdf'}
+			data-sveltekit-reload>Download private PDF</a
 		>
 		<details class="mt-4">
 			<summary class="cursor-pointer text-sm font-medium">Inspect result</summary>
-			<pre class="mt-3 max-h-80 overflow-auto rounded-lg bg-black/5 p-4 text-xs">{resultJSON(run.result)}</pre>
+			<pre class="mt-3 max-h-80 overflow-auto rounded-lg bg-black/5 p-4 text-xs">{resultJSON(
+					run.result
+				)}</pre>
 		</details>
 	{/if}
 </article>

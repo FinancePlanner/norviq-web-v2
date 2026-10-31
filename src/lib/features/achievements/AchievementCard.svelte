@@ -5,11 +5,18 @@
 	import PinOff from '@lucide/svelte/icons/pin-off';
 	import { Icon, SecondarySubmitButton } from '#lib/components/norviq/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
-	import { cardStateClass, isHidden, tierLabelID, type CardViewModel, type TierPip } from './viewmodel.js';
+	import {
+		cardStateClass,
+		isHidden,
+		tierLabelID,
+		type CardViewModel,
+		type TierPip
+	} from './viewmodel.js';
 
 	let { card }: { card: CardViewModel } = $props();
 
-	const tierAria = (pip: TierPip) => t(tierLabelID(pip.tier)) + ', ' + (pip.earned ? t('earned') : t('not yet earned'));
+	const tierAria = (pip: TierPip) =>
+		t(tierLabelID(pip.tier)) + ', ' + (pip.earned ? t('earned') : t('not yet earned'));
 	// templUI progress: indicator width = value / max (max <= 0 → 100), clamped.
 	const percent = $derived.by(() => {
 		const max = card.target > 0 ? card.target : 100;
@@ -25,7 +32,9 @@
 		<div class="min-w-0 flex-1">
 			{#if isHidden(card)}
 				<h3 class="text-body font-semibold">???</h3>
-				<p class="mt-1 text-subhead text-muted-foreground">{t('A hidden achievement. Keep exploring to find it.')}</p>
+				<p class="mt-1 text-subhead text-muted-foreground">
+					{t('A hidden achievement. Keep exploring to find it.')}
+				</p>
 			{:else}
 				<h3 class="text-body font-semibold">{card.title}</h3>
 				<p class="mt-1 text-subhead text-muted-foreground">{card.description}</p>
@@ -35,7 +44,10 @@
 	{#if card.tiers.length > 0}
 		<ul class="achievement-pips mt-3" aria-label={t('Tiers')}>
 			{#each card.tiers as pip (pip.tier)}
-				<li class={['achievement-pip achievement-pip-' + pip.tier, pip.earned && 'is-earned']} aria-label={tierAria(pip)}>
+				<li
+					class={['achievement-pip achievement-pip-' + pip.tier, pip.earned && 'is-earned']}
+					aria-label={tierAria(pip)}
+				>
 					{t(tierLabelID(pip.tier))}
 				</li>
 			{/each}
@@ -43,9 +55,19 @@
 	{/if}
 	{#if card.showProgress}
 		<div class="mt-3">
-			<div class="w-full" aria-valuemin="0" aria-valuemax={card.target} aria-valuenow={card.current} role="progressbar">
+			<div
+				class="w-full"
+				aria-valuemin="0"
+				aria-valuemax={card.target}
+				aria-valuenow={card.current}
+				role="progressbar"
+			>
 				<div class="w-full overflow-hidden rounded-full bg-secondary">
-					<div data-tui-progress-indicator class="rounded-full transition-all h-1 bg-primary" style:width="{percent}%"></div>
+					<div
+						data-tui-progress-indicator
+						class="h-1 rounded-full bg-primary transition-all"
+						style:width="{percent}%"
+					></div>
 				</div>
 			</div>
 			<p class="mt-1 text-footnote text-muted-foreground">{card.current} / {card.target}</p>

@@ -8,4 +8,10 @@
 </script>
 
 <GroupsMeta title="Groups - Norviq" />
-<HomeView groups={data.groups} invitations={data.invitations} canDiscover={data.canDiscover} notice={data.notice} error={data.error} />
+<HomeView
+	groups={data.groups}
+	invitations={data.invitations}
+	canDiscover={data.canDiscover}
+	notice={data.notice}
+	error={data.error}
+/>

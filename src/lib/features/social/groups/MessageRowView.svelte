@@ -12,7 +12,12 @@
 		chat,
 		showDay = true,
 		ondeleted
-	}: { row: MessageRow; chat: string; showDay?: boolean; ondeleted?: (row: MessageRow) => void } = $props();
+	}: {
+		row: MessageRow;
+		chat: string;
+		showDay?: boolean;
+		ondeleted?: (row: MessageRow) => void;
+	} = $props();
 
 	let reported = $state(false);
 	const reasonOptions = reportReasons.map((r) => ({ value: r.value, label: r.label }));
@@ -52,14 +57,23 @@
 </script>
 
 {#if row.dayLabel && showDay}
-	<li class="groups-day" data-groups-day={row.stamp.slice(0, 10)} role="separator"><span>{row.dayLabel}</span></li>
+	<li class="groups-day" data-groups-day={row.stamp.slice(0, 10)} role="separator">
+		<span>{row.dayLabel}</span>
+	</li>
 {/if}
 {#if row.newDivider}
-	<li class="groups-new-divider" data-groups-new-divider role="separator"><span>New messages</span></li>
+	<li class="groups-new-divider" data-groups-new-divider role="separator">
+		<span>New messages</span>
+	</li>
 {/if}
 <li
 	id={'msg-' + row.seq}
-	class={['groups-message', row.continued && 'is-continued', row.own && 'is-own', row.deleted && 'is-deleted']}
+	class={[
+		'groups-message',
+		row.continued && 'is-continued',
+		row.own && 'is-own',
+		row.deleted && 'is-deleted'
+	]}
 	data-seq={row.seq}
 	data-message-id={row.id}
 	data-client-id={row.clientId}
@@ -77,7 +91,7 @@
 			</p>
 		{/if}
 		{#if row.deleted}
-			<p class="groups-message-text italic text-muted-foreground">Message deleted</p>
+			<p class="groups-message-text text-muted-foreground italic">Message deleted</p>
 		{:else}
 			<p class="groups-message-text">
 				{#each row.segments as segment, i (i)}{#if segment.ticker}<a
@@ -105,11 +119,25 @@
 				{/if}
 				{#if row.canReport}
 					{#if reported}
-						<p class="p-2 text-xs text-muted-foreground" role="status">Thanks. A person will review it.</p>
+						<p class="p-2 text-xs text-muted-foreground" role="status">
+							Thanks. A person will review it.
+						</p>
 					{:else}
-						<form method="post" action={'/groups/m/' + row.id + '/report'} class="space-y-2 p-2" onsubmit={report}>
-							<label class="text-xs font-semibold text-muted-foreground" for={'report-' + row.id}>Report</label>
-							<NativeSelect id={'report-' + row.id} name="reason" class="field-input text-xs" options={reasonOptions} />
+						<form
+							method="post"
+							action={'/groups/m/' + row.id + '/report'}
+							class="space-y-2 p-2"
+							onsubmit={report}
+						>
+							<label class="text-xs font-semibold text-muted-foreground" for={'report-' + row.id}
+								>Report</label
+							>
+							<NativeSelect
+								id={'report-' + row.id}
+								name="reason"
+								class="field-input text-xs"
+								options={reasonOptions}
+							/>
 							<NativeButton type="submit" class="groups-menu-item">
 								<Icon name="flag" class="h-4 w-4" />
 								Send report

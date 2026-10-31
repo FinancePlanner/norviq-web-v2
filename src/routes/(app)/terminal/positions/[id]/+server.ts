@@ -1,6 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { deletePosition, terminalID, updatePosition } from '#lib/features/planning-tools/terminal/terminal.server.js';
+import {
+	deletePosition,
+	terminalID,
+	updatePosition
+} from '#lib/features/planning-tools/terminal/terminal.server.js';
 
 // PATCH /terminal/positions/{id} (TerminalPositionUpdate): one cell edit or an
 // AI Accept; answers a RowEditResult. DELETE (TerminalPositionDelete) answers

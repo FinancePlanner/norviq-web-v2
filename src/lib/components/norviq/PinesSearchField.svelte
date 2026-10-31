@@ -68,7 +68,12 @@
 		/>
 	</div>
 	<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -- results are links; the click only closes the panel -->
-	<div id={resultsId} class="pines-search-results" style:display={open ? undefined : 'none'} onclick={() => (open = false)}>
+	<div
+		id={resultsId}
+		class="pines-search-results"
+		style:display={open ? undefined : 'none'}
+		onclick={() => (open = false)}
+	>
 		{@render results?.(query)}
 	</div>
 </div>

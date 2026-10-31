@@ -10,7 +10,9 @@
 	let { vm }: { vm: HoldingsViewModel } = $props();
 
 	// charts.WealthLine("portfolio-chart", labels, values), as the Go loader built it.
-	const chart = $derived(vm.chartLabels.length > 0 ? wealthLine('portfolio-chart', vm.chartLabels, vm.chartValues) : null);
+	const chart = $derived(
+		vm.chartLabels.length > 0 ? wealthLine('portfolio-chart', vm.chartLabels, vm.chartValues) : null
+	);
 
 	/** trendSentiment: the sign the server already formatted into the label. */
 	function trendSentiment(label: string): '' | 'positive' | 'negative' {
@@ -39,7 +41,9 @@
 		{#each vm.timeRanges as r (r)}
 			<a
 				href={'/portfolio?range=' + r}
-				class={vm.selectedTimeRange === r ? 'segmented-link segmented-link-active' : 'segmented-link'}
+				class={vm.selectedTimeRange === r
+					? 'segmented-link segmented-link-active'
+					: 'segmented-link'}
 				aria-current={vm.selectedTimeRange === r ? 'page' : undefined}>{r}</a
 			>
 		{/each}

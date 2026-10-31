@@ -23,8 +23,8 @@
 	<div class="app-page-content vigil-document-page boards-page">
 		<vigil.ModernPageHeader title="Boards" />
 		<p class="glass-card dash-panel max-w-xl p-6 text-sm">
-			Your access to Norviq Boards has been removed. The rest of Norviq works as usual. If you think this is a mistake, write
-			to us from Settings → Feedback.
+			Your access to Norviq Boards has been removed. The rest of Norviq works as usual. If you think
+			this is a mistake, write to us from Settings → Feedback.
 		</p>
 	</div>
 {:else}

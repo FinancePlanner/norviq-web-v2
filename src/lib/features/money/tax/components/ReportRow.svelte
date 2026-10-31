@@ -7,12 +7,15 @@
 
 	let { report, isPro }: { report: TaxReportResponse; isPro: boolean } = $props();
 
-	const generating = (status: string) => status === 'pending' || status === 'retry' || status === 'generating';
+	const generating = (status: string) =>
+		status === 'pending' || status === 'retry' || status === 'generating';
 
 	const query = createQuery(() => ({
 		queryKey: ['tax-report', report.id],
 		queryFn: async (): Promise<TaxReportResponse> => {
-			const res = await fetch(`/api/v1/tax/reports/${report.id}`, { headers: { accept: 'application/json' } });
+			const res = await fetch(`/api/v1/tax/reports/${report.id}`, {
+				headers: { accept: 'application/json' }
+			});
 			if (!res.ok) throw new Error(`report status ${res.status}`);
 			return (await res.json()) as TaxReportResponse;
 		},
@@ -30,7 +33,9 @@
 		<p class="text-sm text-muted-foreground">{current.format} · {current.status}</p>
 	</div>
 	{#if current.status === 'ready' && isPro}
-		<a class="btn-secondary" href="/tax/reports/{current.id}/download" data-sveltekit-reload>Download</a>
+		<a class="btn-secondary" href="/tax/reports/{current.id}/download" data-sveltekit-reload
+			>Download</a
+		>
 	{:else if current.status === 'ready'}
 		<span class="text-sm text-muted-foreground">Pro download</span>
 	{:else if generating(current.status)}

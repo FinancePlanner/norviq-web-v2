@@ -2,7 +2,11 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireAchievements } from '#lib/features/social/gates.server.js';
 import { redirectWith } from '#lib/features/settings-admin/social/social.server.js';
-import { achievementsDo, parseShowcaseItems, showcaseErrorMessage } from '#lib/features/achievements/achievements.server.js';
+import {
+	achievementsDo,
+	parseShowcaseItems,
+	showcaseErrorMessage
+} from '#lib/features/achievements/achievements.server.js';
 
 // POST /achievements/showcase — handlers.AchievementsShowcase. The form
 // carries the full desired list, so a pin appends and an unpin omits without

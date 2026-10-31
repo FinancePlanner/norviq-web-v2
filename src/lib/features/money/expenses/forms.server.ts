@@ -1,8 +1,22 @@
 import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
 import { formatFloat } from '#lib/format.js';
-import { BUDGET_PILLARS, normalizeShares, mergePillarKeys, resolvePillarKey, resolvePillars } from '../pillars.js';
-import { categoryURL, expensesPlannerURL, isISODate, monthQueryString, monthStartDate, parseExpensesMonth, type Month } from './month.js';
+import {
+	BUDGET_PILLARS,
+	normalizeShares,
+	mergePillarKeys,
+	resolvePillarKey,
+	resolvePillars
+} from '../pillars.js';
+import {
+	categoryURL,
+	expensesPlannerURL,
+	isISODate,
+	monthQueryString,
+	monthStartDate,
+	parseExpensesMonth,
+	type Month
+} from './month.js';
 import {
 	formatSharePercent,
 	getPartner,
@@ -30,7 +44,10 @@ async function partnerDefaults(event: RequestEvent) {
 	const partner = await getPartner(event);
 	return {
 		hasPartner: !!partner?.displayName?.trim(),
-		share: partner?.defaultUserSharePercent != null ? formatSharePercent(partner.defaultUserSharePercent) : null
+		share:
+			partner?.defaultUserSharePercent != null
+				? formatSharePercent(partner.defaultUserSharePercent)
+				: null
 	};
 }
 
@@ -47,7 +64,11 @@ function parseSplit(fd: FormData): { mode: 'personal' | 'shared'; share: number 
 
 // ---------- record expense ----------
 
-export async function loadRecordExpenseFormVM(event: RequestEvent, monthQuery: string, recurringID: string): Promise<VM.RecordExpenseFormVM> {
+export async function loadRecordExpenseFormVM(
+	event: RequestEvent,
+	monthQuery: string,
+	recurringID: string
+): Promise<VM.RecordExpenseFormVM> {
 	const [categories, partner] = await Promise.all([listCategories(event), partnerDefaults(event)]);
 	const vm: VM.RecordExpenseFormVM = {
 		monthQuery: monthQuery.trim(),
@@ -147,7 +168,9 @@ export async function submitRecordExpense(event: RequestEvent) {
 
 // ---------- salary ----------
 
-function salaryShareFields(shares: Record<string, number> | null | undefined): VM.SalaryFormVM['shares'] {
+function salaryShareFields(
+	shares: Record<string, number> | null | undefined
+): VM.SalaryFormVM['shares'] {
 	const normalized = normalizeShares(shares);
 	return resolvePillars(...mergePillarKeys(normalized)).map((p) => ({
 		key: p.key,
@@ -157,9 +180,18 @@ function salaryShareFields(shares: Record<string, number> | null | undefined): V
 	}));
 }
 
-export async function loadSalaryFormVM(event: RequestEvent, monthRaw: string | null): Promise<VM.SalaryFormVM> {
+export async function loadSalaryFormVM(
+	event: RequestEvent,
+	monthRaw: string | null
+): Promise<VM.SalaryFormVM> {
 	const month = parseExpensesMonth(monthRaw);
-	const vm: VM.SalaryFormVM = { monthQuery: monthQueryString(month), snapshotID: '', salary: '', shares: salaryShareFields(null), error: '' };
+	const vm: VM.SalaryFormVM = {
+		monthQuery: monthQueryString(month),
+		snapshotID: '',
+		salary: '',
+		shares: salaryShareFields(null),
+		error: ''
+	};
 	let snap: BudgetSnapshot | null = null;
 	try {
 		snap = await getSnapshot(event, month);
@@ -230,7 +262,8 @@ export async function loadPartnerFormVM(event: RequestEvent): Promise<VM.Partner
 	const partner = await getPartner(event);
 	if (partner) {
 		if (partner.displayName != null) vm.displayName = partner.displayName.trim();
-		if (partner.defaultUserSharePercent != null) vm.defaultSharePercent = formatSharePercent(partner.defaultUserSharePercent);
+		if (partner.defaultUserSharePercent != null)
+			vm.defaultSharePercent = formatSharePercent(partner.defaultUserSharePercent);
 	}
 	return vm;
 }
@@ -238,14 +271,21 @@ export async function loadPartnerFormVM(event: RequestEvent): Promise<VM.Partner
 export async function submitPartner(event: RequestEvent) {
 	const fd = await event.request.formData();
 	const renderError = (msg: string) =>
-		fail(400, { vm: { error: msg, displayName: rawField(fd, 'display_name'), defaultSharePercent: rawField(fd, 'default_share_percent') } });
+		fail(400, {
+			vm: {
+				error: msg,
+				displayName: rawField(fd, 'display_name'),
+				defaultSharePercent: rawField(fd, 'default_share_percent')
+			}
+		});
 	const name = field(fd, 'display_name');
 	// Blank clears the household default (nil ≠ 0); outside 0–100 is rejected.
 	const rawShare = field(fd, 'default_share_percent');
 	let defaultShare: number | undefined;
 	if (rawShare) {
 		const v = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(rawShare) ? Number(rawShare) : NaN;
-		if (!Number.isFinite(v) || v < 0 || v > 100) return renderError('Default share must be a whole number between 0 and 100.');
+		if (!Number.isFinite(v) || v < 0 || v > 100)
+			return renderError('Default share must be a whole number between 0 and 100.');
 		defaultShare = v;
 	}
 	const body: Record<string, unknown> = { displayName: name };
@@ -260,7 +300,11 @@ export async function submitPartner(event: RequestEvent) {
 
 // ---------- plan items ----------
 
-export async function loadPlanItemFormVM(event: RequestEvent, monthRaw: string | null, itemID: string): Promise<VM.PlanItemFormVM> {
+export async function loadPlanItemFormVM(
+	event: RequestEvent,
+	monthRaw: string | null,
+	itemID: string
+): Promise<VM.PlanItemFormVM> {
 	const month = parseExpensesMonth(monthRaw);
 	const vm: VM.PlanItemFormVM = {
 		monthQuery: monthQueryString(month),
@@ -275,7 +319,10 @@ export async function loadPlanItemFormVM(event: RequestEvent, monthRaw: string |
 		isEdit: false,
 		error: ''
 	};
-	const [partner, snap] = await Promise.all([partnerDefaults(event), getSnapshot(event, month).catch(() => null)]);
+	const [partner, snap] = await Promise.all([
+		partnerDefaults(event),
+		getSnapshot(event, month).catch(() => null)
+	]);
 	vm.hasPartner = partner.hasPartner;
 	if (partner.share !== null) vm.userSharePercent = partner.share;
 	if (snap) vm.snapshotID = snap.id;
@@ -350,7 +397,14 @@ export async function submitPlanItem(event: RequestEvent, itemID: string) {
 			return renderError('Set up your monthly budget first, then add plan items.');
 		}
 	}
-	const body = { snapshotId: snapshotID, title, plannedAmount: amount, pillar, splitMode: split.mode, userSharePercent: split.share };
+	const body = {
+		snapshotId: snapshotID,
+		title,
+		plannedAmount: amount,
+		pillar,
+		splitMode: split.mode,
+		userSharePercent: split.share
+	};
 
 	if (!itemID) {
 		try {
@@ -384,7 +438,14 @@ export async function deletePlanItem(event: RequestEvent, itemID: string) {
 export async function submitCategory(event: RequestEvent) {
 	const fd = await event.request.formData();
 	const renderError = (msg: string) =>
-		fail(400, { vm: { monthQuery: field(fd, 'month'), name: field(fd, 'name'), pillar: field(fd, 'pillar'), error: msg } satisfies VM.CategoryFormVM });
+		fail(400, {
+			vm: {
+				monthQuery: field(fd, 'month'),
+				name: field(fd, 'name'),
+				pillar: field(fd, 'pillar'),
+				error: msg
+			} satisfies VM.CategoryFormVM
+		});
 	const monthQuery = field(fd, 'month');
 	const name = field(fd, 'name');
 	const pillar = field(fd, 'pillar');
@@ -470,7 +531,14 @@ export async function submitRecurring(event: RequestEvent, templateID: string) {
 	const pillar = resolvePillarKey(field(fd, 'pillar'))?.key ?? BUDGET_PILLARS[0].key;
 	const frequency = field(fd, 'frequency').toLowerCase() === 'weekly' ? 'weekly' : 'monthly';
 	const split = parseSplit(fd);
-	const body: Record<string, unknown> = { title, amount, pillar, frequency, splitMode: split.mode, userSharePercent: split.share };
+	const body: Record<string, unknown> = {
+		title,
+		amount,
+		pillar,
+		frequency,
+		splitMode: split.mode,
+		userSharePercent: split.share
+	};
 	const categoryID = field(fd, 'category_id');
 	if (categoryID && isUUID(categoryID)) body.categoryId = categoryID;
 

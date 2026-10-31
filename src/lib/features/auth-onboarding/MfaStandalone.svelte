@@ -11,10 +11,17 @@
 	let mfa = $state<MFAModalState>(untrack(() => initial ?? emptyMFAState()));
 </script>
 
-<AuthMeta title="Sign in - Norviq" keywords="Norviq sign in" description="Securely access your Norviq account." />
+<AuthMeta
+	title="Sign in - Norviq"
+	keywords="Norviq sign in"
+	description="Securely access your Norviq account."
+/>
 <div class="auth-container auth-container-wide">
 	<div class="flex items-center justify-center p-4">
-		<div id="mfa-modal-content" class="vigil-modal-panel w-full max-w-md rounded-xl bg-[var(--color-card-bg)] p-6 shadow-2xl">
+		<div
+			id="mfa-modal-content"
+			class="vigil-modal-panel w-full max-w-md rounded-xl bg-[var(--color-card-bg)] p-6 shadow-2xl"
+		>
 			<MfaModal bind:mfa onclose={() => goto('/login')} />
 		</div>
 	</div>

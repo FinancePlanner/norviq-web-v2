@@ -17,7 +17,10 @@ import { Marked, type Tokens } from 'marked';
 const cashtag = /(^|[\s(])\$([A-Z][A-Z0-9.-]{0,9})\b/g;
 
 function escapeHTML(s: string): string {
-	return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+	return s.replace(
+		/[&<>"']/g,
+		(c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!
+	);
 }
 
 const ALLOWED_SCHEMES = new Set(['http', 'https', 'mailto']);
@@ -126,7 +129,8 @@ const marked = new Marked({
 		link({ href, tokens, text }) {
 			linkDepth++;
 			try {
-				const inner = tokens && tokens.length > 0 ? this.parser.parseInline(tokens) : escapeHTML(text);
+				const inner =
+					tokens && tokens.length > 0 ? this.parser.parseInline(tokens) : escapeHTML(text);
 				return anchor(href, inner);
 			} finally {
 				linkDepth--;

@@ -3,8 +3,16 @@ import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
 import { apiFetch } from '#lib/server/api.js';
-import { AI_CONSENT_REQUIRED, aiConsentRequiredJSON, aiConsentReturnPath } from '#lib/features/dashboard/ai-consent.server.js';
-import { aiConsentRefusal, formOf, parseUUID } from '#lib/features/dashboard/assistant/assistant.server.js';
+import {
+	AI_CONSENT_REQUIRED,
+	aiConsentRequiredJSON,
+	aiConsentReturnPath
+} from '#lib/features/dashboard/ai-consent.server.js';
+import {
+	aiConsentRefusal,
+	formOf,
+	parseUUID
+} from '#lib/features/dashboard/assistant/assistant.server.js';
 
 // POST /assistant/conversations/{id}/stream (handlers.AssistantStreamTurn).
 // The composer posts its form here; this turns it into the backend's JSON
@@ -24,10 +32,16 @@ export const POST: RequestHandler = async (event) => {
 
 	let upstream: Response;
 	try {
-		upstream = await apiFetch(event, 'POST', `/v1/ai/assistant/conversations/${id}/stream`, JSON.stringify({ content }), {
-			headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
-			signal: event.request.signal
-		});
+		upstream = await apiFetch(
+			event,
+			'POST',
+			`/v1/ai/assistant/conversations/${id}/stream`,
+			JSON.stringify({ content }),
+			{
+				headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+				signal: event.request.signal
+			}
+		);
 	} catch {
 		return text('Assistant is temporarily unavailable', { status: 502 });
 	}
@@ -40,7 +54,9 @@ export const POST: RequestHandler = async (event) => {
 			/* not JSON */
 		}
 		if (reason === AI_CONSENT_REQUIRED) {
-			return json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), { status: 403 });
+			return json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), {
+				status: 403
+			});
 		}
 		return text('Assistant is temporarily unavailable', { status: 403 });
 	}

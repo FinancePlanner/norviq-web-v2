@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { ifElse, ifValue, isUnsafeRedirect, mergeAttributes, randomID, safeRedirect, safeRedirectPath, sortTimeSeries, twMerge } from './helpers.js';
+import {
+	ifElse,
+	ifValue,
+	isUnsafeRedirect,
+	mergeAttributes,
+	randomID,
+	safeRedirect,
+	safeRedirectPath,
+	sortTimeSeries,
+	twMerge
+} from './helpers.js';
 
 describe('safe redirect', () => {
 	it('allows local paths and the empty path', () => {
@@ -31,7 +41,10 @@ it('sortTimeSeries sorts ascending in place', () => {
 
 // Port of utils/templui_test.go (concurrency is moot in JS; the merge result is not).
 it('twMerge resolves conflicts', () => {
-	const merged = twMerge('inline-flex items-center bg-red-500 px-2', 'bg-blue-500 px-4 hover:bg-slate-900');
+	const merged = twMerge(
+		'inline-flex items-center bg-red-500 px-2',
+		'bg-blue-500 px-4 hover:bg-slate-900'
+	);
 	expect(merged).toContain('bg-blue-500');
 	expect(merged).toContain('px-4');
 	expect(merged).not.toContain('bg-red-500');

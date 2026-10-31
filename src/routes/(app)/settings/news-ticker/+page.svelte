@@ -31,7 +31,10 @@
 			{/if}
 		</div>
 		{#if !data.configured}
-			<div class="rounded-lg border border-[var(--color-border)] px-4 py-3 text-sm text-muted-foreground" role="note">
+			<div
+				class="rounded-lg border border-[var(--color-border)] px-4 py-3 text-sm text-muted-foreground"
+				role="note"
+			>
 				{t('The news ticker is not configured on this server.')}
 			</div>
 		{:else}
@@ -49,7 +52,9 @@
 						name="enabled"
 						value="true"
 						label={t('Show the ticker')}
-						description={t('Turn it off and the dashboard strip disappears everywhere you sign in.')}
+						description={t(
+							'Turn it off and the dashboard strip disappears everywhere you sign in.'
+						)}
 						checked={data.enabled}
 					/>
 				</form>

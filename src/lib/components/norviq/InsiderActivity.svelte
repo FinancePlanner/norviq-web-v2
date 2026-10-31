@@ -8,7 +8,9 @@
 {#if vm.present}
 	<div data-market-signal="insider">
 		{#if vm.clusterBuy}
-			<p class="market-insider-cluster mb-3 inline-block rounded-full border px-3 py-1 text-sm font-semibold positive">
+			<p
+				class="market-insider-cluster positive mb-3 inline-block rounded-full border px-3 py-1 text-sm font-semibold"
+			>
 				{vm.clusterBuy}
 			</p>
 		{/if}

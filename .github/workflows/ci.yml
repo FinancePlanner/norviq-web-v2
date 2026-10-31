@@ -15,15 +15,15 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.2
       - run: bun install --frozen-lockfile
       - run: bun run check
+      - run: bun run lint
       # Only the server project: the client and storybook projects need a
-      # browser. `bun run lint` is not gated yet (Prettier was never applied
-      # repo-wide).
+      # browser.
       - run: bunx vitest run --project server
       - run: bun run build
       # After build: the generated types include the built worker's module

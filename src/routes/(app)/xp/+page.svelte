@@ -1,7 +1,12 @@
 <script lang="ts">
 	// Port of xp.templ XPHistoryPage.
 	import { onMount } from 'svelte';
-	import { EmptyStateInline, FormErrorBanner, SecondaryButton, ToastBanner } from '#lib/components/norviq/index.js';
+	import {
+		EmptyStateInline,
+		FormErrorBanner,
+		SecondaryButton,
+		ToastBanner
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { rememberTimezone } from '#lib/features/social/friends/client.js';
@@ -46,7 +51,10 @@
 			{:else}
 				<vigil.InsetList class="xp-history-list">
 					{#each data.events as event (event.id)}
-						<vigil.ListRow title={t(xpEventLabel(event.type))} subtitle={formatDate(event.createdAt)}>
+						<vigil.ListRow
+							title={t(xpEventLabel(event.type))}
+							subtitle={formatDate(event.createdAt)}
+						>
 							{#snippet trailing()}
 								<vigil.RowTrailing value={'+' + event.points + ' XP'} sentiment="positive" />
 							{/snippet}
@@ -57,7 +65,9 @@
 		</vigil.Panel>
 		{#if data.nextCursor}
 			<div class="mt-4">
-				<SecondaryButton href={xpHistoryPath(data.nextCursor)} class="w-auto px-4">{t('Older')}</SecondaryButton>
+				<SecondaryButton href={xpHistoryPath(data.nextCursor)} class="w-auto px-4"
+					>{t('Older')}</SecondaryButton
+				>
 			</div>
 		{/if}
 	{/if}

@@ -19,7 +19,14 @@ function truncatePDF(value: string, max: number): string {
 	return r.slice(0, max - 1).join('') + '...';
 }
 
-function metricBox(pdf: Fpdf, label: string, value: number, currency: string, x: number, y: number) {
+function metricBox(
+	pdf: Fpdf,
+	label: string,
+	value: number,
+	currency: string,
+	x: number,
+	y: number
+) {
 	pdf.setXY(x, y);
 	pdf.setFillColor(245, 247, 249);
 	pdf.roundedRectFilled(x, y, 55, 20, 3);
@@ -79,7 +86,15 @@ export function writeExpensesBudgetPDF(
 		pdf.setY(-13);
 		pdf.setFont('Helvetica', '', 8);
 		pdf.setTextColor(100, 107, 116);
-		pdf.cellFormat(120, 5, 'Planning report only - no money movement or investment execution', '', 0, 'L', false);
+		pdf.cellFormat(
+			120,
+			5,
+			'Planning report only - no money movement or investment execution',
+			'',
+			0,
+			'L',
+			false
+		);
 		pdf.cellFormat(58, 5, `Page ${pdf.pageNo()}`, '', 0, 'R', false);
 	});
 	pdf.addPage();
@@ -88,7 +103,15 @@ export function writeExpensesBudgetPDF(
 	pdf.cellFormat(0, 12, 'Monthly budget report', '', 1, 'L', false);
 	pdf.setFont('Helvetica', '', 12);
 	pdf.setTextColor(80, 89, 99);
-	pdf.cellFormat(0, 7, monthLabel(month) + '  /  ' + drift.currencyCode.toUpperCase(), '', 1, 'L', false);
+	pdf.cellFormat(
+		0,
+		7,
+		monthLabel(month) + '  /  ' + drift.currencyCode.toUpperCase(),
+		'',
+		1,
+		'L',
+		false
+	);
 	pdf.ln(5);
 
 	metricBox(pdf, 'Expense target', drift.totalTarget, drift.currencyCode, 16, 48);
@@ -162,7 +185,15 @@ export function writeExpensesBudgetPDF(
 		pdf.cellFormat(0, 7, 'No target reallocations recorded for this month.', '', 1, 'L', false);
 	}
 	for (const event of filtered) {
-		pdf.cellFormat(0, 7, `${pdfMoney(event.freedCapital, drift.currencyCode)} moved into the Investments target`, '', 1, 'L', false);
+		pdf.cellFormat(
+			0,
+			7,
+			`${pdfMoney(event.freedCapital, drift.currencyCode)} moved into the Investments target`,
+			'',
+			1,
+			'L',
+			false
+		);
 	}
 
 	pdf.ln(8);

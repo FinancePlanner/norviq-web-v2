@@ -21,8 +21,13 @@
 		form.classList.add('htmx-request');
 		try {
 			const res = await postForm(form);
-			const body = (await res.json().catch(() => null)) as { status?: string; error?: string } | null;
-			override = body?.status ? { status: body.status } : { error: body?.error || t('Could not send the request.') };
+			const body = (await res.json().catch(() => null)) as {
+				status?: string;
+				error?: string;
+			} | null;
+			override = body?.status
+				? { status: body.status }
+				: { error: body?.error || t('Could not send the request.') };
 		} catch {
 			override = { error: t('Could not send the request.') };
 		} finally {
@@ -32,7 +37,9 @@
 </script>
 
 {#if override?.error}
-	<div id={'friend-action-' + user.id} class="text-subhead text-danger" role="alert">{override.error}</div>
+	<div id={'friend-action-' + user.id} class="text-subhead text-danger" role="alert">
+		{override.error}
+	</div>
 {:else}
 	<div id={'friend-action-' + user.id} class="flex items-center">
 		{#if status === Friendship.Friends}

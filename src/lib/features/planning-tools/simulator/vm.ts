@@ -103,7 +103,8 @@ export function newDraft(currency: string): DraftViewModel {
 export const addLeg = (draft: DraftViewModel) => draft.legs.push(emptyLeg());
 
 /** ClaimedBasisPoints: what the legs add up to. */
-export const claimedBasisPoints = (d: Pick<DraftViewModel, 'legs'>) => d.legs.reduce((sum, leg) => sum + leg.targetBasisPoints, 0);
+export const claimedBasisPoints = (d: Pick<DraftViewModel, 'legs'>) =>
+	d.legs.reduce((sum, leg) => sum + leg.targetBasisPoints, 0);
 
 /** CashBasisPoints: the unclaimed remainder, held as cash; never negative. */
 export function cashBasisPoints(d: Pick<DraftViewModel, 'legs'>): number {
@@ -114,15 +115,19 @@ export function cashBasisPoints(d: Pick<DraftViewModel, 'legs'>): number {
 /** IsOverAllocated: the one weight state that blocks a simulation. */
 export const isOverAllocated = (d: Pick<DraftViewModel, 'legs'>) => claimedBasisPoints(d) > 10000;
 
-export const isCloning = (d: Pick<DraftViewModel, 'mode'>) => d.mode === SimulationModeCloneCurrentPortfolio;
+export const isCloning = (d: Pick<DraftViewModel, 'mode'>) =>
+	d.mode === SimulationModeCloneCurrentPortfolio;
 
 export const isBuy = (t: Pick<TradeViewModel, 'side'>) => t.side === 'buy';
 
 /** DeltaBasisPoints: positive when the simulation wants more of a position. */
-export const deltaBasisPoints = (d: Pick<DiffViewModel, 'currentBasisPoints' | 'targetBasisPoints'>) =>
-	d.targetBasisPoints - d.currentBasisPoints;
+export const deltaBasisPoints = (
+	d: Pick<DiffViewModel, 'currentBasisPoints' | 'targetBasisPoints'>
+) => d.targetBasisPoints - d.currentBasisPoints;
 
-export function diffSentiment(d: Pick<DiffViewModel, 'currentBasisPoints' | 'targetBasisPoints'>): 'positive' | 'negative' | '' {
+export function diffSentiment(
+	d: Pick<DiffViewModel, 'currentBasisPoints' | 'targetBasisPoints'>
+): 'positive' | 'negative' | '' {
 	const delta = deltaBasisPoints(d);
 	if (delta > 0) return 'positive';
 	if (delta < 0) return 'negative';
@@ -133,13 +138,16 @@ export function diffSentiment(d: Pick<DiffViewModel, 'currentBasisPoints' | 'tar
 export const percent = (basisPoints: number) => formatFloat(basisPoints / 100, 2) + '%';
 
 /** Money: "USD 12.50". */
-export const money = (value: number, currency: string) => `${currency.toUpperCase()} ${formatFloat(value, 2)}`;
+export const money = (value: number, currency: string) =>
+	`${currency.toUpperCase()} ${formatFloat(value, 2)}`;
 
 /** Quantity: whole numbers bare, else four decimals. */
-export const quantity = (value: number) => (Number.isInteger(value) ? formatFloat(value, 0) : formatFloat(value, 4));
+export const quantity = (value: number) =>
+	Number.isInteger(value) ? formatFloat(value, 0) : formatFloat(value, 4);
 
 /** weightValue: basis points as the percentage the form edits; blank for an unset row. */
-export const weightValue = (basisPoints: number) => (basisPoints === 0 ? '' : formatFloat(basisPoints / 100, -1));
+export const weightValue = (basisPoints: number) =>
+	basisPoints === 0 ? '' : formatFloat(basisPoints / 100, -1);
 
 export const capitalValue = (capital: number) => formatFloat(capital, -1);
 
@@ -213,7 +221,10 @@ export function simulatorUpsertRequest(draft: DraftViewModel): PortfolioSimulati
 }
 
 /** simulatorResultViewModel */
-export function simulatorResultViewModel(result: PortfolioSimulationResult, draft: DraftViewModel): ResultViewModel {
+export function simulatorResultViewModel(
+	result: PortfolioSimulationResult,
+	draft: DraftViewModel
+): ResultViewModel {
 	return {
 		currency: result.simulation?.baseCurrency || draft.baseCurrency,
 		totalCashNeeded: result.totalCashNeeded,

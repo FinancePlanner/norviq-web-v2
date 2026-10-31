@@ -25,7 +25,8 @@ export function validateSignup(
 	if (!mailAddressPattern.test(email)) return 'Enter a valid email address.';
 	// Go's len() counts bytes; a multi-byte password is longer there than in
 	// UTF-16, so count UTF-8 bytes to match.
-	if (new TextEncoder().encode(password).length < 8) return 'Password must be at least 8 characters.';
+	if (new TextEncoder().encode(password).length < 8)
+		return 'Password must be at least 8 characters.';
 	const strength = passwordStrengthError(password);
 	if (strength) return strength;
 	if (password !== confirmPassword) return 'Passwords do not match.';
@@ -147,9 +148,11 @@ export type ParsedOutcome =
 /** api.ParseLoginResponse / ParseOAuthExchangeResponse. */
 export function parseLoginOutcome(body: LoginOutcomeBody | null | undefined): ParsedOutcome {
 	if (!body || typeof body !== 'object') return { kind: 'invalid' };
-	if (body.status === 'authenticated' && body.auth) return { kind: 'authenticated', auth: body.auth };
+	if (body.status === 'authenticated' && body.auth)
+		return { kind: 'authenticated', auth: body.auth };
 	if (body.status === 'mfaRequired') return { kind: 'mfa', mfa: body.mfa ?? null };
-	if (typeof body.token === 'string') return { kind: 'authenticated', auth: body as unknown as AuthResponse };
+	if (typeof body.token === 'string')
+		return { kind: 'authenticated', auth: body as unknown as AuthResponse };
 	return { kind: 'invalid' };
 }
 

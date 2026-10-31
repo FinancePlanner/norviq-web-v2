@@ -18,9 +18,16 @@
 {#if !hidden}
 	<!-- role="dialog" on a <section> is the Go markup, kept for parity. -->
 	<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
-	<section id="ai-consent-card" class="ai-consent-card glass-card p-6" role="dialog" aria-labelledby="ai-consent-title">
+	<section
+		id="ai-consent-card"
+		class="ai-consent-card glass-card p-6"
+		role="dialog"
+		aria-labelledby="ai-consent-title"
+	>
 		<p class="command-metric-label">AI features</p>
-		<h2 id="ai-consent-title" class="mt-2 text-lg font-semibold">Allow Norviq to share data with AI providers?</h2>
+		<h2 id="ai-consent-title" class="mt-2 text-lg font-semibold">
+			Allow Norviq to share data with AI providers?
+		</h2>
 		<div class="mt-4">
 			<AIConsentDisclosure />
 		</div>
@@ -28,7 +35,9 @@
 			<input type="hidden" name="next" value={next} />
 			<NativeButton type="submit" class="btn-primary px-6">Allow</NativeButton>
 			{#if dismissible}
-				<NativeButton class="btn-secondary px-6" onclick={() => (hidden = true)}>Not now</NativeButton>
+				<NativeButton class="btn-secondary px-6" onclick={() => (hidden = true)}
+					>Not now</NativeButton
+				>
 			{:else}
 				<a href={notNowHref} class="btn-secondary px-6">Not now</a>
 			{/if}

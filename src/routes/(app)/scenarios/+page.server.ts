@@ -3,7 +3,10 @@ import {
 	fetchScenarioWorkspace,
 	requireScenarioPlanning
 } from '#lib/features/planning-tools/scenarios/form.server.js';
-import { emptyWorkspace, type ScenarioWorkspace } from '#lib/features/planning-tools/scenarios/types.js';
+import {
+	emptyWorkspace,
+	type ScenarioWorkspace
+} from '#lib/features/planning-tools/scenarios/types.js';
 
 // GET /scenarios → AppHandler.Scenarios (internal/handlers/scenarios.go).
 // Any failed read in the workspace fan-out shows the unavailable banner.

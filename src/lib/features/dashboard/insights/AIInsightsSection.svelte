@@ -26,7 +26,9 @@
 				{#if result.consentRequired}
 					<AIConsentCard next={result.next} dismissible />
 				{:else if result.cards.length === 0}
-					<p class="ai-console-loading">{t('No insights yet. They appear once you have holdings or expenses recorded.')}</p>
+					<p class="ai-console-loading">
+						{t('No insights yet. They appear once you have holdings or expenses recorded.')}
+					</p>
 				{:else}
 					<CommandDeck class="is-2col mt-2">
 						{#each result.cards as card, i (i)}
@@ -64,7 +66,10 @@
 	</div>
 {/snippet}
 
-<Panel class="ai-insights-section ai-console-panel mt-8 rounded-lg p-6" titleID="ai-insights-heading">
+<Panel
+	class="ai-insights-section ai-console-panel mt-8 rounded-lg p-6"
+	titleID="ai-insights-heading"
+>
 	<div class="ai-console-header">
 		<div>
 			<h2 id="ai-insights-heading" class="text-xl font-semibold">{t('Educational insights')}</h2>

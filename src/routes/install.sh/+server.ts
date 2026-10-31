@@ -6,4 +6,6 @@ import script from '#lib/features/public/install.sh?raw';
 // so it never gains a content hash and is never cached immutably. The script
 // is norviq-web internal/server/static/install.sh, copied verbatim.
 export const GET: RequestHandler = () =>
-	new Response(script, { headers: { 'Content-Type': 'text/x-shellscript; charset=utf-8', 'Cache-Control': 'no-cache' } });
+	new Response(script, {
+		headers: { 'Content-Type': 'text/x-shellscript; charset=utf-8', 'Cache-Control': 'no-cache' }
+	});

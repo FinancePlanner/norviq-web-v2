@@ -1,6 +1,7 @@
 <script lang="ts">
 	// templates.AuthLayout <title> + auth.MetaTags(keywords, description).
-	let { title, keywords, description }: { title: string; keywords: string; description: string } = $props();
+	let { title, keywords, description }: { title: string; keywords: string; description: string } =
+		$props();
 </script>
 
 <svelte:head>

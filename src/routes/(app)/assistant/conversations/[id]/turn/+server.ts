@@ -2,8 +2,17 @@ import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
-import { aiConsentRequiredJSON, aiConsentReturnPath, isAIConsentRequired } from '#lib/features/dashboard/ai-consent.server.js';
-import { aiConsentRefusal, assistantTurn, formOf, parseUUID } from '#lib/features/dashboard/assistant/assistant.server.js';
+import {
+	aiConsentRequiredJSON,
+	aiConsentReturnPath,
+	isAIConsentRequired
+} from '#lib/features/dashboard/ai-consent.server.js';
+import {
+	aiConsentRefusal,
+	assistantTurn,
+	formOf,
+	parseUUID
+} from '#lib/features/dashboard/assistant/assistant.server.js';
 
 // POST /assistant/conversations/{id}/turn (handlers.AssistantTurn): one
 // non-streamed turn. Go answered the new Message fragment; this answers its
@@ -21,7 +30,9 @@ export const POST: RequestHandler = async (event) => {
 		return json(await assistantTurn(event, id, content));
 	} catch (err) {
 		if (isAIConsentRequired(err)) {
-			return json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), { status: 403 });
+			return json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), {
+				status: 403
+			});
 		}
 		return text('Assistant is temporarily unavailable', { status: 502 });
 	}

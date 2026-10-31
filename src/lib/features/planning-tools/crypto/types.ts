@@ -2,7 +2,13 @@
 // internal/api/cryptomarkets), and the view models of
 // internal/pages/crypto/viewmodel.go. Charts are carried as plain data; the
 // components build the ECharts specs.
-import type { BubbleNode, HeatmapColorMode, BubbleSizeBy, HeatmapTile, GrowthSparklinePoint } from '#lib/charts/index.js';
+import type {
+	BubbleNode,
+	HeatmapColorMode,
+	BubbleSizeBy,
+	HeatmapTile,
+	GrowthSparklinePoint
+} from '#lib/charts/index.js';
 
 // ---------------------------------------------------------------------------
 // Backend
@@ -86,11 +92,20 @@ export interface CryptoMarketsResponse {
 	colorMode: 'change' | 'athDistance' | string;
 	colorScaleMaxPct: number;
 	attribution?: string | null;
-	summary: { totalMarketCap?: number | null; btcDominancePct?: number | null; advancers: number; decliners: number };
+	summary: {
+		totalMarketCap?: number | null;
+		btcDominancePct?: number | null;
+		advancers: number;
+		decliners: number;
+	};
 	coins: CryptoMarketCoin[] | null;
 	gainers: CryptoMarketCoin[] | null;
 	losers: CryptoMarketCoin[] | null;
-	athBoard: { recentAths: CryptoMarketCoin[] | null; nearAth: CryptoMarketCoin[] | null; deepestDrawdowns: CryptoMarketCoin[] | null };
+	athBoard: {
+		recentAths: CryptoMarketCoin[] | null;
+		nearAth: CryptoMarketCoin[] | null;
+		deepestDrawdowns: CryptoMarketCoin[] | null;
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -190,7 +205,13 @@ export interface MarketsVM {
 	btcDominance: string;
 	advancers: number;
 	decliners: number;
-	heatmap: { id: string; tiles: HeatmapTile[]; scaleMaxPct: number; periodLabel: string; colorMode: HeatmapColorMode } | null;
+	heatmap: {
+		id: string;
+		tiles: HeatmapTile[];
+		scaleMaxPct: number;
+		periodLabel: string;
+		colorMode: HeatmapColorMode;
+	} | null;
 	bubbles: {
 		id: string;
 		nodes: BubbleNode[];

@@ -30,11 +30,16 @@
 			<vigil.Panel class="rounded-lg p-6" titleID="category-expenses-panel">
 				<SectionCard title="Expenses in this pillar">
 					{#if data.expenses.length === 0}
-						<EmptyState title="The ledger is quiet" description="Recorded spending in this pillar will show up here." />
+						<EmptyState
+							title="The ledger is quiet"
+							description="Recorded spending in this pillar will show up here."
+						/>
 					{:else}
 						<ul class="expenses-category-list vigil-dense-list mt-4 space-y-2">
 							{#each data.expenses as row (row.id)}
-								<li class="expenses-category-row glass-card p-4 flex items-center justify-between gap-4">
+								<li
+									class="expenses-category-row glass-card flex items-center justify-between gap-4 p-4"
+								>
 									<div>
 										<p class="font-semibold">{row.title}</p>
 										<p class="text-xs text-muted-foreground">{row.date}</p>
@@ -63,8 +68,13 @@
 					<StatPill label="Spent" value={data.spent} />
 					<StatPill label="Remaining" value={data.remaining} />
 				</div>
-				<div class="pillar-progress mt-5 h-2 overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
-					<div class="pillar-progress-fill h-full rounded-full" style={`width:${formatFloat(data.progressPct, 0)}%`}></div>
+				<div
+					class="pillar-progress mt-5 h-2 overflow-hidden rounded-full bg-black/5 dark:bg-white/10"
+				>
+					<div
+						class="pillar-progress-fill h-full rounded-full"
+						style={`width:${formatFloat(data.progressPct, 0)}%`}
+					></div>
 				</div>
 			</vigil.Panel>
 		</vigil.CommandSplitAside>

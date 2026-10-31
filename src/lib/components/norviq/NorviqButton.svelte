@@ -35,7 +35,9 @@
 		...rest
 	}: Props = $props();
 
-	const cls = $derived([className, loading && 'htmx-request'].filter(Boolean).join(' ') || undefined);
+	const cls = $derived(
+		[className, loading && 'htmx-request'].filter(Boolean).join(' ') || undefined
+	);
 </script>
 
 <Button

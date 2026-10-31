@@ -14,7 +14,9 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<div class="app-page-content vigil-document-page settings-modern-page settings-section-page settings-about">
+<div
+	class="app-page-content vigil-document-page settings-modern-page settings-section-page settings-about"
+>
 	<vigil.SettingsShell backHref="/settings" backLabel={t('← Settings')} title="About Norviq">
 		<div class="text-center">
 			<BrandLogo variant="full-large" />
@@ -22,26 +24,61 @@
 		<div class="mt-8 space-y-3">
 			<div class="glass-card px-5 py-4">
 				<p class="font-semibold">Portfolio clarity</p>
-				<p class="mt-1 text-sm text-muted-foreground">Track holdings, cost basis, and valuation changes from one place.</p>
+				<p class="mt-1 text-sm text-muted-foreground">
+					Track holdings, cost basis, and valuation changes from one place.
+				</p>
 			</div>
 			<div class="glass-card px-5 py-4">
 				<p class="font-semibold">Research workflow</p>
-				<p class="mt-1 text-sm text-muted-foreground">Keep watchlists, stock insights, targets, and notes close to your decisions.</p>
+				<p class="mt-1 text-sm text-muted-foreground">
+					Keep watchlists, stock insights, targets, and notes close to your decisions.
+				</p>
 			</div>
 		</div>
 		<nav class="mt-8 space-y-2">
-			<a href="https://www.norviq.org/privacy" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Privacy policy</a>
-			<a href="https://www.norviq.org/terms" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Terms of service</a>
-			<a href="https://www.norviq.org/legal" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Legal notice</a>
-			<a href="https://www.norviq.org/security" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Security</a>
-			<a href="https://instagram.com/norviqplan" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Follow on Instagram</a>
-			<a href="https://x.com/NorviqPlanner" class="settings-about-link glass-card block px-5 py-4" target="_blank" rel="noopener">Follow on X</a>
+			<a
+				href="https://www.norviq.org/privacy"
+				class="settings-about-link glass-card block px-5 py-4"
+				target="_blank"
+				rel="noopener">Privacy policy</a
+			>
+			<a
+				href="https://www.norviq.org/terms"
+				class="settings-about-link glass-card block px-5 py-4"
+				target="_blank"
+				rel="noopener">Terms of service</a
+			>
+			<a
+				href="https://www.norviq.org/legal"
+				class="settings-about-link glass-card block px-5 py-4"
+				target="_blank"
+				rel="noopener">Legal notice</a
+			>
+			<a
+				href="https://www.norviq.org/security"
+				class="settings-about-link glass-card block px-5 py-4"
+				target="_blank"
+				rel="noopener">Security</a
+			>
+			<a
+				href="https://instagram.com/norviqplan"
+				class="settings-about-link glass-card block px-5 py-4"
+				target="_blank"
+				rel="noopener">Follow on Instagram</a
+			>
+			<a
+				href="https://x.com/NorviqPlanner"
+				class="settings-about-link glass-card block px-5 py-4"
+				target="_blank"
+				rel="noopener">Follow on X</a
+			>
 			<a
 				href={DiscordURL}
 				class="settings-about-link glass-card block px-5 py-4"
 				target="_blank"
 				rel="noopener noreferrer"
-				onclick={() => capture('discord_link_clicked', { surface: 'settings' })}>{t('Join us on Discord')}</a
+				onclick={() => capture('discord_link_clicked', { surface: 'settings' })}
+				>{t('Join us on Discord')}</a
 			>
 		</nav>
 		<p class="mt-8 text-center text-xs opacity-40">Version {version} · Web PWA</p>

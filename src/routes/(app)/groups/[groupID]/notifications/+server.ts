@@ -6,5 +6,7 @@ import { groupsAction, setGroupPush, readForm } from '#lib/features/social/group
 export const POST: RequestHandler = async (event) => {
 	await requireGroups(event);
 	const enabled = String((await readForm(event)).get('push') ?? '') === 'on';
-	return groupsAction(event, enabled ? 'unmuted' : 'muted', (groupID) => setGroupPush(event, groupID, enabled));
+	return groupsAction(event, enabled ? 'unmuted' : 'muted', (groupID) =>
+		setGroupPush(event, groupID, enabled)
+	);
 };

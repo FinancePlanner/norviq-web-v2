@@ -49,7 +49,8 @@ export function overviewAttention(vm: OverviewViewModel): OverviewAttentionVM {
 			tone: 'warning',
 			label: 'Data delayed',
 			title: 'Some overview sections are using partial data.',
-			description: 'Portfolio, reports, or chart data did not fully load. Your saved data is still intact.',
+			description:
+				'Portfolio, reports, or chart data did not fully load. Your saved data is still intact.',
 			actionLabel: 'Reload overview',
 			actionHref: '/dashboard'
 		};
@@ -61,13 +62,17 @@ export function overviewAttention(vm: OverviewViewModel): OverviewAttentionVM {
 			tone: 'setup',
 			label: 'Next best action',
 			title: 'Finish setup to make this dashboard useful.',
-			description: 'Start with one holding and one expense so Norviq can connect portfolio movement with cash-flow habits.',
+			description:
+				'Start with one holding and one expense so Norviq can connect portfolio movement with cash-flow habits.',
 			actionLabel: 'Add holding',
 			actionHref: '/portfolio?add=position'
 		};
 	}
 	if (vm.portfolioPeriodPercent) {
-		const [metric, suffix] = overviewMetricParts(vm.portfolioPeriodPercent, vm.portfolioPeriodSuffix);
+		const [metric, suffix] = overviewMetricParts(
+			vm.portfolioPeriodPercent,
+			vm.portfolioPeriodSuffix
+		);
 		return {
 			...none,
 			show: true,
@@ -100,8 +105,10 @@ export function overviewAttention(vm: OverviewViewModel): OverviewAttentionVM {
 }
 
 export function overviewLiquidity(vm: OverviewViewModel): string {
-	for (const card of vm.insightCards) if (card.title === 'Cash buffer' && card.value) return card.value;
-	if (vm.healthMetrics.budgetRemaining && vm.healthMetrics.budgetRemaining !== '-') return vm.healthMetrics.budgetRemaining;
+	for (const card of vm.insightCards)
+		if (card.title === 'Cash buffer' && card.value) return card.value;
+	if (vm.healthMetrics.budgetRemaining && vm.healthMetrics.budgetRemaining !== '-')
+		return vm.healthMetrics.budgetRemaining;
 	return '';
 }
 
@@ -130,6 +137,7 @@ export const groupCollapsed = (g: ActionGroupVM) => g.items.length >= actionGrou
 export function groupSummaryTitle(g: ActionGroupVM): string {
 	if (g.items.length === 0) return '';
 	const shared = g.items[0].title;
-	if (g.items.slice(1).some((i) => i.title !== shared)) return `${g.items.length} ${g.kindLabel.toLowerCase()} alerts`;
+	if (g.items.slice(1).some((i) => i.title !== shared))
+		return `${g.items.length} ${g.kindLabel.toLowerCase()} alerts`;
 	return `${shared} · ${g.items.length}`;
 }

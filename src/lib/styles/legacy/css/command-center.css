@@ -3,48 +3,48 @@
  * the balance on the page, then modules as cards on a 20px stack. */
 
 .cc-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-3) var(--space-4);
-  margin-bottom: var(--space-2);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--space-3) var(--space-4);
+	margin-bottom: var(--space-2);
 }
 
 .cc-header h1 {
-  margin: 0;
-  min-width: 0;
+	margin: 0;
+	min-width: 0;
 }
 
 .cc-header .overview-hero-search {
-  flex: 1 1 18rem;
-  max-width: 24rem;
+	flex: 1 1 18rem;
+	max-width: 24rem;
 }
 
 .cc-modules {
-  display: grid;
-  gap: var(--stack-gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
-  margin-bottom: var(--stack-gap);
+	display: grid;
+	gap: var(--stack-gap);
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+	margin-bottom: var(--stack-gap);
 }
 
 .cc-modules > * {
-  min-width: 0;
+	min-width: 0;
 }
 
 .cc-rail-ledger {
-  margin-bottom: var(--stack-gap);
+	margin-bottom: var(--stack-gap);
 }
 
 .cc-more-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-6);
-  padding: 0 var(--space-1);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-4) var(--space-6);
+	padding: 0 var(--space-1);
 }
 
 /* Attention strip (partial data, first-run setup) sits between the header and
  * the hero as a single flat band, not a card inside a card. */
 .command-center-page .overview-subheader {
-  margin-bottom: var(--space-4);
+	margin-bottom: var(--space-4);
 }

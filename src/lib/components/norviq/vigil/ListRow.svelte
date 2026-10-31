@@ -10,12 +10,25 @@
 		title,
 		subtitle = '',
 		trailing
-	}: { icon?: Snippet; tone?: Sentiment; title: string; subtitle?: string; trailing?: Snippet } = $props();
+	}: {
+		icon?: Snippet;
+		tone?: Sentiment;
+		title: string;
+		subtitle?: string;
+		trailing?: Snippet;
+	} = $props();
 </script>
 
 <li class="nq-row">
 	{#if icon}
-		<span class={['nq-row-icon', tone === 'positive' && 'is-positive', tone === 'negative' && 'is-negative']} aria-hidden="true">
+		<span
+			class={[
+				'nq-row-icon',
+				tone === 'positive' && 'is-positive',
+				tone === 'negative' && 'is-negative'
+			]}
+			aria-hidden="true"
+		>
 			{@render icon()}
 		</span>
 	{/if}

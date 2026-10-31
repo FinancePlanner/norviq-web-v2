@@ -53,7 +53,11 @@ export const actions: Actions = {
 		}
 		let to: string;
 		try {
-			const detail = await createArticle(event, { ...articleWriteRequest(form), source: 'web' }, key);
+			const detail = await createArticle(
+				event,
+				{ ...articleWriteRequest(form), source: 'web' },
+				key
+			);
 			to = articlePath(detail.article.slug, detail.article.code) + '?notice=published';
 		} catch (e) {
 			vm.error = boardsErrorText(e);

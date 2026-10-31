@@ -44,19 +44,50 @@ describe('label', () => {
 		[YTD, 'Year to date']
 	];
 	for (const [key, want] of cases) it(key, () => expect(timerange.label(key)).toBe(want));
-	it('falls back to the default for an unknown key', () => expect(timerange.label('banana')).toBe('30 days'));
+	it('falls back to the default for an unknown key', () =>
+		expect(timerange.label('banana')).toBe('30 days'));
 });
 
 describe('window', () => {
 	// A Wednesday, mid-afternoon, deliberately not on a day boundary.
 	const now = new Date(at(2026, 8, 12, 15, 47, 31, LISBON).getTime() + 1);
 	const cases: Array<[string, timerange.Key, Date, Date]> = [
-		['today spans the current calendar day', Today, at(2026, 8, 12, 0, 0, 0, LISBON), at(2026, 8, 13, 0, 0, 0, LISBON)],
-		['yesterday spans only the previous calendar day', Yesterday, at(2026, 8, 11, 0, 0, 0, LISBON), at(2026, 8, 12, 0, 0, 0, LISBON)],
-		['7d covers seven days including today', Last7d, at(2026, 8, 6, 0, 0, 0, LISBON), at(2026, 8, 13, 0, 0, 0, LISBON)],
-		['30d covers thirty days including today', Last30d, at(2026, 7, 14, 0, 0, 0, LISBON), at(2026, 8, 13, 0, 0, 0, LISBON)],
-		['12mo walks back a calendar year', Last12mo, at(2025, 8, 12, 0, 0, 0, LISBON), at(2026, 8, 13, 0, 0, 0, LISBON)],
-		['ytd starts on January 1st', YTD, at(2026, 1, 1, 0, 0, 0, LISBON), at(2026, 8, 13, 0, 0, 0, LISBON)]
+		[
+			'today spans the current calendar day',
+			Today,
+			at(2026, 8, 12, 0, 0, 0, LISBON),
+			at(2026, 8, 13, 0, 0, 0, LISBON)
+		],
+		[
+			'yesterday spans only the previous calendar day',
+			Yesterday,
+			at(2026, 8, 11, 0, 0, 0, LISBON),
+			at(2026, 8, 12, 0, 0, 0, LISBON)
+		],
+		[
+			'7d covers seven days including today',
+			Last7d,
+			at(2026, 8, 6, 0, 0, 0, LISBON),
+			at(2026, 8, 13, 0, 0, 0, LISBON)
+		],
+		[
+			'30d covers thirty days including today',
+			Last30d,
+			at(2026, 7, 14, 0, 0, 0, LISBON),
+			at(2026, 8, 13, 0, 0, 0, LISBON)
+		],
+		[
+			'12mo walks back a calendar year',
+			Last12mo,
+			at(2025, 8, 12, 0, 0, 0, LISBON),
+			at(2026, 8, 13, 0, 0, 0, LISBON)
+		],
+		[
+			'ytd starts on January 1st',
+			YTD,
+			at(2026, 1, 1, 0, 0, 0, LISBON),
+			at(2026, 8, 13, 0, 0, 0, LISBON)
+		]
 	];
 	for (const [name, key, from, to] of cases) {
 		it(name, () => {

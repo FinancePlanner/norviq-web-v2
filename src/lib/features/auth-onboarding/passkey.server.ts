@@ -25,7 +25,11 @@ function browserOrigin(event: RequestEvent): string {
 	return config().publicBaseURL;
 }
 
-async function proxy(event: RequestEvent, path: string, body: string): Promise<Response | { status: number; text: string }> {
+async function proxy(
+	event: RequestEvent,
+	path: string,
+	body: string
+): Promise<Response | { status: number; text: string }> {
 	try {
 		const res = await apiFetch(event, 'POST', path, body, {
 			auth: 'none',
@@ -45,7 +49,10 @@ export async function passkeyBegin(event: RequestEvent): Promise<Response> {
 		return json({ error: 'Passkey sign-in is not enabled on the server yet.' }, { status: 501 });
 	}
 	if (r.status !== 200) {
-		return json({ error: apiErrorMessage(r.text, 'Could not start passkey sign in.') }, { status: r.status });
+		return json(
+			{ error: apiErrorMessage(r.text, 'Could not start passkey sign in.') },
+			{ status: r.status }
+		);
 	}
 	return new Response(r.text, { status: 200, headers: { 'Content-Type': 'application/json' } });
 }
@@ -63,7 +70,10 @@ export async function passkeyFinish(event: RequestEvent): Promise<Response> {
 		return json({ error: 'Passkey sign-in is not enabled on the server yet.' }, { status: 501 });
 	}
 	if (r.status !== 200) {
-		return json({ error: apiErrorMessage(r.text, 'Could not verify passkey.') }, { status: r.status });
+		return json(
+			{ error: apiErrorMessage(r.text, 'Could not verify passkey.') },
+			{ status: r.status }
+		);
 	}
 	let auth: AuthResponse | null = null;
 	try {
@@ -71,7 +81,8 @@ export async function passkeyFinish(event: RequestEvent): Promise<Response> {
 	} catch {
 		auth = null;
 	}
-	if (!auth?.token) return json({ error: 'Unexpected passkey response from server.' }, { status: 502 });
+	if (!auth?.token)
+		return json({ error: 'Unexpected passkey response from server.' }, { status: 502 });
 
 	await event.locals.session.saveAuth(auth);
 	await setPostHogCaptureOnce(event.locals, 'user_logged_in', { method: 'passkey' });

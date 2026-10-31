@@ -11,7 +11,9 @@
 	let { item, compact = false }: { item: ActivityItemVM; compact?: boolean } = $props();
 
 	// activityTone: success/danger → the row's positive/negative sentiment.
-	const tone: Sentiment = $derived(item.iconTone === 'success' ? 'positive' : item.iconTone === 'danger' ? 'negative' : '');
+	const tone: Sentiment = $derived(
+		item.iconTone === 'success' ? 'positive' : item.iconTone === 'danger' ? 'negative' : ''
+	);
 	const time = $derived(compact ? item.relativeTime : item.timestamp);
 </script>
 

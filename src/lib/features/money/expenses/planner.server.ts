@@ -50,7 +50,8 @@ import type * as VM from './vm.js';
 export const clampPercent = (v: number) => (v < 0 ? 0 : v > 100 ? 100 : v);
 
 /** formatOptionalFloat: strconv.FormatFloat(v, 'f', -1, 64). */
-export const formatOptionalFloat = (v: number | null | undefined) => (v == null ? '' : formatFloat(v, -1));
+export const formatOptionalFloat = (v: number | null | undefined) =>
+	v == null ? '' : formatFloat(v, -1);
 
 /** formatSharePercent */
 export const formatSharePercent = (v: number) => formatFloat(v, -1);
@@ -72,7 +73,8 @@ export function parseFloatStrict(raw: string): number | null {
 
 export function formatBudgetCurrency(value: number, code: string): string {
 	const upper = (code ?? '').toUpperCase();
-	const symbol = ({ USD: '$', EUR: '€', GBP: '£', JPY: '¥' } as Record<string, string>)[upper] || upper + ' ';
+	const symbol =
+		({ USD: '$', EUR: '€', GBP: '£', JPY: '¥' } as Record<string, string>)[upper] || upper + ' ';
 	return symbol + formatWithCommas(Math.abs(value));
 }
 
@@ -87,9 +89,11 @@ function optionalPercent(v: number | null | undefined): string {
 	return (v < 0 || Object.is(v, -0) ? '' : '+') + formatFloat(v, 1) + '%';
 }
 
-const optionalScore = (v: number | null | undefined) => (v == null ? '—' : formatFloat(v, 0) + '/100');
+const optionalScore = (v: number | null | undefined) =>
+	v == null ? '—' : formatFloat(v, 0) + '/100';
 
-const driftCurrency = (d: BudgetDriftDashboard | null) => (!d || !d.currencyCode ? 'USD' : d.currencyCode);
+const driftCurrency = (d: BudgetDriftDashboard | null) =>
+	!d || !d.currencyCode ? 'USD' : d.currencyCode;
 
 function pillarProgressState(pct: number): string {
 	if (pct > 100) return 'over';
@@ -148,7 +152,8 @@ export function mapExpenseActivity(rows: ExpenseRow[]): VM.ActivityItemVM[] {
 	const sorted = [...rows];
 	for (let i = 0; i < sorted.length; i++) {
 		for (let j = i + 1; j < sorted.length; j++) {
-			if (sorted[j].occurredOn > sorted[i].occurredOn) [sorted[i], sorted[j]] = [sorted[j], sorted[i]];
+			if (sorted[j].occurredOn > sorted[i].occurredOn)
+				[sorted[i], sorted[j]] = [sorted[j], sorted[i]];
 		}
 	}
 	return sorted.slice(0, 12).map((row) => ({
@@ -209,7 +214,10 @@ function mapBudgetDrift(value: BudgetDriftDashboard): VM.BudgetDriftVM {
 		lostCapital: formatBudgetCurrency(value.lostInvestmentCapital, ccy),
 		investmentTarget: formatBudgetCurrency(value.investmentContributionTarget, ccy),
 		surplusReady: formatBudgetCurrency(surplus, ccy),
-		deployPct: value.investmentContributionTarget > 0 ? Math.min(100, (surplus / value.investmentContributionTarget) * 100) : 0,
+		deployPct:
+			value.investmentContributionTarget > 0
+				? Math.min(100, (surplus / value.investmentContributionTarget) * 100)
+				: 0,
 		categories: [],
 		hasSuggestions: false
 	};
@@ -281,15 +289,31 @@ export function getSnapshot(event: RequestEvent, m: Month): Promise<BudgetSnapsh
 }
 
 export const listCategories = (event: RequestEvent) =>
-	soft('expense categories fetch failed', apiJSON<ExpenseCategory[]>(event, 'GET', '/v1/expenses/categories'), []);
+	soft(
+		'expense categories fetch failed',
+		apiJSON<ExpenseCategory[]>(event, 'GET', '/v1/expenses/categories'),
+		[]
+	);
 
 export const listRecurring = (event: RequestEvent) =>
-	soft('recurring templates fetch failed', apiJSON<RecurringTemplate[]>(event, 'GET', '/v1/expenses/recurring'), []);
+	soft(
+		'recurring templates fetch failed',
+		apiJSON<RecurringTemplate[]>(event, 'GET', '/v1/expenses/recurring'),
+		[]
+	);
 
 export const getPartner = (event: RequestEvent) =>
-	soft('household partner fetch failed', apiJSON<HouseholdPartner>(event, 'GET', '/v1/expenses/partner'), null);
+	soft(
+		'household partner fetch failed',
+		apiJSON<HouseholdPartner>(event, 'GET', '/v1/expenses/partner'),
+		null
+	);
 
-export async function loadPlannerViewModel(event: RequestEvent, monthRaw: string | null, isPro: boolean): Promise<VM.PlannerViewModel> {
+export async function loadPlannerViewModel(
+	event: RequestEvent,
+	monthRaw: string | null,
+	isPro: boolean
+): Promise<VM.PlannerViewModel> {
 	const month = parseExpensesMonth(monthRaw);
 	const vm: VM.PlannerViewModel = {
 		hasLoadError: false,
@@ -326,24 +350,52 @@ export async function loadPlannerViewModel(event: RequestEvent, monthRaw: string
 	};
 
 	const [from, to] = monthDateRange(month);
-	const [snapshot, monthSummary, expenseRows, suggestionsRes, planItems, categories, recurring, partner] = await Promise.all([
+	const [
+		snapshot,
+		monthSummary,
+		expenseRows,
+		suggestionsRes,
+		planItems,
+		categories,
+		recurring,
+		partner
+	] = await Promise.all([
 		soft('expenses snapshots fetch failed', getSnapshot(event, month), null),
 		soft(
 			'expenses month report fetch failed',
-			apiJSON<unknown>(event, 'GET', '/v1/reports/expenses', undefined, { query: { from, to, granularity: 'month' } }).then(
-				(body) => (Array.isArray(body) && body.length > 0 ? (body[0] as BudgetMonthSummary) : null)
+			apiJSON<unknown>(event, 'GET', '/v1/reports/expenses', undefined, {
+				query: { from, to, granularity: 'month' }
+			}).then((body) =>
+				Array.isArray(body) && body.length > 0 ? (body[0] as BudgetMonthSummary) : null
 			),
 			null
 		),
-		soft('expenses list fetch failed', apiJSON<ExpenseRow[]>(event, 'GET', '/v1/expenses', undefined, { query: { from, to } }), []),
-		apiJSON<{ suggestions?: ReportSuggestion[] } | null>(event, 'GET', '/v1/reports/suggestions', undefined, { query: { from, to } }).then(
-			(body) => (body ? { ok: true as const, rows: body.suggestions ?? [] } : { ok: false as const, msg: 'No suggestions available.' }),
+		soft(
+			'expenses list fetch failed',
+			apiJSON<ExpenseRow[]>(event, 'GET', '/v1/expenses', undefined, { query: { from, to } }),
+			[]
+		),
+		apiJSON<{ suggestions?: ReportSuggestion[] } | null>(
+			event,
+			'GET',
+			'/v1/reports/suggestions',
+			undefined,
+			{ query: { from, to } }
+		).then(
+			(body) =>
+				body
+					? { ok: true as const, rows: body.suggestions ?? [] }
+					: { ok: false as const, msg: 'No suggestions available.' },
 			(err) => {
 				console.warn('expenses suggestions fetch failed', err);
 				return { ok: false as const, msg: 'Could not load suggestions.' };
 			}
 		),
-		soft('plan items fetch failed', apiJSON<BudgetPlanItem[]>(event, 'GET', '/v1/budget/items'), []),
+		soft(
+			'plan items fetch failed',
+			apiJSON<BudgetPlanItem[]>(event, 'GET', '/v1/budget/items'),
+			[]
+		),
 		listCategories(event),
 		isPro ? listRecurring(event) : Promise.resolve([] as RecurringTemplate[]),
 		isPro ? getPartner(event) : Promise.resolve(null)
@@ -358,12 +410,46 @@ export async function loadPlannerViewModel(event: RequestEvent, monthRaw: string
 	let portfolios: PortfolioList[] = [];
 	if (snapshot) {
 		[drift, discipline, reallocations, templates, goals, portfolios] = await Promise.all([
-			soft('budget drift fetch failed', apiJSON<BudgetDriftDashboard>(event, 'GET', `/v1/budget/snapshots/${snapshot.id}/drift`), null),
-			soft('budget discipline fetch failed', apiJSON<BudgetDisciplineSummary>(event, 'GET', '/v1/budget/discipline', undefined, { query: { months: 6 } }), null),
-			isPro ? soft('reallocations fetch failed', apiJSON<BudgetReallocationEvent[]>(event, 'GET', '/v1/budget/reallocations'), []) : [],
-			isPro ? soft('budget templates fetch failed', apiJSON<BudgetTemplate[]>(event, 'GET', '/v1/budget/templates'), []) : [],
-			isPro ? soft('financial goals fetch failed', apiJSON<FinancialGoal[]>(event, 'GET', '/v1/financial-goals'), []) : [],
-			isPro ? soft('portfolio lists fetch failed', apiJSON<PortfolioList[]>(event, 'GET', '/v1/portfolio/lists'), []) : []
+			soft(
+				'budget drift fetch failed',
+				apiJSON<BudgetDriftDashboard>(event, 'GET', `/v1/budget/snapshots/${snapshot.id}/drift`),
+				null
+			),
+			soft(
+				'budget discipline fetch failed',
+				apiJSON<BudgetDisciplineSummary>(event, 'GET', '/v1/budget/discipline', undefined, {
+					query: { months: 6 }
+				}),
+				null
+			),
+			isPro
+				? soft(
+						'reallocations fetch failed',
+						apiJSON<BudgetReallocationEvent[]>(event, 'GET', '/v1/budget/reallocations'),
+						[]
+					)
+				: [],
+			isPro
+				? soft(
+						'budget templates fetch failed',
+						apiJSON<BudgetTemplate[]>(event, 'GET', '/v1/budget/templates'),
+						[]
+					)
+				: [],
+			isPro
+				? soft(
+						'financial goals fetch failed',
+						apiJSON<FinancialGoal[]>(event, 'GET', '/v1/financial-goals'),
+						[]
+					)
+				: [],
+			isPro
+				? soft(
+						'portfolio lists fetch failed',
+						apiJSON<PortfolioList[]>(event, 'GET', '/v1/portfolio/lists'),
+						[]
+					)
+				: []
 		]);
 	}
 
@@ -380,7 +466,11 @@ export async function loadPlannerViewModel(event: RequestEvent, monthRaw: string
 	}
 	if (drift) vm.drift = mapBudgetDrift(drift);
 	vm.capacity = mapSpendToUnits(
-		await soft('dca capacity fetch failed', apiJSON<SpendToUnitsCapacity>(event, 'GET', '/v1/budget/dca-capacity'), null)
+		await soft(
+			'dca capacity fetch failed',
+			apiJSON<SpendToUnitsCapacity>(event, 'GET', '/v1/budget/dca-capacity'),
+			null
+		)
 	);
 	if (discipline) {
 		vm.discipline = {
@@ -394,7 +484,11 @@ export async function loadPlannerViewModel(event: RequestEvent, monthRaw: string
 		freedCapital: formatBudgetCurrency(e.freedCapital, driftCurrency(drift))
 	}));
 	vm.templates = (templates ?? []).map((t) => ({ id: t.id, name: t.name }));
-	vm.financialGoals = (goals ?? []).map((g) => ({ id: g.id, name: g.name, portfolioID: g.portfolioListId }));
+	vm.financialGoals = (goals ?? []).map((g) => ({
+		id: g.id,
+		name: g.name,
+		portfolioID: g.portfolioListId
+	}));
 	vm.portfolioLists = (portfolios ?? []).map((p) => ({ id: p.id, name: p.name }));
 
 	let planned = 0;
@@ -415,7 +509,13 @@ export async function loadPlannerViewModel(event: RequestEvent, monthRaw: string
 		vm.donut = { spent, remaining: Math.max(0, planned - spent) };
 	}
 
-	vm.pillars = defaultPillarCards(month, snapshot?.netSalary ?? 0, snapshot?.targetShares, pillarPlans, pillarActuals);
+	vm.pillars = defaultPillarCards(
+		month,
+		snapshot?.netSalary ?? 0,
+		snapshot?.targetShares,
+		pillarPlans,
+		pillarActuals
+	);
 	vm.activity = mapExpenseActivity(expenseRows ?? []);
 
 	for (const item of planItems ?? []) {
@@ -459,7 +559,11 @@ function formatTaxMoney(v: TaxMoney | null | undefined): string {
 	return `${v.currency} ${formatFloat(v.amount, 2)}`;
 }
 
-export async function loadTaxTeaser(event: RequestEvent, jurisdictionRaw: string | null, taxYearRaw: string | null): Promise<VM.TaxTeaserVM> {
+export async function loadTaxTeaser(
+	event: RequestEvent,
+	jurisdictionRaw: string | null,
+	taxYearRaw: string | null
+): Promise<VM.TaxTeaserVM> {
 	const vm: VM.TaxTeaserVM = {
 		jurisdiction: (jurisdictionRaw ?? '').trim().toUpperCase() || 'US',
 		taxYear: new Date().getFullYear(),
@@ -484,7 +588,12 @@ export async function loadTaxTeaser(event: RequestEvent, jurisdictionRaw: string
 				: formatTaxMoney(dashboard.summary?.embeddedUnrealizedLiability);
 			vm.netBenefit = formatTaxMoney(dashboard.summary?.estimatedNetBenefit);
 			const count = dashboard.opportunities?.length ?? 0;
-			vm.optimization = count === 0 ? '' : count === 1 ? '1 optimization opportunity identified' : `${count} optimization opportunities identified`;
+			vm.optimization =
+				count === 0
+					? ''
+					: count === 1
+						? '1 optimization opportunity identified'
+						: `${count} optimization opportunities identified`;
 		}
 	} catch {
 		vm.loadError = true;

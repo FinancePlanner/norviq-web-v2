@@ -42,14 +42,18 @@ export function showcaseErrorMessage(err: unknown): string {
 export async function loadUnseenToast(event: RequestEvent): Promise<ToastViewModel | null> {
 	let unlocks: AchievementUnlock[] = [];
 	try {
-		unlocks = (await achievementsDo<AchievementUnlock[] | null>(event, 'GET', '/v1/achievements/unseen')) ?? [];
+		unlocks =
+			(await achievementsDo<AchievementUnlock[] | null>(event, 'GET', '/v1/achievements/unseen')) ??
+			[];
 	} catch (err) {
 		console.warn('achievements unseen failed', err);
 		unlocks = [];
 	}
 	if (unlocks.length > 0) {
 		try {
-			await achievementsDo(event, 'POST', '/v1/achievements/seen', { ids: unlocks.map((u) => u.id) });
+			await achievementsDo(event, 'POST', '/v1/achievements/seen', {
+				ids: unlocks.map((u) => u.id)
+			});
 		} catch (err) {
 			console.warn('achievements mark seen failed', err);
 			unlocks = [];

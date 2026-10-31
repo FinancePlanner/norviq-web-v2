@@ -58,13 +58,17 @@ export function buildShareLinks(input: ShareInput): ShareLinks {
 			queryEscape(input.title + cashtags) +
 			'&url=' +
 			queryEscape(shareTag(input.canonical, 'x')),
-		linkedIn: 'https://www.linkedin.com/sharing/share-offsite/?url=' + queryEscape(shareTag(input.canonical, 'linkedin')),
+		linkedIn:
+			'https://www.linkedin.com/sharing/share-offsite/?url=' +
+			queryEscape(shareTag(input.canonical, 'linkedin')),
 		reddit:
 			'https://www.reddit.com/submit?url=' +
 			queryEscape(shareTag(input.canonical, 'reddit')) +
 			'&title=' +
 			escapeSpaces(input.title),
-		whatsApp: 'https://wa.me/?text=' + escapeSpaces(input.title + ' ' + shareTag(input.canonical, 'whatsapp')),
+		whatsApp:
+			'https://wa.me/?text=' +
+			escapeSpaces(input.title + ' ' + shareTag(input.canonical, 'whatsapp')),
 		copy: shareTag(input.canonical, 'copy'),
 		discordText: discord,
 		instagramCaption: caption

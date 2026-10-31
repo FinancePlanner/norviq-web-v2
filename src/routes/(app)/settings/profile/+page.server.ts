@@ -2,7 +2,12 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import type { components } from '#lib/api/schema.js';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
-import { apiErrorMessage, errorMessage, errorStatus, readableAPIReasons } from '#lib/features/settings-admin/api-errors.js';
+import {
+	apiErrorMessage,
+	errorMessage,
+	errorStatus,
+	readableAPIReasons
+} from '#lib/features/settings-admin/api-errors.js';
 
 type GetUserProfileResponse = components['schemas']['GetUserProfileResponse'];
 type LinkedAccounts = components['schemas']['OAuthLinkedAccountsResponse'];
@@ -38,11 +43,24 @@ function oauthProviderLabel(provider: string): string {
 }
 
 const defaultConnectedAccounts = (): ConnectedAccountVM[] =>
-	['apple', 'google', 'x'].map((p) => ({ provider: p, label: oauthProviderLabel(p), connected: false, email: '', emailVerified: false }));
+	['apple', 'google', 'x'].map((p) => ({
+		provider: p,
+		label: oauthProviderLabel(p),
+		connected: false,
+		email: '',
+		emailVerified: false
+	}));
 
 // Go LoadProfileVM (+ applyOAuthLinkFeedback, loadConnectedAccounts).
 async function loadProfileVM(event: RequestEvent, withQueryFeedback: boolean): Promise<ProfileVM> {
-	const vm: ProfileVM = { username: '', email: '', errorMessage: '', successMessage: '', connectedAccounts: [], connectedAccountsError: '' };
+	const vm: ProfileVM = {
+		username: '',
+		email: '',
+		errorMessage: '',
+		successMessage: '',
+		connectedAccounts: [],
+		connectedAccountsError: ''
+	};
 	if (withQueryFeedback) {
 		// Go read these off r.URL on every LoadProfileVM; an action's URL has none.
 		const connected = (event.url.searchParams.get('connected') ?? '').trim();
@@ -77,7 +95,8 @@ async function loadProfileVM(event: RequestEvent, withQueryFeedback: boolean): P
 
 export const load: PageServerLoad = async (event) => {
 	const vm = await loadProfileVM(event, true);
-	if ((event.url.searchParams.get('saved') ?? '').trim() === '1') vm.successMessage = 'Profile updated.';
+	if ((event.url.searchParams.get('saved') ?? '').trim() === '1')
+		vm.successMessage = 'Profile updated.';
 	return { vm };
 };
 
@@ -87,7 +106,8 @@ const feedback = (errorMessage: string) => ({ feedback: { successMessage: '', er
 // emailChangeErrorMessage
 function emailChangeErrorMessage(status: number, body: unknown): string {
 	if (status === 401) return readableAPIReasons.INVALID_CURRENT_PASSWORD;
-	if (status === 409 && apiErrorMessage(body, '').toLowerCase().includes('already')) return 'That email is already in use.';
+	if (status === 409 && apiErrorMessage(body, '').toLowerCase().includes('already'))
+		return 'That email is already in use.';
 	return apiErrorMessage(body, 'Could not update email.');
 }
 
@@ -106,7 +126,8 @@ export const actions: Actions = {
 		const newPassword = String(form.get('new_password') ?? '');
 
 		const vm = await loadProfileVM(event, false);
-		if (vm.errorMessage !== '' && vm.username === '' && vm.email === '') return feedback(vm.errorMessage);
+		if (vm.errorMessage !== '' && vm.username === '' && vm.email === '')
+			return feedback(vm.errorMessage);
 
 		let errMsg = '';
 		if (username !== '' && username !== vm.username) {
@@ -126,9 +147,16 @@ export const actions: Actions = {
 				errMsg = 'Enter your current password to change your email.';
 			} else {
 				try {
-					await apiJSON(event, 'PATCH', '/v1/users/email', { email, currentPassword, refreshToken });
+					await apiJSON(event, 'PATCH', '/v1/users/email', {
+						email,
+						currentPassword,
+						refreshToken
+					});
 				} catch (err) {
-					errMsg = emailChangeErrorMessage(errorStatus(err), isAPIError(err) ? err.body : undefined);
+					errMsg = emailChangeErrorMessage(
+						errorStatus(err),
+						isAPIError(err) ? err.body : undefined
+					);
 				}
 			}
 		}
@@ -138,9 +166,16 @@ export const actions: Actions = {
 				errMsg = 'Enter your current password to set a new one.';
 			} else {
 				try {
-					await apiJSON(event, 'PATCH', '/v1/users/password', { currentPassword, newPassword, refreshToken });
+					await apiJSON(event, 'PATCH', '/v1/users/password', {
+						currentPassword,
+						newPassword,
+						refreshToken
+					});
 				} catch (err) {
-					errMsg = errorStatus(err) === 401 ? readableAPIReasons.INVALID_CURRENT_PASSWORD : errorMessage(err, 'Could not update password.');
+					errMsg =
+						errorStatus(err) === 401
+							? readableAPIReasons.INVALID_CURRENT_PASSWORD
+							: errorMessage(err, 'Could not update password.');
 				}
 			}
 		}
@@ -157,7 +192,8 @@ export const actions: Actions = {
 		} catch {
 			return feedback('Invalid delete request.');
 		}
-		if (String(form.get('confirm') ?? '').trim() !== 'DELETE') return feedback('Type DELETE to confirm account removal.');
+		if (String(form.get('confirm') ?? '').trim() !== 'DELETE')
+			return feedback('Type DELETE to confirm account removal.');
 		try {
 			await apiJSON(event, 'DELETE', '/v1/users');
 		} catch {

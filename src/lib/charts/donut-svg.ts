@@ -35,7 +35,9 @@ export interface DonutGeometry {
  * The donut's circles. Weights are normalised, so callers can pass
  * percentages that do not sum to exactly 100. null when there is nothing to draw.
  */
-export function donutGeometry(slices: readonly DonutSlice[] | null | undefined): DonutGeometry | null {
+export function donutGeometry(
+	slices: readonly DonutSlice[] | null | undefined
+): DonutGeometry | null {
 	const list = slices ?? [];
 	let total = 0;
 	for (const s of list) if (s.weight > 0) total += s.weight;
@@ -66,7 +68,10 @@ export function donutGeometry(slices: readonly DonutSlice[] | null | undefined):
 
 /** Go's html.EscapeString. */
 export function goHTMLEscape(s: string): string {
-	return s.replace(/[&'<>"]/g, (c) => ({ '&': '&amp;', "'": '&#39;', '<': '&lt;', '>': '&gt;', '"': '&#34;' })[c]!);
+	return s.replace(
+		/[&'<>"]/g,
+		(c) => ({ '&': '&amp;', "'": '&#39;', '<': '&lt;', '>': '&gt;', '"': '&#34;' })[c]!
+	);
 }
 
 /** The exact markup charts.DonutSVG produced, or "" when there is nothing to draw. */

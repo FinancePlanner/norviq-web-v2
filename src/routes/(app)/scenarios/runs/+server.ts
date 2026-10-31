@@ -15,7 +15,11 @@ import {
 	scenarioCryptoHoldingIDs
 } from '#lib/features/planning-tools/scenarios/form.server.js';
 import { uid } from '#lib/features/planning-tools/scenarios/view.js';
-import type { RedirectResponse, ScenarioDefinition, ScenarioJSON } from '#lib/features/planning-tools/scenarios/types.js';
+import type {
+	RedirectResponse,
+	ScenarioDefinition,
+	ScenarioJSON
+} from '#lib/features/planning-tools/scenarios/types.js';
 
 // POST /scenarios/runs → ScenarioCreateRun. Posted by the snapshot review's
 // "Run reviewed snapshot" form. Go answered 201 + HX-Redirect; v2 answers
@@ -83,7 +87,9 @@ export const POST: RequestHandler = async (event) => {
 	}
 	try {
 		const run = await queueRun(event, uid(scenario.id), snapshotID, seed !== 0 ? seed : null);
-		return json({ redirect: '/scenarios?run=' + uid(run.id) } satisfies RedirectResponse, { status: 201 });
+		return json({ redirect: '/scenarios?run=' + uid(run.id) } satisfies RedirectResponse, {
+			status: 201
+		});
 	} catch {
 		return formError('The scenario run could not be queued.');
 	}

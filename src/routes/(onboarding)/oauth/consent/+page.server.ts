@@ -10,7 +10,11 @@ export const load: PageServerLoad = async (event) => {
 	if (!flowId) error(400, 'Missing flow_id');
 	const vm = { flowId, clientName: '', scopeDescriptions: [] as string[], errorMessage: '' };
 	try {
-		const detail = await apiJSON<OAuthFlowDetail>(event, 'GET', `/v1/oauth/flows/${encodeURIComponent(flowId)}`);
+		const detail = await apiJSON<OAuthFlowDetail>(
+			event,
+			'GET',
+			`/v1/oauth/flows/${encodeURIComponent(flowId)}`
+		);
 		vm.clientName = detail.clientName ?? '';
 		vm.scopeDescriptions = detail.scopeDescriptions ?? [];
 	} catch {

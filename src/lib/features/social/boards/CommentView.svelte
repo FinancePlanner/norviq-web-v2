@@ -3,7 +3,12 @@
 	// report, delete and (for admins) the moderation link.
 	import { enhance } from '$app/forms';
 	import { commentSubmit } from './comment-submit.js';
-	import { SecondarySubmitButton, SubmitButton, TextareaField, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		SecondarySubmitButton,
+		SubmitButton,
+		TextareaField,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import ReportForm from './ReportForm.svelte';
 	import { pathEscape, type CommentRow, type PostRow, type Viewer } from './boards.js';
 
@@ -15,7 +20,12 @@
 	}: { post: PostRow; viewer: Viewer; backURL: string; comment: CommentRow } = $props();
 </script>
 
-<article id={'c-' + comment.id} class="border-l-2 border-[var(--color-border)] pl-3" style={`margin-left: ${comment.depth}rem`} data-comment>
+<article
+	id={'c-' + comment.id}
+	class="border-l-2 border-[var(--color-border)] pl-3"
+	style={`margin-left: ${comment.depth}rem`}
+	data-comment
+>
 	<p class="text-xs text-muted-foreground">
 		{#if comment.deleted}
 			[deleted]
@@ -25,12 +35,17 @@
 		· {comment.age}
 	</p>
 	{#if !comment.deleted}
-		<p class="mt-1 whitespace-pre-line text-sm">{comment.body}</p>
+		<p class="mt-1 text-sm whitespace-pre-line">{comment.body}</p>
 		<div class="mt-1 flex flex-wrap items-start gap-3 text-xs">
 			{#if comment.canReply}
 				<details>
 					<summary class="cursor-pointer text-muted-foreground hover:underline">Reply</summary>
-					<form method="post" action={'/boards/p/' + pathEscape(post.id) + '/comments'} class="mt-2 space-y-2" use:enhance={commentSubmit(post)}>
+					<form
+						method="post"
+						action={'/boards/p/' + pathEscape(post.id) + '/comments'}
+						class="mt-2 space-y-2"
+						use:enhance={commentSubmit(post)}
+					>
 						<input type="hidden" name="parent_id" value={comment.id} />
 						<TextareaField name="body" label="Reply" rows={2} required />
 						<SubmitButton class="text-xs">Reply</SubmitButton>
@@ -44,13 +59,22 @@
 				</div>
 			</details>
 			{#if comment.canDelete}
-				<form method="post" action={'/boards/c/' + pathEscape(comment.id) + '/delete'} use:enhance={withSpinner()}>
+				<form
+					method="post"
+					action={'/boards/c/' + pathEscape(comment.id) + '/delete'}
+					use:enhance={withSpinner()}
+				>
 					<input type="hidden" name="post_id" value={post.id} />
-					<SecondarySubmitButton class="px-2 py-0 text-xs text-[var(--color-danger)]">Delete</SecondarySubmitButton>
+					<SecondarySubmitButton class="px-2 py-0 text-xs text-[var(--color-danger)]"
+						>Delete</SecondarySubmitButton
+					>
 				</form>
 			{/if}
 			{#if viewer.isAdmin && comment.author !== '' && comment.author !== viewer.username}
-				<a href={'/admin/community?username=' + comment.author} class="text-muted-foreground underline">Mute or ban</a>
+				<a
+					href={'/admin/community?username=' + comment.author}
+					class="text-muted-foreground underline">Mute or ban</a
+				>
 			{/if}
 		</div>
 	{/if}

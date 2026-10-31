@@ -5,8 +5,22 @@
 // Keep in sync with the builders: an unregistered chart type makes setOption
 // throw and the container renders blank.
 import * as echarts from 'echarts/core';
-import { BarChart, CandlestickChart, GraphChart, HeatmapChart, LineChart, PieChart, TreemapChart } from 'echarts/charts';
-import { CalendarComponent, GridComponent, LegendComponent, TooltipComponent, VisualMapComponent } from 'echarts/components';
+import {
+	BarChart,
+	CandlestickChart,
+	GraphChart,
+	HeatmapChart,
+	LineChart,
+	PieChart,
+	TreemapChart
+} from 'echarts/charts';
+import {
+	CalendarComponent,
+	GridComponent,
+	LegendComponent,
+	TooltipComponent,
+	VisualMapComponent
+} from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 
 echarts.use([

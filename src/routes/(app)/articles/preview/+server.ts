@@ -21,7 +21,8 @@ export const POST: RequestHandler = async (event) => {
 		/* empty preview */
 	}
 	const runes = Array.from(body);
-	if (runes.length > ARTICLE_PREVIEW_MAX_RUNES) body = runes.slice(0, ARTICLE_PREVIEW_MAX_RUNES).join('');
+	if (runes.length > ARTICLE_PREVIEW_MAX_RUNES)
+		body = runes.slice(0, ARTICLE_PREVIEW_MAX_RUNES).join('');
 	return new Response(render(body), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 };
 

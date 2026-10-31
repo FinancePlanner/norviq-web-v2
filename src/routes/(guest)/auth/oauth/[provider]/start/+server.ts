@@ -24,7 +24,12 @@ export const GET: RequestHandler = async (event) => {
 		);
 	} catch (err) {
 		if (isAPIError(err)) {
-			console.error('oauth start rejected', { provider, redirectURI, status: err.status, body: err.body });
+			console.error('oauth start rejected', {
+				provider,
+				redirectURI,
+				status: err.status,
+				body: err.body
+			});
 		} else {
 			console.error('oauth start', { provider, redirectURI, err });
 		}

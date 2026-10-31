@@ -18,7 +18,12 @@
 		chips = [],
 		onpanel,
 		oncancel
-	}: { form: AutobuyFormVM; chips?: AutobuyChip[]; onpanel: (vm: AutobuysVM) => void; oncancel?: () => void } = $props();
+	}: {
+		form: AutobuyFormVM;
+		chips?: AutobuyChip[];
+		onpanel: (vm: AutobuysVM) => void;
+		oncancel?: () => void;
+	} = $props();
 
 	const initial = untrack(() => form);
 	const fid = autobuyFormID(initial.id);
@@ -30,7 +35,9 @@
 	let pending = $state(false);
 	let root: HTMLFormElement | null = $state(null);
 
-	const options = $derived(cadenceOptions.map((o) => ({ ...o, selected: o.value === initial.cadence })));
+	const options = $derived(
+		cadenceOptions.map((o) => ({ ...o, selected: o.value === initial.cadence }))
+	);
 
 	async function prefill(chip: AutobuyChip) {
 		label = chip.name;
@@ -47,7 +54,10 @@
 		pending = true;
 		try {
 			const data = new FormData(e.currentTarget as HTMLFormElement);
-			const vm = initial.id === '' ? await terminalSend<AutobuysVM>('POST', '/terminal/autobuys', data) : await terminalSend<AutobuysVM>('PATCH', `/terminal/autobuys/${initial.id}`, data);
+			const vm =
+				initial.id === ''
+					? await terminalSend<AutobuysVM>('POST', '/terminal/autobuys', data)
+					: await terminalSend<AutobuysVM>('PATCH', `/terminal/autobuys/${initial.id}`, data);
 			if (vm) onpanel(vm);
 		} finally {
 			pending = false;
@@ -74,14 +84,54 @@
 			{/each}
 		</div>
 	{/if}
-	<Field id={fid + '-label'} name="label" label="Name" type="text" bind:value={label} placeholder="Weekly buy" required />
-	<SelectField id={fid + '-cadence'} name="cadence" label="How often" {options} bind:value={cadence} />
-	<Field id={fid + '-amount'} name="amount" label="Amount" type="text" bind:value={amount} placeholder="50" inputmode="decimal" />
+	<Field
+		id={fid + '-label'}
+		name="label"
+		label="Name"
+		type="text"
+		bind:value={label}
+		placeholder="Weekly buy"
+		required
+	/>
+	<SelectField
+		id={fid + '-cadence'}
+		name="cadence"
+		label="How often"
+		{options}
+		bind:value={cadence}
+	/>
+	<Field
+		id={fid + '-amount'}
+		name="amount"
+		label="Amount"
+		type="text"
+		bind:value={amount}
+		placeholder="50"
+		inputmode="decimal"
+	/>
 	<div class="space-y-2" style:display={cadence === Cadence.Percent ? undefined : 'none'}>
-		<p class="text-footnote text-muted-foreground">For a percent, the amount is the monthly base it is taken from.</p>
-		<Field id={fid + '-percent'} name="percent" label="Percent of base (%)" type="text" bind:value={percent} placeholder="4" inputmode="decimal" />
+		<p class="text-footnote text-muted-foreground">
+			For a percent, the amount is the monthly base it is taken from.
+		</p>
+		<Field
+			id={fid + '-percent'}
+			name="percent"
+			label="Percent of base (%)"
+			type="text"
+			bind:value={percent}
+			placeholder="4"
+			inputmode="decimal"
+		/>
 	</div>
-	<Field id={fid + '-ticker'} name="ticker" label="Ticker (optional)" type="text" bind:value={ticker} placeholder="VOO" autocomplete="off" />
+	<Field
+		id={fid + '-ticker'}
+		name="ticker"
+		label="Ticker (optional)"
+		type="text"
+		bind:value={ticker}
+		placeholder="VOO"
+		autocomplete="off"
+	/>
 	{#if initial.error}
 		<p role="alert" class="text-footnote text-destructive">{initial.error}</p>
 	{/if}

@@ -8,4 +8,9 @@ export interface MFAModalState {
 	info: string;
 }
 
-export const emptyMFAState = (): MFAModalState => ({ maskedDestination: '', resendAvailableIn: 0, error: '', info: '' });
+export const emptyMFAState = (): MFAModalState => ({
+	maskedDestination: '',
+	resendAvailableIn: 0,
+	error: '',
+	info: ''
+});

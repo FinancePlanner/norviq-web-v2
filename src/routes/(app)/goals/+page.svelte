@@ -1,12 +1,22 @@
 <script lang="ts">
 	// goals.Page(vm) — norviq-web internal/pages/goals/page.templ.
 	import { enhance } from '$app/forms';
-	import { EmptyState, FormErrorBanner, NativeButton, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		EmptyState,
+		FormErrorBanner,
+		NativeButton,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import CreateForm from '#lib/features/dashboard/goals/CreateForm.svelte';
 	import GoalCard from '#lib/features/dashboard/goals/GoalCard.svelte';
 	import GoalDetail from '#lib/features/dashboard/goals/GoalDetail.svelte';
-	import { activeCount, atGoalLimit, firstCurrency, money } from '#lib/features/dashboard/goals/view.js';
+	import {
+		activeCount,
+		atGoalLimit,
+		firstCurrency,
+		money
+	} from '#lib/features/dashboard/goals/view.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -40,26 +50,37 @@
 <div class="app-page-content vigil-deck-page goals-modern-page">
 	<vigil.ModernPageHeader title="Financial goals">
 		{#snippet actions()}
-			<NativeButton class="btn-primary" disabled={atGoalLimit(vm.overview)} data-guide="goal-create" onclick={() => (createOpen = true)}
-				>New goal</NativeButton
+			<NativeButton
+				class="btn-primary"
+				disabled={atGoalLimit(vm.overview)}
+				data-guide="goal-create"
+				onclick={() => (createOpen = true)}>New goal</NativeButton
 			>
 		{/snippet}
 	</vigil.ModernPageHeader>
 	{#if vm.notice}
-		<div class="mt-5 rounded-lg border border-success/30 bg-success/10 p-4 text-sm">{vm.notice}</div>
+		<div class="mt-5 rounded-lg border border-success/30 bg-success/10 p-4 text-sm">
+			{vm.notice}
+		</div>
 	{/if}
 	{#if vm.errorMessage}
 		<div class="mt-5"><FormErrorBanner message={vm.errorMessage} /></div>
 	{/if}
 	<vigil.CommandDeck class="is-3col mt-8">
-		{@render goalMetricPanel('Current value', money(vm.overview.totalCurrentValue, firstCurrency(vm)))}
-		{@render goalMetricPanel('Combined targets', money(vm.overview.totalTargetAmount, firstCurrency(vm)))}
+		{@render goalMetricPanel(
+			'Current value',
+			money(vm.overview.totalCurrentValue, firstCurrency(vm))
+		)}
+		{@render goalMetricPanel(
+			'Combined targets',
+			money(vm.overview.totalTargetAmount, firstCurrency(vm))
+		)}
 		{@render goalMetricPanel('Active goals', activeCount(vm.overview))}
 	</vigil.CommandDeck>
 	{#if atGoalLimit(vm.overview)}
 		<p class="mt-4 text-sm text-muted-foreground">
-			Free includes one active deterministic goal. Pro adds unlimited goals, bulk planning, exports, and linked budget or rebalance
-			drafts.
+			Free includes one active deterministic goal. Pro adds unlimited goals, bulk planning, exports,
+			and linked budget or rebalance drafts.
 		</p>
 	{/if}
 	{#if items.length === 0}
@@ -78,10 +99,10 @@
 				<div class="flex gap-2">
 					<!-- Go renders these through NativeButton without a Type, i.e. type="button",
 					     so neither submits the form. Ported as-is; see docs/parity. -->
-					<NativeButton class="btn-secondary text-sm" name="status" value="paused">Pause selected</NativeButton><NativeButton
-						class="btn-secondary text-sm"
-						name="status"
-						value="active">Activate selected</NativeButton
+					<NativeButton class="btn-secondary text-sm" name="status" value="paused"
+						>Pause selected</NativeButton
+					><NativeButton class="btn-secondary text-sm" name="status" value="active"
+						>Activate selected</NativeButton
 					>
 				</div>
 			</div>
@@ -111,7 +132,9 @@
 			if (e.target === e.currentTarget) createOpen = false;
 		}}
 	>
-		<div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-[var(--color-card-bg)] p-6 shadow-2xl">
+		<div
+			class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-[var(--color-card-bg)] p-6 shadow-2xl"
+		>
 			<div class="flex items-start justify-between">
 				<div>
 					<p class="text-footnote font-semibold text-muted-foreground">Deterministic plan</p>

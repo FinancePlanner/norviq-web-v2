@@ -37,7 +37,12 @@ export class PublicPageCache<T> {
 		}
 		if (!existing && this.max > 0 && this.#entries.size >= this.max) this.#evict();
 
-		const entry: Entry<T> = { promise: undefined as unknown as Promise<T>, settled: false, ok: false, expiresAt: 0 };
+		const entry: Entry<T> = {
+			promise: undefined as unknown as Promise<T>,
+			settled: false,
+			ok: false,
+			expiresAt: 0
+		};
 		entry.promise = (async () => {
 			try {
 				const value = await render();

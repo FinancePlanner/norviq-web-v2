@@ -103,7 +103,10 @@
 <svelte:head><title>Kit gallery (dev)</title></svelte:head>
 
 <div class="app-page-content mx-auto max-w-5xl space-y-10 p-6" {@attach pageMotion()}>
-	<vigil.ModernPageHeader title="Norviq kit" subtitle="Dev-only gallery of src/lib/components/norviq">
+	<vigil.ModernPageHeader
+		title="Norviq kit"
+		subtitle="Dev-only gallery of src/lib/components/norviq"
+	>
 		{#snippet actions()}
 			<ThemeToggle />
 			<ConnectAgentPill />
@@ -113,17 +116,48 @@
 	<!-- Fields -->
 	<vigil.Panel titleID="g-fields">
 		<vigil.PanelHeader id="g-fields" title="Fields" desc="field.templ" />
-		<form method="POST" class="grid gap-4 md:grid-cols-2" use:enhance={withSpinner(() => ({ update }) => update())}>
-			<Field name="email" label="Email" type="email" placeholder="you@example.com" autocomplete="email" bind:value={email} />
-			<Field name="amount" label="Amount" type="number" description="Helper text" error="Required" />
+		<form
+			method="POST"
+			class="grid gap-4 md:grid-cols-2"
+			use:enhance={withSpinner(
+				() =>
+					({ update }) =>
+						update()
+			)}
+		>
+			<Field
+				name="email"
+				label="Email"
+				type="email"
+				placeholder="you@example.com"
+				autocomplete="email"
+				bind:value={email}
+			/>
+			<Field
+				name="amount"
+				label="Amount"
+				type="number"
+				description="Helper text"
+				error="Required"
+			/>
 			<PasswordField label="Password" name="password" autocomplete="current-password" />
 			<VaultTextField label="Vault field" name="vault" placeholder="legacy" />
 			<SelectField name="pillar" label="Pillar" {options} placeholder="Choose…" bind:value={pick} />
 			<SelectField name="multi" label="Multiple" {options} multiple />
 			<TextareaField name="notes" label="Notes" rows={3} autoResize bind:value={notes} />
 			<NativeSelect name="kind" class="field-input" {options} />
-			<CheckboxField name="agree" label="I agree" description="Checkbox description" bind:checked={agree} />
-			<SwitchField name="notify" label="Notify me" description="Switch description" bind:checked={notify} />
+			<CheckboxField
+				name="agree"
+				label="I agree"
+				description="Checkbox description"
+				bind:checked={agree}
+			/>
+			<SwitchField
+				name="notify"
+				label="Notify me"
+				description="Switch description"
+				bind:checked={notify}
+			/>
 			<div class="flex flex-wrap items-center gap-2 md:col-span-2">
 				<SubmitButton {loading}>Save</SubmitButton>
 				<SecondarySubmitButton>Save draft</SecondarySubmitButton>
@@ -146,8 +180,18 @@
 	<!-- Kit -->
 	<section class="space-y-4">
 		<h2 class="text-lg font-semibold">kit.templ</h2>
-		<EmptyState title="No holdings yet" description="Add a position to get started." actionLabel="Add" actionHref="/portfolio" />
-		<EmptyStateInline title="Nothing here" description="Inline empty state" actionLabel="Do it" actionHref="#" />
+		<EmptyState
+			title="No holdings yet"
+			description="Add a position to get started."
+			actionLabel="Add"
+			actionHref="/portfolio"
+		/>
+		<EmptyStateInline
+			title="Nothing here"
+			description="Inline empty state"
+			actionLabel="Do it"
+			actionHref="#"
+		/>
 		<SkeletonBlock heightClass="h-8 rounded-lg" />
 		<ListSkeleton rows={2} />
 		<ChartPlaceholder label="Chart placeholder" />
@@ -162,7 +206,9 @@
 			]}
 		/>
 		<SectionCard title="Section card">Body content</SectionCard>
-		<CollapsibleSection title="Collapsible" desc="Starts open" open>Collapsible body</CollapsibleSection>
+		<CollapsibleSection title="Collapsible" desc="Starts open" open
+			>Collapsible body</CollapsibleSection
+		>
 		<CardHeader title="Card header" desc="Description" />
 	</section>
 
@@ -209,7 +255,12 @@
 			<thead><tr><th>Symbol</th><th>Shares</th></tr></thead>
 			<tbody><tr><td>AAPL</td><td>10</td></tr><tr><td>MSFT</td><td>5</td></tr></tbody>
 		</vigil.DataTable>
-		<vigil.SettingsShell backHref="/settings" backLabel="← Settings" title="Settings shell" subtitle="Back link + header">
+		<vigil.SettingsShell
+			backHref="/settings"
+			backLabel="← Settings"
+			title="Settings shell"
+			subtitle="Back link + header"
+		>
 			<p>Body</p>
 		</vigil.SettingsShell>
 	</section>
@@ -218,9 +269,13 @@
 	<section class="space-y-4">
 		<h2 class="text-lg font-semibold">templUI primitives</h2>
 		<div class="flex flex-wrap items-center gap-2">
-			<Badge>Default</Badge><Badge variant="outline">$AAPL</Badge><Badge variant="secondary">Secondary</Badge>
+			<Badge>Default</Badge><Badge variant="outline">$AAPL</Badge><Badge variant="secondary"
+				>Secondary</Badge
+			>
 			<Badge variant="destructive">Destructive</Badge>
-			<MCPStateBadge state="live">Live</MCPStateBadge><MCPStateBadge state="ready">Ready</MCPStateBadge>
+			<MCPStateBadge state="live">Live</MCPStateBadge><MCPStateBadge state="ready"
+				>Ready</MCPStateBadge
+			>
 			<MCPStateBadge state="off">Off</MCPStateBadge>
 		</div>
 		<div class="flex flex-wrap items-center gap-3">
@@ -237,12 +292,19 @@
 			<span class="mcp-snippet-copy"><CopyButton targetId="copy-src" /></span>
 		</div>
 		<card.Card>
-			<card.Header><card.Title>Card title</card.Title><card.Description>Card description</card.Description></card.Header>
+			<card.Header
+				><card.Title>Card title</card.Title><card.Description>Card description</card.Description
+				></card.Header
+			>
 			<card.Content>Card content</card.Content>
 		</card.Card>
 		<table.Table class="csv-preview-table w-full text-sm">
-			<table.Header><table.Row><table.Head>A</table.Head><table.Head>B</table.Head></table.Row></table.Header>
-			<table.Body><table.Row><table.Cell>1</table.Cell><table.Cell>2</table.Cell></table.Row></table.Body>
+			<table.Header
+				><table.Row><table.Head>A</table.Head><table.Head>B</table.Head></table.Row></table.Header
+			>
+			<table.Body
+				><table.Row><table.Cell>1</table.Cell><table.Cell>2</table.Cell></table.Row></table.Body
+			>
 		</table.Table>
 		<dialog.Trigger for="g-dialog">
 			<NativeButton class="btn-secondary px-5">Open dialog (Trigger for=)</NativeButton>
@@ -254,14 +316,27 @@
 					<dialog.Title>Delete account?</dialog.Title>
 					<dialog.Description>This cannot be undone.</dialog.Description>
 				</dialog.Header>
-				<dialog.Close for="g-dialog"><NativeButton class="btn-secondary px-5">Cancel</NativeButton></dialog.Close>
+				<dialog.Close for="g-dialog"
+					><NativeButton class="btn-secondary px-5">Cancel</NativeButton></dialog.Close
+				>
 			</dialog.Content>
 		</dialog.Dialog>
-		<PrimaryButton onclick={() => window.dispatchEvent(new CustomEvent('openQuickExpense'))}>Open Pines modal</PrimaryButton>
-		<PinesModalShell modalID="quick-expense-modal" openEvent="openQuickExpense" title="Add expense" bind:open={pinesOpen}>
+		<PrimaryButton onclick={() => window.dispatchEvent(new CustomEvent('openQuickExpense'))}
+			>Open Pines modal</PrimaryButton
+		>
+		<PinesModalShell
+			modalID="quick-expense-modal"
+			openEvent="openQuickExpense"
+			title="Add expense"
+			bind:open={pinesOpen}
+		>
 			<p>Pines modal body</p>
 		</PinesModalShell>
-		<PinesSearchField resultsId="asset-search-results" bind:query={searchQ} onsearch={(q) => console.log('search', q)}>
+		<PinesSearchField
+			resultsId="asset-search-results"
+			bind:query={searchQ}
+			onsearch={(q) => console.log('search', q)}
+		>
 			{#snippet results(q)}<p class="p-3 text-sm">Results for "{q}"</p>{/snippet}
 		</PinesSearchField>
 	</section>
@@ -308,7 +383,16 @@
 				netShares: '-12,000',
 				netSharesTone: 'negative',
 				clusterBuy: 'Cluster buy',
-				trades: [{ date: 'Oct 1', name: 'Jane Doe', title: 'CFO', kind: 'Sell', shares: '4,000', value: '$800K' }]
+				trades: [
+					{
+						date: 'Oct 1',
+						name: 'Jane Doe',
+						title: 'CFO',
+						kind: 'Sell',
+						shares: '4,000',
+						value: '$800K'
+					}
+				]
 			}}
 		/>
 		<InstitutionalOwnership
@@ -323,10 +407,20 @@
 		<CongressTrades
 			vm={{
 				present: true,
-				trades: [{ politician: 'J. Smith', chamber: 'House', type: 'Purchase', amountRange: '$1K–$15K', transactionDate: 'Oct 2' }]
+				trades: [
+					{
+						politician: 'J. Smith',
+						chamber: 'House',
+						type: 'Purchase',
+						amountRange: '$1K–$15K',
+						transactionDate: 'Oct 2'
+					}
+				]
 			}}
 		/>
-		<PilotFollowingBanner vm={{ pilotName: 'Buffett', followHref: '/pilots/follow/1', paused: true }} />
+		<PilotFollowingBanner
+			vm={{ pilotName: 'Buffett', followHref: '/pilots/follow/1', paused: true }}
+		/>
 		<CSVImportFormatHint />
 		<WatchlistCSVImportFormatHint />
 		<ShareBar
@@ -361,10 +455,16 @@
 	<section class="space-y-4">
 		<h2 class="text-lg font-semibold">Motion</h2>
 		<p class="nq-hero-value" data-format="$" bind:this={heroEl}>$98,765.43</p>
-		<PrimaryButton onclick={() => heroEl && animateValue(heroEl, '$0.00', '$98,765.43', 800)}>Replay count</PrimaryButton>
+		<PrimaryButton onclick={() => heroEl && animateValue(heroEl, '$0.00', '$98,765.43', 800)}
+			>Replay count</PrimaryButton
+		>
 		<p>
-			Price: <span class="portfolio-row-value" {@attach flashOnChange(() => price)}>${price.toFixed(2)}</span>
-			<SecondaryButton onclick={() => (price = +(price + (Math.random() - 0.5) * 50).toFixed(2))}>Change</SecondaryButton>
+			Price: <span class="portfolio-row-value" {@attach flashOnChange(() => price)}
+				>${price.toFixed(2)}</span
+			>
+			<SecondaryButton onclick={() => (price = +(price + (Math.random() - 0.5) * 50).toFixed(2))}
+				>Change</SecondaryButton
+			>
 		</p>
 		<ul class="space-y-2" {@attach staggerOnMount(':scope > li', 60)}>
 			<li class="glass-card p-3">One</li>

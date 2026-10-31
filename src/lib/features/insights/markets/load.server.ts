@@ -93,14 +93,17 @@ function parseEarningsWeek(raw: string | null, now: Date): Date {
 	if (m) {
 		const t = utcDay(+m[1], +m[2] - 1, +m[3]);
 		// time.Parse rejects out-of-range days ("2026-02-31") rather than rolling over.
-		if (t.getUTCFullYear() === +m[1] && t.getUTCMonth() === +m[2] - 1 && t.getUTCDate() === +m[3]) return mondayOf(t);
+		if (t.getUTCFullYear() === +m[1] && t.getUTCMonth() === +m[2] - 1 && t.getUTCDate() === +m[3])
+			return mondayOf(t);
 	}
 	return mondayOf(now);
 }
 
-const parseEarningsScope = (raw: string | null): 'all' | 'mine' => ((raw ?? '').trim().toLowerCase() === 'mine' ? 'mine' : 'all');
+const parseEarningsScope = (raw: string | null): 'all' | 'mine' =>
+	(raw ?? '').trim().toLowerCase() === 'mine' ? 'mine' : 'all';
 
-const marketsEarningsHref = (weekStart: Date, scope: string) => `/markets/earnings?week=${isoDay(weekStart)}&scope=${scope}`;
+const marketsEarningsHref = (weekStart: Date, scope: string) =>
+	`/markets/earnings?week=${isoDay(weekStart)}&scope=${scope}`;
 
 function earningsWeekLabel(weekStart: Date, weekEnd: Date): string {
 	if (weekStart.getUTCMonth() === weekEnd.getUTCMonth()) {
@@ -114,17 +117,29 @@ function buildEarningsWeekdays(weekStart: Date, now: Date): EarningsDayVM[] {
 	const days: EarningsDayVM[] = [];
 	for (let i = 0; i < EARNINGS_WEEKDAYS; i++) {
 		const day = addDays(weekStart, i);
-		days.push({ label: goFormat(day, 'Mon'), dateLabel: goFormat(day, 'Jan 2'), isoDate: isoDay(day), isToday: isoDay(day) === today, rows: [] });
+		days.push({
+			label: goFormat(day, 'Mon'),
+			dateLabel: goFormat(day, 'Jan 2'),
+			isoDate: isoDay(day),
+			isToday: isoDay(day) === today,
+			rows: []
+		});
 	}
 	return days;
 }
 
-const optionalCompactCurrency = (v: number | null | undefined) => (v === null || v === undefined ? '-' : formatCompactCurrency(v));
+const optionalCompactCurrency = (v: number | null | undefined) =>
+	v === null || v === undefined ? '-' : formatCompactCurrency(v);
 
 /** The date part of the calendar's "YYYY-MM-DD" (or a timestamp read in UTC). */
 const eventDay = (raw: string) => /^\d{4}-\d{2}-\d{2}/.exec(raw)?.[0] ?? '';
 
-function fillEarningsWeekdays(days: EarningsDayVM[], events: S['EarningsResponse'][], mine: Set<string>, names: Map<string, string>) {
+function fillEarningsWeekdays(
+	days: EarningsDayVM[],
+	events: S['EarningsResponse'][],
+	mine: Set<string>,
+	names: Map<string, string>
+) {
 	const column = new Map(days.map((d, i) => [d.isoDate, i]));
 	const sorted = [...events].sort((a, b) => {
 		const da = eventDay(a.date);
@@ -167,7 +182,11 @@ async function loadFollowedSymbols(event: RequestEvent): Promise<Set<string>> {
 }
 
 /** loadFollowedCompanyNames: profile names for followed symbols reporting this week (capped, 8 at a time). */
-async function loadFollowedCompanyNames(event: RequestEvent, events: S['EarningsResponse'][], mine: Set<string>): Promise<Map<string, string>> {
+async function loadFollowedCompanyNames(
+	event: RequestEvent,
+	events: S['EarningsResponse'][],
+	mine: Set<string>
+): Promise<Map<string, string>> {
 	const wanted: string[] = [];
 	const seen = new Set<string>();
 	for (const ev of events) {
@@ -181,7 +200,10 @@ async function loadFollowedCompanyNames(event: RequestEvent, events: S['Earnings
 	for (let i = 0; i < wanted.length; i += 8) {
 		await Promise.all(
 			wanted.slice(i, i + 8).map(async (symbol) => {
-				const res = await getJSON<{ name?: string | null }>(event, '/v1/market/profile/' + encodeURIComponent(symbol));
+				const res = await getJSON<{ name?: string | null }>(
+					event,
+					'/v1/market/profile/' + encodeURIComponent(symbol)
+				);
 				if (res.failed) console.warn('markets earnings company name fetch failed', symbol);
 				const name = (res.data?.name ?? '').trim();
 				if (name) names.set(symbol, name);
@@ -191,7 +213,10 @@ async function loadFollowedCompanyNames(event: RequestEvent, events: S['Earnings
 	return names;
 }
 
-export async function loadMarketsEarnings(event: RequestEvent, now = new Date()): Promise<EarningsCalendarVM> {
+export async function loadMarketsEarnings(
+	event: RequestEvent,
+	now = new Date()
+): Promise<EarningsCalendarVM> {
 	const weekStart = parseEarningsWeek(event.url.searchParams.get('week'), now);
 	const weekEnd = addDays(weekStart, EARNINGS_WEEKDAYS - 1);
 	const scope = parseEarningsScope(event.url.searchParams.get('scope'));
@@ -210,7 +235,10 @@ export async function loadMarketsEarnings(event: RequestEvent, now = new Date())
 	};
 
 	const [calendar, mine] = await Promise.all([
-		getJSON<S['EarningsResponse'][]>(event, '/v1/market/earnings-calendar', { from: isoDay(weekStart), to: isoDay(weekEnd) }),
+		getJSON<S['EarningsResponse'][]>(event, '/v1/market/earnings-calendar', {
+			from: isoDay(weekStart),
+			to: isoDay(weekEnd)
+		}),
 		loadFollowedSymbols(event)
 	]);
 	let events: S['EarningsResponse'][] = [];
@@ -277,13 +305,20 @@ function mapCongressTrades(trades: S['CongressTrade'][], maxRows: number): Congr
 	return out;
 }
 
-export async function loadMarketsCongress(event: RequestEvent): Promise<Omit<CongressFeedVM, 'pilotsEnabled'>> {
-	const res = await getJSON<S['CongressTradesResponse']>(event, '/v1/market/congress/recent', { limit: MARKETS_CONGRESS_ROWS });
+export async function loadMarketsCongress(
+	event: RequestEvent
+): Promise<Omit<CongressFeedVM, 'pilotsEnabled'>> {
+	const res = await getJSON<S['CongressTradesResponse']>(event, '/v1/market/congress/recent', {
+		limit: MARKETS_CONGRESS_ROWS
+	});
 	if (!res.data) {
 		console.warn('recent congress trades fetch failed', res.status);
 		return { trades: [], loadError: true };
 	}
-	return { trades: mapCongressTrades(res.data.trades ?? [], MARKETS_CONGRESS_ROWS), loadError: false };
+	return {
+		trades: mapCongressTrades(res.data.trades ?? [], MARKETS_CONGRESS_ROWS),
+		loadError: false
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -291,7 +326,9 @@ export async function loadMarketsCongress(event: RequestEvent): Promise<Omit<Con
 
 const TRENDING_BOARD_LIMIT = 8;
 
-function mapTrendingRows(entries: S['TrendingSentimentEntry'][] | null | undefined): SentimentRowVM[] {
+function mapTrendingRows(
+	entries: S['TrendingSentimentEntry'][] | null | undefined
+): SentimentRowVM[] {
 	return (entries ?? []).map((entry) => {
 		const delta = formatSentimentDelta(entry.delta1d);
 		return {
@@ -317,7 +354,9 @@ export async function loadSentimentBoard(event: RequestEvent): Promise<Sentiment
 		bearish: [],
 		biggestSwings: []
 	};
-	const res = await getJSON<S['MarketTrendingResponse']>(event, '/v1/insights/sentiment/trending', { limit: TRENDING_BOARD_LIMIT });
+	const res = await getJSON<S['MarketTrendingResponse']>(event, '/v1/insights/sentiment/trending', {
+		limit: TRENDING_BOARD_LIMIT
+	});
 	if (!res.data) {
 		console.warn('load trending sentiment', res.status);
 		return vm;

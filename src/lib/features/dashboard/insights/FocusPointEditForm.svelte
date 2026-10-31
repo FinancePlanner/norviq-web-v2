@@ -16,7 +16,12 @@
 </script>
 
 <li id={'focus-point-' + point.id} class="focus-point-row focus-point-row-editing">
-	<form class="focus-point-edit-form" method="POST" action="/dashboard/insights?/update" use:enhance={submit}>
+	<form
+		class="focus-point-edit-form"
+		method="POST"
+		action="/dashboard/insights?/update"
+		use:enhance={submit}
+	>
 		<input type="hidden" name="id" value={point.id} />
 		<input
 			type="text"

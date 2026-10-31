@@ -103,7 +103,11 @@ export function formatRelativeTime(t: Date, now: Date): string {
 	return goFormat(t, 'Jan 2, 2006');
 }
 
-export async function loadMCPStatus(event: RequestEvent, isPro: boolean, now = new Date()): Promise<MCPStatusVM> {
+export async function loadMCPStatus(
+	event: RequestEvent,
+	isPro: boolean,
+	now = new Date()
+): Promise<MCPStatusVM> {
 	const vm: MCPStatusVM = {
 		isPro,
 		hasTokens: false,
@@ -129,7 +133,8 @@ export async function loadMCPStatus(event: RequestEvent, isPro: boolean, now = n
 	}
 	let tokens: PersonalAccessToken[];
 	try {
-		tokens = (await apiJSON<{ items?: PersonalAccessToken[] }>(event, 'GET', '/v1/tokens'))?.items ?? [];
+		tokens =
+			(await apiJSON<{ items?: PersonalAccessToken[] }>(event, 'GET', '/v1/tokens'))?.items ?? [];
 	} catch (err) {
 		console.warn('list PAT for mcp status failed', err);
 		vm.loadError = true;
@@ -213,7 +218,10 @@ function formatSentimentSource(src: S['WhyMovedSentimentSource']): string {
 }
 
 /** null = render nothing (Go wrote an empty 200 so the shell collapsed). */
-export async function loadWhyMoved(event: RequestEvent, isPro: boolean): Promise<WhyMovedVM | null> {
+export async function loadWhyMoved(
+	event: RequestEvent,
+	isPro: boolean
+): Promise<WhyMovedVM | null> {
 	const res = await getJSON<S['WhyMovedResponse']>(event, '/v1/dashboard/why-moved');
 	if (res.failed || !res.data) return null;
 	const data = res.data;
@@ -221,7 +229,10 @@ export async function loadWhyMoved(event: RequestEvent, isPro: boolean): Promise
 		aiSummary: data.aiSummary?.text ?? '',
 		moverChips: [],
 		indexChips: [],
-		changeLabel: data.portfolioChangePercent != null ? `${signedFixed(data.portfolioChangePercent, 2)}% today` : '',
+		changeLabel:
+			data.portfolioChangePercent != null
+				? `${signedFixed(data.portfolioChangePercent, 2)}% today`
+				: '',
 		isPro,
 		sourceLine: '',
 		capacityLine: ''
@@ -236,9 +247,14 @@ export async function loadWhyMoved(event: RequestEvent, isPro: boolean): Promise
 		});
 	}
 	for (const index of data.context?.indices ?? []) {
-		vm.indexChips.push({ label: index.label, changePct: index.changePercent, change: `${signedFixed(index.changePercent, 2)}%` });
+		vm.indexChips.push({
+			label: index.label,
+			changePct: index.changePercent,
+			change: `${signedFixed(index.changePercent, 2)}%`
+		});
 	}
-	if (data.sentimentSource && data.sentimentSource.postsAnalyzed > 0) vm.sourceLine = formatSentimentSource(data.sentimentSource);
+	if (data.sentimentSource && data.sentimentSource.postsAnalyzed > 0)
+		vm.sourceLine = formatSentimentSource(data.sentimentSource);
 	try {
 		const cap = await apiJSON<S['SpendToUnitsCapacity']>(event, 'GET', '/v1/budget/dca-capacity');
 		if (cap && cap.surplusUnits != null) {
@@ -255,7 +271,8 @@ export async function loadWhyMoved(event: RequestEvent, isPro: boolean): Promise
 // Terminal summary (dashboard_terminal.go + terminal_map.go terminalRowVM)
 
 const terminalTopRows = 3;
-export const terminalDisclaimer = 'Terminal prices are your assumptions, not forecasts. Not financial advice.';
+export const terminalDisclaimer =
+	'Terminal prices are your assumptions, not forecasts. Not financial advice.';
 
 export async function loadTerminalSummary(event: RequestEvent): Promise<TerminalSummaryVM> {
 	const vm: TerminalSummaryVM = {
@@ -266,7 +283,10 @@ export async function loadTerminalSummary(event: RequestEvent): Promise<Terminal
 		top: [],
 		disclaimer: event.locals.t(terminalDisclaimer)
 	};
-	const res = await getJSON<S['TerminalPositionsSummaryResponse']>(event, '/v1/terminal-positions/summary');
+	const res = await getJSON<S['TerminalPositionsSummaryResponse']>(
+		event,
+		'/v1/terminal-positions/summary'
+	);
 	const summary = res.data;
 	if (res.failed || !summary) {
 		if (!res.failed) console.warn('terminal summary', res.status);
@@ -289,7 +309,13 @@ export async function loadTerminalSummary(event: RequestEvent): Promise<Terminal
 			p.sharesStillNeeded != null &&
 			p.gapValueAtTerminal != null;
 		if (!computed) {
-			vm.top.push({ ticker: p.ticker, terminalSharePrice: fmt.DASH, sharesNeeded: fmt.DASH, progressLabel: fmt.DASH, progressPct: 0 });
+			vm.top.push({
+				ticker: p.ticker,
+				terminalSharePrice: fmt.DASH,
+				sharesNeeded: fmt.DASH,
+				progressLabel: fmt.DASH,
+				progressPct: 0
+			});
 			continue;
 		}
 		const pct = p.progress! * 100;
@@ -316,7 +342,12 @@ export async function loadEconomyPulse(event: RequestEvent, limit = 4): Promise<
 	const now = new Date();
 	const items = res.data
 		.filter((a) => (a.title ?? '').trim() !== '' && a.url)
-		.map((a) => ({ title: a.title.trim(), url: a.url, source: headlineSource(a.url), timeAgo: headlineTimeAgo(a.date, now) }));
+		.map((a) => ({
+			title: a.title.trim(),
+			url: a.url,
+			source: headlineSource(a.url),
+			timeAgo: headlineTimeAgo(a.date, now)
+		}));
 	return { items };
 }
 
@@ -328,10 +359,18 @@ function formatOptionalSignedPercent(value: number | null | undefined): [string,
 	return [fmt.formatSignedPercent(value), fmt.changeClass(value)];
 }
 
-export async function loadAssetSearchResults(event: RequestEvent, rawQuery: string, includeReturns: boolean): Promise<SearchResultVM[]> {
+export async function loadAssetSearchResults(
+	event: RequestEvent,
+	rawQuery: string,
+	includeReturns: boolean
+): Promise<SearchResultVM[]> {
 	const query = rawQuery.trim();
 	if (query.length < 1) return [];
-	const res = await getJSON<{ symbol: string; name: string; exchange: string }[]>(event, '/v1/assets/search', { q: query, limit: 8 });
+	const res = await getJSON<{ symbol: string; name: string; exchange: string }[]>(
+		event,
+		'/v1/assets/search',
+		{ q: query, limit: 8 }
+	);
 	if (res.failed || !res.data) return [];
 	const out: SearchResultVM[] = [];
 	for (const row of res.data) {
@@ -351,11 +390,17 @@ export async function loadAssetSearchResults(event: RequestEvent, rawQuery: stri
 		});
 	}
 	if (includeReturns && out.length > 0) {
-		const batch = await getJSON<S['StockPeriodReturnsBatchResponse']>(event, '/v1/market/returns/batch', {
-			symbols: out.map((r) => r.symbol).join(',')
-		});
+		const batch = await getJSON<S['StockPeriodReturnsBatchResponse']>(
+			event,
+			'/v1/market/returns/batch',
+			{
+				symbols: out.map((r) => r.symbol).join(',')
+			}
+		);
 		if (batch.failed) console.warn('asset search period returns fetch failed');
-		const bySymbol = new Map((batch.data?.returns ?? []).map((r) => [r.symbol.trim().toUpperCase(), r]));
+		const bySymbol = new Map(
+			(batch.data?.returns ?? []).map((r) => [r.symbol.trim().toUpperCase(), r])
+		);
 		for (const row of out) {
 			const item = bySymbol.get(row.symbol.toUpperCase());
 			if (!item) continue;

@@ -239,14 +239,16 @@ function goParseFloat(s: string): number | null {
 		const v = mant * Math.pow(2, Number(hex[3]) - 4 * fracPart.length);
 		return hex[1] === '-' ? -v : v;
 	}
-	if (goSpecial.test(s)) return s.toLowerCase().includes('nan') ? NaN : s.startsWith('-') ? -Infinity : Infinity;
+	if (goSpecial.test(s))
+		return s.toLowerCase().includes('nan') ? NaN : s.startsWith('-') ? -Infinity : Infinity;
 	return null;
 }
 
 /** Whether s is digits grouped by sep in threes: "1,234,567". */
 function isGrouped(s: string, sep: string): boolean {
 	const parts = s.replace(/^-/, '').split(sep);
-	if (parts.length < 2 || parts[0] === '' || parts[0][0] === '0' || parts[0].length > 3) return false;
+	if (parts.length < 2 || parts[0] === '' || parts[0][0] === '0' || parts[0].length > 3)
+		return false;
 	return parts.slice(1).every((p) => p.length === 3);
 }
 
@@ -286,7 +288,8 @@ export function parseAmount(raw: string): ParseAmountResult {
 		s = s.slice(0, -1);
 	}
 	const v = goParseFloat(normalizeSeparators(s));
-	if (v === null || !finite(v) || !finite(v * multiplier)) return { ok: false, error: ErrNotNumber };
+	if (v === null || !finite(v) || !finite(v * multiplier))
+		return { ok: false, error: ErrNotNumber };
 	return { ok: true, value: v * multiplier };
 }
 
@@ -367,6 +370,8 @@ export function formatCompactCurrency(value: number): string {
 
 /** handlers.formatMoney (economy_data.go): symbol (USD/EUR/BRL, else "CODE ") and a whole number, no separators. */
 export function formatMoney(value: number, currencyCode: string): string {
-	const symbol = ({ USD: '$', EUR: '€', BRL: 'R$' } as Record<string, string>)[currencyCode] || currencyCode + ' ';
+	const symbol =
+		({ USD: '$', EUR: '€', BRL: 'R$' } as Record<string, string>)[currencyCode] ||
+		currencyCode + ' ';
 	return symbol + formatFloat(value, 0);
 }

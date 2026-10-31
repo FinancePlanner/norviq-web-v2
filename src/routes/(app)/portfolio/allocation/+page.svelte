@@ -3,11 +3,23 @@
 	import { page } from '$app/state';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { allocationPie } from '#lib/charts/index.js';
-	import { Button, EmptyState, Field, Icon, NativeButton, SelectField } from '#lib/components/norviq/index.js';
+	import {
+		Button,
+		EmptyState,
+		Field,
+		Icon,
+		NativeButton,
+		SelectField
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import * as dialog from '#lib/components/norviq/tui/dialog/index.js';
 	import PortfolioListPanel from '#lib/features/portfolio/analytics/PortfolioListPanel.svelte';
-	import { emptyListForm, type AllocationMetricVM, type ListFormVM, type PortfolioListRowVM } from '#lib/features/portfolio/analytics/types.js';
+	import {
+		emptyListForm,
+		type AllocationMetricVM,
+		type ListFormVM,
+		type PortfolioListRowVM
+	} from '#lib/features/portfolio/analytics/types.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -16,15 +28,25 @@
 	// Alpine x-data="{ mode: 'cost' }" with x-init reading ?view=lists.
 	let mode = $state(page.url.searchParams.get('view') === 'lists' ? 'lists' : 'cost');
 
-	const costChart = $derived(vm.costChart ? allocationPie(vm.costChart.chartID, vm.costChart.labels, vm.costChart.weights) : null);
-	const sectorChart = $derived(vm.sectorChart ? allocationPie(vm.sectorChart.chartID, vm.sectorChart.labels, vm.sectorChart.weights) : null);
+	const costChart = $derived(
+		vm.costChart
+			? allocationPie(vm.costChart.chartID, vm.costChart.labels, vm.costChart.weights)
+			: null
+	);
+	const sectorChart = $derived(
+		vm.sectorChart
+			? allocationPie(vm.sectorChart.chartID, vm.sectorChart.labels, vm.sectorChart.weights)
+			: null
+	);
 
 	// Alpine allocationHoldingsTable (assets/scripts.js).
 	let query = $state('');
 	let sort = $state('weight');
 	const filteredRows = $derived.by(() => {
 		const q = query.trim().toLowerCase();
-		const rows = q ? vm.costRows.filter((row) => row.label.toLowerCase().includes(q)) : [...vm.costRows];
+		const rows = q
+			? vm.costRows.filter((row) => row.label.toLowerCase().includes(q))
+			: [...vm.costRows];
 		if (sort === 'ticker') return rows.sort((a, b) => a.label.localeCompare(b.label));
 		if (sort === 'value') return rows.sort((a, b) => b.rawValue - a.rawValue);
 		return rows.sort((a, b) => b.rawPercent - a.rawPercent);
@@ -35,7 +57,16 @@
 	let listForm = $state<ListFormVM>(emptyListForm());
 	let listFormKey = $state(0);
 	function openListForm(list?: PortfolioListRowVM) {
-		listForm = list ? { listID: list.id, name: list.name, isEdit: true, isDefault: list.isDefault, canDelete: list.canDelete, error: '' } : emptyListForm();
+		listForm = list
+			? {
+					listID: list.id,
+					name: list.name,
+					isEdit: true,
+					isDefault: list.isDefault,
+					canDelete: list.canDelete,
+					error: ''
+				}
+			: emptyListForm();
 		listFormKey++;
 		dialog.openDialog('list-action-dialog');
 	}
@@ -49,7 +80,12 @@
 		'Largest holding': 'target',
 		'Largest sector': 'network'
 	};
-	const tipIcon = (tone: string) => (tone === 'warning' || tone === 'danger' ? 'circle-alert' : tone === 'success' ? 'badge-info' : 'info');
+	const tipIcon = (tone: string) =>
+		tone === 'warning' || tone === 'danger'
+			? 'circle-alert'
+			: tone === 'success'
+				? 'badge-info'
+				: 'info';
 	function tipLabel(tone: string): string {
 		switch (tone) {
 			case 'warning':
@@ -148,12 +184,19 @@
 			{#if vm.costOtherCount > 0}
 				<div class="allocation-other-footer">
 					<strong>Donut grouping</strong>
-					<span>{`${vm.costOtherCount} smaller positions grouped as Other · ${vm.costOtherWeight} combined · ${vm.costOtherValue}`}</span>
+					<span
+						>{`${vm.costOtherCount} smaller positions grouped as Other · ${vm.costOtherWeight} combined · ${vm.costOtherValue}`}</span
+					>
 				</div>
 			{/if}
 		</section>
 	{:else}
-		<EmptyState title="Nothing under watch yet" description="Add positions to your portfolio to see how your wealth is distributed." actionLabel="Add position" actionHref="/portfolio" />
+		<EmptyState
+			title="Nothing under watch yet"
+			description="Add positions to your portfolio to see how your wealth is distributed."
+			actionLabel="Add position"
+			actionHref="/portfolio"
+		/>
 	{/if}
 {/snippet}
 
@@ -201,7 +244,12 @@
 			</section>
 		</div>
 	{:else}
-		<EmptyState title="No sector data yet" description="Sector breakdown appears once your holdings have sector metadata." actionLabel="View holdings" actionHref="/portfolio" />
+		<EmptyState
+			title="No sector data yet"
+			description="Sector breakdown appears once your holdings have sector metadata."
+			actionLabel="View holdings"
+			actionHref="/portfolio"
+		/>
 	{/if}
 {/snippet}
 
@@ -213,7 +261,12 @@
 					<h2>Portfolio lists</h2>
 					<p>Organize holdings into separate portfolios.</p>
 				</div>
-				<NativeButton class="btn-secondary px-4 py-2 text-sm" data-tui-dialog-trigger="" data-tui-dialog-target="list-action-dialog" onclick={() => openListForm()}>
+				<NativeButton
+					class="btn-secondary px-4 py-2 text-sm"
+					data-tui-dialog-trigger=""
+					data-tui-dialog-target="list-action-dialog"
+					onclick={() => openListForm()}
+				>
 					New list
 				</NativeButton>
 			</div>
@@ -229,7 +282,9 @@
 								{#if list.totalValue !== ''}
 									<p class="portfolio-list-value mt-2 font-medium">{list.totalValue}</p>
 								{/if}
-								<p class="portfolio-list-meta mt-2 text-sm text-muted-foreground">{list.positionCount}</p>
+								<p class="portfolio-list-meta mt-2 text-sm text-muted-foreground">
+									{list.positionCount}
+								</p>
 							</a>
 							<NativeButton
 								class="btn-secondary shrink-0 px-3 py-1 text-xs"
@@ -245,7 +300,12 @@
 			</div>
 		{:else}
 			<div class="allocation-panel p-8 text-center">
-				<EmptyState title="No portfolio lists" description="Create lists to organize positions separately from your default portfolio." actionLabel="New list" actionHref="#" />
+				<EmptyState
+					title="No portfolio lists"
+					description="Create lists to organize positions separately from your default portfolio."
+					actionLabel="New list"
+					actionHref="#"
+				/>
 				<NativeButton
 					class="btn-primary mt-4 inline-flex w-auto px-6"
 					data-tui-dialog-trigger=""
@@ -336,9 +396,18 @@
 				{/if}
 				<div class="allocation-mode-card">
 					<div class="filter-chips" role="group" aria-label="Allocation mode">
-						<NativeButton class={'filter-chip ' + (mode === 'cost' ? 'filter-chip-active' : '')} onclick={() => (mode = 'cost')}>Cost basis</NativeButton>
-						<NativeButton class={'filter-chip ' + (mode === 'sector' ? 'filter-chip-active' : '')} onclick={() => (mode = 'sector')}>Sector</NativeButton>
-						<NativeButton class={'filter-chip ' + (mode === 'lists' ? 'filter-chip-active' : '')} onclick={() => (mode = 'lists')}>Lists</NativeButton>
+						<NativeButton
+							class={'filter-chip ' + (mode === 'cost' ? 'filter-chip-active' : '')}
+							onclick={() => (mode = 'cost')}>Cost basis</NativeButton
+						>
+						<NativeButton
+							class={'filter-chip ' + (mode === 'sector' ? 'filter-chip-active' : '')}
+							onclick={() => (mode = 'sector')}>Sector</NativeButton
+						>
+						<NativeButton
+							class={'filter-chip ' + (mode === 'lists' ? 'filter-chip-active' : '')}
+							onclick={() => (mode = 'lists')}>Lists</NativeButton
+						>
 					</div>
 				</div>
 			</div>
@@ -360,7 +429,9 @@
 					<div class="allocation-table-toolbar">
 						<div>
 							<h2>All holdings</h2>
-							<p>{`Search and sort ${vm.costRows.length} positions by ticker, value, or weight.`}</p>
+							<p>
+								{`Search and sort ${vm.costRows.length} positions by ticker, value, or weight.`}
+							</p>
 						</div>
 						<div class="allocation-table-controls">
 							<label class="allocation-search">
@@ -396,14 +467,19 @@
 								</div>
 							{/each}
 						</div>
-						<p class="allocation-table-empty" style:display={filteredRows.length === 0 ? undefined : 'none'}>No holdings match that search.</p>
+						<p
+							class="allocation-table-empty"
+							style:display={filteredRows.length === 0 ? undefined : 'none'}
+						>
+							No holdings match that search.
+						</p>
 					</div>
 				</section>
 			{/if}
 		</div>
 	</div>
 	<dialog.Dialog id="list-action-dialog">
-		<dialog.Content class="glass-card vigil-modal-panel border-0 p-6 md:p-8 sm:max-w-2xl">
+		<dialog.Content class="glass-card vigil-modal-panel border-0 p-6 sm:max-w-2xl md:p-8">
 			{#key listFormKey}
 				<PortfolioListPanel vm={listForm} />
 			{/key}

@@ -82,7 +82,9 @@ export interface EarningsCalendarVM {
 export const scopeIsMine = (vm: EarningsCalendarVM) => vm.scope === 'mine';
 
 export function earningsEmptyMessage(vm: EarningsCalendarVM): string {
-	return scopeIsMine(vm) ? 'None of the symbols you hold or watch report this week.' : 'No companies are scheduled to report this week.';
+	return scopeIsMine(vm)
+		? 'None of the symbols you hold or watch report this week.'
+		: 'No companies are scheduled to report this week.';
 }
 
 // ---------------------------------------------------------------------------
@@ -130,7 +132,11 @@ export function formatVolumeZ(z: number | null | undefined): string {
 }
 
 /** markets.FormatSentimentDelta. */
-export function formatSentimentDelta(delta: number | null | undefined): { label: string; up: boolean; ok: boolean } {
+export function formatSentimentDelta(delta: number | null | undefined): {
+	label: string;
+	up: boolean;
+	ok: boolean;
+} {
 	if (delta === null || delta === undefined) return { label: '', up: false, ok: false };
 	const scaled = delta * 100;
 	if (scaled > -1 && scaled < 1) return { label: '', up: false, ok: false };

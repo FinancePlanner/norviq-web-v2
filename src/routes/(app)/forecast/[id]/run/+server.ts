@@ -1,7 +1,10 @@
 import { redirect, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { apiJSON } from '#lib/server/api.js';
-import { parseUUID, requireNetWorthForecasting } from '#lib/features/planning-tools/forecast/form.server.js';
+import {
+	parseUUID,
+	requireNetWorthForecasting
+} from '#lib/features/planning-tools/forecast/form.server.js';
 
 // POST /forecast/{id}/run → NetWorthForecastRun: run, then 303 to
 // /forecast?run=<id as posted>, where the page shows the latest run.

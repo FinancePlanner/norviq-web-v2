@@ -87,7 +87,8 @@ export function emptySubscriptionVM(): SubscriptionVM {
 	};
 }
 
-const UUID_RE = /^(urn:uuid:)?\{?([0-9a-f]{8})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{12})\}?$/i;
+const UUID_RE =
+	/^(urn:uuid:)?\{?([0-9a-f]{8})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{12})\}?$/i;
 
 /**
  * billing.AppUserID: RevenueCat's app_user_id. UUIDs are canonicalised to
@@ -209,13 +210,40 @@ function planRank(plan: string): number {
 	}
 }
 
-const isAnnualPlan = (plan: string) => ['pro_yearly', 'pro_annual'].includes(plan.trim().toLowerCase());
+const isAnnualPlan = (plan: string) =>
+	['pro_yearly', 'pro_annual'].includes(plan.trim().toLowerCase());
 
 function fallbackPlanOptions(currentPlan: string, isPremium: boolean): PlanOption[] {
 	const descriptors: PlanOption[] = [
-		{ productId: 'pro_weekly', plan: 'pro_weekly', displayName: 'Weekly', interval: 'weekly', rank: 1, isCurrent: currentPlan === 'pro_weekly', changeKind: 'subscribe' },
-		{ productId: 'pro_monthly', plan: 'pro_monthly', displayName: 'Monthly', interval: 'monthly', rank: 2, badge: 'Better value', isCurrent: currentPlan === 'pro_monthly', changeKind: 'subscribe' },
-		{ productId: 'pro_yearly', plan: 'pro_yearly', displayName: 'Annual', interval: 'annual', rank: 3, badge: 'Best value', isCurrent: isAnnualPlan(currentPlan), changeKind: 'subscribe' }
+		{
+			productId: 'pro_weekly',
+			plan: 'pro_weekly',
+			displayName: 'Weekly',
+			interval: 'weekly',
+			rank: 1,
+			isCurrent: currentPlan === 'pro_weekly',
+			changeKind: 'subscribe'
+		},
+		{
+			productId: 'pro_monthly',
+			plan: 'pro_monthly',
+			displayName: 'Monthly',
+			interval: 'monthly',
+			rank: 2,
+			badge: 'Better value',
+			isCurrent: currentPlan === 'pro_monthly',
+			changeKind: 'subscribe'
+		},
+		{
+			productId: 'pro_yearly',
+			plan: 'pro_yearly',
+			displayName: 'Annual',
+			interval: 'annual',
+			rank: 3,
+			badge: 'Best value',
+			isCurrent: isAnnualPlan(currentPlan),
+			changeKind: 'subscribe'
+		}
 	];
 	const currentRank = planRank(currentPlan);
 	for (const d of descriptors) {
@@ -243,7 +271,8 @@ function planOptionSubtitle(plan: string, changeKind: string): string {
 	}
 }
 
-const normalizeBillingProductID = (id: string) => (id.trim().toLowerCase() === 'pro_annual' ? 'pro_yearly' : id);
+const normalizeBillingProductID = (id: string) =>
+	id.trim().toLowerCase() === 'pro_annual' ? 'pro_yearly' : id;
 
 function planOptionButtonText(displayName: string, changeKind: string): string {
 	switch (changeKind) {
@@ -256,8 +285,13 @@ function planOptionButtonText(displayName: string, changeKind: string): string {
 	}
 }
 
-function subscriptionPlanOptionVMs(ctx: BillingContext, ...allowedKinds: string[]): SubscriptionPlanOptionVM[] {
-	const options = ctx.planOptions?.length ? ctx.planOptions : fallbackPlanOptions(ctx.plan, ctx.isPremium);
+function subscriptionPlanOptionVMs(
+	ctx: BillingContext,
+	...allowedKinds: string[]
+): SubscriptionPlanOptionVM[] {
+	const options = ctx.planOptions?.length
+		? ctx.planOptions
+		: fallbackPlanOptions(ctx.plan, ctx.isPremium);
 	const cards: SubscriptionPlanOptionVM[] = [];
 	for (const option of options) {
 		const changeKind = String(option.changeKind ?? '').trim();
@@ -306,7 +340,12 @@ export function hydrateSubscriptionVM(vm: SubscriptionVM, ctx: BillingContext | 
 }
 
 /** LoadSubscriptionVM, minus the billing fetch (the caller passes the context). */
-export function subscriptionVM(cfg: Config, userID: string | undefined, billing: BillingContext | null, query: URLSearchParams): SubscriptionVM {
+export function subscriptionVM(
+	cfg: Config,
+	userID: string | undefined,
+	billing: BillingContext | null,
+	query: URLSearchParams
+): SubscriptionVM {
 	const vm = emptySubscriptionVM();
 	vm.appStoreURL = cfg.iosAppStoreURL || DEFAULT_IOS_APP_STORE_URL;
 	vm.revenueCatAPIKey = cfg.revenueCatWebAPIKey.trim();
@@ -318,14 +357,21 @@ export function subscriptionVM(cfg: Config, userID: string | undefined, billing:
 	}
 	vm.isPro = isPro(billing);
 	hydrateSubscriptionVM(vm, billing);
-	if ((query.get('upgraded') ?? '').trim() === '1') vm.successMessage = 'Subscription synced successfully.';
+	if ((query.get('upgraded') ?? '').trim() === '1')
+		vm.successMessage = 'Subscription synced successfully.';
 	if ((query.get('manage_error') ?? '').trim() === '1') {
-		vm.errorMessage = 'Could not open subscription management. Try restoring purchases, then try again.';
+		vm.errorMessage =
+			'Could not open subscription management. Try restoring purchases, then try again.';
 	}
 	return vm;
 }
 
-const ALLOWED_BILLING_HOSTS = new Set(['apps.apple.com', 'billing.revenuecat.com', 'pay.rev.cat', 'billing.stripe.com']);
+const ALLOWED_BILLING_HOSTS = new Set([
+	'apps.apple.com',
+	'billing.revenuecat.com',
+	'pay.rev.cat',
+	'billing.stripe.com'
+]);
 
 /** safeBillingRedirect: HTTPS billing-portal hosts only. */
 export function safeBillingRedirect(raw: string | null | undefined): string | null {

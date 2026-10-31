@@ -3,7 +3,10 @@ import { apiJSON } from '#lib/server/api.js';
 import { requireFeature } from '#lib/server/guards.js';
 import { Feature } from '#lib/billing.js';
 import { safeRedirect } from '#lib/helpers.js';
-import { formString, portfolioAPIErrorMessage } from '#lib/features/portfolio/automation/common.server.js';
+import {
+	formString,
+	portfolioAPIErrorMessage
+} from '#lib/features/portfolio/automation/common.server.js';
 import {
 	FormError,
 	findPortfolio,
@@ -20,14 +23,16 @@ import type { RebalancingSimulation } from '#lib/features/portfolio/automation/t
 // `?portfolio={id}[&plan=…|&alert=…]&/<action>`, which carries the Go path
 // parameters; redirects and messages are the Go handlers' (redirectRebalancing).
 
-const gate = (event: RequestEvent) => requireFeature(event, Feature.RebalancingRules, 'Rebalancing rules');
+const gate = (event: RequestEvent) =>
+	requireFeature(event, Feature.RebalancingRules, 'Rebalancing rules');
 
 export const load: PageServerLoad = async (event) => {
 	await gate(event);
 	return { vm: await loadRebalancingViewModel(event) };
 };
 
-const portfolioParam = (event: RequestEvent) => (event.url.searchParams.get('portfolio') ?? '').trim();
+const portfolioParam = (event: RequestEvent) =>
+	(event.url.searchParams.get('portfolio') ?? '').trim();
 
 function back(portfolioID: string, message: string, isError: boolean): never {
 	safeRedirect(303, rebalancingURL(portfolioID, message, isError));
@@ -56,7 +61,11 @@ export const actions: Actions = {
 		try {
 			await apiJSON(event, method, path, input);
 		} catch (err) {
-			back(portfolioID, portfolioAPIErrorMessage(err, 'Could not save the allocation model.'), true);
+			back(
+				portfolioID,
+				portfolioAPIErrorMessage(err, 'Could not save the allocation model.'),
+				true
+			);
 		}
 		back(portfolioID, 'Allocation model saved.', false);
 	},
@@ -74,15 +83,27 @@ export const actions: Actions = {
 			if (err instanceof FormError) back(portfolioID, err.message, true);
 			throw err;
 		}
-		const page = await apiJSON<{ items: { id: string }[] | null }>(event, 'GET', '/v1/portfolios').catch(() => null);
+		const page = await apiJSON<{ items: { id: string }[] | null }>(
+			event,
+			'GET',
+			'/v1/portfolios'
+		).catch(() => null);
 		if (!findPortfolio((page?.items ?? []) as never[], portfolioID)) {
 			return { portfolioID, error: 'Portfolio not found.' };
 		}
 		try {
-			const simulation = await apiJSON<RebalancingSimulation>(event, 'POST', rebalancingBase(portfolioID) + '/simulate', request);
+			const simulation = await apiJSON<RebalancingSimulation>(
+				event,
+				'POST',
+				rebalancingBase(portfolioID) + '/simulate',
+				request
+			);
 			return { portfolioID, simulation, cashFlow: request.cashFlow };
 		} catch (err) {
-			return { portfolioID, error: portfolioAPIErrorMessage(err, 'Could not calculate the rebalancing plan.') };
+			return {
+				portfolioID,
+				error: portfolioAPIErrorMessage(err, 'Could not calculate the rebalancing plan.')
+			};
 		}
 	},
 
@@ -115,7 +136,12 @@ export const actions: Actions = {
 		const form = await event.request.formData();
 		const input = { note: formString(form, 'note').trim() };
 		try {
-			await apiJSON(event, 'POST', `${rebalancingBase(portfolioID)}/plans/${encodeURIComponent(planID)}/complete`, input);
+			await apiJSON(
+				event,
+				'POST',
+				`${rebalancingBase(portfolioID)}/plans/${encodeURIComponent(planID)}/complete`,
+				input
+			);
 		} catch (err) {
 			back(portfolioID, portfolioAPIErrorMessage(err, 'Could not complete the plan.'), true);
 		}
@@ -142,7 +168,11 @@ export const actions: Actions = {
 		const portfolioID = portfolioParam(event);
 		const alertID = (event.url.searchParams.get('alert') ?? '').trim();
 		try {
-			await apiJSON(event, 'POST', `/v1/rebalancing/alerts/${encodeURIComponent(alertID)}/acknowledge`);
+			await apiJSON(
+				event,
+				'POST',
+				`/v1/rebalancing/alerts/${encodeURIComponent(alertID)}/acknowledge`
+			);
 		} catch (err) {
 			back(portfolioID, portfolioAPIErrorMessage(err, 'Could not acknowledge the alert.'), true);
 		}

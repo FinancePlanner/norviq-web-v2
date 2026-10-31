@@ -28,7 +28,8 @@
 		<div>
 			<h2 class="auth-modern-title">{t('Two-Factor Verification')}</h2>
 		</div>
-		<GhostButton class="link-tint text-sm font-semibold" onclick={onclose}>{t('Close')}</GhostButton>
+		<GhostButton class="link-tint text-sm font-semibold" onclick={onclose}>{t('Close')}</GhostButton
+		>
 	</header>
 	<p class="text-sm leading-relaxed text-muted-foreground">
 		{#if mfa.maskedDestination}
@@ -50,7 +51,7 @@
 			placeholder="123456"
 			autocomplete="one-time-code"
 			required
-			class="text-center text-2xl font-semibold spring-pop"
+			class="spring-pop text-center text-2xl font-semibold"
 			inputmode="numeric"
 			pattern={'[0-9]{6}'}
 			maxlength={6}
@@ -60,16 +61,22 @@
 		<ToastBanner message={mfa.info} />
 		<SubmitButton fullWidth>{t('Verify and Sign In')}</SubmitButton>
 	</form>
-	<form method="POST" action="/mfa/resend" use:enhance={enhanceInPlace({ onData, onError, hardRedirect: true })}>
+	<form
+		method="POST"
+		action="/mfa/resend"
+		use:enhance={enhanceInPlace({ onData, onError, hardRedirect: true })}
+	>
 		{#if mfa.resendAvailableIn > 0}
 			<GhostButton
 				disabled
 				fullWidth
-				class="text-sm font-semibold text-muted-foreground spring-pop"
+				class="spring-pop text-sm font-semibold text-muted-foreground"
 				data-motion="spring">Resend in {mfa.resendAvailableIn}s</GhostButton
 			>
 		{:else}
-			<SubmitButton fullWidth class="link-tint text-sm font-semibold">{t('Resend code')}</SubmitButton>
+			<SubmitButton fullWidth class="link-tint text-sm font-semibold"
+				>{t('Resend code')}</SubmitButton
+			>
 		{/if}
 	</form>
 </div>

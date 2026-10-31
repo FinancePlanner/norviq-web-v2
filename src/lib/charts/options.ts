@@ -8,7 +8,14 @@
 //   - the empty `title: {}` / `toolbox: {}` go-echarts adds to every chart;
 //   - SentimentHistoryLine's `markLine` (the "neutral" zero line never rendered).
 import type { EChartsOption } from 'echarts';
-import { allocationColors, colorCyan, colorGreen, colorMuted, colorTint, goEchartsDefaultColors } from './palette.js';
+import {
+	allocationColors,
+	colorCyan,
+	colorGreen,
+	colorMuted,
+	colorTint,
+	goEchartsDefaultColors
+} from './palette.js';
 import type { ChartSpec, OptionObject } from './types.js';
 
 /**
@@ -31,17 +38,29 @@ function spec(id: string, width: string, height: string, option: OptionObject): 
 }
 
 /** Monthly spending trend. */
-export function spendingLine(chartID: string, labels: readonly string[], values: readonly number[]): ChartSpec | null {
+export function spendingLine(
+	chartID: string,
+	labels: readonly string[],
+	values: readonly number[]
+): ChartSpec | null {
 	return trendLine(chartID, labels, values, 'Spending', colorCyan, 0.22);
 }
 
 /** Portfolio wealth trend. */
-export function wealthLine(chartID: string, labels: readonly string[], values: readonly number[]): ChartSpec | null {
+export function wealthLine(
+	chartID: string,
+	labels: readonly string[],
+	values: readonly number[]
+): ChartSpec | null {
 	return trendLine(chartID, labels, values, 'Wealth', colorTint, 0.25);
 }
 
 /** A single-asset close-price line (crypto coin detail). */
-export function priceLine(chartID: string, labels: readonly string[], values: readonly number[]): ChartSpec | null {
+export function priceLine(
+	chartID: string,
+	labels: readonly string[],
+	values: readonly number[]
+): ChartSpec | null {
 	return trendLine(chartID, labels, values, 'Price', colorTint, 0.18);
 }
 
@@ -102,7 +121,11 @@ function trendLine(
 }
 
 /** Sector allocation donut. Ids containing "allocation" (but not "expenses") get the large variant. */
-export function allocationPie(chartID: string, sectors: readonly string[], weights: readonly number[]): ChartSpec | null {
+export function allocationPie(
+	chartID: string,
+	sectors: readonly string[],
+	weights: readonly number[]
+): ChartSpec | null {
 	const id = normalizeChartID(chartID || 'allocation_chart');
 	if (sectors.length === 0) return null;
 	let height = '160px';
@@ -141,7 +164,11 @@ export function allocationPie(chartID: string, sectors: readonly string[], weigh
  * carries no data (go-echarts dropped the sectors passed to XAxis because
  * SetXAxis was never called), so ECharts labels the bars by index.
  */
-export function sectorGainsBar(chartID: string, sectors: readonly string[], gains: readonly number[]): ChartSpec | null {
+export function sectorGainsBar(
+	chartID: string,
+	sectors: readonly string[],
+	gains: readonly number[]
+): ChartSpec | null {
 	const id = normalizeChartID(chartID || 'sector_gains_chart');
 	if (sectors.length === 0) return null;
 	return spec(id, '100%', '220px', {
@@ -152,7 +179,10 @@ export function sectorGainsBar(chartID: string, sectors: readonly string[], gain
 			{
 				name: 'Unrealized P/L',
 				type: 'bar',
-				data: gains.map((value) => ({ value, itemStyle: { color: value < 0 ? '#f23645' : colorGreen } })),
+				data: gains.map((value) => ({
+					value,
+					itemStyle: { color: value < 0 ? '#f23645' : colorGreen }
+				})),
 				label: { show: false }
 			}
 		],
@@ -194,7 +224,11 @@ export function sparkline(chartID: string, closes: readonly number[]): ChartSpec
 }
 
 /** OHLC candlestick; each bar is [open, close, low, high]. Unused by the Go pages, ported for completeness. */
-export function candlestick(chartID: string, xLabels: readonly string[], klineData: readonly (readonly number[])[]): ChartSpec | null {
+export function candlestick(
+	chartID: string,
+	xLabels: readonly string[],
+	klineData: readonly (readonly number[])[]
+): ChartSpec | null {
 	const id = normalizeChartID(chartID || 'candle_chart');
 	if (xLabels.length === 0 || klineData.length === 0) return null;
 	return spec(id, '100%', '420px', {
@@ -206,8 +240,15 @@ export function candlestick(chartID: string, xLabels: readonly string[], klineDa
 			{
 				name: 'Price',
 				type: 'candlestick',
-				data: klineData.map((ohlc) => ({ value: ohlc.length >= 4 ? [ohlc[0], ohlc[1], ohlc[2], ohlc[3]] : null })),
-				itemStyle: { color: '#22c55e', color0: '#ef4444', borderColor: '#22c55e', borderColor0: '#ef4444' }
+				data: klineData.map((ohlc) => ({
+					value: ohlc.length >= 4 ? [ohlc[0], ohlc[1], ohlc[2], ohlc[3]] : null
+				})),
+				itemStyle: {
+					color: '#22c55e',
+					color0: '#ef4444',
+					borderColor: '#22c55e',
+					borderColor0: '#ef4444'
+				}
 			}
 		],
 		tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
@@ -234,7 +275,11 @@ export function candlestick(chartID: string, xLabels: readonly string[], klineDa
  * A symbol's daily sentiment score. The Y axis is pinned to -100..100 so a
  * week of near-neutral noise does not read as a dramatic swing.
  */
-export function sentimentHistoryLine(chartID: string, labels: readonly string[], scores: readonly number[]): ChartSpec | null {
+export function sentimentHistoryLine(
+	chartID: string,
+	labels: readonly string[],
+	scores: readonly number[]
+): ChartSpec | null {
 	const id = normalizeChartID(chartID || 'sentiment_history');
 	if (scores.length < 2) return null;
 	const lineColor = scores[scores.length - 1] >= 0 ? colorTint : '#f23645';
@@ -254,7 +299,20 @@ export function sentimentHistoryLine(chartID: string, labels: readonly string[],
 			}
 		],
 		tooltip: { show: true, trigger: 'axis' },
-		xAxis: [{ type: 'category', data: [...labels], axisLabel: { show: true, ...labelDefaults, fontSize: 10 } }],
-		yAxis: [{ type: 'value', min: -100, max: 100, axisLabel: { show: true, ...labelDefaults, fontSize: 10 } }]
+		xAxis: [
+			{
+				type: 'category',
+				data: [...labels],
+				axisLabel: { show: true, ...labelDefaults, fontSize: 10 }
+			}
+		],
+		yAxis: [
+			{
+				type: 'value',
+				min: -100,
+				max: 100,
+				axisLabel: { show: true, ...labelDefaults, fontSize: 10 }
+			}
+		]
 	});
 }

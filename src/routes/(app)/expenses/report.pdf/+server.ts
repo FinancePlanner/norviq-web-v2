@@ -10,7 +10,10 @@ import { writeExpensesBudgetPDF } from '#lib/features/money/pdf/budget-report.js
 // +server route cannot, so a locked reader gets the 402 error response.
 
 const plain = (msg: string, status: number) =>
-	new Response(msg + '\n', { status, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'X-Content-Type-Options': 'nosniff' } });
+	new Response(msg + '\n', {
+		status,
+		headers: { 'Content-Type': 'text/plain; charset=utf-8', 'X-Content-Type-Options': 'nosniff' }
+	});
 
 export const GET: RequestHandler = async (event) => {
 	await requireFeature(event, Feature.SmartSuggestions, 'Smart suggestions');
@@ -26,7 +29,9 @@ export const GET: RequestHandler = async (event) => {
 	if (!snapshot) return plain('No budget exists for this month', 404);
 
 	const drift = await client
-		.GET('/v1/budget/snapshots/{snapshotId}/drift', { params: { path: { snapshotId: snapshot.id } } })
+		.GET('/v1/budget/snapshots/{snapshotId}/drift', {
+			params: { path: { snapshotId: snapshot.id } }
+		})
 		.catch(() => null);
 	if (!drift?.response.ok || !drift.data) return plain('Budget report is unavailable', 502);
 

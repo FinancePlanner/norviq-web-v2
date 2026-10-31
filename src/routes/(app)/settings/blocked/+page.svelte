@@ -2,7 +2,13 @@
 	// Port of norviq-web internal/pages/settings/social.templ BlockedUsersPage.
 	import { enhance } from '$app/forms';
 	import { t } from '#lib/i18n/context.svelte.js';
-	import { EmptyState, FormErrorBanner, SecondarySubmitButton, ToastBanner, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		EmptyState,
+		FormErrorBanner,
+		SecondarySubmitButton,
+		ToastBanner,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { userTitle } from '#lib/features/settings-admin/social/privacy.js';
 	import type { PageProps } from './$types';
@@ -40,7 +46,8 @@
 								{#snippet trailing()}
 									<form method="post" action="?/unblock" use:enhance={withSpinner()}>
 										<input type="hidden" name="userId" value={user.id} />
-										<SecondarySubmitButton class="w-auto px-3">{t('Unblock')}</SecondarySubmitButton>
+										<SecondarySubmitButton class="w-auto px-3">{t('Unblock')}</SecondarySubmitButton
+										>
 									</form>
 								{/snippet}
 							</vigil.ListRow>

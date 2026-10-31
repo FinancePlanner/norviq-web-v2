@@ -3,10 +3,24 @@
 // (cryptoChangePercent), plus handlers.formatShares. Client-safe: the
 // Markets/Bubbles tab builds its view model in the browser from
 // /api/v1/crypto/markets, the one backend call Go's fragment handler made.
-import { formatCompactCurrency, formatFloat, formatSignedPercent, formatWithCommas, changeClass, goRound } from '#lib/format.js';
+import {
+	formatCompactCurrency,
+	formatFloat,
+	formatSignedPercent,
+	formatWithCommas,
+	changeClass,
+	goRound
+} from '#lib/format.js';
 import { shortDate } from '#lib/features/settings-admin/go-time.js';
 import type { BubbleNode, HeatmapTile } from '#lib/charts/index.js';
-import type { AthRowVM, CoinRowVM, CryptoMarketCoin, CryptoMarketsResponse, MarketsVM, ToggleOption } from './types.js';
+import type {
+	AthRowVM,
+	CoinRowVM,
+	CryptoMarketCoin,
+	CryptoMarketsResponse,
+	MarketsVM,
+	ToggleOption
+} from './types.js';
 
 /** cryptoTimeframes: the selector order; values are the backend's `timeframe`. */
 export const cryptoTimeframes = [
@@ -30,13 +44,16 @@ export function cryptoTimeframeLabel(value: string): string {
 	return cryptoTimeframes.find((tf) => tf.value === value)?.label ?? '1D';
 }
 
-export const normalizeCryptoMarketsView = (raw: string | null | undefined) => (raw === 'bubbles' ? 'bubbles' : 'market');
+export const normalizeCryptoMarketsView = (raw: string | null | undefined) =>
+	raw === 'bubbles' ? 'bubbles' : 'market';
 
-export const normalizeBubbleSize = (raw: string | null | undefined) => (raw === 'change' ? 'change' : 'cap');
+export const normalizeBubbleSize = (raw: string | null | undefined) =>
+	raw === 'change' ? 'change' : 'cap';
 
 /** cryptoTabURL: the hx-push-url of a toggle (url.Values.Encode sorts keys). */
 export function cryptoTabURL(view: string, timeframe: string, size: string): string {
-	if (view === 'bubbles') return `/crypto/bubbles?size=${encodeURIComponent(size)}&tf=${encodeURIComponent(timeframe)}`;
+	if (view === 'bubbles')
+		return `/crypto/bubbles?size=${encodeURIComponent(size)}&tf=${encodeURIComponent(timeframe)}`;
 	return `/crypto/market?tf=${encodeURIComponent(timeframe)}`;
 }
 
@@ -58,7 +75,8 @@ export function cryptoChangePercent(price: number, change: number): number | nul
 }
 
 /** handlers.formatShares */
-export const formatShares = (shares: number) => (shares % 1 === 0 ? formatFloat(shares, 0) : formatFloat(shares, 2));
+export const formatShares = (shares: number) =>
+	shares % 1 === 0 ? formatFloat(shares, 0) : formatFloat(shares, 2);
 
 /** formatCryptoPrice keeps two significant digits for sub-cent coins. */
 export function formatCryptoPrice(price: number): string {
@@ -97,7 +115,12 @@ function asOfLabel(raw: string): string {
 }
 
 /** timeframeOptions: `supported` null means "unknown", so nothing is disabled. */
-export function timeframeOptions(view: string, current: string, size: string, supported: readonly string[] | null): ToggleOption[] {
+export function timeframeOptions(
+	view: string,
+	current: string,
+	size: string,
+	supported: readonly string[] | null
+): ToggleOption[] {
 	return cryptoTimeframes.map((tf) => ({
 		label: tf.label,
 		pushURL: cryptoTabURL(view, tf.value, size),
@@ -171,7 +194,12 @@ function mapAthRows(coins: readonly CryptoMarketCoin[] | null): AthRowVM[] {
 }
 
 /** buildCryptoMarketsVM */
-export function buildCryptoMarketsVM(resp: CryptoMarketsResponse, view: string, timeframe: string, size: string): MarketsVM {
+export function buildCryptoMarketsVM(
+	resp: CryptoMarketsResponse,
+	view: string,
+	timeframe: string,
+	size: string
+): MarketsVM {
 	const label = cryptoTimeframeLabel(timeframe);
 	const coins = resp.coins ?? [];
 	const vm: MarketsVM = {
@@ -190,8 +218,10 @@ export function buildCryptoMarketsVM(resp: CryptoMarketsResponse, view: string, 
 		vm.losersTitle = 'Furthest from all-time high';
 	}
 	if (resp.attribution) vm.attribution = resp.attribution;
-	if (resp.summary?.totalMarketCap != null) vm.totalMarketCap = formatCompactCurrency(resp.summary.totalMarketCap);
-	if (resp.summary?.btcDominancePct != null) vm.btcDominance = formatFloat(resp.summary.btcDominancePct, 1) + '%';
+	if (resp.summary?.totalMarketCap != null)
+		vm.totalMarketCap = formatCompactCurrency(resp.summary.totalMarketCap);
+	if (resp.summary?.btcDominancePct != null)
+		vm.btcDominance = formatFloat(resp.summary.btcDominancePct, 1) + '%';
 
 	const colorMode = resp.colorMode === 'athDistance' ? 'athDistance' : 'change';
 
@@ -231,7 +261,13 @@ export function buildCryptoMarketsVM(resp: CryptoMarketsResponse, view: string, 
 			marketCap: coin.marketCap as number,
 			changePct: coin.changePct as number
 		}));
-	vm.heatmap = { id: 'crypto_heatmap_' + timeframe, tiles, scaleMaxPct: resp.colorScaleMaxPct, periodLabel: label, colorMode };
+	vm.heatmap = {
+		id: 'crypto_heatmap_' + timeframe,
+		tiles,
+		scaleMaxPct: resp.colorScaleMaxPct,
+		periodLabel: label,
+		colorMode
+	};
 	vm.gainers = mapCoinRows(resp.gainers);
 	vm.losers = mapCoinRows(resp.losers);
 	vm.recentAths = mapAthRows(resp.athBoard?.recentAths ?? null);

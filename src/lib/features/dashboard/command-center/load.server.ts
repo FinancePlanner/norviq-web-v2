@@ -8,7 +8,12 @@ import { fetchJSON, getJSON } from '../fetch.server.js';
 import { clampPercent, goFormat, isoDate, parseTime, relativeTimeSince } from '../shared.js';
 import { resolvePillar, resolvePillars } from '../pillars.js';
 import { mapActivities, mapRecentSpend } from '../activity/mappers.js';
-import { focusPointsTeaser, mapFinancialHealth, mapFocusPoints, mapInsightCards } from '../insights/mappers.js';
+import {
+	focusPointsTeaser,
+	mapFinancialHealth,
+	mapFocusPoints,
+	mapInsightCards
+} from '../insights/mappers.js';
 import type { HealthMetricsVM } from '../types.js';
 import type {
 	ActionItemVM,
@@ -41,7 +46,10 @@ const inboxMaxPages = 3;
 // Overview (LoadOverviewViewModel)
 
 export function greetingForTime(now: Date, timeZone = 'UTC'): string {
-	const hour = Number(new Intl.DateTimeFormat('en-US', { timeZone, hour: 'numeric', hourCycle: 'h23' }).format(now)) % 24;
+	const hour =
+		Number(
+			new Intl.DateTimeFormat('en-US', { timeZone, hour: 'numeric', hourCycle: 'h23' }).format(now)
+		) % 24;
 	if (hour >= 5 && hour < 12) return 'Good morning';
 	if (hour >= 12 && hour < 17) return 'Good afternoon';
 	if (hour >= 17 && hour < 22) return 'Good evening';
@@ -72,13 +80,21 @@ function changeSuffix(change: Change | undefined | null): string {
 }
 
 /** portfolio_change.go formatChange. */
-function formatChange(change: Change | undefined | null): { metric: string; suffix: string; positive: boolean } | null {
+function formatChange(
+	change: Change | undefined | null
+): { metric: string; suffix: string; positive: boolean } | null {
 	if (!change) return null;
 	const positive = change.percent >= 0;
-	return { metric: `${positive ? '+' : ''}${formatFloat(change.percent * 100, 1)}%`, suffix: changeSuffix(change), positive };
+	return {
+		metric: `${positive ? '+' : ''}${formatFloat(change.percent * 100, 1)}%`,
+		suffix: changeSuffix(change),
+		positive
+	};
 }
 
-function formatChangeLabel(change: Change | undefined | null): { label: string; positive: boolean } | null {
+function formatChangeLabel(
+	change: Change | undefined | null
+): { label: string; positive: boolean } | null {
 	const c = formatChange(change);
 	if (!c) return null;
 	return { label: c.suffix ? `${c.metric} ${c.suffix}` : c.metric, positive: c.positive };
@@ -107,7 +123,9 @@ function monthOverMonthChange(values: number[]): { pct: number; positive: boolea
 
 function spendingSeries(summaries: S['BudgetMonthSummaryResponse'][] | undefined): SeriesData {
 	if (!summaries?.length) return { labels: [], values: [] };
-	const sorted = [...summaries].sort((a, b) => (parseTime(a.monthStart)?.getTime() ?? 0) - (parseTime(b.monthStart)?.getTime() ?? 0));
+	const sorted = [...summaries].sort(
+		(a, b) => (parseTime(a.monthStart)?.getTime() ?? 0) - (parseTime(b.monthStart)?.getTime() ?? 0)
+	);
 	const window = sorted.slice(Math.max(0, sorted.length - 12));
 	return {
 		labels: window.map((r) => goFormat(parseTime(r.monthStart) ?? new Date(0), 'Jan')),
@@ -115,7 +133,10 @@ function spendingSeries(summaries: S['BudgetMonthSummaryResponse'][] | undefined
 	};
 }
 
-function mapHealthMetrics(insights: S['DashboardInsightsResponse'] | null, reports: S['ReportsOverviewResponse'] | null): HealthMetricsVM {
+function mapHealthMetrics(
+	insights: S['DashboardInsightsResponse'] | null,
+	reports: S['ReportsOverviewResponse'] | null
+): HealthMetricsVM {
 	const vm: HealthMetricsVM = {
 		savingsRate: '-',
 		savingsRatePct: 0,
@@ -139,7 +160,8 @@ function mapHealthMetrics(insights: S['DashboardInsightsResponse'] | null, repor
 	if (summary) {
 		const remaining = Math.max(0, summary.planned - summary.actual);
 		vm.budgetRemaining = formatCurrency(remaining) + ' left';
-		if (summary.planned > 0) vm.budgetRemainingPct = clampPercent((remaining / summary.planned) * 100);
+		if (summary.planned > 0)
+			vm.budgetRemainingPct = clampPercent((remaining / summary.planned) * 100);
 		vm.spendingOnTrack = summary.actual <= summary.planned;
 		vm.spendingStatus = vm.spendingOnTrack ? 'On track' : 'Over budget';
 	} else if (insights && insights.budgetStreak > 0) {
@@ -149,7 +171,11 @@ function mapHealthMetrics(insights: S['DashboardInsightsResponse'] | null, repor
 	return vm;
 }
 
-export async function loadOverviewViewModel(event: RequestEvent, username: string, now = new Date()): Promise<OverviewViewModel> {
+export async function loadOverviewViewModel(
+	event: RequestEvent,
+	username: string,
+	now = new Date()
+): Promise<OverviewViewModel> {
 	const vm: OverviewViewModel = {
 		greeting: greetingForTime(now),
 		username,
@@ -192,7 +218,8 @@ export async function loadOverviewViewModel(event: RequestEvent, username: strin
 	if (goals.failed) vm.goalsError = true;
 
 	let totalValue = dash.data?.portfolio?.totalMarketValue ?? 0;
-	if (totalValue <= 0 && reports.data) totalValue = reports.data.portfolioStatistics?.totalMarketValue ?? 0;
+	if (totalValue <= 0 && reports.data)
+		totalValue = reports.data.portfolioStatistics?.totalMarketValue ?? 0;
 	vm.totalWealth = formatCurrency(totalValue);
 
 	const perf = performance.data;
@@ -227,7 +254,8 @@ export async function loadOverviewViewModel(event: RequestEvent, username: strin
 	vm.focusPoints = focusPointsTeaser(mapFocusPoints(goals.data ?? []));
 
 	if (reports.data) {
-		if (reports.data.latestMonthSummary) vm.spendingThisMonth = formatCurrency(reports.data.latestMonthSummary.actual);
+		if (reports.data.latestMonthSummary)
+			vm.spendingThisMonth = formatCurrency(reports.data.latestMonthSummary.actual);
 		const series = spendingSeries(reports.data.monthlySummaries);
 		if (series.labels.length > 0) {
 			const change = monthOverMonthChange(series.values);
@@ -343,7 +371,12 @@ function emptyLedger(rng: timerange.Key, domain: string): LedgerVM {
 }
 
 /** LoadLedgerViewModel: only the LEDGER rail. */
-export async function loadLedgerViewModel(event: RequestEvent, rng: timerange.Key, domain: string, now = new Date()): Promise<LedgerVM> {
+export async function loadLedgerViewModel(
+	event: RequestEvent,
+	rng: timerange.Key,
+	domain: string,
+	now = new Date()
+): Promise<LedgerVM> {
 	const vm = emptyLedger(rng, domain);
 	const res = await getJSON<Activity[]>(event, '/v1/activities', { limit: ledgerActivityLimit });
 	if (res.failed) {
@@ -359,7 +392,9 @@ export async function loadLedgerViewModel(event: RequestEvent, rng: timerange.Ke
 // Action queue
 
 /** drainNotificationInbox: pages the unread inbox up to inboxMaxPages. */
-async function drainNotificationInbox(event: RequestEvent): Promise<{ items: InboxItem[]; unread: number } | null> {
+async function drainNotificationInbox(
+	event: RequestEvent
+): Promise<{ items: InboxItem[]; unread: number } | null> {
 	const items: InboxItem[] = [];
 	let unread = 0;
 	let cursor: string | undefined;
@@ -384,13 +419,32 @@ async function drainNotificationInbox(event: RequestEvent): Promise<{ items: Inb
 }
 
 function notificationPriority(kind: string): number {
-	return ({ price_target: 0, rebalancing: 1, budget: 2, tax: 3, earnings: 4, watchlist_screen: 5 } as Record<string, number>)[kind] ?? 6;
+	return (
+		(
+			{
+				price_target: 0,
+				rebalancing: 1,
+				budget: 2,
+				tax: 3,
+				earnings: 4,
+				watchlist_screen: 5
+			} as Record<string, number>
+		)[kind] ?? 6
+	);
 }
 
 function notificationKindLabel(kind: string): string {
 	return (
-		({ price_target: 'Price target', rebalancing: 'Rebalancing', budget: 'Budget', tax: 'Tax', earnings: 'Earnings', watchlist_screen: 'Screen' } as Record<string, string>)[kind] ??
-		'Alert'
+		(
+			{
+				price_target: 'Price target',
+				rebalancing: 'Rebalancing',
+				budget: 'Budget',
+				tax: 'Tax',
+				earnings: 'Earnings',
+				watchlist_screen: 'Screen'
+			} as Record<string, string>
+		)[kind] ?? 'Alert'
 	);
 }
 
@@ -462,15 +516,27 @@ export function buildActionQueue(items: InboxItem[], now: Date): ActionItemVM[] 
 }
 
 /** LoadActionQueueViewModel: only the NOW rail. */
-export async function loadActionQueueViewModel(event: RequestEvent, now = new Date()): Promise<ActionQueueVM> {
+export async function loadActionQueueViewModel(
+	event: RequestEvent,
+	now = new Date()
+): Promise<ActionQueueVM> {
 	const drained = await drainNotificationInbox(event);
 	if (!drained) return { actionQueue: [], unreadCount: 0, loadError: true };
-	return { actionQueue: buildActionQueue(drained.items, now), unreadCount: drained.unread, loadError: false };
+	return {
+		actionQueue: buildActionQueue(drained.items, now),
+		unreadCount: drained.unread,
+		loadError: false
+	};
 }
 
 /** DashboardActionRead: mark one item read; the queue re-renders either way. */
 export async function markActionRead(event: RequestEvent, id: string): Promise<void> {
-	const res = await fetchJSON(event, 'PUT', `/v1/notifications/inbox/${encodeURIComponent(id)}/read`, { read: true });
+	const res = await fetchJSON(
+		event,
+		'PUT',
+		`/v1/notifications/inbox/${encodeURIComponent(id)}/read`,
+		{ read: true }
+	);
 	if (res.failed) console.warn('mark notification read failed', id);
 }
 
@@ -509,7 +575,10 @@ export async function loadCommandCenterViewModel(
 	const dayMs = 24 * 60 * 60 * 1000;
 
 	const [expenses, overview, activities, drained] = await Promise.all([
-		getJSON<Expense[]>(event, '/v1/expenses', { from: isoDate(from), to: isoDate(new Date(to.getTime() - dayMs)) }),
+		getJSON<Expense[]>(event, '/v1/expenses', {
+			from: isoDate(from),
+			to: isoDate(new Date(to.getTime() - dayMs))
+		}),
 		loadOverviewViewModel(event, username, now),
 		getJSON<Activity[]>(event, '/v1/activities', { limit: ledgerActivityLimit }),
 		drainNotificationInbox(event)
@@ -540,7 +609,8 @@ export async function loadCommandCenterViewModel(
 		}
 	}
 
-	for (const [key, failed] of Object.entries(overview.loadErrors)) if (failed) loadErrors[key] = true;
+	for (const [key, failed] of Object.entries(overview.loadErrors))
+		if (failed) loadErrors[key] = true;
 
 	return {
 		overview,

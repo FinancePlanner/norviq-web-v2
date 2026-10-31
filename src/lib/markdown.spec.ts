@@ -33,7 +33,8 @@ describe('render', () => {
 		};
 		for (const [input, banned] of Object.entries(cases)) {
 			const html = render(input);
-			for (const b of banned) expect(html.toLowerCase(), `input ${input}`).not.toContain(b.toLowerCase());
+			for (const b of banned)
+				expect(html.toLowerCase(), `input ${input}`).not.toContain(b.toLowerCase());
 		}
 	});
 
@@ -76,19 +77,26 @@ describe('render', () => {
 
 	// An already-sanitized href must never decode a second time into a live scheme.
 	it('keeps an entity-encoded scheme inert', () => {
-		const rendered = render('[ext](https://e.com) [click](&amp;#x6A;avascript&amp;colon;alert(1)//)');
+		const rendered = render(
+			'[ext](https://e.com) [click](&amp;#x6A;avascript&amp;colon;alert(1)//)'
+		);
 		for (const [text, href] of Object.entries(hrefs(rendered))) {
 			const scheme = href.trim().toLowerCase();
-			for (const bad of ['javascript:', 'data:', 'vbscript:']) expect(scheme.startsWith(bad), `link ${text} href ${href}`).toBe(false);
+			for (const bad of ['javascript:', 'data:', 'vbscript:'])
+				expect(scheme.startsWith(bad), `link ${text} href ${href}`).toBe(false);
 		}
 	});
 
 	it('keeps the ampersand in a relative link', () => {
-		expect(hrefs(render('[ext](https://e.com) [rel](/articles?a=1&b=2)')).rel).toBe('/articles?a=1&b=2');
+		expect(hrefs(render('[ext](https://e.com) [rel](/articles?a=1&b=2)')).rel).toBe(
+			'/articles?a=1&b=2'
+		);
 	});
 
 	it('keeps the ampersand in a mailto link', () => {
-		expect(hrefs(render('[ext](https://e.com) [m](mailto:x@y.z?subject=a&body=b)')).m).toBe('mailto:x@y.z?subject=a&body=b');
+		expect(hrefs(render('[ext](https://e.com) [m](mailto:x@y.z?subject=a&body=b)')).m).toBe(
+			'mailto:x@y.z?subject=a&body=b'
+		);
 	});
 });
 

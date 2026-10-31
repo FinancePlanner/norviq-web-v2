@@ -14,9 +14,36 @@ export interface BudgetPillarDef {
 }
 
 export const BudgetPillars: readonly BudgetPillarDef[] = [
-	{ key: 'fundamentals', label: 'Fundamentals', hint: 'Rent, groceries, utilities', icon: 'house', colorVar: '--color-pillar-fundamentals', defaultShare: 0.5, sortRank: 0, isCustom: false },
-	{ key: 'futureYou', label: 'Future you', hint: 'Investing, debt payoff, savings', icon: 'trending-up', colorVar: '--color-pillar-future-you', defaultShare: 0.2, sortRank: 1, isCustom: false },
-	{ key: 'fun', label: 'Fun', hint: 'Dining, travel, hobbies', icon: 'sparkles', colorVar: '--color-pillar-fun', defaultShare: 0.3, sortRank: 2, isCustom: false }
+	{
+		key: 'fundamentals',
+		label: 'Fundamentals',
+		hint: 'Rent, groceries, utilities',
+		icon: 'house',
+		colorVar: '--color-pillar-fundamentals',
+		defaultShare: 0.5,
+		sortRank: 0,
+		isCustom: false
+	},
+	{
+		key: 'futureYou',
+		label: 'Future you',
+		hint: 'Investing, debt payoff, savings',
+		icon: 'trending-up',
+		colorVar: '--color-pillar-future-you',
+		defaultShare: 0.2,
+		sortRank: 1,
+		isCustom: false
+	},
+	{
+		key: 'fun',
+		label: 'Fun',
+		hint: 'Dining, travel, hobbies',
+		icon: 'sparkles',
+		colorVar: '--color-pillar-fun',
+		defaultShare: 0.3,
+		sortRank: 2,
+		isCustom: false
+	}
 ];
 
 const customPillarColorVars = [
@@ -68,7 +95,15 @@ export function resolvePillar(key: string | null | undefined): BudgetPillarDef {
 }
 
 function sortPillars(defs: BudgetPillarDef[]) {
-	defs.sort((a, b) => (a.sortRank !== b.sortRank ? a.sortRank - b.sortRank : a.label < b.label ? -1 : a.label > b.label ? 1 : 0));
+	defs.sort((a, b) =>
+		a.sortRank !== b.sortRank
+			? a.sortRank - b.sortRank
+			: a.label < b.label
+				? -1
+				: a.label > b.label
+					? 1
+					: 0
+	);
 }
 
 export function resolvePillars(...extraKeys: string[]): BudgetPillarDef[] {

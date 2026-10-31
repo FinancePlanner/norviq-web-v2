@@ -105,12 +105,14 @@
 		<Button
 			size="icon"
 			variant="ghost"
-			class="absolute right-0 top-1/2 -translate-y-1/2 opacity-50 cursor-pointer"
+			class="absolute top-1/2 right-0 -translate-y-1/2 cursor-pointer opacity-50"
 			data-tui-input-toggle-password={inputId}
 			onclick={() => (revealed = !revealed)}
 		>
 			<span class={['icon-open', revealed ? 'hidden' : 'block']}><Eye class="size-[18px]" /></span>
-			<span class={['icon-closed', revealed ? 'block' : 'hidden']}><EyeOff class="size-[18px]" /></span>
+			<span class={['icon-closed', revealed ? 'block' : 'hidden']}
+				><EyeOff class="size-[18px]" /></span
+			>
 		</Button>
 	{/if}
 </div>

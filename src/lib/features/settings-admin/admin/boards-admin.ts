@@ -135,7 +135,8 @@ export function reportRow(rep: BoardReportItem, now: Date): ReportRow {
 		link: ''
 	};
 	if (rep.postId != null && rep.boardSlug != null) {
-		row.link = '/boards/' + encodeURIComponent(rep.boardSlug) + '/p/' + encodeURIComponent(rep.postId);
+		row.link =
+			'/boards/' + encodeURIComponent(rep.boardSlug) + '/p/' + encodeURIComponent(rep.postId);
 		if (rep.commentId != null) row.link += '#c-' + encodeURIComponent(rep.commentId);
 	}
 	return row;

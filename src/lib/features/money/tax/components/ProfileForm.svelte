@@ -9,7 +9,11 @@
 </script>
 
 <form method="POST" action="/tax?/profile" use:enhance={withSpinner()} class="glass-card p-6">
-	<input type="hidden" name="jurisdiction" value={vm.jurisdiction} /><input type="hidden" name="taxYear" value={vm.taxYear} />
+	<input type="hidden" name="jurisdiction" value={vm.jurisdiction} /><input
+		type="hidden"
+		name="taxYear"
+		value={vm.taxYear}
+	/>
 	<h2 class="text-xl font-semibold">Tax profile</h2>
 	{#if vm.jurisdiction === 'PT'}
 		<label class="field-label mt-4"
@@ -26,7 +30,8 @@
 			/>
 		</label>
 		<p class="mt-2 text-xs text-muted-foreground">
-			Aggregation can enable eligible five-year loss carryforwards. Short-term gains at the top income band may be aggregated by law.
+			Aggregation can enable eligible five-year loss carryforwards. Short-term gains at the top
+			income band may be aggregated by law.
 		</p>
 	{/if}
 	{#if vm.jurisdiction === 'DE'}
@@ -55,7 +60,8 @@
 				/>
 			</div>
 			<p class="mt-2 text-xs text-muted-foreground">
-				Enter only the allowance still unused across all banks and brokers. German securities use FIFO separately per depot.
+				Enter only the allowance still unused across all banks and brokers. German securities use
+				FIFO separately per depot.
 			</p>
 		</div>
 	{/if}
@@ -72,8 +78,20 @@
 				['domestic_partnership', 'Domestic partnership']
 			)}
 		/>
-		<Field name="reportingCurrency" label="Reporting currency" value={profileValue(vm, 'currency')} class="mt-2" maxlength={3} />
-		<Field name="primaryName" label="Primary taxpayer" value={profileValue(vm, 'primary')} required class="mt-2" />
+		<Field
+			name="reportingCurrency"
+			label="Reporting currency"
+			value={profileValue(vm, 'currency')}
+			class="mt-2"
+			maxlength={3}
+		/>
+		<Field
+			name="primaryName"
+			label="Primary taxpayer"
+			value={profileValue(vm, 'primary')}
+			required
+			class="mt-2"
+		/>
 		<Field
 			name="partnerName"
 			label="Spouse or partner"
@@ -121,8 +139,22 @@
 			min="0"
 			max="100"
 		/>
-		<Field name="priorShortLoss" label="Short-term carryover" type="number" value={profileValue(vm, 'shortLoss')} class="mt-2" step="0.01" />
-		<Field name="priorLongLoss" label="Long-term carryover" type="number" value={profileValue(vm, 'longLoss')} class="mt-2" step="0.01" />
+		<Field
+			name="priorShortLoss"
+			label="Short-term carryover"
+			type="number"
+			value={profileValue(vm, 'shortLoss')}
+			class="mt-2"
+			step="0.01"
+		/>
+		<Field
+			name="priorLongLoss"
+			label="Long-term carryover"
+			type="number"
+			value={profileValue(vm, 'longLoss')}
+			class="mt-2"
+			step="0.01"
+		/>
 	</div>
 	<h3 class="mt-6 font-semibold">Account classification</h3>
 	<div class="mt-3 space-y-3">
@@ -137,7 +169,11 @@
 						label="Owner"
 						class="mt-1"
 						options={[
-							{ value: 'primary', label: 'Primary', selected: account.ownerMemberId == null || account.ownerMemberId === 'primary' },
+							{
+								value: 'primary',
+								label: 'Primary',
+								selected: account.ownerMemberId == null || account.ownerMemberId === 'primary'
+							},
 							{ value: 'partner', label: 'Partner', selected: account.ownerMemberId === 'partner' }
 						]}
 					/>
@@ -157,8 +193,8 @@
 					/>
 					{#if vm.jurisdiction === 'DE'}
 						<label class="field-label"
-							>Lot matching<input type="hidden" name={'lot_' + account.id} value="fifo" /><span class="field-input mt-1 block"
-								>FIFO per depot</span
+							>Lot matching<input type="hidden" name={'lot_' + account.id} value="fifo" /><span
+								class="field-input mt-1 block">FIFO per depot</span
 							></label
 						>
 					{:else}

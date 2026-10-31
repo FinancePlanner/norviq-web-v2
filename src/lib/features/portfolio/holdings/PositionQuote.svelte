@@ -8,7 +8,9 @@
 
 	const direction = (positive: boolean) => (positive ? 'up' : 'down');
 	const changeClass = (positive: boolean) =>
-		positive ? 'portfolio-row-trend overview-watchlist-change-up' : 'portfolio-row-trend overview-watchlist-change-down';
+		positive
+			? 'portfolio-row-trend overview-watchlist-change-up'
+			: 'portfolio-row-trend overview-watchlist-change-down';
 </script>
 
 <div id={'position-quote-' + row.id} class="portfolio-row-quote text-right tabular-nums">

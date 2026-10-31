@@ -5,11 +5,16 @@
 	// (app)/+error.svelte.
 	import { page } from '$app/state';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
-	import { BOARDS_BANNED, BOARDS_NOT_FOUND } from '#lib/features/settings-admin/admin/boards-admin.js';
+	import {
+		BOARDS_BANNED,
+		BOARDS_NOT_FOUND
+	} from '#lib/features/settings-admin/admin/boards-admin.js';
 
 	const message = $derived(page.error?.message ?? '');
 	const notFoundWhat = $derived(
-		page.status === 404 && message.startsWith(BOARDS_NOT_FOUND) ? message.slice(BOARDS_NOT_FOUND.length) : ''
+		page.status === 404 && message.startsWith(BOARDS_NOT_FOUND)
+			? message.slice(BOARDS_NOT_FOUND.length)
+			: ''
 	);
 	const banned = $derived(page.status === 403 && message === BOARDS_BANNED);
 </script>
@@ -25,15 +30,16 @@
 	<div class="app-page-content vigil-document-page boards-page">
 		<vigil.ModernPageHeader title="Not found" />
 		<p class="glass-card dash-panel max-w-xl p-6 text-sm">
-			That {notFoundWhat} doesn't exist or was removed. <a class="underline" href="/boards">All boards</a>
+			That {notFoundWhat} doesn't exist or was removed.
+			<a class="underline" href="/boards">All boards</a>
 		</p>
 	</div>
 {:else if banned}
 	<div class="app-page-content vigil-document-page boards-page">
 		<vigil.ModernPageHeader title="Boards" />
 		<p class="glass-card dash-panel max-w-xl p-6 text-sm">
-			Your access to Norviq Boards has been removed. The rest of Norviq works as usual. If you think this is a mistake, write
-			to us from Settings → Feedback.
+			Your access to Norviq Boards has been removed. The rest of Norviq works as usual. If you think
+			this is a mistake, write to us from Settings → Feedback.
 		</p>
 	</div>
 {:else}

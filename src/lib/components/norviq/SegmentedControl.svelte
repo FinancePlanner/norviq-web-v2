@@ -13,7 +13,9 @@
 	{#each items as item (item.path)}
 		<a
 			href={item.path}
-			class={isActivePath(current, item.path) ? 'segmented-link segmented-link-active' : 'segmented-link'}
+			class={isActivePath(current, item.path)
+				? 'segmented-link segmented-link-active'
+				: 'segmented-link'}
 		>
 			{item.label}
 		</a>

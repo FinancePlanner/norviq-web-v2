@@ -2,7 +2,14 @@
 	// pages/pilots/follow.templ FollowPage.
 	import { enhance } from '$app/forms';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
-	import { Field, FormErrorBanner, SecondaryButton, SelectField, SubmitButton, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		Field,
+		FormErrorBanner,
+		SecondaryButton,
+		SelectField,
+		SubmitButton,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import type { Option } from '#lib/components/norviq/types.js';
 	import {
 		DISCLAIMER,
@@ -29,12 +36,25 @@
 		let portfolioLabel = 'New what-if portfolio';
 		if (!vm.isPro) portfolioLabel += ' (Pro)';
 		const options: Option[] = [
-			{ value: TARGET_PORTFOLIO, label: portfolioLabel, selected: vm.target === TARGET_PORTFOLIO, disabled: !vm.isPro },
-			{ value: TARGET_NEW_WATCHLIST, label: 'New watchlist', selected: vm.target === TARGET_NEW_WATCHLIST }
+			{
+				value: TARGET_PORTFOLIO,
+				label: portfolioLabel,
+				selected: vm.target === TARGET_PORTFOLIO,
+				disabled: !vm.isPro
+			},
+			{
+				value: TARGET_NEW_WATCHLIST,
+				label: 'New watchlist',
+				selected: vm.target === TARGET_NEW_WATCHLIST
+			}
 		];
 		for (const list of vm.watchlists) {
 			const value = TARGET_WATCHLIST_PREFIX + list.id;
-			options.push({ value, label: 'Watchlist: ' + list.name + ' (must be empty)', selected: vm.target === value });
+			options.push({
+				value,
+				label: 'Watchlist: ' + list.name + ' (must be empty)',
+				selected: vm.target === value
+			});
 		}
 		return options;
 	});
@@ -54,7 +74,9 @@
 	subtitle="Norviq copies the trades this pilot discloses into a simulation you choose."
 >
 	{#if !vm.pilot.hasTrades}
-		<p class="text-sm" role="status">{NO_TRADES_YET + '. There is nothing to follow until Norviq sees a disclosed trade.'}</p>
+		<p class="text-sm" role="status">
+			{NO_TRADES_YET + '. There is nothing to follow until Norviq sees a disclosed trade.'}
+		</p>
 	{:else}
 		<vigil.Panel class="p-5 md:p-6" titleID="pilot-follow-form-title">
 			<vigil.PanelHeader id="pilot-follow-form-title" title="Where should the trades go?" />
@@ -107,7 +129,8 @@
 				{/key}
 				{#if !vm.isPro}
 					<p class="text-xs text-muted-foreground">
-						Free includes one watchlist follow. What-if portfolio follows, and up to 10 follows, need Pro.
+						Free includes one watchlist follow. What-if portfolio follows, and up to 10 follows,
+						need Pro.
 					</p>
 				{/if}
 				<div class="rounded-lg bg-current/5 px-4 py-3 text-sm" role="note">

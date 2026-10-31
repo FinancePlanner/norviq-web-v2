@@ -24,7 +24,11 @@
 
 <div class="store-badge-slot">
 	{#if !href}
-		<span class="store-badge store-badge-apple store-badge-soon" role="img" aria-label="App Store — coming soon">
+		<span
+			class="store-badge store-badge-apple store-badge-soon"
+			role="img"
+			aria-label="App Store — coming soon"
+		>
 			{@render art()}
 		</span>
 		<span class="store-badge-caption" aria-hidden="true">Coming soon</span>
@@ -40,7 +44,13 @@
 		</a>
 		<span class="store-badge-caption" aria-hidden="true">Beta · TestFlight</span>
 	{:else}
-		<a {href} class="store-badge store-badge-apple" rel="noopener noreferrer" target="_blank" aria-label="Download on the App Store">
+		<a
+			{href}
+			class="store-badge store-badge-apple"
+			rel="noopener noreferrer"
+			target="_blank"
+			aria-label="Download on the App Store"
+		>
 			{@render art()}
 		</a>
 	{/if}

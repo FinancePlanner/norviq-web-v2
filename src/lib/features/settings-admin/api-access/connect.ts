@@ -55,20 +55,36 @@ export const API_ACCESS_SCOPES: APIScopeOption[] = [
 	{ value: 'transactions:read', label: 'Read your recorded trades and profit/loss', checked: true },
 	{ value: 'transactions:write', label: 'Record, edit, and delete trades', checked: false },
 	{ value: 'portfolio:read', label: 'Read your portfolio holdings', checked: true },
-	{ value: 'portfolio:write', label: 'Create and edit portfolios and cash accounts', checked: false },
+	{
+		value: 'portfolio:write',
+		label: 'Create and edit portfolios and cash accounts',
+		checked: false
+	},
 	{ value: 'targets:read', label: 'Read your price targets and alerts', checked: false },
 	{ value: 'targets:write', label: 'Create and delete price targets and alerts', checked: false },
 	{ value: 'crypto:read', label: 'Read your crypto holdings', checked: false },
 	{ value: 'crypto:write', label: 'Add, edit, and remove crypto holdings', checked: false },
 	{ value: 'research:read', label: 'Read your research notes and saved articles', checked: false },
-	{ value: 'research:write', label: 'Write and delete research notes and saved articles', checked: false },
+	{
+		value: 'research:write',
+		label: 'Write and delete research notes and saved articles',
+		checked: false
+	},
 	{ value: 'expenses:read', label: 'Read expenses', checked: true },
 	{ value: 'expenses:write', label: 'Add and edit expenses', checked: true },
 	{ value: 'budget:read', label: 'Read your budget snapshots and plan items', checked: false },
-	{ value: 'budget:write', label: 'Create and edit budget snapshots and plan items', checked: false },
+	{
+		value: 'budget:write',
+		label: 'Create and edit budget snapshots and plan items',
+		checked: false
+	},
 	{ value: 'goals:read', label: 'Read your goals', checked: false },
 	{ value: 'goals:write', label: 'Create, edit, and delete goals', checked: false },
-	{ value: 'planning:read', label: 'Read scenarios, forecasts, and rebalancing plans', checked: false },
+	{
+		value: 'planning:read',
+		label: 'Read scenarios, forecasts, and rebalancing plans',
+		checked: false
+	},
 	{ value: 'planning:write', label: 'Create and run scenarios and forecasts', checked: false },
 	{ value: 'reports:read', label: 'Read spending reports', checked: true },
 	{ value: 'market:read', label: 'Read market data', checked: false },
@@ -76,16 +92,28 @@ export const API_ACCESS_SCOPES: APIScopeOption[] = [
 	{ value: 'tax:read', label: 'Read tax estimates', checked: false },
 	{ value: 'tax:write', label: 'Edit your tax profile and generate tax reports', checked: false },
 	{ value: 'notifications:read', label: 'Read your notifications', checked: false },
-	{ value: 'notifications:write', label: 'Mark notifications read and change preferences', checked: false },
+	{
+		value: 'notifications:write',
+		label: 'Mark notifications read and change preferences',
+		checked: false
+	},
 	{ value: 'settings:read', label: 'Read your account preferences', checked: false },
 	{ value: 'settings:write', label: 'Change your account preferences', checked: false },
 	{ value: 'integrations:read', label: 'Read your connected banks and brokers', checked: false },
-	{ value: 'integrations:write', label: 'Connect, sync, and disconnect banks and brokers', checked: false },
+	{
+		value: 'integrations:write',
+		label: 'Connect, sync, and disconnect banks and brokers',
+		checked: false
+	},
 	{ value: 'billing:read', label: 'Read your subscription status', checked: false },
 	{ value: 'billing:write', label: 'Restore purchases and redeem coupons', checked: false },
 	{ value: 'export:read', label: 'Read and download your data exports', checked: false },
 	{ value: 'export:write', label: 'Create data exports of your account', checked: false },
-	{ value: 'assistant:read', label: 'Read your assistant conversations and insights', checked: false },
+	{
+		value: 'assistant:read',
+		label: 'Read your assistant conversations and insights',
+		checked: false
+	},
 	{ value: 'assistant:write', label: 'Start assistant conversations', checked: false }
 ];
 
@@ -95,7 +123,11 @@ export function cliCommand(clientID: string, endpoint: string, token: string): s
 	const tok = resolveToken(token);
 	switch (clientID) {
 		case 'claude-code':
-			return 'claude mcp add --transport http norviq ' + endpoint + ` --header "Authorization: Bearer ${tok}"`;
+			return (
+				'claude mcp add --transport http norviq ' +
+				endpoint +
+				` --header "Authorization: Bearer ${tok}"`
+			);
 		case 'hermes':
 			return (
 				'sudo hermes --profile mac-mcp mcp add norviq \\\n' +
@@ -121,7 +153,13 @@ interface ConnectClient {
 }
 
 export const CONNECT_CLIENTS: ConnectClient[] = [
-	{ id: 'claude-code', label: 'Claude Code', brand: 'claude', modes: ['prompt', 'cli', 'config', 'installer'], default: true },
+	{
+		id: 'claude-code',
+		label: 'Claude Code',
+		brand: 'claude',
+		modes: ['prompt', 'cli', 'config', 'installer'],
+		default: true
+	},
 	{ id: 'codex', label: 'Codex', brand: 'openai', modes: ['prompt', 'config', 'installer'] },
 	{ id: 'hermes', label: 'Hermes', brand: 'hermes', modes: ['prompt', 'cli'] },
 	{ id: 'cursor', label: 'Cursor', brand: 'cursor', modes: ['prompt', 'config'] },
@@ -132,9 +170,18 @@ export const CONNECT_CLIENTS: ConnectClient[] = [
 export function mcpConfig(clientID: string, endpoint: string, token: string): string {
 	const tok = resolveToken(token);
 	if (clientID === 'codex') {
-		return '[mcp_servers.norviq]\n' + `url = "${endpoint}"` + '\n' + `http_headers = { Authorization = "Bearer ${tok}" }`;
+		return (
+			'[mcp_servers.norviq]\n' +
+			`url = "${endpoint}"` +
+			'\n' +
+			`http_headers = { Authorization = "Bearer ${tok}" }`
+		);
 	}
-	const doc = { mcpServers: { norviq: { type: 'http', url: endpoint, headers: { Authorization: 'Bearer ' + tok } } } };
+	const doc = {
+		mcpServers: {
+			norviq: { type: 'http', url: endpoint, headers: { Authorization: 'Bearer ' + tok } }
+		}
+	};
 	// Go json.MarshalIndent escapes <, > and & as < etc.; none occur in these values.
 	return JSON.stringify(doc, null, 2);
 }
@@ -149,7 +196,10 @@ export function setupPrompt(clientID: string, endpoint: string, token: string): 
 	let b = 'Set up Norviq for me so you can read and manage my portfolio and expenses.\n';
 	const cli = cliCommand(clientID, endpoint, resolveToken(token));
 	if (cli !== '') {
-		b += '1. Register the MCP server by running:\n' + cli + '\n2. Confirm the norviq server is listed and reachable.\n';
+		b +=
+			'1. Register the MCP server by running:\n' +
+			cli +
+			'\n2. Confirm the norviq server is listed and reachable.\n';
 	} else {
 		b +=
 			'1. Add this remote MCP server to your config:\n' +
@@ -220,7 +270,13 @@ export function buildConnectPanel(
 		return row;
 	});
 	const verify: VerifyStateVM | null = verifyTokenID
-		? { tokenID: verifyTokenID, state: 'waiting', lastUsed: '', keepPolling: true, pollURL: verifyPollURL(verifyTokenID, now) }
+		? {
+				tokenID: verifyTokenID,
+				state: 'waiting',
+				lastUsed: '',
+				keepPolling: true,
+				pollURL: verifyPollURL(verifyTokenID, now)
+			}
 		: null;
 	return { activeClient: active, clients, verify };
 }

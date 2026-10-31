@@ -53,8 +53,10 @@ function intervalLabel(interval: string): string {
 	}
 }
 
-const normalizeProductID = (id: string) => (id.trim().toLowerCase() === 'pro_annual' ? 'pro_yearly' : id);
-const isAnnualPlan = (plan: string) => ['pro_yearly', 'pro_annual'].includes(plan.trim().toLowerCase());
+const normalizeProductID = (id: string) =>
+	id.trim().toLowerCase() === 'pro_annual' ? 'pro_yearly' : id;
+const isAnnualPlan = (plan: string) =>
+	['pro_yearly', 'pro_annual'].includes(plan.trim().toLowerCase());
 
 function planRank(plan: string): number {
 	switch (plan.trim().toLowerCase()) {
@@ -100,9 +102,35 @@ type PlanOption = NonNullable<BillingContext['planOptions']>[number];
 
 function fallbackPlanOptions(currentPlan: string, isPremium: boolean): PlanOption[] {
 	const d: PlanOption[] = [
-		{ productId: 'pro_weekly', plan: 'pro_weekly', displayName: 'Weekly', interval: 'weekly', rank: 1, isCurrent: currentPlan === 'pro_weekly', changeKind: 'subscribe' },
-		{ productId: 'pro_monthly', plan: 'pro_monthly', displayName: 'Monthly', interval: 'monthly', rank: 2, badge: 'Better value', isCurrent: currentPlan === 'pro_monthly', changeKind: 'subscribe' },
-		{ productId: 'pro_yearly', plan: 'pro_yearly', displayName: 'Annual', interval: 'annual', rank: 3, badge: 'Best value', isCurrent: isAnnualPlan(currentPlan), changeKind: 'subscribe' }
+		{
+			productId: 'pro_weekly',
+			plan: 'pro_weekly',
+			displayName: 'Weekly',
+			interval: 'weekly',
+			rank: 1,
+			isCurrent: currentPlan === 'pro_weekly',
+			changeKind: 'subscribe'
+		},
+		{
+			productId: 'pro_monthly',
+			plan: 'pro_monthly',
+			displayName: 'Monthly',
+			interval: 'monthly',
+			rank: 2,
+			badge: 'Better value',
+			isCurrent: currentPlan === 'pro_monthly',
+			changeKind: 'subscribe'
+		},
+		{
+			productId: 'pro_yearly',
+			plan: 'pro_yearly',
+			displayName: 'Annual',
+			interval: 'annual',
+			rank: 3,
+			badge: 'Best value',
+			isCurrent: isAnnualPlan(currentPlan),
+			changeKind: 'subscribe'
+		}
 	];
 	const currentRank = planRank(currentPlan);
 	for (const o of d) {
@@ -116,7 +144,10 @@ function fallbackPlanOptions(currentPlan: string, isPremium: boolean): PlanOptio
 }
 
 /** subscriptionPlanOptionVMs(ctx, ...allowedKinds) */
-export function subscriptionPlanOptionVMs(ctx: BillingContext | null, ...allowedKinds: string[]): PlanOptionVM[] {
+export function subscriptionPlanOptionVMs(
+	ctx: BillingContext | null,
+	...allowedKinds: string[]
+): PlanOptionVM[] {
 	if (!ctx) return [];
 	const allowed = new Set(allowedKinds);
 	let options = (ctx.planOptions ?? []) as PlanOption[];

@@ -25,7 +25,10 @@ export function safeRedirectPath(path: string): string {
  * utils.SafeRedirect for SvelteKit: throws redirect(status, path) after the
  * open-redirect check. Use in load functions, actions and +server handlers.
  */
-export function safeRedirect(status: 300 | 301 | 302 | 303 | 304 | 305 | 306 | 307 | 308, path: string): never {
+export function safeRedirect(
+	status: 300 | 301 | 302 | 303 | 304 | 305 | 306 | 307 | 308,
+	path: string
+): never {
 	redirect(status, safeRedirectPath(path));
 }
 
@@ -64,7 +67,9 @@ export function ifElse<T>(condition: boolean, trueValue: T, falseValue: T): T {
 }
 
 /** utils.MergeAttributes: later attributes win. */
-export function mergeAttributes(...attrs: Array<Record<string, unknown> | null | undefined>): Record<string, unknown> {
+export function mergeAttributes(
+	...attrs: Array<Record<string, unknown> | null | undefined>
+): Record<string, unknown> {
 	return Object.assign({}, ...attrs.filter(Boolean));
 }
 

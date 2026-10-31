@@ -11,7 +11,10 @@
 
 {#snippet delta()}
 	{#if vm.portfolioPeriodPercent}
-		<vigil.HeroDelta text={vm.portfolioPeriodPercent} sentiment={sentiment(vm.portfolioPeriodPositive)} />
+		<vigil.HeroDelta
+			text={vm.portfolioPeriodPercent}
+			sentiment={sentiment(vm.portfolioPeriodPositive)}
+		/>
 	{:else if vm.ytdPercent}
 		<vigil.HeroDelta text={vm.ytdPercent} sentiment={sentiment(vm.ytdPositive)} />
 	{/if}

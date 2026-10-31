@@ -145,8 +145,20 @@ describe('retire draft', () => {
 
 describe('retire result', () => {
 	it('names every available move', () => {
-		const rows = leverRows({ gap: 230000, additionalMonthlyContribution: 185, delayYears: 3, spendingReductionMonthly: 120 }, 'EUR');
-		expect(rows.map((r) => r.label)).toEqual(['+€185 a month', 'Retire 3 years later', '-€120 a month']);
+		const rows = leverRows(
+			{
+				gap: 230000,
+				additionalMonthlyContribution: 185,
+				delayYears: 3,
+				spendingReductionMonthly: 120
+			},
+			'EUR'
+		);
+		expect(rows.map((r) => r.label)).toEqual([
+			'+€185 a month',
+			'Retire 3 years later',
+			'-€120 a month'
+		]);
 	});
 
 	it('has no levers when on track', () => {
@@ -154,7 +166,15 @@ describe('retire result', () => {
 	});
 
 	it('skips moves that were not solved', () => {
-		const rows = leverRows({ gap: 5000, additionalMonthlyContribution: 90, delayYears: null, spendingReductionMonthly: 0 }, 'EUR');
+		const rows = leverRows(
+			{
+				gap: 5000,
+				additionalMonthlyContribution: 90,
+				delayYears: null,
+				spendingReductionMonthly: 0
+			},
+			'EUR'
+		);
 		expect(rows.map((r) => r.label)).toEqual(['+€90 a month']);
 	});
 
@@ -171,8 +191,12 @@ describe('retire result', () => {
 
 	it('matches the verdict to the tone', () => {
 		expect(retireVerdict({ gap: -1 }, need())).toBe('Your plan covers this');
-		expect(retireVerdict({ gap: 1 }, need())).toBe('Short of the target, but the money still lasts');
-		expect(retireVerdict({ gap: 1 }, need({ shortfallAge: 81 }))).toBe('Short, and the money runs out');
+		expect(retireVerdict({ gap: 1 }, need())).toBe(
+			'Short of the target, but the money still lasts'
+		);
+		expect(retireVerdict({ gap: 1 }, need({ shortfallAge: 81 }))).toBe(
+			'Short, and the money runs out'
+		);
 	});
 
 	it('carries the probability as a whole percent', () => {

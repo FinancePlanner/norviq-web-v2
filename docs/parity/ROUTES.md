@@ -1,8 +1,7 @@
 # norviq-web route inventory (source of truth for 1:1 parity)
 
-Generated from norviq-web internal/server/server.go + internal/handlers/*Mount*. Every row must be ported or explicitly
+Generated from norviq-web internal/server/server.go + internal/handlers/_Mount_. Every row must be ported or explicitly
 mapped (HTMX fragment → component / JSON endpoint). Tick `[x]` when done; append `→ v2: <route or component>` and any deviation.
-
 
 ### /sw.js (1)
 

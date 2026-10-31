@@ -6,7 +6,8 @@
 <script lang="ts">
 	import { growthSparklineGeometry, type GrowthSparklinePoint } from './growth-sparkline.js';
 
-	let { points, tone = 'positive' }: { points: readonly GrowthSparklinePoint[]; tone?: string } = $props();
+	let { points, tone = 'positive' }: { points: readonly GrowthSparklinePoint[]; tone?: string } =
+		$props();
 
 	const g = $derived(growthSparklineGeometry(points, tone));
 </script>
@@ -20,7 +21,13 @@
 			</linearGradient>
 		</defs>
 		{#if g.zeroLine}
-			<line class="fin-growth-sparkline-zero" x1={g.zeroLine.x1} y1={g.zeroLine.y1} x2={g.zeroLine.x2} y2={g.zeroLine.y2} />
+			<line
+				class="fin-growth-sparkline-zero"
+				x1={g.zeroLine.x1}
+				y1={g.zeroLine.y1}
+				x2={g.zeroLine.x2}
+				y2={g.zeroLine.y2}
+			/>
 		{/if}
 		<path class="fin-growth-sparkline-area" fill="url(#{g.fillID})" d={g.areaPath} />
 		<polyline

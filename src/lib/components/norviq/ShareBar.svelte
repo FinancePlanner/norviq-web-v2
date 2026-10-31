@@ -138,8 +138,13 @@
 </script>
 
 {#snippet shareLink(href: string, channel: string, label: string)}
-	<a {href} target="_blank" rel="noopener noreferrer" class={cls} data-share-channel={channel} onclick={() => track(channel)}
-		>{label}</a
+	<a
+		{href}
+		target="_blank"
+		rel="noopener noreferrer"
+		class={cls}
+		data-share-channel={channel}
+		onclick={() => track(channel)}>{label}</a
 	>
 {/snippet}
 

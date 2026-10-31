@@ -42,7 +42,9 @@ export function decimalAxisFormatter(value: AxisValue): string {
 	return Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
-export function multiSeriesValueFormatter(format: string | undefined): (value: AxisValue) => string {
+export function multiSeriesValueFormatter(
+	format: string | undefined
+): (value: AxisValue) => string {
 	switch (format) {
 		case 'percent':
 			return percentAxisFormatter;
@@ -71,7 +73,13 @@ function globalOptions(labels: readonly string[], format: string | undefined) {
 		backgroundColor: 'transparent',
 		color: [...multiSeriesColors],
 		grid: [{ left: '1%', top: '18%', right: '2%', bottom: '8%', containLabel: true }],
-		legend: { type: 'scroll', show: true, left: 'center', top: '0', textStyle: { color: colorMuted, fontSize: 11 } },
+		legend: {
+			type: 'scroll',
+			show: true,
+			left: 'center',
+			top: '0',
+			textStyle: { color: colorMuted, fontSize: 11 }
+		},
 		tooltip: {
 			trigger: 'axis',
 			triggerOn: 'mousemove|click',
@@ -100,7 +108,11 @@ function globalOptions(labels: readonly string[], format: string | undefined) {
 }
 
 /** Several aligned series as an interactive line chart with a shared value axis. */
-export function multiSeriesLine(chartID: string, labels: readonly string[], series: readonly MultiSeriesData[]): ChartSpec | null {
+export function multiSeriesLine(
+	chartID: string,
+	labels: readonly string[],
+	series: readonly MultiSeriesData[]
+): ChartSpec | null {
 	const id = normalizeChartID(chartID || 'multi_series_line');
 	if (labels.length === 0 || series.length === 0) return null;
 	const option = {
@@ -120,7 +132,11 @@ export function multiSeriesLine(chartID: string, labels: readonly string[], seri
 }
 
 /** Several aligned series as grouped bars with a shared value axis. */
-export function multiSeriesBar(chartID: string, labels: readonly string[], series: readonly MultiSeriesData[]): ChartSpec | null {
+export function multiSeriesBar(
+	chartID: string,
+	labels: readonly string[],
+	series: readonly MultiSeriesData[]
+): ChartSpec | null {
 	const id = normalizeChartID(chartID || 'multi_series_bar');
 	if (labels.length === 0 || series.length === 0) return null;
 	const option = {

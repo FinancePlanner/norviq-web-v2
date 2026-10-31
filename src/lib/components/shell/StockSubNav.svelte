@@ -4,7 +4,8 @@
 
 	// activePath: Go's StockDetail passed "/portfolio/<lower symbol>[/tab]", so
 	// /portfolio/AAPL still marks its tab; defaults to the current path.
-	let { symbol, tabs, activePath }: { symbol: string; tabs: NavItem[]; activePath?: string } = $props();
+	let { symbol, tabs, activePath }: { symbol: string; tabs: NavItem[]; activePath?: string } =
+		$props();
 	const current = $derived(activePath ?? page.url.pathname);
 </script>
 

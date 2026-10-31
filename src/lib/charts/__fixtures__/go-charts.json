@@ -1,1823 +1,1725 @@
 {
- "wealth": {
-  "id": "wealth_chart",
-  "className": "",
-  "width": "100%",
-  "height": "220px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B"
-   ],
-   "grid": [
-    {
-     "left": "0%",
-     "top": "8%",
-     "right": "2%",
-     "bottom": "8%",
-     "containLabel": true
-    }
-   ],
-   "legend": {},
-   "series": [
-    {
-     "name": "Wealth",
-     "type": "line",
-     "smooth": true,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 100000
-      },
-      {
-       "value": 105000
-      }
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "lineStyle": {
-      "color": "#C97A2B",
-      "width": 2.5
-     },
-     "areaStyle": {
-      "color": "#C97A2B",
-      "opacity": 0.25
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "triggerOn": "mousemove|click",
-    "formatter": "{b}<br/>{c}",
-    "borderColor": "#e7e0d2",
-    "backgroundColor": "rgba(255,255,255,0.96)",
-    "axisPointer": {
-     "type": "line",
-     "snap": true
-    }
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "Jan 2",
-      "Jan 9"
-     ],
-     "axisLine": {
-      "show": false
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     },
-     "axisTick": {
-      "show": false
-     },
-     "axisPointer": {
-      "snap": true,
-      "show": true
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "splitLine": {
-      "show": true,
-      "lineStyle": {
-       "color": "#e7e0d2",
-       "type": "dashed"
-      }
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     }
-    }
-   ]
-  }
- },
- "spending": {
-  "id": "wealth_chart",
-  "className": "",
-  "width": "100%",
-  "height": "220px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#26A69A"
-   ],
-   "grid": [
-    {
-     "left": "0%",
-     "top": "8%",
-     "right": "2%",
-     "bottom": "8%",
-     "containLabel": true
-    }
-   ],
-   "legend": {},
-   "series": [
-    {
-     "name": "Spending",
-     "type": "line",
-     "smooth": true,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 10
-      },
-      {
-       "value": 20
-      }
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "lineStyle": {
-      "color": "#26A69A",
-      "width": 2.5
-     },
-     "areaStyle": {
-      "color": "#26A69A",
-      "opacity": 0.22
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "triggerOn": "mousemove|click",
-    "formatter": "{b}<br/>{c}",
-    "borderColor": "#e7e0d2",
-    "backgroundColor": "rgba(255,255,255,0.96)",
-    "axisPointer": {
-     "type": "line",
-     "snap": true
-    }
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "Jan",
-      "Feb"
-     ],
-     "axisLine": {
-      "show": false
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     },
-     "axisTick": {
-      "show": false
-     },
-     "axisPointer": {
-      "snap": true,
-      "show": true
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "splitLine": {
-      "show": true,
-      "lineStyle": {
-       "color": "#e7e0d2",
-       "type": "dashed"
-      }
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     }
-    }
-   ]
-  }
- },
- "price": {
-  "id": "coin_price",
-  "className": "",
-  "width": "100%",
-  "height": "220px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B"
-   ],
-   "grid": [
-    {
-     "left": "0%",
-     "top": "8%",
-     "right": "2%",
-     "bottom": "8%",
-     "containLabel": true
-    }
-   ],
-   "legend": {},
-   "series": [
-    {
-     "name": "Price",
-     "type": "line",
-     "smooth": true,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 1
-      },
-      {
-       "value": 2
-      }
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "lineStyle": {
-      "color": "#C97A2B",
-      "width": 2.5
-     },
-     "areaStyle": {
-      "color": "#C97A2B",
-      "opacity": 0.18
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "triggerOn": "mousemove|click",
-    "formatter": "{b}<br/>{c}",
-    "borderColor": "#e7e0d2",
-    "backgroundColor": "rgba(255,255,255,0.96)",
-    "axisPointer": {
-     "type": "line",
-     "snap": true
-    }
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "a",
-      "b"
-     ],
-     "axisLine": {
-      "show": false
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     },
-     "axisTick": {
-      "show": false
-     },
-     "axisPointer": {
-      "snap": true,
-      "show": true
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "splitLine": {
-      "show": true,
-      "lineStyle": {
-       "color": "#e7e0d2",
-       "type": "dashed"
-      }
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     }
-    }
-   ]
-  }
- },
- "pie": {
-  "id": "allocation_chart",
-  "className": "",
-  "width": "100%",
-  "height": "260px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B",
-    "#2563EB",
-    "#DB2777",
-    "#65A30D",
-    "#7C3AED",
-    "#0891B2",
-    "#E11D48",
-    "#0D9488",
-    "#B45309"
-   ],
-   "legend": {
-    "show": false
-   },
-   "series": [
-    {
-     "name": "Allocation",
-     "type": "pie",
-     "center": [
-      "50%",
-      "50%"
-     ],
-     "radius": [
-      "48%",
-      "74%"
-     ],
-     "data": [
-      {
-       "name": "Tech",
-       "value": 40
-      },
-      {
-       "name": "Health",
-       "value": 30
-      }
-     ],
-     "label": {
-      "show": false
-     },
-     "emphasis": {
-      "itemStyle": {
-       "shadowBlur": 10,
-       "shadowColor": "rgba(0,0,0,0.25)"
-      },
-      "focus": "self"
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "item",
-    "triggerOn": "mousemove|click",
-    "formatter": "{b}: {d}%",
-    "borderColor": "#e7e0d2",
-    "backgroundColor": "rgba(255,255,255,0.96)"
-   }
-  }
- },
- "pie2": {
-  "id": "expenses_donut",
-  "className": "",
-  "width": "100%",
-  "height": "160px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B",
-    "#2563EB",
-    "#DB2777",
-    "#65A30D",
-    "#7C3AED",
-    "#0891B2",
-    "#E11D48",
-    "#0D9488",
-    "#B45309"
-   ],
-   "legend": {
-    "show": false
-   },
-   "series": [
-    {
-     "name": "Allocation",
-     "type": "pie",
-     "center": [
-      "50%",
-      "50%"
-     ],
-     "radius": [
-      "55%",
-      "78%"
-     ],
-     "data": [
-      {
-       "name": "Tech",
-       "value": 40
-      }
-     ],
-     "label": {
-      "show": false
-     },
-     "emphasis": {
-      "itemStyle": {
-       "shadowBlur": 10,
-       "shadowColor": "rgba(0,0,0,0.25)"
-      },
-      "focus": "self"
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "item",
-    "triggerOn": "mousemove|click",
-    "formatter": "{b}: {d}%",
-    "borderColor": "#e7e0d2",
-    "backgroundColor": "rgba(255,255,255,0.96)"
-   }
-  }
- },
- "sector": {
-  "id": "sector_gains_chart",
-  "className": "",
-  "width": "100%",
-  "height": "220px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#5470c6",
-    "#91cc75",
-    "#fac858",
-    "#ee6666",
-    "#73c0de",
-    "#3ba272",
-    "#fc8452",
-    "#9a60b4",
-    "#ea7ccc"
-   ],
-   "legend": {},
-   "series": [
-    {
-     "name": "Unrealized P/L",
-     "type": "bar",
-     "data": [
-      {
-       "value": 40,
-       "itemStyle": {
-        "color": "#089981"
-       }
-      },
-      {
-       "value": -30,
-       "itemStyle": {
-        "color": "#f23645"
-       }
-      }
-     ],
-     "label": {
-      "show": false
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "triggerOn": "mousemove|click",
-    "borderColor": "#e7e0d2",
-    "backgroundColor": "rgba(255,255,255,0.96)"
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "axisLabel": {
-      "rotate": 30,
-      "showMinLabel": null,
-      "showMaxLabel": null
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value"
-    }
-   ]
-  }
- },
- "spark": {
-  "id": "spark_aapl",
-  "className": "",
-  "width": "72px",
-  "height": "28px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B"
-   ],
-   "grid": [
-    {
-     "left": "0",
-     "top": "2",
-     "right": "0",
-     "bottom": "2"
-    }
-   ],
-   "legend": {},
-   "series": [
-    {
-     "name": "p",
-     "type": "line",
-     "smooth": true,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 1
-      },
-      {
-       "value": 2
-      },
-      {
-       "value": 3
-      },
-      {
-       "value": 2.5
-      }
-     ],
-     "lineStyle": {
-      "color": "#C97A2B",
-      "width": 1.5
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "show": false
-   },
-   "xAxis": [
-    {
-     "show": false,
-     "type": "category",
-     "data": [
-      "0",
-      "1",
-      "2",
-      "3"
-     ]
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "show": false,
-     "scale": true
-    }
-   ]
-  }
- },
- "candle": {
-  "id": "candle_chart",
-  "className": "",
-  "width": "100%",
-  "height": "420px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#5470c6",
-    "#91cc75",
-    "#fac858",
-    "#ee6666",
-    "#73c0de",
-    "#3ba272",
-    "#fc8452",
-    "#9a60b4",
-    "#ea7ccc"
-   ],
-   "grid": [
-    {
-     "left": "8%",
-     "top": "10%",
-     "right": "8%",
-     "bottom": "15%",
-     "containLabel": true
-    }
-   ],
-   "legend": {
-    "show": false
-   },
-   "series": [
-    {
-     "name": "Price",
-     "type": "candlestick",
-     "data": [
-      {
-       "value": [
-        1,
-        2,
-        0.5,
-        3
-       ]
-      },
-      {
-       "value": [
-        2,
-        1,
-        0.5,
-        3
-       ]
-      }
-     ],
-     "itemStyle": {
-      "color": "#22c55e",
-      "color0": "#ef4444",
-      "borderColor": "#22c55e",
-      "borderColor0": "#ef4444"
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "axisPointer": {
-     "type": "cross"
-    }
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "d1",
-      "d2"
-     ],
-     "axisLine": {
-      "show": true
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 10
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "scale": true,
-     "splitLine": {
-      "show": true,
-      "lineStyle": {
-       "color": "#57534e",
-       "type": "dashed"
-      }
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 10
-     }
-    }
-   ]
-  }
- },
- "sentiment": {
-  "id": "sentiment_history",
-  "className": "",
-  "width": "100%",
-  "height": "180px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#f23645"
-   ],
-   "grid": [
-    {
-     "left": "8",
-     "top": "16",
-     "right": "8",
-     "bottom": "24",
-     "containLabel": true
-    }
-   ],
-   "legend": {},
-   "series": [
-    {
-     "name": "sentiment",
-     "type": "line",
-     "smooth": true,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 10
-      },
-      {
-       "value": -5
-      }
-     ],
-     "markLine": {
-      "data": [
-       {
-        "name": "neutral",
-        "yAxis": 0
-       }
-      ]
-     },
-     "lineStyle": {
-      "color": "#f23645",
-      "width": 2
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "show": true,
-    "trigger": "axis"
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "a",
-      "b"
-     ],
-     "axisLabel": {
-      "show": true,
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "fontSize": 10
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "min": -100,
-     "max": 100,
-     "axisLabel": {
-      "show": true,
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "fontSize": 10
-     }
-    }
-   ]
-  }
- },
- "msline": {
-  "id": "builder_line",
-  "className": "",
-  "width": "100%",
-  "height": "360px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B",
-    "#2563EB",
-    "#DB2777",
-    "#65A30D",
-    "#7C3AED",
-    "#0891B2",
-    "#E11D48",
-    "#0D9488",
-    "#B45309"
-   ],
-   "grid": [
-    {
-     "left": "1%",
-     "top": "18%",
-     "right": "2%",
-     "bottom": "8%",
-     "containLabel": true
-    }
-   ],
-   "legend": {
-    "type": "scroll",
-    "show": true,
-    "left": "center",
-    "top": "0",
-    "textStyle": {
-     "color": "#8D8371",
-     "fontSize": 11
-    }
-   },
-   "series": [
-    {
-     "name": "AAPL",
-     "type": "line",
-     "smooth": false,
-     "connectNulls": false,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 100
-      },
-      {
-       "value": 125
-      }
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "lineStyle": {
-      "width": 2.5
-     }
-    },
-    {
-     "name": "MSFT",
-     "type": "line",
-     "smooth": false,
-     "connectNulls": false,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": "-"
-      },
-      {
-       "value": 1
-      }
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "lineStyle": {
-      "width": 2.5
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "triggerOn": "mousemove|click",
-    "valueFormatter": "__fn__",
-    "borderColor": "#e2e8f0",
-    "backgroundColor": "rgba(255,255,255,0.96)",
-    "axisPointer": {
-     "type": "shadow",
-     "snap": true
-    }
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "FY2023",
-      "FY2024"
-     ],
-     "axisLine": {
-      "show": false
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     },
-     "axisTick": {
-      "show": false
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "splitLine": {
-      "show": true,
-      "lineStyle": {
-       "color": "#e2e8f0",
-       "type": "dashed"
-      }
-     },
-     "axisLabel": {
-      "formatter": "__fn__",
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     }
-    }
-   ]
-  }
- },
- "msbar": {
-  "id": "builder_bar",
-  "className": "",
-  "width": "100%",
-  "height": "360px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B",
-    "#2563EB",
-    "#DB2777",
-    "#65A30D",
-    "#7C3AED",
-    "#0891B2",
-    "#E11D48",
-    "#0D9488",
-    "#B45309"
-   ],
-   "grid": [
-    {
-     "left": "1%",
-     "top": "18%",
-     "right": "2%",
-     "bottom": "8%",
-     "containLabel": true
-    }
-   ],
-   "legend": {
-    "type": "scroll",
-    "show": true,
-    "left": "center",
-    "top": "0",
-    "textStyle": {
-     "color": "#8D8371",
-     "fontSize": 11
-    }
-   },
-   "series": [
-    {
-     "name": "FCF",
-     "type": "bar",
-     "data": [
-      {
-       "value": 42
-      }
-     ],
-     "label": {
-      "show": false
-     },
-     "emphasis": {
-      "focus": "series"
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "triggerOn": "mousemove|click",
-    "valueFormatter": "__fn__",
-    "borderColor": "#e2e8f0",
-    "backgroundColor": "rgba(255,255,255,0.96)",
-    "axisPointer": {
-     "type": "shadow",
-     "snap": true
-    }
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "Q1"
-     ],
-     "axisLine": {
-      "show": false
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     },
-     "axisTick": {
-      "show": false
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "splitLine": {
-      "show": true,
-      "lineStyle": {
-       "color": "#e2e8f0",
-       "type": "dashed"
-      }
-     },
-     "axisLabel": {
-      "formatter": "__fn__",
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     }
-    }
-   ]
-  }
- },
- "treemap": {
-  "id": "stocks",
-  "className": "",
-  "width": "100%",
-  "height": "540px",
-  "theme": null,
-  "option": {
-   "series": [
-    {
-     "breadcrumb": {
-      "show": true,
-      "top": 0
-     },
-     "data": [
-      {
-       "name": "Tech",
-       "changePct": 0,
-       "children": [
-        {
-         "name": "AAPL",
-         "value": 3000000000000,
-         "symbol": "AAPL",
-         "fullName": "Apple",
-         "changePct": 1,
-         "itemStyle": {
-          "color": "#2e6063"
-         }
-        }
-       ]
-      },
-      {
-       "name": "Energy",
-       "changePct": 0,
-       "children": [
-        {
-         "name": "XOM",
-         "value": 400000000000,
-         "symbol": "XOM",
-         "changePct": -2,
-         "itemStyle": {
-          "color": "#b73b4a"
-         }
-        }
-       ]
-      }
-     ],
-     "height": "100%",
-     "itemStyle": {
-      "borderColor": "rgba(0,0,0,0.35)",
-      "borderWidth": 1,
-      "gapWidth": 1
-     },
-     "label": {
-      "color": "#ffffff",
-      "fontSize": 12,
-      "fontWeight": "bold",
-      "formatter": "__fn__",
-      "show": true
-     },
-     "levels": [
-      {
-       "itemStyle": {
-        "borderWidth": 0,
-        "gapWidth": 2
-       }
-      },
-      {
-       "itemStyle": {
-        "borderColor": "rgba(0,0,0,0.4)",
-        "gapWidth": 1
-       },
-       "upperLabel": {
-        "show": true
-       }
-      }
-     ],
-     "nodeClick": "zoomToNode",
-     "roam": false,
-     "type": "treemap",
-     "upperLabel": {
-      "color": "#ffffff",
-      "fontSize": 11,
-      "formatter": "{b}",
-      "height": 22,
-      "show": true
-     },
-     "width": "100%"
-    }
-   ],
-   "tooltip": {
-    "backgroundColor": "rgba(20,20,22,0.92)",
-    "borderWidth": 0,
-    "formatter": "__fn__",
-    "textStyle": {
-     "color": "#f4f5f8"
-    }
-   }
-  }
- },
- "bubbles": {
-  "id": "crypto_bubbles_1w",
-  "className": "crypto-bubbles",
-  "width": "100%",
-  "height": "620px",
-  "theme": null,
-  "option": {
-   "series": [
-    {
-     "data": [
-      {
-       "name": "BTC",
-       "value": 110,
-       "symbolSize": 110,
-       "fullName": "Bitcoin",
-       "changePct": 3,
-       "marketCap": 1000000000000,
-       "href": "/crypto/btc",
-       "itemStyle": {
-        "borderColor": "rgba(255,255,255,0.18)",
-        "borderWidth": 1,
-        "color": "#36555d"
-       }
-      },
-      {
-       "name": "ETH",
-       "value": 60.24948132556827,
-       "symbolSize": 60.24948132556827,
-       "fullName": "Ethereum",
-       "changePct": -2,
-       "marketCap": 300000000000,
-       "itemStyle": {
-        "borderColor": "rgba(255,255,255,0.18)",
-        "borderWidth": 1,
-        "color": "#594252"
-       }
-      }
-     ],
-     "draggable": true,
-     "emphasis": {
-      "scale": 1.08
-     },
-     "force": {
-      "edgeLength": 0,
-      "friction": 0.6,
-      "gravity": 0.12,
-      "layoutAnimation": true,
-      "repulsion": [
-       72,
-       440
-      ]
-     },
-     "label": {
-      "color": "#ffffff",
-      "fontSize": 11,
-      "fontWeight": "bold",
-      "formatter": "__fn__",
-      "show": true
-     },
-     "layout": "force",
-     "roam": false,
-     "type": "graph"
-    }
-   ],
-   "tooltip": {
-    "backgroundColor": "rgba(20,20,22,0.92)",
-    "borderWidth": 0,
-    "formatter": "__fn__",
-    "textStyle": {
-     "color": "#f4f5f8"
-    }
-   }
-  }
- },
- "pillars": {
-  "id": "cc-pillars",
-  "className": "",
-  "width": "100%",
-  "height": "120px",
-  "theme": null,
-  "option": {
-   "backgroundColor": "transparent",
-   "grid": {
-    "bottom": "0%",
-    "containLabel": false,
-    "left": "0%",
-    "right": "0%",
-    "top": "0%"
-   },
-   "legend": {
-    "bottom": 0,
-    "icon": "roundRect",
-    "itemHeight": 10,
-    "itemWidth": 10,
-    "show": true,
-    "textStyle": {
-     "color": "#8D8371",
-     "fontSize": 11
-    }
-   },
-   "series": [
-    {
-     "colorVar": "--color-pillar-fundamentals",
-     "data": [
-      2400
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "itemStyle": {
-      "borderColor": "transparent",
-      "borderWidth": 2,
-      "color": "#8D8371"
-     },
-     "name": "Fixed",
-     "stack": "spend",
-     "type": "bar"
-    },
-    {
-     "colorVar": "",
-     "data": [
-      450
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "itemStyle": {
-      "borderColor": "transparent",
-      "borderWidth": 2,
-      "color": "#8D8371"
-     },
-     "name": "Fun",
-     "stack": "spend",
-     "type": "bar"
-    }
-   ],
-   "tooltip": {
-    "formatter": "__fn__",
-    "trigger": "item",
-    "triggerOn": "mousemove|click"
-   },
-   "xAxis": {
-    "max": "dataMax",
-    "show": false,
-    "type": "value"
-   },
-   "yAxis": {
-    "data": [
-     ""
-    ],
-    "show": false,
-    "type": "category"
-   }
-  }
- },
- "activity": {
-  "id": "cc-heatmap",
-  "className": "",
-  "width": "100%",
-  "height": "200px",
-  "theme": null,
-  "option": {
-   "backgroundColor": "transparent",
-   "calendar": {
-    "cellSize": [
-     "auto",
-     13
-    ],
-    "dayLabel": {
-     "color": "#8D8371",
-     "firstDay": 1,
-     "fontSize": 10
-    },
-    "itemStyle": {
-     "borderColor": "transparent",
-     "borderWidth": 2
-    },
-    "left": 20,
-    "monthLabel": {
-     "color": "#8D8371",
-     "fontSize": 10
-    },
-    "range": [
-     "2026-01-01",
-     "2026-08-12"
-    ],
-    "right": 20,
-    "splitLine": {
-     "show": false
-    },
-    "top": 20,
-    "yearLabel": {
-     "show": false
-    }
-   },
-   "series": {
-    "coordinateSystem": "calendar",
-    "data": [
-     [
-      "2026-08-12",
-      4
-     ]
-    ],
-    "type": "heatmap"
-   },
-   "tooltip": {
-    "formatter": "__fn__",
-    "trigger": "item",
-    "triggerOn": "mousemove|click"
-   },
-   "visualMap": {
-    "bottom": 0,
-    "inRange": {
-     "color": [
-      "#F0E9DC",
-      "#E0C89A",
-      "#C97A2B",
-      "#8A4F16"
-     ]
-    },
-    "itemHeight": 90,
-    "itemWidth": 10,
-    "left": "center",
-    "max": 4,
-    "min": 0,
-    "orient": "horizontal",
-    "text": [
-     "more",
-     "less"
-    ],
-    "textStyle": {
-     "color": "#8D8371",
-     "fontSize": 11
-    },
-    "type": "continuous"
-   }
-  }
- },
- "msps": {
-  "id": "ps_chart",
-  "className": "",
-  "width": "100%",
-  "height": "360px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B",
-    "#2563EB",
-    "#DB2777",
-    "#65A30D",
-    "#7C3AED",
-    "#0891B2",
-    "#E11D48",
-    "#0D9488",
-    "#B45309"
-   ],
-   "grid": [
-    {
-     "left": "1%",
-     "top": "18%",
-     "right": "2%",
-     "bottom": "8%",
-     "containLabel": true
-    }
-   ],
-   "legend": {
-    "type": "scroll",
-    "show": true,
-    "left": "center",
-    "top": "0",
-    "textStyle": {
-     "color": "#8D8371",
-     "fontSize": 11
-    }
-   },
-   "series": [
-    {
-     "name": "EPS",
-     "type": "line",
-     "smooth": false,
-     "connectNulls": false,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 1.5
-      }
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "lineStyle": {
-      "width": 2.5
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "triggerOn": "mousemove|click",
-    "valueFormatter": "__fn__",
-    "borderColor": "#e2e8f0",
-    "backgroundColor": "rgba(255,255,255,0.96)",
-    "axisPointer": {
-     "type": "shadow",
-     "snap": true
-    }
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "A"
-     ],
-     "axisLine": {
-      "show": false
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     },
-     "axisTick": {
-      "show": false
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "splitLine": {
-      "show": true,
-      "lineStyle": {
-       "color": "#e2e8f0",
-       "type": "dashed"
-      }
-     },
-     "axisLabel": {
-      "formatter": "__fn__",
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     }
-    }
-   ]
-  }
- },
- "mspct": {
-  "id": "pct_chart",
-  "className": "",
-  "width": "100%",
-  "height": "360px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#C97A2B",
-    "#2563EB",
-    "#DB2777",
-    "#65A30D",
-    "#7C3AED",
-    "#0891B2",
-    "#E11D48",
-    "#0D9488",
-    "#B45309"
-   ],
-   "grid": [
-    {
-     "left": "1%",
-     "top": "18%",
-     "right": "2%",
-     "bottom": "8%",
-     "containLabel": true
-    }
-   ],
-   "legend": {
-    "type": "scroll",
-    "show": true,
-    "left": "center",
-    "top": "0",
-    "textStyle": {
-     "color": "#8D8371",
-     "fontSize": 11
-    }
-   },
-   "series": [
-    {
-     "name": "M",
-     "type": "line",
-     "smooth": false,
-     "connectNulls": false,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 0.5
-      },
-      {
-       "value": "-"
-      }
-     ],
-     "emphasis": {
-      "focus": "series"
-     },
-     "lineStyle": {
-      "width": 2.5
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "trigger": "axis",
-    "triggerOn": "mousemove|click",
-    "valueFormatter": "__fn__",
-    "borderColor": "#e2e8f0",
-    "backgroundColor": "rgba(255,255,255,0.96)",
-    "axisPointer": {
-     "type": "shadow",
-     "snap": true
-    }
-   },
-   "xAxis": [
-    {
-     "type": "category",
-     "data": [
-      "A",
-      "B"
-     ],
-     "axisLine": {
-      "show": false
-     },
-     "axisLabel": {
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     },
-     "axisTick": {
-      "show": false
-     }
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "splitLine": {
-      "show": true,
-      "lineStyle": {
-       "color": "#e2e8f0",
-       "type": "dashed"
-      }
-     },
-     "axisLabel": {
-      "formatter": "__fn__",
-      "showMinLabel": null,
-      "showMaxLabel": null,
-      "color": "#8D8371",
-      "fontSize": 11
-     }
-    }
-   ]
-  }
- },
- "treemap2": {
-  "id": "crypto_heat",
-  "className": "",
-  "width": "100%",
-  "height": "400px",
-  "theme": null,
-  "option": {
-   "series": [
-    {
-     "breadcrumb": {
-      "show": true,
-      "top": 0
-     },
-     "data": [
-      {
-       "name": "L1",
-       "changePct": 0,
-       "children": [
-        {
-         "name": "BTC",
-         "value": 300000000,
-         "symbol": "BTC",
-         "changePct": 4,
-         "itemStyle": {
-          "color": "#089981"
-         }
-        }
-       ]
-      }
-     ],
-     "height": "100%",
-     "itemStyle": {
-      "borderColor": "rgba(0,0,0,0.35)",
-      "borderWidth": 1,
-      "gapWidth": 1
-     },
-     "label": {
-      "color": "#ffffff",
-      "fontSize": 12,
-      "fontWeight": "bold",
-      "formatter": "__fn__",
-      "show": true
-     },
-     "levels": [
-      {
-       "itemStyle": {
-        "borderWidth": 0,
-        "gapWidth": 2
-       }
-      },
-      {
-       "itemStyle": {
-        "borderColor": "rgba(0,0,0,0.4)",
-        "gapWidth": 1
-       },
-       "upperLabel": {
-        "show": true
-       }
-      }
-     ],
-     "nodeClick": "zoomToNode",
-     "roam": false,
-     "type": "treemap",
-     "upperLabel": {
-      "color": "#ffffff",
-      "fontSize": 11,
-      "formatter": "{b}",
-      "height": 22,
-      "show": true
-     },
-     "width": "100%"
-    }
-   ],
-   "tooltip": {
-    "backgroundColor": "rgba(20,20,22,0.92)",
-    "borderWidth": 0,
-    "formatter": "__fn__",
-    "textStyle": {
-     "color": "#f4f5f8"
-    }
-   }
-  }
- },
- "bubbles2": {
-  "id": "b2",
-  "className": "crypto-bubbles",
-  "width": "100%",
-  "height": "300px",
-  "theme": null,
-  "option": {
-   "series": [
-    {
-     "data": [
-      {
-       "name": "BTC",
-       "value": 55,
-       "symbolSize": 55,
-       "fullName": "",
-       "changePct": 3,
-       "marketCap": 1000000000000,
-       "itemStyle": {
-        "borderColor": "rgba(255,255,255,0.18)",
-        "borderWidth": 1,
-        "color": "#1f776f"
-       }
-      },
-      {
-       "name": "X",
-       "value": 110,
-       "symbolSize": 110,
-       "fullName": "",
-       "changePct": -12,
-       "marketCap": 0,
-       "itemStyle": {
-        "borderColor": "rgba(255,255,255,0.18)",
-        "borderWidth": 1,
-        "color": "#f23645"
-       }
-      }
-     ],
-     "draggable": true,
-     "emphasis": {
-      "scale": 1.08
-     },
-     "force": {
-      "edgeLength": 0,
-      "friction": 0.6,
-      "gravity": 0.12,
-      "layoutAnimation": true,
-      "repulsion": [
-       72,
-       440
-      ]
-     },
-     "label": {
-      "color": "#ffffff",
-      "fontSize": 11,
-      "fontWeight": "bold",
-      "formatter": "__fn__",
-      "show": true
-     },
-     "layout": "force",
-     "roam": false,
-     "type": "graph"
-    }
-   ],
-   "tooltip": {
-    "backgroundColor": "rgba(20,20,22,0.92)",
-    "borderWidth": 0,
-    "formatter": "__fn__",
-    "textStyle": {
-     "color": "#f4f5f8"
-    }
-   }
-  }
- },
- "spark2": {
-  "id": "spark_2",
-  "className": "",
-  "width": "72px",
-  "height": "28px",
-  "theme": "white",
-  "option": {
-   "backgroundColor": "transparent",
-   "color": [
-    "#f23645"
-   ],
-   "grid": [
-    {
-     "left": "0",
-     "top": "2",
-     "right": "0",
-     "bottom": "2"
-    }
-   ],
-   "legend": {},
-   "series": [
-    {
-     "name": "p",
-     "type": "line",
-     "smooth": true,
-     "showSymbol": false,
-     "data": [
-      {
-       "value": 3
-      },
-      {
-       "value": 2
-      }
-     ],
-     "lineStyle": {
-      "color": "#f23645",
-      "width": 1.5
-     }
-    }
-   ],
-   "title": {},
-   "toolbox": {},
-   "tooltip": {
-    "show": false
-   },
-   "xAxis": [
-    {
-     "show": false,
-     "type": "category",
-     "data": [
-      "0",
-      "1"
-     ]
-    }
-   ],
-   "yAxis": [
-    {
-     "type": "value",
-     "show": false,
-     "scale": true
-    }
-   ]
-  }
- },
- "donut": {
-  "svg": "<svg class=\"donut-chart\" viewBox=\"0 0 42 42\" role=\"img\" aria-label=\"Allocation: AAPL 60.0%, M&amp;S 30.0%, Other 10.0%\"><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#C97A2B\" stroke-width=\"6\" stroke-dasharray=\"60.000 40.000\" stroke-dashoffset=\"0.000\" transform=\"rotate(-90 21 21)\"><title>AAPL 60.0%</title></circle><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#2563EB\" stroke-width=\"6\" stroke-dasharray=\"30.000 70.000\" stroke-dashoffset=\"-60.000\" transform=\"rotate(-90 21 21)\"><title>M&amp;S 30.0%</title></circle><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#123456\" stroke-width=\"6\" stroke-dasharray=\"10.000 90.000\" stroke-dashoffset=\"-90.000\" transform=\"rotate(-90 21 21)\"><title>Other 10.0%</title></circle></svg>"
- },
- "growth": {
-  "svg": "<svg class=\"fin-growth-sparkline-svg\" viewBox=\"0 0 220 52\" role=\"img\" aria-hidden=\"true\"><defs><linearGradient id=\"fin-growth-fill-positive\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C97A2B\" stop-opacity=\"0.35\"/><stop offset=\"100%\" stop-color=\"#C97A2B\" stop-opacity=\"0\"/></linearGradient></defs><line class=\"fin-growth-sparkline-zero\" x1=\"2.00\" y1=\"38.00\" x2=\"218.00\" y2=\"38.00\"/><path class=\"fin-growth-sparkline-area\" fill=\"url(#fin-growth-fill-positive)\" d=\"M 2.00,24.67 L 74.00,6.00 L 146.00,46.00 L 218.00,16.67 L 218.00,46.00 L 2.00,46.00 Z\"/><polyline class=\"fin-growth-sparkline-line\" fill=\"none\" stroke=\"#C97A2B\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"2.00,24.67 74.00,6.00 146.00,46.00 218.00,16.67\"/></svg>"
- },
- "growthneg": {
-  "svg": "<svg class=\"fin-growth-sparkline-svg\" viewBox=\"0 0 220 52\" role=\"img\" aria-hidden=\"true\"><defs><linearGradient id=\"fin-growth-fill-negative\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#f85149\" stop-opacity=\"0.35\"/><stop offset=\"100%\" stop-color=\"#f85149\" stop-opacity=\"0\"/></linearGradient></defs><path class=\"fin-growth-sparkline-area\" fill=\"url(#fin-growth-fill-negative)\" d=\"M 2.00,26.00 L 218.00,26.00 L 218.00,46.00 L 2.00,46.00 Z\"/><polyline class=\"fin-growth-sparkline-line\" fill=\"none\" stroke=\"#f85149\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"2.00,26.00 218.00,26.00\"/></svg>"
- }
+	"wealth": {
+		"id": "wealth_chart",
+		"className": "",
+		"width": "100%",
+		"height": "220px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": ["#C97A2B"],
+			"grid": [
+				{
+					"left": "0%",
+					"top": "8%",
+					"right": "2%",
+					"bottom": "8%",
+					"containLabel": true
+				}
+			],
+			"legend": {},
+			"series": [
+				{
+					"name": "Wealth",
+					"type": "line",
+					"smooth": true,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 100000
+						},
+						{
+							"value": 105000
+						}
+					],
+					"emphasis": {
+						"focus": "series"
+					},
+					"lineStyle": {
+						"color": "#C97A2B",
+						"width": 2.5
+					},
+					"areaStyle": {
+						"color": "#C97A2B",
+						"opacity": 0.25
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"triggerOn": "mousemove|click",
+				"formatter": "{b}<br/>{c}",
+				"borderColor": "#e7e0d2",
+				"backgroundColor": "rgba(255,255,255,0.96)",
+				"axisPointer": {
+					"type": "line",
+					"snap": true
+				}
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["Jan 2", "Jan 9"],
+					"axisLine": {
+						"show": false
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					},
+					"axisTick": {
+						"show": false
+					},
+					"axisPointer": {
+						"snap": true,
+						"show": true
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"splitLine": {
+						"show": true,
+						"lineStyle": {
+							"color": "#e7e0d2",
+							"type": "dashed"
+						}
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					}
+				}
+			]
+		}
+	},
+	"spending": {
+		"id": "wealth_chart",
+		"className": "",
+		"width": "100%",
+		"height": "220px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": ["#26A69A"],
+			"grid": [
+				{
+					"left": "0%",
+					"top": "8%",
+					"right": "2%",
+					"bottom": "8%",
+					"containLabel": true
+				}
+			],
+			"legend": {},
+			"series": [
+				{
+					"name": "Spending",
+					"type": "line",
+					"smooth": true,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 10
+						},
+						{
+							"value": 20
+						}
+					],
+					"emphasis": {
+						"focus": "series"
+					},
+					"lineStyle": {
+						"color": "#26A69A",
+						"width": 2.5
+					},
+					"areaStyle": {
+						"color": "#26A69A",
+						"opacity": 0.22
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"triggerOn": "mousemove|click",
+				"formatter": "{b}<br/>{c}",
+				"borderColor": "#e7e0d2",
+				"backgroundColor": "rgba(255,255,255,0.96)",
+				"axisPointer": {
+					"type": "line",
+					"snap": true
+				}
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["Jan", "Feb"],
+					"axisLine": {
+						"show": false
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					},
+					"axisTick": {
+						"show": false
+					},
+					"axisPointer": {
+						"snap": true,
+						"show": true
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"splitLine": {
+						"show": true,
+						"lineStyle": {
+							"color": "#e7e0d2",
+							"type": "dashed"
+						}
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					}
+				}
+			]
+		}
+	},
+	"price": {
+		"id": "coin_price",
+		"className": "",
+		"width": "100%",
+		"height": "220px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": ["#C97A2B"],
+			"grid": [
+				{
+					"left": "0%",
+					"top": "8%",
+					"right": "2%",
+					"bottom": "8%",
+					"containLabel": true
+				}
+			],
+			"legend": {},
+			"series": [
+				{
+					"name": "Price",
+					"type": "line",
+					"smooth": true,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 1
+						},
+						{
+							"value": 2
+						}
+					],
+					"emphasis": {
+						"focus": "series"
+					},
+					"lineStyle": {
+						"color": "#C97A2B",
+						"width": 2.5
+					},
+					"areaStyle": {
+						"color": "#C97A2B",
+						"opacity": 0.18
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"triggerOn": "mousemove|click",
+				"formatter": "{b}<br/>{c}",
+				"borderColor": "#e7e0d2",
+				"backgroundColor": "rgba(255,255,255,0.96)",
+				"axisPointer": {
+					"type": "line",
+					"snap": true
+				}
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["a", "b"],
+					"axisLine": {
+						"show": false
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					},
+					"axisTick": {
+						"show": false
+					},
+					"axisPointer": {
+						"snap": true,
+						"show": true
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"splitLine": {
+						"show": true,
+						"lineStyle": {
+							"color": "#e7e0d2",
+							"type": "dashed"
+						}
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					}
+				}
+			]
+		}
+	},
+	"pie": {
+		"id": "allocation_chart",
+		"className": "",
+		"width": "100%",
+		"height": "260px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": [
+				"#C97A2B",
+				"#2563EB",
+				"#DB2777",
+				"#65A30D",
+				"#7C3AED",
+				"#0891B2",
+				"#E11D48",
+				"#0D9488",
+				"#B45309"
+			],
+			"legend": {
+				"show": false
+			},
+			"series": [
+				{
+					"name": "Allocation",
+					"type": "pie",
+					"center": ["50%", "50%"],
+					"radius": ["48%", "74%"],
+					"data": [
+						{
+							"name": "Tech",
+							"value": 40
+						},
+						{
+							"name": "Health",
+							"value": 30
+						}
+					],
+					"label": {
+						"show": false
+					},
+					"emphasis": {
+						"itemStyle": {
+							"shadowBlur": 10,
+							"shadowColor": "rgba(0,0,0,0.25)"
+						},
+						"focus": "self"
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "item",
+				"triggerOn": "mousemove|click",
+				"formatter": "{b}: {d}%",
+				"borderColor": "#e7e0d2",
+				"backgroundColor": "rgba(255,255,255,0.96)"
+			}
+		}
+	},
+	"pie2": {
+		"id": "expenses_donut",
+		"className": "",
+		"width": "100%",
+		"height": "160px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": [
+				"#C97A2B",
+				"#2563EB",
+				"#DB2777",
+				"#65A30D",
+				"#7C3AED",
+				"#0891B2",
+				"#E11D48",
+				"#0D9488",
+				"#B45309"
+			],
+			"legend": {
+				"show": false
+			},
+			"series": [
+				{
+					"name": "Allocation",
+					"type": "pie",
+					"center": ["50%", "50%"],
+					"radius": ["55%", "78%"],
+					"data": [
+						{
+							"name": "Tech",
+							"value": 40
+						}
+					],
+					"label": {
+						"show": false
+					},
+					"emphasis": {
+						"itemStyle": {
+							"shadowBlur": 10,
+							"shadowColor": "rgba(0,0,0,0.25)"
+						},
+						"focus": "self"
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "item",
+				"triggerOn": "mousemove|click",
+				"formatter": "{b}: {d}%",
+				"borderColor": "#e7e0d2",
+				"backgroundColor": "rgba(255,255,255,0.96)"
+			}
+		}
+	},
+	"sector": {
+		"id": "sector_gains_chart",
+		"className": "",
+		"width": "100%",
+		"height": "220px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": [
+				"#5470c6",
+				"#91cc75",
+				"#fac858",
+				"#ee6666",
+				"#73c0de",
+				"#3ba272",
+				"#fc8452",
+				"#9a60b4",
+				"#ea7ccc"
+			],
+			"legend": {},
+			"series": [
+				{
+					"name": "Unrealized P/L",
+					"type": "bar",
+					"data": [
+						{
+							"value": 40,
+							"itemStyle": {
+								"color": "#089981"
+							}
+						},
+						{
+							"value": -30,
+							"itemStyle": {
+								"color": "#f23645"
+							}
+						}
+					],
+					"label": {
+						"show": false
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"triggerOn": "mousemove|click",
+				"borderColor": "#e7e0d2",
+				"backgroundColor": "rgba(255,255,255,0.96)"
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"axisLabel": {
+						"rotate": 30,
+						"showMinLabel": null,
+						"showMaxLabel": null
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value"
+				}
+			]
+		}
+	},
+	"spark": {
+		"id": "spark_aapl",
+		"className": "",
+		"width": "72px",
+		"height": "28px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": ["#C97A2B"],
+			"grid": [
+				{
+					"left": "0",
+					"top": "2",
+					"right": "0",
+					"bottom": "2"
+				}
+			],
+			"legend": {},
+			"series": [
+				{
+					"name": "p",
+					"type": "line",
+					"smooth": true,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 1
+						},
+						{
+							"value": 2
+						},
+						{
+							"value": 3
+						},
+						{
+							"value": 2.5
+						}
+					],
+					"lineStyle": {
+						"color": "#C97A2B",
+						"width": 1.5
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"show": false
+			},
+			"xAxis": [
+				{
+					"show": false,
+					"type": "category",
+					"data": ["0", "1", "2", "3"]
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"show": false,
+					"scale": true
+				}
+			]
+		}
+	},
+	"candle": {
+		"id": "candle_chart",
+		"className": "",
+		"width": "100%",
+		"height": "420px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": [
+				"#5470c6",
+				"#91cc75",
+				"#fac858",
+				"#ee6666",
+				"#73c0de",
+				"#3ba272",
+				"#fc8452",
+				"#9a60b4",
+				"#ea7ccc"
+			],
+			"grid": [
+				{
+					"left": "8%",
+					"top": "10%",
+					"right": "8%",
+					"bottom": "15%",
+					"containLabel": true
+				}
+			],
+			"legend": {
+				"show": false
+			},
+			"series": [
+				{
+					"name": "Price",
+					"type": "candlestick",
+					"data": [
+						{
+							"value": [1, 2, 0.5, 3]
+						},
+						{
+							"value": [2, 1, 0.5, 3]
+						}
+					],
+					"itemStyle": {
+						"color": "#22c55e",
+						"color0": "#ef4444",
+						"borderColor": "#22c55e",
+						"borderColor0": "#ef4444"
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"axisPointer": {
+					"type": "cross"
+				}
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["d1", "d2"],
+					"axisLine": {
+						"show": true
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 10
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"scale": true,
+					"splitLine": {
+						"show": true,
+						"lineStyle": {
+							"color": "#57534e",
+							"type": "dashed"
+						}
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 10
+					}
+				}
+			]
+		}
+	},
+	"sentiment": {
+		"id": "sentiment_history",
+		"className": "",
+		"width": "100%",
+		"height": "180px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": ["#f23645"],
+			"grid": [
+				{
+					"left": "8",
+					"top": "16",
+					"right": "8",
+					"bottom": "24",
+					"containLabel": true
+				}
+			],
+			"legend": {},
+			"series": [
+				{
+					"name": "sentiment",
+					"type": "line",
+					"smooth": true,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 10
+						},
+						{
+							"value": -5
+						}
+					],
+					"markLine": {
+						"data": [
+							{
+								"name": "neutral",
+								"yAxis": 0
+							}
+						]
+					},
+					"lineStyle": {
+						"color": "#f23645",
+						"width": 2
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"show": true,
+				"trigger": "axis"
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["a", "b"],
+					"axisLabel": {
+						"show": true,
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"fontSize": 10
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"min": -100,
+					"max": 100,
+					"axisLabel": {
+						"show": true,
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"fontSize": 10
+					}
+				}
+			]
+		}
+	},
+	"msline": {
+		"id": "builder_line",
+		"className": "",
+		"width": "100%",
+		"height": "360px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": [
+				"#C97A2B",
+				"#2563EB",
+				"#DB2777",
+				"#65A30D",
+				"#7C3AED",
+				"#0891B2",
+				"#E11D48",
+				"#0D9488",
+				"#B45309"
+			],
+			"grid": [
+				{
+					"left": "1%",
+					"top": "18%",
+					"right": "2%",
+					"bottom": "8%",
+					"containLabel": true
+				}
+			],
+			"legend": {
+				"type": "scroll",
+				"show": true,
+				"left": "center",
+				"top": "0",
+				"textStyle": {
+					"color": "#8D8371",
+					"fontSize": 11
+				}
+			},
+			"series": [
+				{
+					"name": "AAPL",
+					"type": "line",
+					"smooth": false,
+					"connectNulls": false,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 100
+						},
+						{
+							"value": 125
+						}
+					],
+					"emphasis": {
+						"focus": "series"
+					},
+					"lineStyle": {
+						"width": 2.5
+					}
+				},
+				{
+					"name": "MSFT",
+					"type": "line",
+					"smooth": false,
+					"connectNulls": false,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": "-"
+						},
+						{
+							"value": 1
+						}
+					],
+					"emphasis": {
+						"focus": "series"
+					},
+					"lineStyle": {
+						"width": 2.5
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"triggerOn": "mousemove|click",
+				"valueFormatter": "__fn__",
+				"borderColor": "#e2e8f0",
+				"backgroundColor": "rgba(255,255,255,0.96)",
+				"axisPointer": {
+					"type": "shadow",
+					"snap": true
+				}
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["FY2023", "FY2024"],
+					"axisLine": {
+						"show": false
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					},
+					"axisTick": {
+						"show": false
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"splitLine": {
+						"show": true,
+						"lineStyle": {
+							"color": "#e2e8f0",
+							"type": "dashed"
+						}
+					},
+					"axisLabel": {
+						"formatter": "__fn__",
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					}
+				}
+			]
+		}
+	},
+	"msbar": {
+		"id": "builder_bar",
+		"className": "",
+		"width": "100%",
+		"height": "360px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": [
+				"#C97A2B",
+				"#2563EB",
+				"#DB2777",
+				"#65A30D",
+				"#7C3AED",
+				"#0891B2",
+				"#E11D48",
+				"#0D9488",
+				"#B45309"
+			],
+			"grid": [
+				{
+					"left": "1%",
+					"top": "18%",
+					"right": "2%",
+					"bottom": "8%",
+					"containLabel": true
+				}
+			],
+			"legend": {
+				"type": "scroll",
+				"show": true,
+				"left": "center",
+				"top": "0",
+				"textStyle": {
+					"color": "#8D8371",
+					"fontSize": 11
+				}
+			},
+			"series": [
+				{
+					"name": "FCF",
+					"type": "bar",
+					"data": [
+						{
+							"value": 42
+						}
+					],
+					"label": {
+						"show": false
+					},
+					"emphasis": {
+						"focus": "series"
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"triggerOn": "mousemove|click",
+				"valueFormatter": "__fn__",
+				"borderColor": "#e2e8f0",
+				"backgroundColor": "rgba(255,255,255,0.96)",
+				"axisPointer": {
+					"type": "shadow",
+					"snap": true
+				}
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["Q1"],
+					"axisLine": {
+						"show": false
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					},
+					"axisTick": {
+						"show": false
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"splitLine": {
+						"show": true,
+						"lineStyle": {
+							"color": "#e2e8f0",
+							"type": "dashed"
+						}
+					},
+					"axisLabel": {
+						"formatter": "__fn__",
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					}
+				}
+			]
+		}
+	},
+	"treemap": {
+		"id": "stocks",
+		"className": "",
+		"width": "100%",
+		"height": "540px",
+		"theme": null,
+		"option": {
+			"series": [
+				{
+					"breadcrumb": {
+						"show": true,
+						"top": 0
+					},
+					"data": [
+						{
+							"name": "Tech",
+							"changePct": 0,
+							"children": [
+								{
+									"name": "AAPL",
+									"value": 3000000000000,
+									"symbol": "AAPL",
+									"fullName": "Apple",
+									"changePct": 1,
+									"itemStyle": {
+										"color": "#2e6063"
+									}
+								}
+							]
+						},
+						{
+							"name": "Energy",
+							"changePct": 0,
+							"children": [
+								{
+									"name": "XOM",
+									"value": 400000000000,
+									"symbol": "XOM",
+									"changePct": -2,
+									"itemStyle": {
+										"color": "#b73b4a"
+									}
+								}
+							]
+						}
+					],
+					"height": "100%",
+					"itemStyle": {
+						"borderColor": "rgba(0,0,0,0.35)",
+						"borderWidth": 1,
+						"gapWidth": 1
+					},
+					"label": {
+						"color": "#ffffff",
+						"fontSize": 12,
+						"fontWeight": "bold",
+						"formatter": "__fn__",
+						"show": true
+					},
+					"levels": [
+						{
+							"itemStyle": {
+								"borderWidth": 0,
+								"gapWidth": 2
+							}
+						},
+						{
+							"itemStyle": {
+								"borderColor": "rgba(0,0,0,0.4)",
+								"gapWidth": 1
+							},
+							"upperLabel": {
+								"show": true
+							}
+						}
+					],
+					"nodeClick": "zoomToNode",
+					"roam": false,
+					"type": "treemap",
+					"upperLabel": {
+						"color": "#ffffff",
+						"fontSize": 11,
+						"formatter": "{b}",
+						"height": 22,
+						"show": true
+					},
+					"width": "100%"
+				}
+			],
+			"tooltip": {
+				"backgroundColor": "rgba(20,20,22,0.92)",
+				"borderWidth": 0,
+				"formatter": "__fn__",
+				"textStyle": {
+					"color": "#f4f5f8"
+				}
+			}
+		}
+	},
+	"bubbles": {
+		"id": "crypto_bubbles_1w",
+		"className": "crypto-bubbles",
+		"width": "100%",
+		"height": "620px",
+		"theme": null,
+		"option": {
+			"series": [
+				{
+					"data": [
+						{
+							"name": "BTC",
+							"value": 110,
+							"symbolSize": 110,
+							"fullName": "Bitcoin",
+							"changePct": 3,
+							"marketCap": 1000000000000,
+							"href": "/crypto/btc",
+							"itemStyle": {
+								"borderColor": "rgba(255,255,255,0.18)",
+								"borderWidth": 1,
+								"color": "#36555d"
+							}
+						},
+						{
+							"name": "ETH",
+							"value": 60.24948132556827,
+							"symbolSize": 60.24948132556827,
+							"fullName": "Ethereum",
+							"changePct": -2,
+							"marketCap": 300000000000,
+							"itemStyle": {
+								"borderColor": "rgba(255,255,255,0.18)",
+								"borderWidth": 1,
+								"color": "#594252"
+							}
+						}
+					],
+					"draggable": true,
+					"emphasis": {
+						"scale": 1.08
+					},
+					"force": {
+						"edgeLength": 0,
+						"friction": 0.6,
+						"gravity": 0.12,
+						"layoutAnimation": true,
+						"repulsion": [72, 440]
+					},
+					"label": {
+						"color": "#ffffff",
+						"fontSize": 11,
+						"fontWeight": "bold",
+						"formatter": "__fn__",
+						"show": true
+					},
+					"layout": "force",
+					"roam": false,
+					"type": "graph"
+				}
+			],
+			"tooltip": {
+				"backgroundColor": "rgba(20,20,22,0.92)",
+				"borderWidth": 0,
+				"formatter": "__fn__",
+				"textStyle": {
+					"color": "#f4f5f8"
+				}
+			}
+		}
+	},
+	"pillars": {
+		"id": "cc-pillars",
+		"className": "",
+		"width": "100%",
+		"height": "120px",
+		"theme": null,
+		"option": {
+			"backgroundColor": "transparent",
+			"grid": {
+				"bottom": "0%",
+				"containLabel": false,
+				"left": "0%",
+				"right": "0%",
+				"top": "0%"
+			},
+			"legend": {
+				"bottom": 0,
+				"icon": "roundRect",
+				"itemHeight": 10,
+				"itemWidth": 10,
+				"show": true,
+				"textStyle": {
+					"color": "#8D8371",
+					"fontSize": 11
+				}
+			},
+			"series": [
+				{
+					"colorVar": "--color-pillar-fundamentals",
+					"data": [2400],
+					"emphasis": {
+						"focus": "series"
+					},
+					"itemStyle": {
+						"borderColor": "transparent",
+						"borderWidth": 2,
+						"color": "#8D8371"
+					},
+					"name": "Fixed",
+					"stack": "spend",
+					"type": "bar"
+				},
+				{
+					"colorVar": "",
+					"data": [450],
+					"emphasis": {
+						"focus": "series"
+					},
+					"itemStyle": {
+						"borderColor": "transparent",
+						"borderWidth": 2,
+						"color": "#8D8371"
+					},
+					"name": "Fun",
+					"stack": "spend",
+					"type": "bar"
+				}
+			],
+			"tooltip": {
+				"formatter": "__fn__",
+				"trigger": "item",
+				"triggerOn": "mousemove|click"
+			},
+			"xAxis": {
+				"max": "dataMax",
+				"show": false,
+				"type": "value"
+			},
+			"yAxis": {
+				"data": [""],
+				"show": false,
+				"type": "category"
+			}
+		}
+	},
+	"activity": {
+		"id": "cc-heatmap",
+		"className": "",
+		"width": "100%",
+		"height": "200px",
+		"theme": null,
+		"option": {
+			"backgroundColor": "transparent",
+			"calendar": {
+				"cellSize": ["auto", 13],
+				"dayLabel": {
+					"color": "#8D8371",
+					"firstDay": 1,
+					"fontSize": 10
+				},
+				"itemStyle": {
+					"borderColor": "transparent",
+					"borderWidth": 2
+				},
+				"left": 20,
+				"monthLabel": {
+					"color": "#8D8371",
+					"fontSize": 10
+				},
+				"range": ["2026-01-01", "2026-08-12"],
+				"right": 20,
+				"splitLine": {
+					"show": false
+				},
+				"top": 20,
+				"yearLabel": {
+					"show": false
+				}
+			},
+			"series": {
+				"coordinateSystem": "calendar",
+				"data": [["2026-08-12", 4]],
+				"type": "heatmap"
+			},
+			"tooltip": {
+				"formatter": "__fn__",
+				"trigger": "item",
+				"triggerOn": "mousemove|click"
+			},
+			"visualMap": {
+				"bottom": 0,
+				"inRange": {
+					"color": ["#F0E9DC", "#E0C89A", "#C97A2B", "#8A4F16"]
+				},
+				"itemHeight": 90,
+				"itemWidth": 10,
+				"left": "center",
+				"max": 4,
+				"min": 0,
+				"orient": "horizontal",
+				"text": ["more", "less"],
+				"textStyle": {
+					"color": "#8D8371",
+					"fontSize": 11
+				},
+				"type": "continuous"
+			}
+		}
+	},
+	"msps": {
+		"id": "ps_chart",
+		"className": "",
+		"width": "100%",
+		"height": "360px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": [
+				"#C97A2B",
+				"#2563EB",
+				"#DB2777",
+				"#65A30D",
+				"#7C3AED",
+				"#0891B2",
+				"#E11D48",
+				"#0D9488",
+				"#B45309"
+			],
+			"grid": [
+				{
+					"left": "1%",
+					"top": "18%",
+					"right": "2%",
+					"bottom": "8%",
+					"containLabel": true
+				}
+			],
+			"legend": {
+				"type": "scroll",
+				"show": true,
+				"left": "center",
+				"top": "0",
+				"textStyle": {
+					"color": "#8D8371",
+					"fontSize": 11
+				}
+			},
+			"series": [
+				{
+					"name": "EPS",
+					"type": "line",
+					"smooth": false,
+					"connectNulls": false,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 1.5
+						}
+					],
+					"emphasis": {
+						"focus": "series"
+					},
+					"lineStyle": {
+						"width": 2.5
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"triggerOn": "mousemove|click",
+				"valueFormatter": "__fn__",
+				"borderColor": "#e2e8f0",
+				"backgroundColor": "rgba(255,255,255,0.96)",
+				"axisPointer": {
+					"type": "shadow",
+					"snap": true
+				}
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["A"],
+					"axisLine": {
+						"show": false
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					},
+					"axisTick": {
+						"show": false
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"splitLine": {
+						"show": true,
+						"lineStyle": {
+							"color": "#e2e8f0",
+							"type": "dashed"
+						}
+					},
+					"axisLabel": {
+						"formatter": "__fn__",
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					}
+				}
+			]
+		}
+	},
+	"mspct": {
+		"id": "pct_chart",
+		"className": "",
+		"width": "100%",
+		"height": "360px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": [
+				"#C97A2B",
+				"#2563EB",
+				"#DB2777",
+				"#65A30D",
+				"#7C3AED",
+				"#0891B2",
+				"#E11D48",
+				"#0D9488",
+				"#B45309"
+			],
+			"grid": [
+				{
+					"left": "1%",
+					"top": "18%",
+					"right": "2%",
+					"bottom": "8%",
+					"containLabel": true
+				}
+			],
+			"legend": {
+				"type": "scroll",
+				"show": true,
+				"left": "center",
+				"top": "0",
+				"textStyle": {
+					"color": "#8D8371",
+					"fontSize": 11
+				}
+			},
+			"series": [
+				{
+					"name": "M",
+					"type": "line",
+					"smooth": false,
+					"connectNulls": false,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 0.5
+						},
+						{
+							"value": "-"
+						}
+					],
+					"emphasis": {
+						"focus": "series"
+					},
+					"lineStyle": {
+						"width": 2.5
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"trigger": "axis",
+				"triggerOn": "mousemove|click",
+				"valueFormatter": "__fn__",
+				"borderColor": "#e2e8f0",
+				"backgroundColor": "rgba(255,255,255,0.96)",
+				"axisPointer": {
+					"type": "shadow",
+					"snap": true
+				}
+			},
+			"xAxis": [
+				{
+					"type": "category",
+					"data": ["A", "B"],
+					"axisLine": {
+						"show": false
+					},
+					"axisLabel": {
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					},
+					"axisTick": {
+						"show": false
+					}
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"splitLine": {
+						"show": true,
+						"lineStyle": {
+							"color": "#e2e8f0",
+							"type": "dashed"
+						}
+					},
+					"axisLabel": {
+						"formatter": "__fn__",
+						"showMinLabel": null,
+						"showMaxLabel": null,
+						"color": "#8D8371",
+						"fontSize": 11
+					}
+				}
+			]
+		}
+	},
+	"treemap2": {
+		"id": "crypto_heat",
+		"className": "",
+		"width": "100%",
+		"height": "400px",
+		"theme": null,
+		"option": {
+			"series": [
+				{
+					"breadcrumb": {
+						"show": true,
+						"top": 0
+					},
+					"data": [
+						{
+							"name": "L1",
+							"changePct": 0,
+							"children": [
+								{
+									"name": "BTC",
+									"value": 300000000,
+									"symbol": "BTC",
+									"changePct": 4,
+									"itemStyle": {
+										"color": "#089981"
+									}
+								}
+							]
+						}
+					],
+					"height": "100%",
+					"itemStyle": {
+						"borderColor": "rgba(0,0,0,0.35)",
+						"borderWidth": 1,
+						"gapWidth": 1
+					},
+					"label": {
+						"color": "#ffffff",
+						"fontSize": 12,
+						"fontWeight": "bold",
+						"formatter": "__fn__",
+						"show": true
+					},
+					"levels": [
+						{
+							"itemStyle": {
+								"borderWidth": 0,
+								"gapWidth": 2
+							}
+						},
+						{
+							"itemStyle": {
+								"borderColor": "rgba(0,0,0,0.4)",
+								"gapWidth": 1
+							},
+							"upperLabel": {
+								"show": true
+							}
+						}
+					],
+					"nodeClick": "zoomToNode",
+					"roam": false,
+					"type": "treemap",
+					"upperLabel": {
+						"color": "#ffffff",
+						"fontSize": 11,
+						"formatter": "{b}",
+						"height": 22,
+						"show": true
+					},
+					"width": "100%"
+				}
+			],
+			"tooltip": {
+				"backgroundColor": "rgba(20,20,22,0.92)",
+				"borderWidth": 0,
+				"formatter": "__fn__",
+				"textStyle": {
+					"color": "#f4f5f8"
+				}
+			}
+		}
+	},
+	"bubbles2": {
+		"id": "b2",
+		"className": "crypto-bubbles",
+		"width": "100%",
+		"height": "300px",
+		"theme": null,
+		"option": {
+			"series": [
+				{
+					"data": [
+						{
+							"name": "BTC",
+							"value": 55,
+							"symbolSize": 55,
+							"fullName": "",
+							"changePct": 3,
+							"marketCap": 1000000000000,
+							"itemStyle": {
+								"borderColor": "rgba(255,255,255,0.18)",
+								"borderWidth": 1,
+								"color": "#1f776f"
+							}
+						},
+						{
+							"name": "X",
+							"value": 110,
+							"symbolSize": 110,
+							"fullName": "",
+							"changePct": -12,
+							"marketCap": 0,
+							"itemStyle": {
+								"borderColor": "rgba(255,255,255,0.18)",
+								"borderWidth": 1,
+								"color": "#f23645"
+							}
+						}
+					],
+					"draggable": true,
+					"emphasis": {
+						"scale": 1.08
+					},
+					"force": {
+						"edgeLength": 0,
+						"friction": 0.6,
+						"gravity": 0.12,
+						"layoutAnimation": true,
+						"repulsion": [72, 440]
+					},
+					"label": {
+						"color": "#ffffff",
+						"fontSize": 11,
+						"fontWeight": "bold",
+						"formatter": "__fn__",
+						"show": true
+					},
+					"layout": "force",
+					"roam": false,
+					"type": "graph"
+				}
+			],
+			"tooltip": {
+				"backgroundColor": "rgba(20,20,22,0.92)",
+				"borderWidth": 0,
+				"formatter": "__fn__",
+				"textStyle": {
+					"color": "#f4f5f8"
+				}
+			}
+		}
+	},
+	"spark2": {
+		"id": "spark_2",
+		"className": "",
+		"width": "72px",
+		"height": "28px",
+		"theme": "white",
+		"option": {
+			"backgroundColor": "transparent",
+			"color": ["#f23645"],
+			"grid": [
+				{
+					"left": "0",
+					"top": "2",
+					"right": "0",
+					"bottom": "2"
+				}
+			],
+			"legend": {},
+			"series": [
+				{
+					"name": "p",
+					"type": "line",
+					"smooth": true,
+					"showSymbol": false,
+					"data": [
+						{
+							"value": 3
+						},
+						{
+							"value": 2
+						}
+					],
+					"lineStyle": {
+						"color": "#f23645",
+						"width": 1.5
+					}
+				}
+			],
+			"title": {},
+			"toolbox": {},
+			"tooltip": {
+				"show": false
+			},
+			"xAxis": [
+				{
+					"show": false,
+					"type": "category",
+					"data": ["0", "1"]
+				}
+			],
+			"yAxis": [
+				{
+					"type": "value",
+					"show": false,
+					"scale": true
+				}
+			]
+		}
+	},
+	"donut": {
+		"svg": "<svg class=\"donut-chart\" viewBox=\"0 0 42 42\" role=\"img\" aria-label=\"Allocation: AAPL 60.0%, M&amp;S 30.0%, Other 10.0%\"><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#C97A2B\" stroke-width=\"6\" stroke-dasharray=\"60.000 40.000\" stroke-dashoffset=\"0.000\" transform=\"rotate(-90 21 21)\"><title>AAPL 60.0%</title></circle><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#2563EB\" stroke-width=\"6\" stroke-dasharray=\"30.000 70.000\" stroke-dashoffset=\"-60.000\" transform=\"rotate(-90 21 21)\"><title>M&amp;S 30.0%</title></circle><circle class=\"donut-slice\" cx=\"21\" cy=\"21\" r=\"15.91549\" fill=\"none\" stroke=\"#123456\" stroke-width=\"6\" stroke-dasharray=\"10.000 90.000\" stroke-dashoffset=\"-90.000\" transform=\"rotate(-90 21 21)\"><title>Other 10.0%</title></circle></svg>"
+	},
+	"growth": {
+		"svg": "<svg class=\"fin-growth-sparkline-svg\" viewBox=\"0 0 220 52\" role=\"img\" aria-hidden=\"true\"><defs><linearGradient id=\"fin-growth-fill-positive\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C97A2B\" stop-opacity=\"0.35\"/><stop offset=\"100%\" stop-color=\"#C97A2B\" stop-opacity=\"0\"/></linearGradient></defs><line class=\"fin-growth-sparkline-zero\" x1=\"2.00\" y1=\"38.00\" x2=\"218.00\" y2=\"38.00\"/><path class=\"fin-growth-sparkline-area\" fill=\"url(#fin-growth-fill-positive)\" d=\"M 2.00,24.67 L 74.00,6.00 L 146.00,46.00 L 218.00,16.67 L 218.00,46.00 L 2.00,46.00 Z\"/><polyline class=\"fin-growth-sparkline-line\" fill=\"none\" stroke=\"#C97A2B\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"2.00,24.67 74.00,6.00 146.00,46.00 218.00,16.67\"/></svg>"
+	},
+	"growthneg": {
+		"svg": "<svg class=\"fin-growth-sparkline-svg\" viewBox=\"0 0 220 52\" role=\"img\" aria-hidden=\"true\"><defs><linearGradient id=\"fin-growth-fill-negative\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#f85149\" stop-opacity=\"0.35\"/><stop offset=\"100%\" stop-color=\"#f85149\" stop-opacity=\"0\"/></linearGradient></defs><path class=\"fin-growth-sparkline-area\" fill=\"url(#fin-growth-fill-negative)\" d=\"M 2.00,26.00 L 218.00,26.00 L 218.00,46.00 L 2.00,46.00 Z\"/><polyline class=\"fin-growth-sparkline-line\" fill=\"none\" stroke=\"#f85149\" stroke-width=\"1.75\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"2.00,26.00 218.00,26.00\"/></svg>"
+	}
 }

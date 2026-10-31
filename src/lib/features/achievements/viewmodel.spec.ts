@@ -27,10 +27,48 @@ const fixture: AchievementsResponse = {
 				{ tier: 'gold', xp: 30 }
 			]
 		},
-		{ key: 'first.budget', category: 'habits', title: 'Budgeter', description: 'Make a budget', iconKey: 'cart.fill', state: 'earned', isPerformance: false, tiers: [{ tier: '', xp: 5, unlockedAt: '2026-10-02T00:00:00Z' }] },
-		{ key: 'locked.one', category: 'habits', title: 'Later', description: 'Not yet', iconKey: 'nope', state: 'locked', isPerformance: false, tiers: [{ tier: '', xp: 5 }] },
-		{ key: 'hidden.1', category: 'habits', title: '???', description: 'secret', iconKey: 'star.fill', state: 'hidden', isPerformance: false, tiers: [{ tier: '', xp: 0 }] },
-		{ key: 'beat.market', category: 'performance', title: 'Beat it', description: 'Perf', iconKey: 'trophy.fill', state: 'earned', currentTier: 'bronze', progress: { current: 1, target: 2 }, isPerformance: true, tiers: [{ tier: 'bronze', xp: 5, unlockedAt: '2026-10-03T00:00:00Z' }] }
+		{
+			key: 'first.budget',
+			category: 'habits',
+			title: 'Budgeter',
+			description: 'Make a budget',
+			iconKey: 'cart.fill',
+			state: 'earned',
+			isPerformance: false,
+			tiers: [{ tier: '', xp: 5, unlockedAt: '2026-10-02T00:00:00Z' }]
+		},
+		{
+			key: 'locked.one',
+			category: 'habits',
+			title: 'Later',
+			description: 'Not yet',
+			iconKey: 'nope',
+			state: 'locked',
+			isPerformance: false,
+			tiers: [{ tier: '', xp: 5 }]
+		},
+		{
+			key: 'hidden.1',
+			category: 'habits',
+			title: '???',
+			description: 'secret',
+			iconKey: 'star.fill',
+			state: 'hidden',
+			isPerformance: false,
+			tiers: [{ tier: '', xp: 0 }]
+		},
+		{
+			key: 'beat.market',
+			category: 'performance',
+			title: 'Beat it',
+			description: 'Perf',
+			iconKey: 'trophy.fill',
+			state: 'earned',
+			currentTier: 'bronze',
+			progress: { current: 1, target: 2 },
+			isPerformance: true,
+			tiers: [{ tier: 'bronze', xp: 5, unlockedAt: '2026-10-03T00:00:00Z' }]
+		}
 	]
 };
 
@@ -65,7 +103,16 @@ describe('buildPage', () => {
 
 describe('buildToast', () => {
 	it('names one unlock and counts several', () => {
-		const u = { id: '1', key: 'k', tier: 'gold', title: 'T', description: '', iconKey: '', xp: 1, unlockedAt: '' };
+		const u = {
+			id: '1',
+			key: 'k',
+			tier: 'gold',
+			title: 'T',
+			description: '',
+			iconKey: '',
+			xp: 1,
+			unlockedAt: ''
+		};
 		expect(buildToast([u])).toEqual({ count: 1, title: 'T', tier: 'gold' });
 		expect(buildToast([u, { ...u, id: '2' }])).toEqual({ count: 2, title: '', tier: '' });
 	});

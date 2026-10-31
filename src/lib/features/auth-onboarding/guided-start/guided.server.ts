@@ -1,14 +1,7 @@
 // internal/session/guided_start.go + handlers/guided_start.go (server half).
 import type { RequestEvent } from '@sveltejs/kit';
 import { getOnboardingProgress, type OnboardingProgress } from '../onboarding/onboarding.server.js';
-import {
-	allDone,
-	cardVisible,
-	isStep,
-	progressOf,
-	type CardVM,
-	type LayerVM
-} from './guide.js';
+import { allDone, cardVisible, isStep, progressOf, type CardVM, type LayerVM } from './guide.js';
 
 export const GuidedKey = {
 	Step: 'guidedStartStep',
@@ -32,7 +25,12 @@ export interface ActiveGuidedStep {
 
 const sess = (event: RequestEvent) => event.locals.session;
 
-export async function startGuidedStep(event: RequestEvent, step: string, source: string, now: number) {
+export async function startGuidedStep(
+	event: RequestEvent,
+	step: string,
+	source: string,
+	now: number
+) {
 	const f = sess(event).data.flags;
 	f[GuidedKey.Step] = step;
 	f[GuidedKey.StepStartedAt] = now;
@@ -62,7 +60,8 @@ export function activeGuidedStep(event: RequestEvent): ActiveGuidedStep | null {
  * from their form actions.
  */
 export async function noteGuidedAction(event: RequestEvent, step: string) {
-	if (sess(event).get<string>(GuidedKey.Step) === step) await sess(event).set(GuidedKey.StepActed, true);
+	if (sess(event).get<string>(GuidedKey.Step) === step)
+		await sess(event).set(GuidedKey.StepActed, true);
 }
 
 export async function clearGuidedStep(event: RequestEvent) {
@@ -103,9 +102,21 @@ export async function guidedCardVM(
 	message = ''
 ): Promise<CardVM> {
 	const p = progressOf(progress);
-	const hidden: CardVM = { visible: false, progress: p, message: '', fireCardShown: false, fireCompleted: false };
+	const hidden: CardVM = {
+		visible: false,
+		progress: p,
+		message: '',
+		fireCardShown: false,
+		fireCompleted: false
+	};
 	if (!cardVisible(progress, !!sess(event).get<boolean>(GuidedKey.ShowCompleted))) return hidden;
-	const vm: CardVM = { visible: true, progress: p, message, fireCardShown: false, fireCompleted: false };
+	const vm: CardVM = {
+		visible: true,
+		progress: p,
+		message,
+		fireCardShown: false,
+		fireCompleted: false
+	};
 	vm.fireCardShown = await markOnce(event, GuidedKey.CardShown);
 	if (allDone(p)) vm.fireCompleted = await markOnce(event, GuidedKey.CompletedSent);
 	return vm;

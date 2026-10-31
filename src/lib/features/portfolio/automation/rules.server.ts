@@ -2,7 +2,14 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
 import { uuidString } from './format.js';
 import { validUUID } from './common.server.js';
-import type { PortfolioListResponse, RebalanceEvent, RebalancePreview, RebalanceTarget, RebalancingPolicy, RebalancingRulesVM } from './types.js';
+import type {
+	PortfolioListResponse,
+	RebalanceEvent,
+	RebalancePreview,
+	RebalanceTarget,
+	RebalancingPolicy,
+	RebalancingRulesVM
+} from './types.js';
 
 // Port of handlers/wealth_automation.go RebalancingRules / RebalancingRuleSave /
 // updateRebalanceEvent and parseTargets.
@@ -19,8 +26,10 @@ export async function loadRulesVM(event: RequestEvent): Promise<RebalancingRules
 		error: ''
 	};
 	try {
-		vm.portfolios = (await apiJSON<PortfolioListResponse[]>(event, 'GET', '/v1/portfolio/lists')) ?? [];
-		if (vm.selectedID === '' && vm.portfolios.length > 0) vm.selectedID = uuidString(vm.portfolios[0].id);
+		vm.portfolios =
+			(await apiJSON<PortfolioListResponse[]>(event, 'GET', '/v1/portfolio/lists')) ?? [];
+		if (vm.selectedID === '' && vm.portfolios.length > 0)
+			vm.selectedID = uuidString(vm.portfolios[0].id);
 	} catch {
 		/* Go ignores a failed list */
 	}
@@ -32,7 +41,11 @@ export async function loadRulesVM(event: RequestEvent): Promise<RebalancingRules
 		]);
 		if (policy) {
 			vm.policy = policy;
-			vm.preview = await apiJSON<RebalancePreview>(event, 'POST', policyBase(id) + '/preview').catch(() => null);
+			vm.preview = await apiJSON<RebalancePreview>(
+				event,
+				'POST',
+				policyBase(id) + '/preview'
+			).catch(() => null);
 		}
 		if (events) vm.events = events;
 	}
@@ -52,10 +65,16 @@ export function parseTargets(raw: string): RebalanceTarget[] {
 		if (at < 0) throw new TargetsError('targets must use SYMBOL:WEIGHT');
 		const symbolPart = trimmed.slice(0, at);
 		const weightPart = trimmed.slice(at + 1);
-		const weight = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(weightPart) ? Number(weightPart) : NaN;
+		const weight = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(weightPart)
+			? Number(weightPart)
+			: NaN;
 		if (Number.isNaN(weight) || weight <= 0) throw new TargetsError('invalid target weight');
 		total += weight;
-		const target: RebalanceTarget = { id: `target-${index + 1}`, kind: 'symbol', targetWeight: weight / 100 };
+		const target: RebalanceTarget = {
+			id: `target-${index + 1}`,
+			kind: 'symbol',
+			targetWeight: weight / 100
+		};
 		if (symbolPart.toLowerCase() === 'cash') target.kind = 'cash';
 		else target.symbol = symbolPart.trim().toUpperCase();
 		targets.push(target);

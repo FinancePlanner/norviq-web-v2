@@ -1,7 +1,12 @@
 <script lang="ts">
 	// tax.reportsPanel (Workpapers). Generate posts to /tax?/reports (Go: hx-post="/tax/reports").
 	import { enhance } from '$app/forms';
-	import { EmptyState, NativeButton, SelectField, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		EmptyState,
+		NativeButton,
+		SelectField,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import { staticOptions, workpaperDescription } from '../helpers.js';
 	import type { TaxPageViewModel } from '../types.js';
 	import ReportRow from './ReportRow.svelte';
@@ -18,11 +23,11 @@
 		{#if vm.isPro}
 			<div class="flex flex-wrap gap-2">
 				<form method="POST" action="/tax?/reports" use:enhance={withSpinner()} class="flex gap-2">
-					<input type="hidden" name="taxYear" value={vm.taxYear} /><input type="hidden" name="jurisdiction" value={vm.jurisdiction} /><input
+					<input type="hidden" name="taxYear" value={vm.taxYear} /><input
 						type="hidden"
-						name="format"
-						value="pdf"
-					/><SelectField
+						name="jurisdiction"
+						value={vm.jurisdiction}
+					/><input type="hidden" name="format" value="pdf" /><SelectField
 						name="kind"
 						aria-label="Report kind"
 						options={staticOptions(
@@ -35,11 +40,15 @@
 					/><NativeButton type="submit" class="btn-secondary">Generate PDF</NativeButton>
 				</form>
 				<form method="POST" action="/tax?/reports" use:enhance={withSpinner()}>
-					<input type="hidden" name="taxYear" value={vm.taxYear} /><input type="hidden" name="jurisdiction" value={vm.jurisdiction} /><input
+					<input type="hidden" name="taxYear" value={vm.taxYear} /><input
 						type="hidden"
-						name="kind"
-						value="transaction_workpaper"
-					/><input type="hidden" name="format" value="csv" /><NativeButton type="submit" class="btn-secondary">Generate CSV</NativeButton>
+						name="jurisdiction"
+						value={vm.jurisdiction}
+					/><input type="hidden" name="kind" value="transaction_workpaper" /><input
+						type="hidden"
+						name="format"
+						value="csv"
+					/><NativeButton type="submit" class="btn-secondary">Generate CSV</NativeButton>
 				</form>
 			</div>
 		{:else}
@@ -48,7 +57,10 @@
 	</div>
 	<div class="mt-4 space-y-3">
 		{#if vm.reports.length === 0}
-			<EmptyState title="No reports generated yet" description="Generate a tax report from your holdings to see it listed here." />
+			<EmptyState
+				title="No reports generated yet"
+				description="Generate a tax report from your holdings to see it listed here."
+			/>
 		{/if}
 		{#each vm.reports as report (report.id)}
 			<ReportRow {report} isPro={vm.isPro} />

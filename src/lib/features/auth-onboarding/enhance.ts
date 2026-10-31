@@ -31,7 +31,8 @@ export function enhanceInPlace<T>(h: EnhanceHandlers<T>): SubmitFunction {
 					return;
 				case 'error':
 					h.onError?.(
-						(result.error as { message?: string } | undefined)?.message || 'Something went wrong. Please try again.'
+						(result.error as { message?: string } | undefined)?.message ||
+							'Something went wrong. Please try again.'
 					);
 					return;
 			}

@@ -70,7 +70,10 @@ async function maybe<T>(p: Promise<T>): Promise<T | null> {
 }
 
 // GET /tax
-export async function loadTaxPage(event: RequestEvent, isProUser: boolean): Promise<TaxPageViewModel> {
+export async function loadTaxPage(
+	event: RequestEvent,
+	isProUser: boolean
+): Promise<TaxPageViewModel> {
 	const q = event.url.searchParams;
 	const jurisdiction = (q.get('jurisdiction') ?? '').trim().toUpperCase() || 'US';
 	let year = new Date().getFullYear();
@@ -78,22 +81,39 @@ export async function loadTaxPage(event: RequestEvent, isProUser: boolean): Prom
 	if (parsed !== null && parsed >= 2020 && parsed <= year + 1) year = parsed;
 	const query = { jurisdiction, taxYear: year };
 
-	const [dashboardResult, context, carryforwards, notifications, reports, actionPlans] = await Promise.all([
-		apiJSON<TaxDashboardResponse>(event, 'GET', '/v1/tax/dashboard', undefined, { query }).then(
-			(d) => ({ ok: true as const, d }),
-			(err) => {
-				console.warn('fetch tax dashboard', err);
-				return { ok: false as const, d: emptyDashboard(jurisdiction, year) };
-			}
-		),
-		maybe(apiJSON<TaxProfileContextResponse>(event, 'GET', '/v1/tax/profile/context', undefined, { query })),
-		isProUser && (jurisdiction === 'PT' || jurisdiction === 'DE')
-			? maybe(apiJSON<TaxLossCarryforwardLedgerResponse>(event, 'GET', '/v1/tax/loss-carryforwards', undefined, { query }))
-			: Promise.resolve(null),
-		isProUser ? maybe(apiJSON<TaxNotificationPreferences>(event, 'GET', '/v1/tax/notifications')) : Promise.resolve(null),
-		maybe(apiJSON<TaxReportResponse[]>(event, 'GET', '/v1/tax/reports')),
-		isProUser ? maybe(apiJSON<TaxActionPlanResponse[]>(event, 'GET', '/v1/tax/action-plans')) : Promise.resolve(null)
-	]);
+	const [dashboardResult, context, carryforwards, notifications, reports, actionPlans] =
+		await Promise.all([
+			apiJSON<TaxDashboardResponse>(event, 'GET', '/v1/tax/dashboard', undefined, { query }).then(
+				(d) => ({ ok: true as const, d }),
+				(err) => {
+					console.warn('fetch tax dashboard', err);
+					return { ok: false as const, d: emptyDashboard(jurisdiction, year) };
+				}
+			),
+			maybe(
+				apiJSON<TaxProfileContextResponse>(event, 'GET', '/v1/tax/profile/context', undefined, {
+					query
+				})
+			),
+			isProUser && (jurisdiction === 'PT' || jurisdiction === 'DE')
+				? maybe(
+						apiJSON<TaxLossCarryforwardLedgerResponse>(
+							event,
+							'GET',
+							'/v1/tax/loss-carryforwards',
+							undefined,
+							{ query }
+						)
+					)
+				: Promise.resolve(null),
+			isProUser
+				? maybe(apiJSON<TaxNotificationPreferences>(event, 'GET', '/v1/tax/notifications'))
+				: Promise.resolve(null),
+			maybe(apiJSON<TaxReportResponse[]>(event, 'GET', '/v1/tax/reports')),
+			isProUser
+				? maybe(apiJSON<TaxActionPlanResponse[]>(event, 'GET', '/v1/tax/action-plans'))
+				: Promise.resolve(null)
+		]);
 
 	const accountFilter = (q.get('accountId') ?? '').trim();
 	const assetFilter = (q.get('assetClass') ?? '').trim().toLowerCase();
@@ -101,7 +121,12 @@ export async function loadTaxPage(event: RequestEvent, isProUser: boolean): Prom
 	const dashboard = dashboardResult.d;
 	dashboard.opportunities = dashboard.opportunities ?? [];
 	const assetClasses = taxOpportunityAssetClasses(dashboard.opportunities);
-	dashboard.opportunities = filterTaxOpportunities(dashboard.opportunities, accountFilter, assetFilter, statusFilter);
+	dashboard.opportunities = filterTaxOpportunities(
+		dashboard.opportunities,
+		accountFilter,
+		assetFilter,
+		statusFilter
+	);
 
 	return {
 		dashboard,
@@ -118,7 +143,9 @@ export async function loadTaxPage(event: RequestEvent, isProUser: boolean): Prom
 		jurisdiction,
 		taxYear: year,
 		isPro: isProUser,
-		errorMessage: dashboardResult.ok ? '' : 'Tax estimates are temporarily unavailable. Please try again.',
+		errorMessage: dashboardResult.ok
+			? ''
+			: 'Tax estimates are temporarily unavailable. Please try again.',
 		accountFilter,
 		assetFilter,
 		statusFilter,
@@ -127,7 +154,10 @@ export async function loadTaxPage(event: RequestEvent, isProUser: boolean): Prom
 }
 
 // GET /tax/filing
-export async function loadFilingPage(event: RequestEvent, isProUser: boolean): Promise<FilingViewModel> {
+export async function loadFilingPage(
+	event: RequestEvent,
+	isProUser: boolean
+): Promise<FilingViewModel> {
 	const q = event.url.searchParams;
 	const now = new Date();
 	const current = now.getFullYear();
@@ -149,7 +179,9 @@ export async function loadFilingPage(event: RequestEvent, isProUser: boolean): P
 	// opens the preview without a subscription, and only the backend knows.
 	let res: Response;
 	try {
-		res = await apiFetch(event, 'GET', '/v1/tax/filing/preview', null, { query: { taxYear: year } });
+		res = await apiFetch(event, 'GET', '/v1/tax/filing/preview', null, {
+			query: { taxYear: year }
+		});
 	} catch {
 		vm.errorMessage = 'The filing pack is temporarily unavailable. Please try again.';
 		return vm;
@@ -214,7 +246,8 @@ const atoi0 = (raw: FormDataEntryValue | null) => goAtoi(typeof raw === 'string'
 /** taxFloat: strconv.ParseFloat(strings.TrimSpace(value), 32). */
 function taxFloat(raw: FormDataEntryValue | null): [number, boolean] {
 	const s = (typeof raw === 'string' ? raw : '').trim();
-	if (s === '' || !/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$|^[+-]?(inf|infinity)$/i.test(s)) return [0, false];
+	if (s === '' || !/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$|^[+-]?(inf|infinity)$/i.test(s))
+		return [0, false];
 	return [Number(/inf/i.test(s) ? (s.startsWith('-') ? -Infinity : Infinity) : s), true];
 }
 
@@ -226,7 +259,13 @@ function taxPercent(raw: FormDataEntryValue | null): number | undefined {
 }
 
 const UUID_RE = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
-const isUUID = (s: string) => UUID_RE.test(s.trim().replace(/^urn:uuid:/i, '').replace(/^\{(.*)\}$/, '$1'));
+const isUUID = (s: string) =>
+	UUID_RE.test(
+		s
+			.trim()
+			.replace(/^urn:uuid:/i, '')
+			.replace(/^\{(.*)\}$/, '$1')
+	);
 
 function str(form: FormData, key: string): string {
 	const v = form.get(key);
@@ -267,8 +306,12 @@ export async function saveProfile(event: RequestEvent) {
 	for (const rawID of strs(form, 'account_id')) {
 		if (!isUUID(rawID)) return unprocessable('Invalid account');
 		const owner = str(form, 'owner_' + rawID);
-		if (owner !== 'primary' && (owner !== 'partner' || members.length !== 2)) return unprocessable('Invalid account owner');
-		let lotMethod = str(form, 'lot_' + rawID) as TaxProfileRequest['accounts'][number]['lotSelectionMethod'];
+		if (owner !== 'primary' && (owner !== 'partner' || members.length !== 2))
+			return unprocessable('Invalid account owner');
+		let lotMethod = str(
+			form,
+			'lot_' + rawID
+		) as TaxProfileRequest['accounts'][number]['lotSelectionMethod'];
 		if (jurisdictionRaw.toUpperCase() === 'DE') lotMethod = 'fifo';
 		accounts.push({
 			id: rawID,
@@ -300,7 +343,8 @@ export async function saveProfile(event: RequestEvent) {
 	}
 	const rawChurchTax = str(form, 'churchTaxRate').trim();
 	if (rawChurchTax !== '') {
-		if (rawChurchTax !== '8' && rawChurchTax !== '9') return unprocessable('Invalid church tax rate');
+		if (rawChurchTax !== '8' && rawChurchTax !== '9')
+			return unprocessable('Invalid church tax rate');
 		body.churchTaxRate = taxPercent(rawChurchTax);
 	}
 	const rawMode = str(form, 'capitalGainsTaxationMode').trim();
@@ -333,9 +377,15 @@ export async function saveMarketAdmission(event: RequestEvent) {
 	}
 	const evidenceAttested = status !== 'unknown';
 	try {
-		await apiJSON(event, 'PUT', `/v1/tax/instruments/${id.toLowerCase()}/market-admission`, { status }, {
-			headers: { 'X-Tax-Evidence-Attested': String(evidenceAttested) }
-		});
+		await apiJSON(
+			event,
+			'PUT',
+			`/v1/tax/instruments/${id.toLowerCase()}/market-admission`,
+			{ status },
+			{
+				headers: { 'X-Tax-Evidence-Attested': String(evidenceAttested) }
+			}
+		);
 	} catch {
 		return unprocessable('Classification could not be saved');
 	}
@@ -344,7 +394,14 @@ export async function saveMarketAdmission(event: RequestEvent) {
 	taxRedirect(str(form, 'jurisdiction').toUpperCase(), year);
 }
 
-const FUND_CLASSIFICATIONS = ['equity', 'mixed', 'real_estate', 'foreign_real_estate', 'other', 'unknown'];
+const FUND_CLASSIFICATIONS = [
+	'equity',
+	'mixed',
+	'real_estate',
+	'foreign_real_estate',
+	'other',
+	'unknown'
+];
 
 // POST /tax/instruments/{id}/fund-classification (no feature gate in Go)
 export async function saveFundClassification(event: RequestEvent) {
@@ -352,9 +409,12 @@ export async function saveFundClassification(event: RequestEvent) {
 	if (!isUUID(id)) error(404, 'Not found');
 	const form = await event.request.formData();
 	const classification = str(form, 'classification');
-	if (!FUND_CLASSIFICATIONS.includes(classification)) return unprocessable('Invalid fund classification');
+	if (!FUND_CLASSIFICATIONS.includes(classification))
+		return unprocessable('Invalid fund classification');
 	try {
-		await apiJSON(event, 'PUT', `/v1/tax/instruments/${id.toLowerCase()}/fund-classification`, { classification });
+		await apiJSON(event, 'PUT', `/v1/tax/instruments/${id.toLowerCase()}/fund-classification`, {
+			classification
+		});
 	} catch {
 		return unprocessable('Fund classification could not be saved');
 	}
@@ -378,7 +438,8 @@ export async function saveFundAnnualInput(event: RequestEvent) {
 	const accountID = str(form, 'accountId');
 	const instrumentID = str(form, 'instrumentId');
 	const year = goAtoi(str(form, 'calculationYear'));
-	if (!isUUID(accountID) || !isUUID(instrumentID) || year === null) return unprocessable('Enter valid annual fund values');
+	if (!isUUID(accountID) || !isUUID(instrumentID) || year === null)
+		return unprocessable('Enter valid annual fund values');
 	const holdings: Holding[] = [];
 	for (const rawLotID of strs(form, 'lot_id')) {
 		if (!isUUID(rawLotID)) return unprocessable('Invalid fund lot');
@@ -386,14 +447,24 @@ export async function saveFundAnnualInput(event: RequestEvent) {
 		const [beginning, bOK] = taxFloat(form.get('beginning_' + rawLotID));
 		const [ending, eOK] = taxFloat(form.get('ending_' + rawLotID));
 		const [distributions, dOK] = taxFloat(form.get('distributions_' + rawLotID));
-		if (!qOK || !bOK || !eOK || !dOK || quantity <= 0 || beginning < 0 || ending < 0 || distributions < 0) {
+		if (
+			!qOK ||
+			!bOK ||
+			!eOK ||
+			!dOK ||
+			quantity <= 0 ||
+			beginning < 0 ||
+			ending < 0 ||
+			distributions < 0
+		) {
 			return unprocessable('Enter valid values for every selected lot');
 		}
 		let month: number | undefined;
 		const raw = str(form, 'acquisition_' + rawLotID).trim();
 		if (raw !== '') {
 			const parsed = goAtoi(raw);
-			if (parsed === null || parsed < 1 || parsed > 12) return unprocessable('Invalid acquisition month');
+			if (parsed === null || parsed < 1 || parsed > 12)
+				return unprocessable('Invalid acquisition month');
 			month = parsed;
 		}
 		holdings.push({
@@ -417,10 +488,17 @@ export async function saveFundAnnualInput(event: RequestEvent) {
 		const raw = str(form, 'acquisitionMonth').trim();
 		if (raw !== '') {
 			const parsed = goAtoi(raw);
-			if (parsed === null || parsed < 1 || parsed > 12) return unprocessable('Invalid acquisition month');
+			if (parsed === null || parsed < 1 || parsed > 12)
+				return unprocessable('Invalid acquisition month');
 			month = parsed;
 		}
-		holdings.push({ id: 'aggregate', beginningMarketValue: beginning, endingMarketValue: ending, distributions, acquisitionMonth: month });
+		holdings.push({
+			id: 'aggregate',
+			beginningMarketValue: beginning,
+			endingMarketValue: ending,
+			distributions,
+			acquisitionMonth: month
+		});
 	}
 	try {
 		await apiJSON(event, 'PUT', '/v1/tax/funds/annual-inputs', {
@@ -581,7 +659,11 @@ export async function createReport(event: RequestEvent) {
 	}
 	if (kind === 'annual_filing_pack') {
 		// The one funnel event the filing pack owns: a user asked for the file.
-		await setPostHogCaptureOnce(event.locals, 'filing_pack_generated', { taxYear: year, format, jurisdiction });
+		await setPostHogCaptureOnce(event.locals, 'filing_pack_generated', {
+			taxYear: year,
+			format,
+			jurisdiction
+		});
 	}
 	taxRedirect(jurisdiction, year);
 }

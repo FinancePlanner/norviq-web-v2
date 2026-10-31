@@ -1,7 +1,11 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { boardReturnTo, withNotice } from '#lib/features/social/boards/boards.js';
-import { formValue, methodNotAllowed, reportBoardContent } from '#lib/features/social/boards/boards.server.js';
+import {
+	formValue,
+	methodNotAllowed,
+	reportBoardContent
+} from '#lib/features/social/boards/boards.server.js';
 
 // POST /boards/report (handlers.BoardsReport). A failed report never errors
 // the page: it comes back with ?notice=report_fail.

@@ -116,5 +116,4 @@ export interface ReceiptImportVM {
 
 /** What the receipt import load and its actions hand the panel. */
 export type ReceiptImportState =
-	| { kind: 'review'; vm: ReceiptImportVM }
-	| { kind: 'consent'; next: string; vm: ReceiptImportVM };
+	{ kind: 'review'; vm: ReceiptImportVM } | { kind: 'consent'; next: string; vm: ReceiptImportVM };

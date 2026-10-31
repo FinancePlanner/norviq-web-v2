@@ -28,10 +28,18 @@ function notificationScopeLabel(scope: string): string {
 
 function formatLeadDays(days: number[] | null | undefined): string {
 	if (!days || days.length === 0) return 'Default schedule';
-	return days.map((d) => (d === 0 ? 'same day' : d === 1 ? '1 day before' : `${d} days before`)).join(', ');
+	return days
+		.map((d) => (d === 0 ? 'same day' : d === 1 ? '1 day before' : `${d} days before`))
+		.join(', ');
 }
 
-const blank = (): NotificationsVM => ({ earningsEnabled: false, leadDays: '', scopeLabel: '', errorMessage: '', successMessage: '' });
+const blank = (): NotificationsVM => ({
+	earningsEnabled: false,
+	leadDays: '',
+	scopeLabel: '',
+	errorMessage: '',
+	successMessage: ''
+});
 
 // Go LoadNotificationsVM.
 async function loadVM(event: RequestEvent): Promise<NotificationsVM> {
@@ -57,7 +65,9 @@ export const actions: Actions = {
 		const form = await event.request.formData();
 		const enabled = String(form.get('earnings_enabled') ?? '').trim() === '1';
 		try {
-			const prefs = await apiJSON<Prefs>(event, 'PUT', '/v1/notifications/earnings/preferences', { enabled });
+			const prefs = await apiJSON<Prefs>(event, 'PUT', '/v1/notifications/earnings/preferences', {
+				enabled
+			});
 			const vm: NotificationsVM = {
 				earningsEnabled: prefs.enabled,
 				leadDays: formatLeadDays(prefs.leadDays),

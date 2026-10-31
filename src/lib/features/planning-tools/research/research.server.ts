@@ -1,7 +1,14 @@
 import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiFetch, apiJSON, isAPIError } from '#lib/server/api.js';
 import { formatFloat } from '#lib/format.js';
-import type { MemoMarkRow, MemoPageVM, MemoRow, NoteRow, PositionMemoCard, ResearchPageVM } from './types.js';
+import type {
+	MemoMarkRow,
+	MemoPageVM,
+	MemoRow,
+	NoteRow,
+	PositionMemoCard,
+	ResearchPageVM
+} from './types.js';
 
 // Port of norviq-web internal/handlers/{research,research_data,position_memos}.go
 // and internal/api/position_memos.go.
@@ -54,7 +61,8 @@ interface PositionMemoDetail {
 	mark: PositionMemoMark | null;
 	sections: { heading: string; paragraphs: string[] | null }[] | null;
 	verdict: string;
-	sources: { label: string; symbol?: string | null; asOf?: string | null; url?: string | null }[] | null;
+	sources:
+		{ label: string; symbol?: string | null; asOf?: string | null; url?: string | null }[] | null;
 	footer: string;
 	bookmarked: boolean;
 	createdAt: string;
@@ -84,10 +92,21 @@ function mapResearchNote(note: ResearchNoteResponse): NoteRow {
 }
 
 /** LoadResearchViewModel */
-export async function loadResearchViewModel(event: RequestEvent, filterSymbol: string): Promise<ResearchPageVM> {
-	const vm: ResearchPageVM = { notes: [], errorMessage: '', successMessage: '', filterSymbol: filterSymbol.trim().toUpperCase(), savedMemos: [] };
+export async function loadResearchViewModel(
+	event: RequestEvent,
+	filterSymbol: string
+): Promise<ResearchPageVM> {
+	const vm: ResearchPageVM = {
+		notes: [],
+		errorMessage: '',
+		successMessage: '',
+		filterSymbol: filterSymbol.trim().toUpperCase(),
+		savedMemos: []
+	};
 	try {
-		const notes = await apiJSON<ResearchNoteResponse[]>(event, 'GET', '/v1/research', undefined, { query: { symbol: vm.filterSymbol || undefined } });
+		const notes = await apiJSON<ResearchNoteResponse[]>(event, 'GET', '/v1/research', undefined, {
+			query: { symbol: vm.filterSymbol || undefined }
+		});
 		vm.notes = (notes ?? []).map(mapResearchNote);
 	} catch (err) {
 		console.warn('research list fetch failed', err);
@@ -100,14 +119,29 @@ export async function loadResearchViewModel(event: RequestEvent, filterSymbol: s
 export function memoDate(raw: string): string {
 	const d = new Date(raw);
 	if (!raw || Number.isNaN(d.getTime()) || !/^\d{4}-\d{2}-\d{2}T/.test(raw)) return raw;
-	const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	const months = [
+		'Jan',
+		'Feb',
+		'Mar',
+		'Apr',
+		'May',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Oct',
+		'Nov',
+		'Dec'
+	];
 	return `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
 /** loadSavedMemos: a failure (including the Pro gate) leaves the list empty. */
 export async function loadSavedMemos(event: RequestEvent): Promise<MemoRow[]> {
 	try {
-		const items = await apiJSON<PositionMemoListItem[]>(event, 'GET', '/v1/ai/memos', undefined, { query: { bookmarked: 'true' } });
+		const items = await apiJSON<PositionMemoListItem[]>(event, 'GET', '/v1/ai/memos', undefined, {
+			query: { bookmarked: 'true' }
+		});
 		return (items ?? []).map((item) => ({
 			id: item.id,
 			symbol: item.primarySymbol,
@@ -132,7 +166,8 @@ export async function submitResearch(event: RequestEvent) {
 	const get = (k: string) => String(form.get(k) ?? '').trim();
 	const symbol = get('symbol').toUpperCase();
 	const thesis = get('thesis');
-	if (symbol === '' || thesis === '') return fail(400, { error: 'Symbol and thesis are required.' });
+	if (symbol === '' || thesis === '')
+		return fail(400, { error: 'Symbol and thesis are required.' });
 	const body: Record<string, string> = { symbol, thesis };
 	const title = get('title');
 	const risks = get('risks');
@@ -163,7 +198,8 @@ export async function deleteResearch(event: RequestEvent): Promise<Response> {
 	const noteID = parseUUID(id);
 	if (!noteID) return new Response('Invalid note ID\n', { status: 400 });
 	const res = await apiFetch(event, 'DELETE', `/v1/research/${noteID}`).catch(() => null);
-	if (!res || (res.status !== 204 && res.status !== 200)) return new Response('Could not delete note\n', { status: 502 });
+	if (!res || (res.status !== 204 && res.status !== 200))
+		return new Response('Could not delete note\n', { status: 502 });
 	redirect(303, '/research');
 }
 
@@ -200,33 +236,53 @@ function memoMarkRows(mark: PositionMemoMark | null): MemoMarkRow[] {
 		rows.push({ label: 'Your cost', value: memoMoney(mark.cost, costCurrency) + ' · ' + source });
 	}
 	if (mark.shares != null) rows.push({ label: 'Shares', value: String(mark.shares) });
-	if (mark.livePrice != null) rows.push({ label: 'Live price ' + s(mark.liveSymbol), value: memoMoney(mark.livePrice, s(mark.liveCurrency)) });
+	if (mark.livePrice != null)
+		rows.push({
+			label: 'Live price ' + s(mark.liveSymbol),
+			value: memoMoney(mark.livePrice, s(mark.liveCurrency))
+		});
 	if (mark.primaryPrice != null && s(mark.primarySymbol) !== s(mark.liveSymbol)) {
-		rows.push({ label: 'Primary listing ' + s(mark.primarySymbol), value: memoMoney(mark.primaryPrice, s(mark.primaryCurrency)) });
+		rows.push({
+			label: 'Primary listing ' + s(mark.primarySymbol),
+			value: memoMoney(mark.primaryPrice, s(mark.primaryCurrency))
+		});
 	}
 	if (mark.fxRate != null) {
 		let value = `${s(mark.fxPair)} ${formatFloat(mark.fxRate, 4)}`;
 		const date = s(mark.fxDate);
 		if (date) value += ' · ' + date;
 		rows.push({ label: 'FX rate', value: value.trim() });
-		if (mark.priceInCostCurrency != null) rows.push({ label: 'Live price in ' + costCurrency, value: memoMoney(mark.priceInCostCurrency, costCurrency) });
+		if (mark.priceInCostCurrency != null)
+			rows.push({
+				label: 'Live price in ' + costCurrency,
+				value: memoMoney(mark.priceInCostCurrency, costCurrency)
+			});
 	}
-	if (mark.drawdownPercent != null) rows.push({ label: 'Versus your cost', value: memoPercent(mark.drawdownPercent) });
+	if (mark.drawdownPercent != null)
+		rows.push({ label: 'Versus your cost', value: memoPercent(mark.drawdownPercent) });
 	if (mark.statedPercent != null) {
 		let value = memoPercent(mark.statedPercent) + ' as you stated it';
-		if (mark.priceImpliedByStatedPercent != null) value += ' · implies ' + memoMoney(mark.priceImpliedByStatedPercent, costCurrency);
+		if (mark.priceImpliedByStatedPercent != null)
+			value += ' · implies ' + memoMoney(mark.priceImpliedByStatedPercent, costCurrency);
 		rows.push({ label: 'Stated move', value });
 	}
-	if (mark.breakevenPercent != null) rows.push({ label: 'Gain needed to reach cost', value: memoPercent(mark.breakevenPercent) });
+	if (mark.breakevenPercent != null)
+		rows.push({ label: 'Gain needed to reach cost', value: memoPercent(mark.breakevenPercent) });
 	return rows;
 }
 
 /** doMemoRequest: 404 → MemoNotFoundError, other non-2xx → Error. */
-async function memoRequest<T>(event: RequestEvent, method: string, path: string, body?: unknown): Promise<T> {
+async function memoRequest<T>(
+	event: RequestEvent,
+	method: string,
+	path: string,
+	body?: unknown
+): Promise<T> {
 	try {
 		return await apiJSON<T>(event, method, path, body);
 	} catch (err) {
-		if (isAPIError(err) && err.status === 404) throw new MemoNotFoundError('position memo not found');
+		if (isAPIError(err) && err.status === 404)
+			throw new MemoNotFoundError('position memo not found');
 		throw err;
 	}
 }
@@ -240,27 +296,42 @@ export async function loadMemoPage(event: RequestEvent, id: string): Promise<Mem
 		title: detail.title,
 		createdAt: memoDate(detail.createdAt),
 		mark: memoMarkRows(detail.mark),
-		sections: (detail.sections ?? []).map((sec) => ({ heading: sec.heading, paragraphs: sec.paragraphs ?? [] })),
+		sections: (detail.sections ?? []).map((sec) => ({
+			heading: sec.heading,
+			paragraphs: sec.paragraphs ?? []
+		})),
 		verdict: detail.verdict,
 		footer: detail.footer,
 		sources: [],
 		bookmarked: detail.bookmarked
 	};
-	if (detail.askedSymbol && detail.askedSymbol.toLowerCase() !== detail.primarySymbol.toLowerCase()) {
+	if (
+		detail.askedSymbol &&
+		detail.askedSymbol.toLowerCase() !== detail.primarySymbol.toLowerCase()
+	) {
 		vm.symbol = detail.askedSymbol + ' / ' + detail.primarySymbol;
 	}
 	for (const source of detail.sources ?? []) {
 		const meta: string[] = [];
 		if (source.symbol) meta.push(source.symbol);
 		if (source.asOf) meta.push('as of ' + source.asOf);
-		const url = source.url && (source.url.startsWith('https://') || source.url.startsWith('http://')) ? source.url : '';
+		const url =
+			source.url && (source.url.startsWith('https://') || source.url.startsWith('http://'))
+				? source.url
+				: '';
 		vm.sources.push({ label: source.label, meta: meta.join(' · '), url });
 	}
 	return vm;
 }
 
-export async function bookmarkMemo(event: RequestEvent, id: string, bookmarked: boolean): Promise<PositionMemoCard> {
-	return memoRequest<PositionMemoCard>(event, 'POST', `/v1/ai/memos/${id}/bookmark`, { bookmarked });
+export async function bookmarkMemo(
+	event: RequestEvent,
+	id: string,
+	bookmarked: boolean
+): Promise<PositionMemoCard> {
+	return memoRequest<PositionMemoCard>(event, 'POST', `/v1/ai/memos/${id}/bookmark`, {
+		bookmarked
+	});
 }
 
 /** DeletePositionMemo: a 404 is the outcome asked for. */

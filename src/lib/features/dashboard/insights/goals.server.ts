@@ -15,7 +15,8 @@ export interface FocusPointsResult {
 	goalsError: boolean;
 }
 
-const UUID_RE = /^(?:urn:uuid:)?\{?([0-9a-f]{8})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{12})\}?$/i;
+const UUID_RE =
+	/^(?:urn:uuid:)?\{?([0-9a-f]{8})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{12})\}?$/i;
 
 /** uuid.Parse, lowercased canonical form; null when unparseable. */
 function parseUUID(raw: string): string | null {
@@ -24,7 +25,14 @@ function parseUUID(raw: string): string | null {
 }
 
 /** Sends one mutation; ok only on the status Go required. */
-async function send(event: RequestEvent, method: string, path: string, input: unknown, want: number, what: string) {
+async function send(
+	event: RequestEvent,
+	method: string,
+	path: string,
+	input: unknown,
+	want: number,
+	what: string
+) {
 	try {
 		const body = input === undefined ? undefined : JSON.stringify(input);
 		const headers: Record<string, string> = body ? { 'Content-Type': 'application/json' } : {};
@@ -42,7 +50,10 @@ async function send(event: RequestEvent, method: string, path: string, input: un
 }
 
 /** lookupManualGoal: the goal must parse, exist, and not be system-managed. */
-async function lookupManualGoal(event: RequestEvent, idParam: string): Promise<{ id: string; goal: Goal } | null> {
+async function lookupManualGoal(
+	event: RequestEvent,
+	idParam: string
+): Promise<{ id: string; goal: Goal } | null> {
 	const id = parseUUID(idParam);
 	if (!id) return null;
 	try {
@@ -71,7 +82,8 @@ const field = (data: FormData, name: string) => String(data.get(name) ?? '').tri
 export async function createGoal(event: RequestEvent, data: FormData) {
 	const title = field(data, 'title');
 	let goalsError = false;
-	if (title !== '') goalsError = !(await send(event, 'POST', '/v1/goals', { title }, 200, 'create goal'));
+	if (title !== '')
+		goalsError = !(await send(event, 'POST', '/v1/goals', { title }, 200, 'create goal'));
 	return result(event, goalsError);
 }
 
@@ -99,7 +111,14 @@ export async function updateGoal(event: RequestEvent, data: FormData) {
 	const found = await lookupManualGoal(event, field(data, 'id'));
 	let goalsError = !found || title === '';
 	if (found && title !== '') {
-		goalsError = !(await send(event, 'PATCH', `/v1/goals/${found.id}`, { title }, 200, 'update goal'));
+		goalsError = !(await send(
+			event,
+			'PATCH',
+			`/v1/goals/${found.id}`,
+			{ title },
+			200,
+			'update goal'
+		));
 	}
 	return result(event, goalsError);
 }
@@ -108,6 +127,14 @@ export async function updateGoal(event: RequestEvent, data: FormData) {
 export async function deleteGoal(event: RequestEvent, data: FormData) {
 	const found = await lookupManualGoal(event, field(data, 'id'));
 	let goalsError = !found;
-	if (found) goalsError = !(await send(event, 'DELETE', `/v1/goals/${found.id}`, undefined, 204, 'delete goal'));
+	if (found)
+		goalsError = !(await send(
+			event,
+			'DELETE',
+			`/v1/goals/${found.id}`,
+			undefined,
+			204,
+			'delete goal'
+		));
 	return result(event, goalsError);
 }

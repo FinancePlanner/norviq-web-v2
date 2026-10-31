@@ -47,7 +47,9 @@
 		</div>
 		<div class="muse-pill">
 			<p class="muse-name">Vig</p>
-			<p id="muse-status" class="muse-status" data-muse-status role="status" aria-live="polite">{muse.status}</p>
+			<p id="muse-status" class="muse-status" data-muse-status role="status" aria-live="polite">
+				{muse.status}
+			</p>
 		</div>
 	</div>
 </header>

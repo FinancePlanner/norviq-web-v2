@@ -100,16 +100,23 @@ function friendsGroup(t: Tr, cfg: SocialConfig): NavItem {
 			{ label: t('XP history'), path: Path.XP, tab: 'friends' }
 		);
 	}
-	if (achievementsOn(cfg)) children.push({ label: t('Achievements'), path: Path.Achievements, tab: 'friends' });
+	if (achievementsOn(cfg))
+		children.push({ label: t('Achievements'), path: Path.Achievements, tab: 'friends' });
 	children.push({ label: t('Invite friends'), path: Path.Friends + '/invite', tab: 'friends' });
 	return { label: t('Friends'), path: Path.Friends, tab: 'friends', children };
 }
 
 function groupsGroup(t: Tr, cfg: SocialConfig): NavItem {
 	const children: NavItem[] = [
-		{ label: t('Your groups'), path: Path.Groups, tab: 'groups', badgeURL: Path.Groups + '/unread-badge' }
+		{
+			label: t('Your groups'),
+			path: Path.Groups,
+			tab: 'groups',
+			badgeURL: Path.Groups + '/unread-badge'
+		}
 	];
-	if (groupsPublicOn(cfg)) children.push({ label: t('Discover'), path: Path.Groups + '/discover', tab: 'groups' });
+	if (groupsPublicOn(cfg))
+		children.push({ label: t('Discover'), path: Path.Groups + '/discover', tab: 'groups' });
 	children.push({ label: t('New group'), path: Path.Groups + '/new', tab: 'groups' });
 	return { label: t('Groups'), path: Path.Groups, tab: 'groups', children };
 }
@@ -120,7 +127,9 @@ function withAchievementsBadges(items: NavItem[], t: Tr): NavItem[] {
 	for (const item of items) {
 		if (item.path !== Path.Settings || !item.children) continue;
 		item.children = item.children.map((c) =>
-			c.path === Path.Settings + '/badges' ? { label: t('Achievements'), path: Path.Achievements, tab: 'settings' } : c
+			c.path === Path.Settings + '/badges'
+				? { label: t('Achievements'), path: Path.Achievements, tab: 'settings' }
+				: c
 		);
 	}
 	return items;
@@ -156,21 +165,66 @@ function sidebarItems(t: Tr): NavItem[] {
 				{ label: t('Retire'), path: '/planning/retire', tab: 'portfolio' },
 				{ label: t('Terminal sizing'), path: Path.Terminal, tab: 'portfolio' },
 				{ label: t('Retirement'), path: Path.Portfolio + '/retirement', tab: 'portfolio' },
-				{ label: t('Net worth forecast'), path: '/forecast', tab: 'portfolio', featureKey: Feature.NetWorthForecasting },
-				{ label: t('Chart Builder'), path: '/chart-builder', tab: 'portfolio', featureKey: Feature.ValuationCases },
-				{ label: t('Scenario Planning'), path: '/scenarios', tab: 'portfolio', featureKey: Feature.ScenarioPlanning },
+				{
+					label: t('Net worth forecast'),
+					path: '/forecast',
+					tab: 'portfolio',
+					featureKey: Feature.NetWorthForecasting
+				},
+				{
+					label: t('Chart Builder'),
+					path: '/chart-builder',
+					tab: 'portfolio',
+					featureKey: Feature.ValuationCases
+				},
+				{
+					label: t('Scenario Planning'),
+					path: '/scenarios',
+					tab: 'portfolio',
+					featureKey: Feature.ScenarioPlanning
+				},
 				{ label: t('Allocation'), path: Path.Portfolio + '/allocation', tab: 'portfolio' },
 				{ label: t('Simulator'), path: '/simulator', tab: 'portfolio' },
-				{ label: t('Rebalancing'), path: Path.Portfolio + '/rebalancing', tab: 'portfolio', featureKey: Feature.RebalancingRules },
-				{ label: t('Sector Gains'), path: Path.Portfolio + '/sector-gains', tab: 'portfolio', featureKey: Feature.Statistics },
+				{
+					label: t('Rebalancing'),
+					path: Path.Portfolio + '/rebalancing',
+					tab: 'portfolio',
+					featureKey: Feature.RebalancingRules
+				},
+				{
+					label: t('Sector Gains'),
+					path: Path.Portfolio + '/sector-gains',
+					tab: 'portfolio',
+					featureKey: Feature.Statistics
+				},
 				{ label: t('Watchlist'), path: Path.Portfolio + '/watchlist', tab: 'portfolio' },
-				{ label: t('Smart screens'), path: Path.Portfolio + '/screens', tab: 'portfolio', featureKey: Feature.SmartScreening },
-				{ label: t('Rebalancing rules'), path: Path.Portfolio + '/rebalancing-rules', tab: 'portfolio', featureKey: Feature.RebalancingRules },
-				{ label: t('Targets'), path: Path.Portfolio + '/targets', tab: 'portfolio', featureKey: Feature.TargetAlerts },
+				{
+					label: t('Smart screens'),
+					path: Path.Portfolio + '/screens',
+					tab: 'portfolio',
+					featureKey: Feature.SmartScreening
+				},
+				{
+					label: t('Rebalancing rules'),
+					path: Path.Portfolio + '/rebalancing-rules',
+					tab: 'portfolio',
+					featureKey: Feature.RebalancingRules
+				},
+				{
+					label: t('Targets'),
+					path: Path.Portfolio + '/targets',
+					tab: 'portfolio',
+					featureKey: Feature.TargetAlerts
+				},
 				{ label: t('Earnings'), path: Path.Portfolio + '/earnings', tab: 'portfolio' },
 				{ label: t('Thesis Watch'), path: Path.Portfolio + '/news', tab: 'portfolio' },
 				{ label: t('Crypto'), path: '/crypto', tab: 'portfolio', featureKey: Feature.Crypto },
-				{ label: t('Research'), path: '/research', tab: 'portfolio', featureKey: Feature.AdvancedResearch }
+				{
+					label: t('Research'),
+					path: '/research',
+					tab: 'portfolio',
+					featureKey: Feature.AdvancedResearch
+				}
 			]
 		},
 		{
@@ -179,7 +233,12 @@ function sidebarItems(t: Tr): NavItem[] {
 			tab: 'expenses',
 			children: [
 				{ label: t('Budget Planner'), path: Path.Expenses, tab: 'expenses' },
-				{ label: t('Year Overview'), path: Path.Expenses + '/year', tab: 'expenses', featureKey: Feature.YearOverview }
+				{
+					label: t('Year Overview'),
+					path: Path.Expenses + '/year',
+					tab: 'expenses',
+					featureKey: Feature.YearOverview
+				}
 			]
 		},
 		{
@@ -187,7 +246,9 @@ function sidebarItems(t: Tr): NavItem[] {
 			path: Path.Tax,
 			tab: 'tax',
 			featureKey: Feature.TaxOptimization,
-			children: [{ label: t('Overview'), path: Path.Tax, tab: 'tax', featureKey: Feature.TaxOptimization }]
+			children: [
+				{ label: t('Overview'), path: Path.Tax, tab: 'tax', featureKey: Feature.TaxOptimization }
+			]
 		},
 		{
 			label: t('Markets'),
@@ -222,11 +283,21 @@ function sidebarItems(t: Tr): NavItem[] {
 			tab: 'reports',
 			children: [
 				{ label: t('Overview'), path: Path.Reports, tab: 'reports' },
-				{ label: t('Reporting Center'), path: Path.Reports + '/advanced', tab: 'reports', featureKey: Feature.AdvancedReportRuns },
+				{
+					label: t('Reporting Center'),
+					path: Path.Reports + '/advanced',
+					tab: 'reports',
+					featureKey: Feature.AdvancedReportRuns
+				},
 				{ label: t('Portfolio'), path: Path.Reports + '/portfolio', tab: 'reports' },
 				{ label: t('Spending'), path: Path.Reports + '/spending', tab: 'reports' },
 				{ label: t('Trends'), path: Path.Reports + '/trends', tab: 'reports' },
-				{ label: t('Deep Dive'), path: Path.Reports + '/deep-dive', tab: 'reports', featureKey: Feature.AdvancedReportRuns }
+				{
+					label: t('Deep Dive'),
+					path: Path.Reports + '/deep-dive',
+					tab: 'reports',
+					featureKey: Feature.AdvancedReportRuns
+				}
 			]
 		},
 		{
@@ -289,8 +360,10 @@ function bottomTabsMoreBase(t: Tr): NavItem[] {
 
 export function bottomTabsMore(t: Tr, social: SocialConfig): NavItem[] {
 	let items = bottomTabsMoreBase(t);
-	if (social.enabled) items = [{ label: t('Friends'), path: Path.Friends, tab: 'friends' }, ...items];
-	if (groupsOn(social)) items = [{ label: t('Groups'), path: Path.Groups, tab: 'groups' }, ...items];
+	if (social.enabled)
+		items = [{ label: t('Friends'), path: Path.Friends, tab: 'friends' }, ...items];
+	if (groupsOn(social))
+		items = [{ label: t('Groups'), path: Path.Groups, tab: 'groups' }, ...items];
 	return items;
 }
 
@@ -340,12 +413,40 @@ export function stockDetailTabs(symbol: string, locked: FeatureLocked = null): N
 	);
 }
 
-const validStockTabs = new Set(['chart', 'overview', 'builder', 'statements', 'analysis', 'forecast', 'compare', 'news', 'sentiment', 'earnings', 'ownership']);
+const validStockTabs = new Set([
+	'chart',
+	'overview',
+	'builder',
+	'statements',
+	'analysis',
+	'forecast',
+	'compare',
+	'news',
+	'sentiment',
+	'earnings',
+	'ownership'
+]);
 const validReportTabs = new Set(['overview', 'portfolio', 'spending', 'trends']);
-const validSettingsSections = new Set(['profile', 'appearance', 'badges', 'about', 'subscription', 'notifications', 'language', 'feedback', 'integrations', 'export', 'api-access', 'banks', 'ai-providers', 'news-ticker']);
+const validSettingsSections = new Set([
+	'profile',
+	'appearance',
+	'badges',
+	'about',
+	'subscription',
+	'notifications',
+	'language',
+	'feedback',
+	'integrations',
+	'export',
+	'api-access',
+	'banks',
+	'ai-providers',
+	'news-ticker'
+]);
 
 export const isValidStockTab = (tab: string) => tab === '' || validStockTabs.has(tab);
-export const isValidReportTab = (tab: string) => tab === '' || tab === 'overview' || validReportTabs.has(tab);
+export const isValidReportTab = (tab: string) =>
+	tab === '' || tab === 'overview' || validReportTabs.has(tab);
 export const isValidSettingsSection = (s: string) => s === '' || validSettingsSections.has(s);
 export const normalizeReportTab = (tab: string) => (tab === '' || tab === 'overview' ? '' : tab);
 
@@ -354,7 +455,15 @@ export function activeTab(path: string): Tab {
 	if (path === '') return 'dashboard';
 	const p = (prefix: string) => path.startsWith(prefix);
 	if (p('/dashboard') || p('/goals')) return 'dashboard';
-	if (p('/portfolio') || p('/forecast') || p('/chart-builder') || p('/scenarios') || p('/crypto') || p('/research') || p(Path.Terminal))
+	if (
+		p('/portfolio') ||
+		p('/forecast') ||
+		p('/chart-builder') ||
+		p('/scenarios') ||
+		p('/crypto') ||
+		p('/research') ||
+		p(Path.Terminal)
+	)
 		return 'portfolio';
 	if (p('/expenses')) return 'expenses';
 	if (p('/markets')) return 'markets';

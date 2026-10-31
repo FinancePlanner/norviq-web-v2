@@ -1,5 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { guardInProgress, recordFunnelStep } from '#lib/features/auth-onboarding/onboarding/onboarding.server.js';
+import {
+	guardInProgress,
+	recordFunnelStep
+} from '#lib/features/auth-onboarding/onboarding/onboarding.server.js';
 
 // GET /onboarding/import (onboarding.go ImportMenu)
 export const load: PageServerLoad = async (event) => {

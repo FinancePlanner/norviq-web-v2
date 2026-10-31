@@ -7,7 +7,11 @@ export async function postAndFollow(e: SubmitEvent) {
 	e.preventDefault();
 	const form = e.currentTarget as HTMLFormElement;
 	try {
-		const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'text/html' } });
+		const res = await fetch(form.action, {
+			method: 'POST',
+			body: new FormData(form),
+			headers: { Accept: 'text/html' }
+		});
 		if (res.ok && res.redirected) {
 			const url = new URL(res.url);
 			await goto(url.pathname + url.search, { invalidateAll: true });

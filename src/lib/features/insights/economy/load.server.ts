@@ -97,7 +97,9 @@ export async function loadEconomyViewModel(
 }
 
 async function loadEconomyInflation(event: RequestEvent, vm: EconomyPageVM): Promise<void> {
-	const res = await getJSON<S['InflationSnapshotResponse']>(event, '/v1/macro/inflation/current', { country: vm.country });
+	const res = await getJSON<S['InflationSnapshotResponse']>(event, '/v1/macro/inflation/current', {
+		country: vm.country
+	});
 	const snap = res.data;
 	if (!snap) {
 		console.warn('economy inflation fetch failed', vm.country, res.status);
@@ -112,7 +114,8 @@ async function loadEconomyInflation(event: RequestEvent, vm: EconomyPageVM): Pro
 	vm.headline = mapInflationGauge(snap.headline);
 	for (const g of snap.gauges ?? []) vm.gauges.push(mapInflationGauge(g));
 	for (const component of snap.components ?? []) {
-		const weight = component.cpiWeight != null ? `${formatFloat(component.cpiWeight, 1)}% basket weight` : '';
+		const weight =
+			component.cpiWeight != null ? `${formatFloat(component.cpiWeight, 1)}% basket weight` : '';
 		vm.components.push({
 			category: component.category,
 			macroCategory: '',
@@ -136,8 +139,10 @@ async function loadEconomyInflation(event: RequestEvent, vm: EconomyPageVM): Pro
 			const days = np.daysRemaining;
 			vm.nextPrint.daysRemaining = `Next CPI print in ${days} ${days === 1 ? 'day' : 'days'}`;
 		}
-		if (np.forecastNowflation != null) vm.nextPrint.forecast = formatFloat(np.forecastNowflation, 2) + '%';
-		if (np.streetConsensus != null) vm.nextPrint.consensus = formatFloat(np.streetConsensus, 2) + '%';
+		if (np.forecastNowflation != null)
+			vm.nextPrint.forecast = formatFloat(np.forecastNowflation, 2) + '%';
+		if (np.streetConsensus != null)
+			vm.nextPrint.consensus = formatFloat(np.streetConsensus, 2) + '%';
 		if (np.lastOfficial != null) vm.nextPrint.lastOfficial = formatFloat(np.lastOfficial, 2) + '%';
 	}
 	await loadInflationEnrichments(event, vm);
@@ -223,7 +228,8 @@ async function loadPersonalInflation(event: RequestEvent, vm: EconomyPageVM): Pr
 
 /** handlers.trendViewModel: SVG polyline points in a 1000x250 viewBox. */
 function trendViewModel(points: S['MacroSeriesPoint'][]): EconomyPageVM['trend'] {
-	if (points.length < 2) return { points: '', startLabel: '', endLabel: '', minLabel: '', maxLabel: '' };
+	if (points.length < 2)
+		return { points: '', startLabel: '', endLabel: '', minLabel: '', maxLabel: '' };
 	let minimum = points[0].value;
 	let maximum = points[0].value;
 	for (const point of points.slice(1)) {
@@ -247,7 +253,9 @@ function trendViewModel(points: S['MacroSeriesPoint'][]): EconomyPageVM['trend']
 }
 
 async function loadEconomyHousing(event: RequestEvent, vm: EconomyPageVM): Promise<void> {
-	const res = await getJSON<S['HousingHubResponse']>(event, '/v1/macro/housing', { country: vm.country });
+	const res = await getJSON<S['HousingHubResponse']>(event, '/v1/macro/housing', {
+		country: vm.country
+	});
 	const hub = res.data;
 	if (!hub) {
 		console.warn('economy housing fetch failed', vm.country, res.status);
@@ -266,7 +274,9 @@ async function loadEconomyHousing(event: RequestEvent, vm: EconomyPageVM): Promi
 }
 
 async function loadEconomyGrowth(event: RequestEvent, vm: EconomyPageVM): Promise<void> {
-	const res = await getJSON<S['EconomyHubResponse']>(event, '/v1/macro/economy', { country: vm.country });
+	const res = await getJSON<S['EconomyHubResponse']>(event, '/v1/macro/economy', {
+		country: vm.country
+	});
 	const hub = res.data;
 	if (!hub) {
 		console.warn('economy growth fetch failed', vm.country, res.status);
@@ -276,7 +286,8 @@ async function loadEconomyGrowth(event: RequestEvent, vm: EconomyPageVM): Promis
 	applyHubMeta(vm, hub.currency, hub.asOf, hub.updatedAt, hub.source, hub.coverage, hub.notes);
 	vm.officialRecession = hub.officialRecession ?? null;
 	if (hub.riskLabel != null) vm.riskLabel = hub.riskLabel;
-	if (hub.yieldCurveSpread != null) vm.yieldCurveSpread = `${signedFixed(hub.yieldCurveSpread, 2)} pp`;
+	if (hub.yieldCurveSpread != null)
+		vm.yieldCurveSpread = `${signedFixed(hub.yieldCurveSpread, 2)} pp`;
 	vm.indicators = [
 		mapOptionalIndicator('Unemployment', hub.unemployment),
 		mapOptionalIndicator('GDP growth', hub.gdpGrowth),
@@ -285,7 +296,14 @@ async function loadEconomyGrowth(event: RequestEvent, vm: EconomyPageVM): Promis
 		mapOptionalIndicator('Policy rate', hub.policyRate),
 		mapOptionalIndicator('Sahm rule', hub.sahmRule)
 	];
-	vm.missing = missingCoverage(hub.coverage ?? [], ['unemployment', 'gdp', 'payrolls', 'claims', 'policy', 'sahm']);
+	vm.missing = missingCoverage(hub.coverage ?? [], [
+		'unemployment',
+		'gdp',
+		'payrolls',
+		'claims',
+		'policy',
+		'sahm'
+	]);
 }
 
 /** api.PolicyWatchFromFedWatch (macro_helpers.go). policyRate is not mapped, as in Go. */
@@ -310,7 +328,9 @@ function policyWatchFromFedWatch(fed: S['FedWatchResponse']): S['PolicyWatchResp
 }
 
 async function loadEconomyPolicy(event: RequestEvent, vm: EconomyPageVM): Promise<void> {
-	const res = await getJSON<S['PolicyWatchResponse']>(event, '/v1/macro/policy-watch', { country: vm.country });
+	const res = await getJSON<S['PolicyWatchResponse']>(event, '/v1/macro/policy-watch', {
+		country: vm.country
+	});
 	let policy: S['PolicyWatchResponse'];
 	if (res.data) {
 		policy = res.data;
@@ -389,7 +409,13 @@ function applyHubMeta(
 }
 
 function mapInflationGauge(g: S['InflationGaugeDTO']): GaugeVM {
-	const vm: GaugeVM = { name: g.name, nowValue: formatFloat(g.nowValue, 2) + '%', officialValue: '', gap: '', hasOfficial: false };
+	const vm: GaugeVM = {
+		name: g.name,
+		nowValue: formatFloat(g.nowValue, 2) + '%',
+		officialValue: '',
+		gap: '',
+		hasOfficial: false
+	};
 	if (g.officialValue != null) {
 		vm.hasOfficial = true;
 		vm.officialValue = formatFloat(g.officialValue, 2) + '%';
@@ -398,16 +424,29 @@ function mapInflationGauge(g: S['InflationGaugeDTO']): GaugeVM {
 	return vm;
 }
 
-function mapOptionalIndicator(label: string, ind: S['MacroIndicatorDTO'] | null | undefined): IndicatorVM {
+function mapOptionalIndicator(
+	label: string,
+	ind: S['MacroIndicatorDTO'] | null | undefined
+): IndicatorVM {
 	if (!ind) return { label, value: '', asOf: '', detail: '', covered: false };
 	return mapRequiredIndicator(label, ind);
 }
 
-function mapRequiredIndicator(label: string, ind: S['MacroIndicatorDTO'] | null | undefined): IndicatorVM {
+function mapRequiredIndicator(
+	label: string,
+	ind: S['MacroIndicatorDTO'] | null | undefined
+): IndicatorVM {
 	if (!ind) return { label, value: '', asOf: '', detail: '', covered: false };
 	const name = (ind.name ?? '').trim() !== '' ? ind.name : label;
-	const detail = ind.changeFromPrevious != null ? `${signedFixed(ind.changeFromPrevious, 2)} vs prior` : '';
-	return { label: name, value: formatMacroIndicatorValue(ind), asOf: ind.asOf, detail, covered: true };
+	const detail =
+		ind.changeFromPrevious != null ? `${signedFixed(ind.changeFromPrevious, 2)} vs prior` : '';
+	return {
+		label: name,
+		value: formatMacroIndicatorValue(ind),
+		asOf: ind.asOf,
+		detail,
+		covered: true
+	};
 }
 
 function formatMacroIndicatorValue(ind: S['MacroIndicatorDTO']): string {

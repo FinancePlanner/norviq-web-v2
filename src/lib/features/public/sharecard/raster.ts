@@ -112,7 +112,15 @@ export class Canvas {
 		const stride = w + 2;
 		const acc = new Float32Array(stride * h);
 		for (let i = 0; i < lines.length; i += 4) {
-			accumulateLine(acc, stride, h, lines[i] - left, lines[i + 1] - top, lines[i + 2] - left, lines[i + 3] - top);
+			accumulateLine(
+				acc,
+				stride,
+				h,
+				lines[i] - left,
+				lines[i + 1] - top,
+				lines[i + 2] - left,
+				lines[i + 3] - top
+			);
 		}
 		for (let yy = 0; yy < h; yy++) {
 			let sum = 0;
@@ -132,13 +140,22 @@ export class Canvas {
 			raw[y * row] = 0; // filter: none
 			raw.set(this.pix.subarray(y * this.width * 3, (y + 1) * this.width * 3), y * row + 1);
 		}
-		const zdata = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate'))).arrayBuffer());
+		const zdata = new Uint8Array(
+			await new Response(
+				new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate'))
+			).arrayBuffer()
+		);
 		const ihdr = new Uint8Array(13);
 		const dv = new DataView(ihdr.buffer);
 		dv.setUint32(0, this.width);
 		dv.setUint32(4, this.height);
 		ihdr.set([8, 2, 0, 0, 0], 8);
-		const parts = [new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), chunk('IHDR', ihdr), chunk('IDAT', zdata), chunk('IEND', new Uint8Array(0))];
+		const parts = [
+			new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+			chunk('IHDR', ihdr),
+			chunk('IDAT', zdata),
+			chunk('IEND', new Uint8Array(0))
+		];
 		const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
 		let o = 0;
 		for (const p of parts) {
@@ -150,7 +167,15 @@ export class Canvas {
 }
 
 /** Signed-area coverage accumulation of one line (the font-rs / x/image/vector scheme). */
-function accumulateLine(a: Float32Array, stride: number, h: number, x0: number, y0: number, x1: number, y1: number) {
+function accumulateLine(
+	a: Float32Array,
+	stride: number,
+	h: number,
+	x0: number,
+	y0: number,
+	x1: number,
+	y1: number
+) {
 	if (y0 === y1) return;
 	let dir = 1;
 	if (y0 > y1) {

@@ -7,6 +7,9 @@ export const POST: RequestHandler = (event) =>
 		event,
 		'/v1/auth/webauthn/register/options',
 		'{}',
-		{ request: 'Could not start passkey registration.', failure: 'Could not start passkey registration.' },
+		{
+			request: 'Could not start passkey registration.',
+			failure: 'Could not start passkey registration.'
+		},
 		false
 	);

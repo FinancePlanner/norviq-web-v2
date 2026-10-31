@@ -17,17 +17,36 @@ export const load: PageServerLoad = async (event) => {
 	if (err === 'access_denied' || reason === 'user_denied') {
 		return { matches: null, errorMessage: 'Facebook connection was canceled. Nothing was shared.' };
 	}
-	if (err || reason) return { matches: null, errorMessage: 'Facebook did not finish connecting. Start again from Friends.' };
-	if (!flowID || !code || !state) return { matches: null, errorMessage: 'That Facebook sign-in has expired. Start again from Friends.' };
+	if (err || reason)
+		return {
+			matches: null,
+			errorMessage: 'Facebook did not finish connecting. Start again from Friends.'
+		};
+	if (!flowID || !code || !state)
+		return {
+			matches: null,
+			errorMessage: 'That Facebook sign-in has expired. Start again from Friends.'
+		};
 	try {
-		const m = await socialDo<SocialFacebookImportMatches>(event, 'POST', '/v1/social/discovery/facebook/exchange', {
-			flowId: flowID,
-			code,
-			state,
-			redirectURI
-		});
-		return { matches: { matches: m?.matches ?? [], friendsGranted: m?.friendsGranted ?? 0 }, errorMessage: '' };
+		const m = await socialDo<SocialFacebookImportMatches>(
+			event,
+			'POST',
+			'/v1/social/discovery/facebook/exchange',
+			{
+				flowId: flowID,
+				code,
+				state,
+				redirectURI
+			}
+		);
+		return {
+			matches: { matches: m?.matches ?? [], friendsGranted: m?.friendsGranted ?? 0 },
+			errorMessage: ''
+		};
 	} catch (e) {
-		return { matches: null, errorMessage: socialErrorMessage(e, 'Could not read your Facebook friends.') };
+		return {
+			matches: null,
+			errorMessage: socialErrorMessage(e, 'Could not read your Facebook friends.')
+		};
 	}
 };

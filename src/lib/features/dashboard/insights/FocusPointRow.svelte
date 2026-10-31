@@ -25,14 +25,23 @@
 		ondelete?: (point: FocusPointVM) => void;
 	} = $props();
 
-	const titleClass = $derived(point.isCompleted && !point.isSystem ? 'focus-point-title focus-point-title-done' : 'focus-point-title');
+	const titleClass = $derived(
+		point.isCompleted && !point.isSystem
+			? 'focus-point-title focus-point-title-done'
+			: 'focus-point-title'
+	);
 </script>
 
 <li id={'focus-point-' + point.id} class="focus-point-row">
 	<div class="focus-point-row-inner">
 		{#if point.canToggle}
 			{#if toggleEnhance}
-				<form class="focus-point-toggle-form min-w-0 flex-1" method="POST" action="/dashboard/insights?/toggle" use:enhance={toggleEnhance}>
+				<form
+					class="focus-point-toggle-form min-w-0 flex-1"
+					method="POST"
+					action="/dashboard/insights?/toggle"
+					use:enhance={toggleEnhance}
+				>
 					<input type="hidden" name="id" value={point.id} />
 					<NativeButton type="submit" class="focus-point-toggle-btn">
 						<FocusPointIcon {point} />
@@ -55,8 +64,10 @@
 		{/if}
 		{#if showActions && point.canManage}
 			<div class="focus-point-actions">
-				<NativeButton class="focus-point-action-btn" aria-label={t('Edit focus point')} onclick={() => onedit?.(point)}
-					>{t('Edit')}</NativeButton
+				<NativeButton
+					class="focus-point-action-btn"
+					aria-label={t('Edit focus point')}
+					onclick={() => onedit?.(point)}>{t('Edit')}</NativeButton
 				>
 				<NativeButton
 					class="focus-point-action-btn focus-point-action-btn-danger"

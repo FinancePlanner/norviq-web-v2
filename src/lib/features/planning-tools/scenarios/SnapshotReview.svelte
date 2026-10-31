@@ -33,26 +33,38 @@
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
 		pending = true;
-		const result = await postForm<RedirectResponse>(action, new FormData(event.currentTarget as HTMLFormElement));
+		const result = await postForm<RedirectResponse>(
+			action,
+			new FormData(event.currentTarget as HTMLFormElement)
+		);
 		pending = false;
 		if (result?.kind === 'redirect') onredirect(result.to);
 		else if (result?.kind === 'formError') onformerror(result.message);
 	}
 </script>
 
-<section class="rounded-lg border border-warning/30 bg-warning/5 p-5" aria-labelledby="snapshot-review-title">
+<section
+	class="rounded-lg border border-warning/30 bg-warning/5 p-5"
+	aria-labelledby="snapshot-review-title"
+>
 	<h3 id="snapshot-review-title" class="font-semibold">Review frozen snapshot</h3>
-	<p class="mt-1 text-sm text-muted-foreground">Prices, FX rates, classifications, and risk metadata are now immutable for this run.</p>
+	<p class="mt-1 text-sm text-muted-foreground">
+		Prices, FX rates, classifications, and risk metadata are now immutable for this run.
+	</p>
 	{#if snapshot.warnings != null}
 		<details class="mt-4" open>
 			<summary class="cursor-pointer text-sm font-medium">Data-quality and proxy warnings</summary>
-			<pre class="mt-2 max-h-48 overflow-auto rounded-xl bg-black/5 p-3 text-xs">{resultJSON(snapshot.warnings)}</pre>
+			<pre class="mt-2 max-h-48 overflow-auto rounded-xl bg-black/5 p-3 text-xs">{resultJSON(
+					snapshot.warnings
+				)}</pre>
 		</details>
 	{/if}
 	{#if snapshot.payload != null}
 		<details class="mt-3">
 			<summary class="cursor-pointer text-sm font-medium">Frozen holdings and valuations</summary>
-			<pre class="mt-2 max-h-64 overflow-auto rounded-xl bg-black/5 p-3 text-xs">{resultJSON(snapshot.payload)}</pre>
+			<pre class="mt-2 max-h-64 overflow-auto rounded-xl bg-black/5 p-3 text-xs">{resultJSON(
+					snapshot.payload
+				)}</pre>
 		</details>
 	{/if}
 	<form class="mt-4" class:htmx-request={pending} onsubmit={submit}>

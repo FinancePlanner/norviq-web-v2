@@ -105,13 +105,16 @@ export async function registerPasskey(): Promise<string> {
 		body: '{}'
 	});
 	const beginPayload = await readJSON(beginResponse);
-	if (!beginResponse.ok) throw new Error(beginPayload.error || 'Could not start passkey registration.');
+	if (!beginResponse.ok)
+		throw new Error(beginPayload.error || 'Could not start passkey registration.');
 
 	const requestOptions = beginPayload.publicKey
 		? normalizeCreationOptions(beginPayload as { publicKey: Loose })
 		: normalizeCreationOptions({ publicKey: beginPayload });
 
-	const credential = (await navigator.credentials.create(requestOptions)) as PublicKeyCredential | null;
+	const credential = (await navigator.credentials.create(
+		requestOptions
+	)) as PublicKeyCredential | null;
 	if (!credential) throw new Error('Passkey registration was cancelled.');
 
 	const finishResponse = await fetch('/settings/passkey/register/finish', {
@@ -134,7 +137,11 @@ export async function signInWithPasskey(showError: (message: string) => void): P
 		return;
 	}
 
-	const beginResponse = await fetch('/auth/passkey/begin', { method: 'POST', headers: jsonHeaders, body: '{}' });
+	const beginResponse = await fetch('/auth/passkey/begin', {
+		method: 'POST',
+		headers: jsonHeaders,
+		body: '{}'
+	});
 	const beginPayload = await readJSON(beginResponse);
 	if (!beginResponse.ok) {
 		showError(beginPayload.error || 'Could not start passkey sign in.');
@@ -145,7 +152,9 @@ export async function signInWithPasskey(showError: (message: string) => void): P
 		? normalizeRequestOptions(beginPayload as { publicKey: Loose })
 		: normalizeRequestOptions({ publicKey: beginPayload });
 
-	const credential = (await navigator.credentials.get(requestOptions)) as PublicKeyCredential | null;
+	const credential = (await navigator.credentials.get(
+		requestOptions
+	)) as PublicKeyCredential | null;
 	if (!credential) {
 		showError('Passkey sign in was cancelled.');
 		return;
@@ -190,7 +199,9 @@ export type PasskeyFeedback = { kind: 'success' | 'error'; message: string } | n
  * onFeedback receives null when a registration starts, then the outcome, so
  * the page renders .success-banner / .error-banner in #passkey-register-feedback.
  */
-export function passkeyRegisterButton(onFeedback: (f: PasskeyFeedback) => void): Attachment<HTMLButtonElement> {
+export function passkeyRegisterButton(
+	onFeedback: (f: PasskeyFeedback) => void
+): Attachment<HTMLButtonElement> {
 	return (button) => {
 		const onClick = async () => {
 			button.disabled = true;

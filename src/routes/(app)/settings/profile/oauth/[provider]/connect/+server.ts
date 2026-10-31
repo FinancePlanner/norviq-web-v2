@@ -20,13 +20,22 @@ const FALLBACK = 'Could not start account linking. Please try again.';
 
 export const GET: RequestHandler = async (event) => {
 	const provider = event.params.provider.trim().toLowerCase();
-	if (!PROVIDERS.has(provider)) return new Response('Unsupported provider\n', { status: 400, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+	if (!PROVIDERS.has(provider))
+		return new Response('Unsupported provider\n', {
+			status: 400,
+			headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+		});
 	if (!event.locals.session.isAuthenticated) redirect(303, '/login');
 
 	const redirectURI = `${config().publicBaseURL}/auth/oauth/${provider}/callback`;
 	let resp: OAuthStartResponse;
 	try {
-		resp = await apiJSON<OAuthStartResponse>(event, 'POST', `/v1/auth/oauth/${provider}/link/start`, { redirectURI });
+		resp = await apiJSON<OAuthStartResponse>(
+			event,
+			'POST',
+			`/v1/auth/oauth/${provider}/link/start`,
+			{ redirectURI }
+		);
 	} catch (err) {
 		if (!isAPIError(err)) console.error('oauth link start', provider, err);
 		const message = isAPIError(err) ? apiErrorMessage(err.body, FALLBACK) : FALLBACK;

@@ -70,7 +70,9 @@ export function initPostHog(config: RuntimePostHogConfig | undefined): void {
 	}
 	// Clicks queued by landing code before init (window.__norviqAnalyticsQueue).
 	const queued = Array.isArray(window.__norviqAnalyticsQueue) ? window.__norviqAnalyticsQueue : [];
-	const sink = { push: ([event, properties]: QueueEntry) => norviqAnalytics.capture(event, properties) };
+	const sink = {
+		push: ([event, properties]: QueueEntry) => norviqAnalytics.capture(event, properties)
+	};
 	window.__norviqAnalyticsQueue = sink;
 	for (const [event, properties] of queued) norviqAnalytics.capture(event, properties);
 }

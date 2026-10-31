@@ -16,7 +16,13 @@ export const focusTeaserLimit = 3;
 
 export function mapFinancialHealth(health: FinancialHealth | null | undefined): FinancialHealthVM {
 	if (!health) {
-		return { scoreText: '--', summaryText: '--/100 - Unavailable', tone: 'neutral', ringPercent: 0, unavailable: true };
+		return {
+			scoreText: '--',
+			summaryText: '--/100 - Unavailable',
+			tone: 'neutral',
+			ringPercent: 0,
+			unavailable: true
+		};
 	}
 	const score = Math.trunc(health.score);
 	const max = Math.trunc(health.maxScore);
@@ -100,7 +106,8 @@ export function mapFocusPoints(goals: Goal[] | null | undefined): FocusPointVM[]
 	const sorted = [...goals];
 	for (let i = 0; i < sorted.length; i++) {
 		for (let j = i + 1; j < sorted.length; j++) {
-			if (focusPointSortKey(sorted[i]) > focusPointSortKey(sorted[j])) [sorted[i], sorted[j]] = [sorted[j], sorted[i]];
+			if (focusPointSortKey(sorted[i]) > focusPointSortKey(sorted[j]))
+				[sorted[i], sorted[j]] = [sorted[j], sorted[i]];
 		}
 	}
 	return sorted.map((g) => {

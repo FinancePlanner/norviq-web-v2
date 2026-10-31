@@ -8,14 +8,17 @@
 
 	let { data }: PageProps = $props();
 	const vm = $derived(data.vm);
-	const chart = $derived(vm.chart ? sectorGainsBar('sector-gains-chart', vm.chart.labels, vm.chart.values) : null);
+	const chart = $derived(
+		vm.chart ? sectorGainsBar('sector-gains-chart', vm.chart.labels, vm.chart.values) : null
+	);
 
 	function totalClass(total: string): string {
 		if (total.startsWith('-')) return 'text-danger';
 		if (total.startsWith('+')) return 'text-success';
 		return '';
 	}
-	const valueClass = (positive: boolean) => (positive ? 'text-success font-medium' : 'text-danger font-medium');
+	const valueClass = (positive: boolean) =>
+		positive ? 'text-success font-medium' : 'text-danger font-medium';
 </script>
 
 <svelte:head>
@@ -28,7 +31,14 @@
 	<div class="app-page-content vigil-deck-page portfolio-sector-gains-page portfolio-modern-page">
 		<vigil.ModernPageHeader title="Sector Gains" subtitle={vm.subtitle} />
 		{#if vm.totalUnrealizedPnl !== ''}
-			<p class={['portfolio-sector-gains-total mt-2 text-2xl font-semibold vigil-mono tabular-nums', totalClass(vm.totalUnrealizedPnl)]}>{vm.totalUnrealizedPnl}</p>
+			<p
+				class={[
+					'portfolio-sector-gains-total vigil-mono mt-2 text-2xl font-semibold tabular-nums',
+					totalClass(vm.totalUnrealizedPnl)
+				]}
+			>
+				{vm.totalUnrealizedPnl}
+			</p>
 		{/if}
 		{#if vm.totalMarketValue !== ''}
 			<p class="mt-1 text-sm text-muted-foreground">{vm.totalMarketValue} market value</p>
@@ -62,9 +72,19 @@
 				</div>
 			</vigil.Panel>
 		{:else if vm.loadError}
-			<EmptyState title="Could not load sector gains" description="Try again in a moment." actionLabel="Retry" actionHref="/portfolio/sector-gains" />
+			<EmptyState
+				title="Could not load sector gains"
+				description="Try again in a moment."
+				actionLabel="Retry"
+				actionHref="/portfolio/sector-gains"
+			/>
 		{:else}
-			<EmptyState title="No sector gains yet" description="Add positions to your portfolio to see unrealized gains grouped by sector." actionLabel="Add position" actionHref="/portfolio" />
+			<EmptyState
+				title="No sector gains yet"
+				description="Add positions to your portfolio to see unrealized gains grouped by sector."
+				actionLabel="Add position"
+				actionHref="/portfolio"
+			/>
 		{/if}
 	</div>
 </ProGateWrap>

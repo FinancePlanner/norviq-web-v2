@@ -19,7 +19,10 @@
 	<meta property="og:site_name" content="Norviq" />
 	<meta property="og:url" content={vm.canonicalURL} />
 	<meta property="og:title" content="Join me on Norviq" />
-	<meta property="og:description" content="Track your portfolio, keep a streak and compare progress with friends." />
+	<meta
+		property="og:description"
+		content="Track your portfolio, keep a streak and compare progress with friends."
+	/>
 	<meta property="og:image" content={vm.ogImageURL} />
 	<meta property="og:image:type" content="image/png" />
 	<meta property="og:image:width" content="1200" />
@@ -31,16 +34,26 @@
 <main id="main-content" class="public-invite mx-auto w-full max-w-xl px-6 py-10">
 	<PublicNav />
 	{#if vm.inviter}
-		<section class="mt-8 rounded-[var(--radius)] border bg-card-bg p-6 text-center" data-invite-accept>
-			<h1 class="text-xl font-semibold">{socialUserTitle(vm.inviter)} invited you to be friends on Norviq</h1>
+		<section
+			class="mt-8 rounded-[var(--radius)] border bg-card-bg p-6 text-center"
+			data-invite-accept
+		>
+			<h1 class="text-xl font-semibold">
+				{socialUserTitle(vm.inviter)} invited you to be friends on Norviq
+			</h1>
 			<p class="mt-2 text-sm text-muted-foreground">{'@' + vm.inviter.username}</p>
 			<p class="mt-4 text-sm text-muted-foreground">
-				Friends compare streaks, levels and, if they choose, return percentages. Amounts of money are never shared.
+				Friends compare streaks, levels and, if they choose, return percentages. Amounts of money
+				are never shared.
 			</p>
 			<form method="post" action={'/friends/invite/' + vm.code + '/accept'} class="mt-6">
 				<SubmitButton fullWidth>Add friend</SubmitButton>
 			</form>
-			<a href="/friends" class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium">Not now</a>
+			<a
+				href="/friends"
+				class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium"
+				>Not now</a
+			>
 		</section>
 	{:else}
 		{#if vm.inviteError}
@@ -55,23 +68,30 @@
 			</p>
 			<p class="mt-6 text-xs text-muted-foreground">Invite code</p>
 			<p class="mt-1 text-2xl font-semibold tabular-nums" data-invite-code>{vm.code}</p>
-			<a href={vm.appURL} class="mt-6 block rounded-[var(--radius-control)] bg-tint px-4 py-3 text-center font-medium text-white" data-invite-open
-				>Open in Norviq</a
+			<a
+				href={vm.appURL}
+				class="mt-6 block rounded-[var(--radius-control)] bg-tint px-4 py-3 text-center font-medium text-white"
+				data-invite-open>Open in Norviq</a
 			>
-			<a href={vm.appStoreURL} class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium" rel="noopener"
-				>Get Norviq on the App Store</a
+			<a
+				href={vm.appStoreURL}
+				class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium"
+				rel="noopener">Get Norviq on the App Store</a
 			>
 			{#if vm.signupURL}
 				<p class="mt-6 text-sm text-muted-foreground">Or use Norviq on the web</p>
-				<a href={vm.signupURL} class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium" data-invite-signup
-					>Create an account</a
+				<a
+					href={vm.signupURL}
+					class="mt-3 block rounded-[var(--radius-control)] border px-4 py-3 text-center font-medium"
+					data-invite-signup>Create an account</a
 				>
 				<p class="mt-3 text-sm text-muted-foreground">
 					Already have one? <a href={vm.loginURL} class="font-medium underline">Log in</a>
 				</p>
 			{/if}
 			<p class="mt-6 text-xs text-muted-foreground">
-				Just installed? Open this link again, or go to Friends, then Invite friends, and enter the code above.
+				Just installed? Open this link again, or go to Friends, then Invite friends, and enter the
+				code above.
 			</p>
 		</section>
 	{/if}

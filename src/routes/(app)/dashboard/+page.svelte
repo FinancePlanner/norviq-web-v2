@@ -25,9 +25,13 @@
 	<meta name="description" content="Your Norviq financial dashboard." />
 </svelte:head>
 
-<div class="app-page-content vigil-deck-page overview-page overview-modern-page command-center-page">
+<div
+	class="app-page-content vigil-deck-page overview-page overview-modern-page command-center-page"
+>
 	<header class="cc-header">
-		<h1 class="text-title1 font-semibold tracking-tight text-balance">{commandGreeting(vm.overview)}</h1>
+		<h1 class="text-title1 font-semibold tracking-tight text-balance">
+			{commandGreeting(vm.overview)}
+		</h1>
 		<div class="overview-hero-search flex flex-col gap-3">
 			<div class="flex lg:justify-end">
 				<ConnectAgentPill />

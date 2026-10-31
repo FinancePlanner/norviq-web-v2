@@ -7,7 +7,13 @@
 	// the panel from the returned vm, a redirect closes the dialog and reloads.
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { Field, NativeButton, SelectField, SubmitButton, withSpinner } from '#lib/components/norviq/index.js';
+	import {
+		Field,
+		NativeButton,
+		SelectField,
+		SubmitButton,
+		withSpinner
+	} from '#lib/components/norviq/index.js';
 	import type { Option } from '#lib/components/norviq/types.js';
 	import type { HoldingFormVM } from './types.js';
 
@@ -20,12 +26,18 @@
 	const assetOptions = $derived.by((): Option[] => {
 		const opts: Option[] = panel.isEdit ? [] : [{ value: '', label: 'Select asset' }];
 		for (const asset of panel.assets) {
-			opts.push({ value: asset.symbol, label: asset.symbol + ' - ' + asset.name, selected: panel.symbol === asset.symbol });
+			opts.push({
+				value: asset.symbol,
+				label: asset.symbol + ' - ' + asset.name,
+				selected: panel.symbol === asset.symbol
+			});
 		}
 		return opts;
 	});
 
-	const base = $derived(panel.isEdit ? `/crypto/portfolio/holding/${panel.itemID}` : '/crypto/portfolio/holding');
+	const base = $derived(
+		panel.isEdit ? `/crypto/portfolio/holding/${panel.itemID}` : '/crypto/portfolio/holding'
+	);
 	const action = $derived(panel.isEdit ? `${base}?/update` : base);
 
 	const close = () => onclose?.();
@@ -68,7 +80,14 @@
 				<SelectField id="crypto-symbol" name="symbol" required options={assetOptions} />
 			</div>
 		{:else}
-			<Field id="crypto-symbol" name="symbol" label="Symbol" value={panel.symbol} required wrapperClass="space-y-2" />
+			<Field
+				id="crypto-symbol"
+				name="symbol"
+				label="Symbol"
+				value={panel.symbol}
+				required
+				wrapperClass="space-y-2"
+			/>
 		{/if}
 		<Field
 			id="crypto-name"
