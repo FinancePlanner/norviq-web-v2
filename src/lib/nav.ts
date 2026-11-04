@@ -14,7 +14,8 @@ export type Tab =
 	| 'settings'
 	| 'friends'
 	| 'community'
-	| 'groups';
+	| 'groups'
+	| 'tools';
 
 export const Path = {
 	Dashboard: '/dashboard',
@@ -32,7 +33,8 @@ export const Path = {
 	Boards: '/boards',
 	Articles: '/articles',
 	Groups: '/groups',
-	Terminal: '/terminal'
+	Terminal: '/terminal',
+	Tools: '/tools'
 } as const;
 
 export interface NavItem {
@@ -228,6 +230,12 @@ function sidebarItems(t: Tr): NavItem[] {
 			]
 		},
 		{
+			label: t('Tools'),
+			path: Path.Tools,
+			tab: 'tools',
+			children: [{ label: t('All tools'), path: Path.Tools, tab: 'tools' }]
+		},
+		{
 			label: t('Expenses'),
 			path: Path.Expenses,
 			tab: 'expenses',
@@ -351,6 +359,7 @@ export function bottomTabs(t: Tr): NavItem[] {
 
 function bottomTabsMoreBase(t: Tr): NavItem[] {
 	return [
+		{ label: t('Tools'), path: Path.Tools, tab: 'tools' },
 		{ label: t('Markets'), path: Path.Markets, tab: 'markets' },
 		{ label: t('Economy'), path: Path.Economy, tab: 'economy' },
 		{ label: t('Tax'), path: Path.Tax, tab: 'tax' },
@@ -465,6 +474,7 @@ export function activeTab(path: string): Tab {
 		p(Path.Terminal)
 	)
 		return 'portfolio';
+	if (p(Path.Tools)) return 'tools';
 	if (p('/expenses')) return 'expenses';
 	if (p('/markets')) return 'markets';
 	if (p('/economy')) return 'economy';
