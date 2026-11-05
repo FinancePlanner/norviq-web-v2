@@ -7,11 +7,13 @@ import {
 	CalendarDays,
 	ChartCandlestick,
 	ChartColumn,
+	ChartLine,
 	ChartNoAxesCombined,
 	ChartPie,
 	Circle,
 	CircleGauge,
 	Compass,
+	Crosshair,
 	Folder,
 	Globe,
 	Grid2x2,
@@ -28,15 +30,18 @@ import {
 	ReceiptText,
 	Scale,
 	Search,
+	SlidersHorizontal,
 	Sparkles,
 	Star,
 	Target,
+	TreePalm,
 	TrendingUp,
 	Trophy,
 	UserPlus,
 	UserRound,
 	Users,
-	Wallet
+	Wallet,
+	Wrench
 } from '@lucide/svelte';
 import type { Tab } from '#lib/nav.js';
 
@@ -50,6 +55,11 @@ const byPath: Record<string, Component> = {
 	'/markets': Grid2x2,
 	'/boards': MessagesSquare,
 	'/articles': Newspaper,
+	'/tools': Wrench,
+	'/planning/grow': ChartLine,
+	'/planning/retire': TreePalm,
+	'/terminal': Crosshair,
+	'/simulator': SlidersHorizontal,
 	'/portfolio': LayoutGrid,
 	'/scenarios': CircleGauge,
 	'/forecast': ChartNoAxesCombined,
@@ -94,7 +104,8 @@ const byTab: Record<Tab, Component> = {
 	friends: Users,
 	groups: MessageCircle,
 	community: MessagesSquare,
-	settings: UserRound
+	settings: UserRound,
+	tools: Wrench
 };
 
 export const tabIcon = (tab: Tab): Component => byTab[tab] ?? Circle;
