@@ -24,6 +24,8 @@ import {
 // A turn with attached images goes upstream as multipart (content + image
 // parts); a text turn stays JSON, because a multipart request spends the
 // user's image rate budget even when it carries no image.
+/** The backend's turn body cap (turnBodyLimit): three images plus the form. */
+const MAX_BODY_BYTES = 16 << 20;
 const RELAYED = ['content-type', 'cache-control', 'x-accel-buffering'];
 
 export const POST: RequestHandler = async (event) => {
@@ -32,6 +34,9 @@ export const POST: RequestHandler = async (event) => {
 	if (refusal) return refusal;
 	const id = parseUUID(event.params.id);
 	if (!id) return text('Invalid conversation', { status: 400 });
+	// Refuse before buffering a body the backend would refuse anyway.
+	if (Number(event.request.headers.get('content-length')) > MAX_BODY_BYTES)
+		return text('That image is too large.', { status: 413 });
 	const form = await formOf(event);
 	const content = String(form.get('content') ?? '').trim();
 	const images = form.getAll('image').filter((f): f is File => f instanceof File && f.size > 0);
@@ -58,6 +63,8 @@ export const POST: RequestHandler = async (event) => {
 	} catch {
 		return text('Assistant is temporarily unavailable', { status: 502 });
 	}
+	// The backend sends 403 upgrade_required; 402 is the same refusal from older builds.
+	if (upstream.status === 402) return json({ code: 'upgrade_required' }, { status: 403 });
 	if (upstream.status === 403) {
 		const body = (await upstream.text().catch(() => '')).slice(0, 4096);
 		let reason = '';

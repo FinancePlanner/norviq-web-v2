@@ -66,3 +66,37 @@ test('images alone are allowed, empty text alone is not', async () => {
 	expect((await call(withImage)).status).toBe(200);
 	expect((await call(new FormData())).status).toBe(400);
 });
+
+test('a body over the cap is refused with 413 before it is read', async () => {
+	const request = new Request('http://x/s', {
+		method: 'POST',
+		body: new FormData(),
+		headers: { 'content-length': String((16 << 20) + 1) }
+	});
+	const res = await POST({ request, params: { id: 'c1' } } as unknown as Parameters<
+		typeof POST
+	>[0]);
+	expect(res.status).toBe(413);
+	expect(apiFetch).not.toHaveBeenCalled();
+});
+
+test('an upstream 402 reaches the reader as the upgrade refusal', async () => {
+	apiFetch.mockResolvedValue(new Response('{"code":"upgrade_required"}', { status: 402 }));
+	const form = new FormData();
+	form.set('content', 'hi');
+	const res = await call(form);
+	expect(res.status).toBe(403);
+	expect(await res.json()).toEqual({ code: 'upgrade_required' });
+});
+
+test('an upstream 403 upgrade_required (body has error, not reason) does too', async () => {
+	apiFetch.mockResolvedValue(
+		new Response('{"success":false,"code":"upgrade_required","error":"Upgrade required."}', {
+			status: 403
+		})
+	);
+	const form = new FormData();
+	form.set('content', 'hi');
+	const res = await call(form);
+	expect(await res.json()).toEqual({ code: 'upgrade_required' });
+});

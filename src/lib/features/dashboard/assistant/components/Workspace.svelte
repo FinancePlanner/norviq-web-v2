@@ -3,6 +3,7 @@
 	// composer streams the turn (window.streamAssistantTurn); on the `turn`
 	// frame the page reloads this conversation and re-keys the workspace,
 	// which is Go's htmx outerHTML swap of #assistant-workspace.
+	import { onDestroy } from 'svelte';
 	import Paperclip from '@lucide/svelte/icons/paperclip';
 	import X from '@lucide/svelte/icons/x';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
@@ -45,7 +46,7 @@
 	let attachments = $state<Attachment[]>([]);
 	let preparing = $state(0);
 	let nextKey = 0;
-	let fileInput = $state<HTMLInputElement | null>(null);
+	const attachFull = $derived(attachments.length + preparing >= MAX_CHAT_IMAGES);
 
 	const isImage = (file: File) => file.type.startsWith('image/');
 
@@ -53,6 +54,8 @@
 		for (const a of attachments) URL.revokeObjectURL(a.url);
 		attachments = [];
 	}
+
+	onDestroy(clearAttachments);
 
 	function removeAttachment(key: number) {
 		const gone = attachments.find((a) => a.key === key);
@@ -64,10 +67,12 @@
 		const images = picked.filter(isImage);
 		if (!imagesEnabled || images.length === 0) return;
 		errorText = '';
-		const room = MAX_CHAT_IMAGES - attachments.length - preparing;
+		const room = Math.max(MAX_CHAT_IMAGES - attachments.length - preparing, 0);
 		if (images.length > room) errorText = `Attach up to ${MAX_CHAT_IMAGES} images.`;
-		for (const file of images.slice(0, Math.max(room, 0))) {
-			preparing++;
+		const take = images.slice(0, room);
+		// Reserve every slot now, so a second drop while these decode cannot overshoot.
+		preparing += take.length;
+		for (const file of take) {
 			try {
 				const prepared = await prepareChatImage(file);
 				attachments.push({ key: nextKey++, file: prepared, url: URL.createObjectURL(prepared) });
@@ -121,11 +126,13 @@
 				conversationId: vm.id,
 				body,
 				muse,
-				onAccepted: () => {
+				// Only the turn frame clears the composer: a refused image or a
+				// failed turn leaves the text and thumbnails to retry with.
+				onTurn: () => {
 					content = '';
 					clearAttachments();
-				},
-				onTurn: () => reload(vm.id)
+					return reload(vm.id);
+				}
 			});
 		} finally {
 			sending = false;
@@ -194,25 +201,18 @@
 				aria-label="Message Q"
 			/>
 			{#if imagesEnabled}
-				<input
-					bind:this={fileInput}
-					type="file"
-					class="sr-only"
-					accept="image/png,image/jpeg,image/webp,image/gif"
-					multiple
-					tabindex="-1"
-					aria-hidden="true"
-					onchange={onPick}
-				/>
-				<button
-					type="button"
-					class="muse-attach"
-					aria-label="Attach images"
-					disabled={attachments.length + preparing >= MAX_CHAT_IMAGES}
-					onclick={() => fileInput?.click()}
-				>
+				<label class="muse-attach" class:muse-attach-disabled={attachFull} title="Attach images">
+					<input
+						type="file"
+						class="sr-only"
+						accept="image/png,image/jpeg,image/webp,image/gif"
+						multiple
+						disabled={attachFull}
+						aria-label="Attach images"
+						onchange={onPick}
+					/>
 					<Paperclip class="size-5" />
-				</button>
+				</label>
 			{/if}
 			<div>
 				<NativeButton type="submit" class="assistant-send" disabled={sending || preparing > 0}

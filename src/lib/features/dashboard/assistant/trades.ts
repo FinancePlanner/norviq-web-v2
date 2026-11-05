@@ -136,23 +136,37 @@ export function parseTradesProposal(args: string): TradesProposal | null {
 	};
 }
 
-/** Reads "1,5" and "1.5" as 1.5. Undefined for anything that is not a plain decimal. */
+/**
+ * Reads "1,5" and "1.5" as 1.5. Undefined for anything that is not a plain
+ * decimal, and for anything that could be read two ways: "1,234" is 1.234 in
+ * one country and 1234 in another, so it is refused rather than guessed.
+ * Dots are never refused as groups, because stored values use them ("1.000" is 1).
+ */
 export function parseDecimal(raw: string): number | undefined {
-	let s = raw.trim().replace(/[\s\u00a0']/g, '');
+	const s = raw.trim().replace(/[\s\u00a0']/g, '');
 	if (s === '') return undefined;
-	const comma = s.lastIndexOf(',');
-	const dot = s.lastIndexOf('.');
-	if (comma >= 0 && dot >= 0) {
-		// "1.234,56" or "1,234.56": the later mark is the decimal point.
-		const decimal = comma > dot ? ',' : '.';
+	const sign = /^[+-]/.test(s) ? s[0] : '';
+	const body = sign ? s.slice(1) : s;
+	const hasComma = body.includes(',');
+	const hasDot = body.includes('.');
+	let digits: string;
+	if (hasComma && hasDot) {
+		// "1.234,56" or "1,234.56": thousands groups of three, then the decimal part.
+		const decimal = body.lastIndexOf(',') > body.lastIndexOf('.') ? ',' : '.';
 		const group = decimal === ',' ? '.' : ',';
-		s = s.split(group).join('').replace(decimal, '.');
-	} else if (comma >= 0) {
-		if (s.indexOf(',') !== comma) return undefined;
-		s = s.replace(',', '.');
+		const g = '\\' + group;
+		const d = '\\' + decimal;
+		if (!new RegExp(`^\\d{1,3}(${g}\\d{3})+${d}\\d+$`).test(body)) return undefined;
+		digits = body.split(group).join('').replace(decimal, '.');
+	} else if (hasComma) {
+		if (!/^\d*,\d+$/.test(body)) return undefined;
+		if (/^[1-9]\d*,\d{3}$/.test(body)) return undefined;
+		digits = body.replace(',', '.');
+	} else {
+		digits = body;
 	}
-	if (!/^[+-]?(\d+\.?\d*|\.\d+)$/.test(s)) return undefined;
-	const n = Number(s);
+	if (!/^(\d+\.?\d*|\.\d+)$/.test(digits)) return undefined;
+	const n = Number(sign + digits);
 	return Number.isFinite(n) ? n : undefined;
 }
 
@@ -172,14 +186,29 @@ export function skippedRowsText(count: number): string {
 	return `${count} ${noun} left out (options, shorts, dividends or fees).`;
 }
 
+/** The portfolio name in a summary like "Record 2 buys and 1 sell in Growth.". Empty when it does not fit. */
+export function listNameFromSummary(summary: string): string {
+	const m = /^Record .+? in (.+)\.$/.exec(summary.trim());
+	return m ? m[1] : '';
+}
+
+/** True for a YYYY-MM-DD that exists on the calendar. */
+function isRealDate(raw: string): boolean {
+	const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
+	if (!m) return false;
+	const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+	const date = new Date(Date.UTC(y, mo - 1, d));
+	return date.getUTCFullYear() === y && date.getUTCMonth() === mo - 1 && date.getUTCDate() === d;
+}
+
 /** Why a kept row cannot be sent yet, or '' when it can. */
 export function rowProblem(row: TradeRow): string {
 	if (row.symbol.trim() === '') return 'Enter a symbol.';
 	const quantity = parseDecimal(row.quantity);
 	if (quantity === undefined || quantity <= 0) return 'Enter the number of shares.';
 	const price = parseDecimal(row.price);
-	if (price === undefined || price < 0) return 'Enter the price.';
-	if (!/^\d{4}-\d{2}-\d{2}$/.test(row.tradeDate)) return 'Enter the date.';
+	if (price === undefined || price <= 0) return 'Enter the price.';
+	if (!isRealDate(row.tradeDate)) return 'Enter the date.';
 	const fees = (row.fees ?? '').trim();
 	if (fees !== '' && (parseDecimal(fees) ?? -1) < 0) return 'Fees must be a number, or blank.';
 	return '';

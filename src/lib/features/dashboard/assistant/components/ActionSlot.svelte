@@ -120,6 +120,7 @@
 {:else if action.trades}
 	<TradesCard
 		actionID={action.id}
+		summary={action.summary}
 		trades={action.trades}
 		lists={action.portfolioLists}
 		{busy}

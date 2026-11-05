@@ -856,8 +856,18 @@ html .muse-composer textarea:focus-visible {
   place-items: center;
   border-radius: 9999px;
   color: var(--muse-text-secondary);
+  cursor: pointer;
 }
 
+.muse-attach:focus-within {
+  outline: 2px solid var(--color-tint);
+}
+
+.muse-attach-disabled {
+  cursor: default;
+}
+
+.muse-attach-disabled,
 .muse-attach:disabled {
   opacity: 0.4;
 }

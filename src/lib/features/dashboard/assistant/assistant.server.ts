@@ -30,7 +30,8 @@ type AIConfirmedAction = Schemas['AIConfirmedActionResponse'];
 type AIUsage = Schemas['AIAssistantUsageResponse'];
 type AITip = Schemas['AITipResponse'];
 type AITurn = Schemas['AIAssistantTurnResponse'];
-type AIPreferences = Schemas['AIAssistantPreferencesResponse'];
+// schema.d.ts is generated and does not know imagesEnabled yet, so the field is typed here.
+type AIPreferences = Schemas['AIAssistantPreferencesResponse'] & { imagesEnabled?: boolean };
 type PortfolioList = Schemas['PortfolioListResponse'];
 
 /** api.PositionMemoListItem (internal/api/position_memos.go). */
@@ -564,7 +565,11 @@ export async function confirmTrades(
 		if (status === 409) return { kind: 'tradesExpired', id, message: TRADES_EXPIRED };
 		if (status === 422 && isAPIError(err)) {
 			if ((await stillPending(event, id)) === false)
-				return { kind: 'tradesExpired', id, message: TRADES_CLOSED };
+				return {
+					kind: 'tradesExpired',
+					id,
+					message: err.reason ? `${err.reason} ${TRADES_CLOSED}` : TRADES_CLOSED
+				};
 			return {
 				kind: 'tradesError',
 				id,
@@ -572,10 +577,9 @@ export async function confirmTrades(
 				rowErrors: rowErrorsOf(err.body)
 			};
 		}
-		const message =
-			status === 403 && isAPIError(err) && err.code === 'upgrade_required'
-				? TRADES_UPGRADE
-				: TRADES_RETRY;
+		const upgrade =
+			status === 402 || (status === 403 && isAPIError(err) && err.code === 'upgrade_required');
+		const message = upgrade ? TRADES_UPGRADE : TRADES_RETRY;
 		return { kind: 'tradesError', id, message, rowErrors: [] };
 	}
 }

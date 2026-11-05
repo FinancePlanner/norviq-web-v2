@@ -13,6 +13,8 @@
 		keptRows,
 		placeRowErrors,
 		rowProblem,
+		listNameFromSummary,
+		parseDecimal,
 		skippedRowsText,
 		SYNCED_COPY,
 		tradesConfirmBody,
@@ -24,6 +26,7 @@
 
 	let {
 		actionID,
+		summary,
 		trades,
 		lists = [],
 		busy,
@@ -32,6 +35,8 @@
 		oncancel
 	}: {
 		actionID: string;
+		/** The action summary ("Record 2 buys in Main."), the only place that names the stored list. */
+		summary: string;
 		trades: TradesProposal;
 		lists?: PortfolioListOption[];
 		busy: boolean;
@@ -51,6 +56,24 @@
 
 	function same(a: string, b: string) {
 		return a.toLowerCase() === b.toLowerCase();
+	}
+
+	// The destination must always be visible. When the lists lookup failed, or the
+	// stored list is not among them, the name comes from the action summary.
+	const storedName = $derived(listNameFromSummary(summary) || 'the proposed portfolio');
+	const options = $derived<PortfolioListOption[]>(
+		lists.some((l) => same(l.id, trades.portfolioListId))
+			? lists
+			: [{ id: trades.portfolioListId, name: storedName }, ...lists]
+	);
+	const destination = $derived(options.find((l) => l.id === listId)?.name ?? storedName);
+
+	/** Shows the number that will be sent: "1,5" becomes "1.5". Unreadable text is left for the row's message. */
+	function tidy(row: TradeRow, field: 'quantity' | 'price' | 'fees') {
+		const raw = row[field];
+		if (raw === undefined || raw.trim() === '') return;
+		const n = parseDecimal(raw);
+		if (n !== undefined) row[field] = String(n);
 	}
 
 	const proposal = $derived<TradesProposal>({ ...trades, portfolioListId: listId, rows });
@@ -81,7 +104,7 @@
 		Check each row against your screenshot. Only ticked rows are saved.
 	</p>
 
-	{#if lists.length > 1}
+	{#if options.length > 1}
 		<label class="mt-3 flex items-center gap-2 text-sm">
 			<span>Portfolio</span>
 			<select
@@ -90,11 +113,13 @@
 				disabled={busy}
 				aria-label="Portfolio"
 			>
-				{#each lists as list (list.id)}
+				{#each options as list (list.id)}
 					<option value={list.id}>{list.name}</option>
 				{/each}
 			</select>
 		</label>
+	{:else}
+		<p class="mt-3 text-sm">Saving to <strong>{destination}</strong></p>
 	{/if}
 
 	{#if blockedBySync}
@@ -103,7 +128,7 @@
 
 	<fieldset disabled={busy} class="mt-3 min-w-0 border-0 p-0">
 		<div class="overflow-x-auto">
-			<table.Table class="w-full text-sm">
+			<table.Table class="csv-preview-table w-full text-sm">
 				<thead>
 					<tr>
 						<th class="text-left">Keep</th>
@@ -139,6 +164,7 @@
 									class="w-[4.5rem] rounded border bg-transparent px-2 py-1"
 									bind:value={row.side}
 									aria-label="Side"
+									disabled={recorded}
 								>
 									<option value="buy">Buy</option>
 									<option value="sell">Sell</option>
@@ -150,6 +176,7 @@
 									type="text"
 									bind:value={row.symbol}
 									aria-label="Symbol"
+									disabled={recorded}
 								/>
 							</td>
 							<td>
@@ -158,7 +185,9 @@
 									type="text"
 									inputmode="decimal"
 									bind:value={row.quantity}
+									onblur={() => tidy(row, 'quantity')}
 									aria-label="Shares"
+									disabled={recorded}
 								/>
 							</td>
 							<td>
@@ -167,7 +196,9 @@
 									type="text"
 									inputmode="decimal"
 									bind:value={row.price}
+									onblur={() => tidy(row, 'price')}
 									aria-label="Price"
+									disabled={recorded}
 								/>
 							</td>
 							<td>
@@ -176,6 +207,7 @@
 									type="date"
 									bind:value={row.tradeDate}
 									aria-label="Date"
+									disabled={recorded}
 								/>
 							</td>
 							<td>
@@ -186,6 +218,7 @@
 									placeholder={trades.baseCurrency}
 									bind:value={row.currency}
 									aria-label="Currency"
+									disabled={recorded}
 								/>
 							</td>
 							<td>
@@ -194,7 +227,9 @@
 									type="text"
 									inputmode="decimal"
 									bind:value={row.fees}
+									onblur={() => tidy(row, 'fees')}
 									aria-label="Fees"
+									disabled={recorded}
 								/>
 							</td>
 							<td class="text-xs text-muted-foreground">

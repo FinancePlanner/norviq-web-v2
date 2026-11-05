@@ -1,8 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import {
 	isLowConfidence,
+	listNameFromSummary,
 	parseDecimal,
 	parseTradesProposal,
+	rowProblem,
 	placeRowErrors,
 	skippedRowsText,
 	SYNCED_COPY,
@@ -214,4 +216,54 @@ test('the IBKR refusal copy is the backend wording', () => {
 	expect(SYNCED_COPY).toBe(
 		'This portfolio syncs from IBKR, so saved trades would be overwritten. Pick another portfolio.'
 	);
+});
+
+describe('parseDecimal never writes a wrong number', () => {
+	test('one comma and exactly three digits is ambiguous, unless the integer part is 0', () => {
+		for (const raw of ['1,234', '1,000', '12,345', '999,999']) {
+			expect(parseDecimal(raw), raw).toBeUndefined();
+		}
+		expect(parseDecimal('0,123')).toBe(0.123);
+		expect(parseDecimal('1,23')).toBe(1.23);
+		expect(parseDecimal('1,2345')).toBe(1.2345);
+	});
+	test('both marks need proper groups and a decimal part', () => {
+		for (const raw of ['1,2.3', '1.2.3,4', '12,34.5', '1.234.56,7', '1,234,567', '1,234.5,6']) {
+			expect(parseDecimal(raw), raw).toBeUndefined();
+		}
+		expect(parseDecimal('1.234,56')).toBe(1234.56);
+		expect(parseDecimal('1,234.56')).toBe(1234.56);
+		expect(parseDecimal('1.234.567,5')).toBe(1234567.5);
+		expect(parseDecimal('1,234,567.5')).toBe(1234567.5);
+	});
+	test('dots are plain decimals because stored values use them', () => {
+		expect(parseDecimal('1.000')).toBe(1);
+		expect(parseDecimal('100.5')).toBe(100.5);
+		expect(parseDecimal('1.2.3')).toBeUndefined();
+	});
+	test('a row with an ambiguous cell cannot be saved', () => {
+		const p = parseTradesProposal(args([row({ quantity: '1,234', price: '1,500' })]))!;
+		expect(rowProblem(p.rows[0])).not.toBe('');
+	});
+});
+
+describe('rowProblem', () => {
+	const ok = () => parseTradesProposal(args([row()]))!.rows[0];
+	test('a clean row has no problem', () => expect(rowProblem(ok())).toBe(''));
+	test('price must be above zero, like the backend', () => {
+		expect(rowProblem({ ...ok(), price: '0' })).not.toBe('');
+		expect(rowProblem({ ...ok(), price: '-1' })).not.toBe('');
+	});
+	test('a date must be a real calendar date', () => {
+		for (const d of ['2026-13-45', '2026-02-30', '2026-00-10']) {
+			expect(rowProblem({ ...ok(), tradeDate: d }), d).not.toBe('');
+		}
+		expect(rowProblem({ ...ok(), tradeDate: '2024-02-29' })).toBe('');
+	});
+});
+
+test('listNameFromSummary reads the list out of the backend summary', () => {
+	expect(listNameFromSummary('Record 1 buy in Main.')).toBe('Main');
+	expect(listNameFromSummary('Record 2 buys and 1 sell in My IBKR in EUR.')).toBe('My IBKR in EUR');
+	expect(listNameFromSummary('something else')).toBe('');
 });

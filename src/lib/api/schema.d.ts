@@ -12166,8 +12166,6 @@ export interface components {
 			proactiveTipsEnabled: boolean;
 			pushEnabled: boolean;
 			timezone: string;
-			/** Whether a chat turn may carry image attachments. */
-			imagesEnabled: boolean;
 		};
 		AIAssistantUsageResponse: {
 			month: string;
