@@ -8,6 +8,8 @@ export interface PageViewModel {
 	tips: TipRow[];
 	usage: UsageViewModel;
 	errorMessage: string;
+	/** The backend accepts image attachments on a turn. False when it cannot be told. */
+	imagesEnabled: boolean;
 }
 
 export interface ConversationRow {

@@ -3,8 +3,11 @@
 	// composer streams the turn (window.streamAssistantTurn); on the `turn`
 	// frame the page reloads this conversation and re-keys the workspace,
 	// which is Go's htmx outerHTML swap of #assistant-workspace.
+	import Paperclip from '@lucide/svelte/icons/paperclip';
+	import X from '@lucide/svelte/icons/x';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import TextareaField from '#lib/components/norviq/TextareaField.svelte';
+	import { MAX_CHAT_IMAGES, ImageUnreadable, prepareChatImage } from '../images.js';
 	import type { MuseChat } from '../muse.svelte.js';
 	import { streamAssistantTurn } from '../stream.js';
 	import type { ConversationViewModel, MessageRow } from '../types.js';
@@ -14,10 +17,13 @@
 	let {
 		vm,
 		muse,
+		imagesEnabled = false,
 		reload
 	}: {
 		vm: ConversationViewModel;
 		muse: MuseChat;
+		/** The backend accepts images on a turn: shows the attach controls. */
+		imagesEnabled?: boolean;
 		/** Swaps the workspace for a fresh render of this conversation. */
 		reload: (id: string) => Promise<void>;
 	} = $props();
@@ -30,17 +36,95 @@
 	let sending = $state(false);
 	let errorText = $state('');
 
+	/** Downscaled files waiting to go with the next message, each with a thumbnail URL. */
+	interface Attachment {
+		key: number;
+		file: File;
+		url: string;
+	}
+	let attachments = $state<Attachment[]>([]);
+	let preparing = $state(0);
+	let nextKey = 0;
+	let fileInput = $state<HTMLInputElement | null>(null);
+
+	const isImage = (file: File) => file.type.startsWith('image/');
+
+	function clearAttachments() {
+		for (const a of attachments) URL.revokeObjectURL(a.url);
+		attachments = [];
+	}
+
+	function removeAttachment(key: number) {
+		const gone = attachments.find((a) => a.key === key);
+		if (gone) URL.revokeObjectURL(gone.url);
+		attachments = attachments.filter((a) => a.key !== key);
+	}
+
+	async function addFiles(picked: File[]) {
+		const images = picked.filter(isImage);
+		if (!imagesEnabled || images.length === 0) return;
+		errorText = '';
+		const room = MAX_CHAT_IMAGES - attachments.length - preparing;
+		if (images.length > room) errorText = `Attach up to ${MAX_CHAT_IMAGES} images.`;
+		for (const file of images.slice(0, Math.max(room, 0))) {
+			preparing++;
+			try {
+				const prepared = await prepareChatImage(file);
+				attachments.push({ key: nextKey++, file: prepared, url: URL.createObjectURL(prepared) });
+			} catch (error) {
+				errorText =
+					error instanceof ImageUnreadable
+						? error.message
+						: "This image format can't be read. Try a PNG or JPEG.";
+			} finally {
+				preparing--;
+			}
+		}
+	}
+
+	function onPick(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const files = Array.from(input.files ?? []);
+		input.value = '';
+		void addFiles(files);
+	}
+
+	function onPaste(event: ClipboardEvent) {
+		const files = Array.from(event.clipboardData?.files ?? []).filter(isImage);
+		if (!imagesEnabled || files.length === 0) return;
+		event.preventDefault();
+		void addFiles(files);
+	}
+
+	const hasFiles = (event: DragEvent) => event.dataTransfer?.types.includes('Files') ?? false;
+
+	function onDragOver(event: DragEvent) {
+		if (imagesEnabled && hasFiles(event)) event.preventDefault();
+	}
+
+	function onDrop(event: DragEvent) {
+		if (!imagesEnabled || !hasFiles(event)) return;
+		event.preventDefault();
+		void addFiles(Array.from(event.dataTransfer?.files ?? []));
+	}
+
 	async function submit(event: SubmitEvent) {
 		event.preventDefault();
 		const form = event.currentTarget as HTMLFormElement;
+		if (preparing > 0) return;
 		errorText = '';
 		sending = true;
+		const body = new FormData(form);
+		for (const a of attachments) body.append('image', a.file, a.file.name);
 		try {
 			errorText = await streamAssistantTurn({
 				conversationId: vm.id,
-				body: new FormData(form),
+				body,
 				muse,
-				onAccepted: () => (content = ''),
+				onAccepted: () => {
+					content = '';
+					clearAttachments();
+				},
 				onTurn: () => reload(vm.id)
 			});
 		} finally {
@@ -64,12 +148,36 @@
 	</div>
 	<div
 		class="assistant-composer muse-composer"
+		role="presentation"
+		onpaste={onPaste}
+		ondragover={onDragOver}
+		ondrop={onDrop}
 		onfocusin={(e) => isComposer(e.target) && muse.listen()}
 		onfocusout={(e) => isComposer(e.target) && muse.unlisten()}
 	>
 		<p class="muse-composer-error" data-muse-error role="alert" hidden={errorText === ''}>
 			{errorText}
 		</p>
+		{#if attachments.length > 0 || preparing > 0}
+			<ul class="muse-attachments" aria-label="Attached images">
+				{#each attachments as attachment (attachment.key)}
+					<li class="muse-attachment">
+						<img src={attachment.url} alt="Attached screenshot" />
+						<button
+							type="button"
+							class="muse-attachment-remove"
+							aria-label="Remove image"
+							onclick={() => removeAttachment(attachment.key)}
+						>
+							<X class="size-3" />
+						</button>
+					</li>
+				{/each}
+				{#if preparing > 0}
+					<li class="muse-attachment-pending" role="status">Preparing…</li>
+				{/if}
+			</ul>
+		{/if}
 		<form
 			method="post"
 			action={'/assistant/conversations/' + vm.id + '/stream'}
@@ -80,13 +188,36 @@
 				name="content"
 				bind:value={content}
 				placeholder="Ask about your spending, budget, portfolio, or goals…"
-				required
+				required={attachments.length === 0}
 				maxlength={12000}
 				autofocus={vm.seed !== ''}
 				aria-label="Message Q"
 			/>
+			{#if imagesEnabled}
+				<input
+					bind:this={fileInput}
+					type="file"
+					class="sr-only"
+					accept="image/png,image/jpeg,image/webp,image/gif"
+					multiple
+					tabindex="-1"
+					aria-hidden="true"
+					onchange={onPick}
+				/>
+				<button
+					type="button"
+					class="muse-attach"
+					aria-label="Attach images"
+					disabled={attachments.length + preparing >= MAX_CHAT_IMAGES}
+					onclick={() => fileInput?.click()}
+				>
+					<Paperclip class="size-5" />
+				</button>
+			{/if}
 			<div>
-				<NativeButton type="submit" class="assistant-send" disabled={sending}>Send</NativeButton>
+				<NativeButton type="submit" class="assistant-send" disabled={sending || preparing > 0}
+					>Send</NativeButton
+				>
 			</div>
 		</form>
 		<p class="muse-privacy">

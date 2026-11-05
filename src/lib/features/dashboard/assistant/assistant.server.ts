@@ -28,6 +28,7 @@ type AIConfirmedAction = Schemas['AIConfirmedActionResponse'];
 type AIUsage = Schemas['AIAssistantUsageResponse'];
 type AITip = Schemas['AITipResponse'];
 type AITurn = Schemas['AIAssistantTurnResponse'];
+type AIPreferences = Schemas['AIAssistantPreferencesResponse'];
 
 /** api.PositionMemoListItem (internal/api/position_memos.go). */
 interface PositionMemoListItem {
@@ -110,7 +111,8 @@ export async function loadAssistantPage(event: RequestEvent): Promise<PageViewMo
 		active: null,
 		tips: [],
 		usage: { label: 'AI preview', remaining: 'Usage unavailable', isPro: false },
-		errorMessage: ''
+		errorMessage: '',
+		imagesEnabled: false
 	};
 	let conversations: AIConversationSummary[];
 	try {
@@ -135,11 +137,14 @@ export async function loadAssistantPage(event: RequestEvent): Promise<PageViewMo
 		});
 	}
 
-	const [active, usage, tips] = await Promise.all([
+	const [active, usage, tips, preferences] = await Promise.all([
 		activeID ? loadAssistantConversation(event, activeID) : Promise.resolve(null),
 		apiJSON<AIUsage>(event, 'GET', '/v1/ai/assistant/usage').catch(() => null),
-		apiJSON<AITip[]>(event, 'GET', '/v1/ai/assistant/tips').catch(() => null)
+		apiJSON<AITip[]>(event, 'GET', '/v1/ai/assistant/tips').catch(() => null),
+		// A preferences outage must never break chat: images are simply off.
+		apiJSON<AIPreferences>(event, 'GET', '/v1/ai/assistant/preferences').catch(() => null)
 	]);
+	vm.imagesEnabled = preferences?.imagesEnabled === true;
 	if (active) {
 		active.seed = (event.url.searchParams.get('seed') ?? '').trim();
 		vm.active = active;

@@ -18,7 +18,12 @@ import {
 // The composer posts its form here; this turns it into the backend's JSON
 // body and relays the SSE response unbuffered, untouched (Go copied it through
 // with a Flush per read). A backend 403 is not a stream: an AI consent
-// refusal goes back as JSON with a consentUrl so the reader can navigate.
+// refusal goes back as JSON with a consentUrl so the reader can navigate, and
+// an upgrade refusal as JSON with code upgrade_required.
+//
+// A turn with attached images goes upstream as multipart (content + image
+// parts); a text turn stays JSON, because a multipart request spends the
+// user's image rate budget even when it carries no image.
 const RELAYED = ['content-type', 'cache-control', 'x-accel-buffering'];
 
 export const POST: RequestHandler = async (event) => {
@@ -27,32 +32,44 @@ export const POST: RequestHandler = async (event) => {
 	if (refusal) return refusal;
 	const id = parseUUID(event.params.id);
 	if (!id) return text('Invalid conversation', { status: 400 });
-	const content = String((await formOf(event)).get('content') ?? '').trim();
-	if (!content) return text('Message is required', { status: 400 });
+	const form = await formOf(event);
+	const content = String(form.get('content') ?? '').trim();
+	const images = form.getAll('image').filter((f): f is File => f instanceof File && f.size > 0);
+	if (!content && images.length === 0) return text('Message is required', { status: 400 });
+	let body: BodyInit;
+	let contentType: Record<string, string> = {};
+	if (images.length > 0) {
+		// No Content-Type: fetch adds the multipart one with its boundary.
+		const multipart = new FormData();
+		multipart.set('content', content);
+		for (const image of images) multipart.append('image', image, image.name);
+		body = multipart;
+	} else {
+		body = JSON.stringify({ content });
+		contentType = { 'Content-Type': 'application/json' };
+	}
 
 	let upstream: Response;
 	try {
-		upstream = await apiFetch(
-			event,
-			'POST',
-			`/v1/ai/assistant/conversations/${id}/stream`,
-			JSON.stringify({ content }),
-			{
-				headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
-				signal: event.request.signal
-			}
-		);
+		upstream = await apiFetch(event, 'POST', `/v1/ai/assistant/conversations/${id}/stream`, body, {
+			headers: { ...contentType, Accept: 'text/event-stream' },
+			signal: event.request.signal
+		});
 	} catch {
 		return text('Assistant is temporarily unavailable', { status: 502 });
 	}
 	if (upstream.status === 403) {
 		const body = (await upstream.text().catch(() => '')).slice(0, 4096);
 		let reason = '';
+		let code = '';
 		try {
-			reason = String((JSON.parse(body) as { reason?: unknown }).reason ?? '');
+			const parsed = JSON.parse(body) as { reason?: unknown; code?: unknown };
+			reason = String(parsed.reason ?? '');
+			code = String(parsed.code ?? '');
 		} catch {
 			/* not JSON */
 		}
+		if (code === 'upgrade_required') return json({ code }, { status: 403 });
 		if (reason === AI_CONSENT_REQUIRED) {
 			return json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), {
 				status: 403

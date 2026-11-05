@@ -89,7 +89,7 @@
 		</aside>
 		{#if slot.kind === 'conversation'}
 			{#key slot.vm}
-				<Workspace vm={slot.vm} {muse} reload={loadWorkspace} />
+				<Workspace vm={slot.vm} {muse} imagesEnabled={vm.imagesEnabled} reload={loadWorkspace} />
 			{/key}
 		{:else if slot.kind === 'consent'}
 			<AIConsentCard next={slot.next} dismissible />
