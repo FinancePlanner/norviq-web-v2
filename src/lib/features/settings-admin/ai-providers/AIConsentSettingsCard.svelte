@@ -24,7 +24,7 @@
 			{/if}
 			. AI features (assistant, insights, summaries, AI imports) send the financial context they need
 			to Anthropic and OpenRouter. Your name, email and user ID are not sent, unless they are visible
-			in an image you attach, and your data is not used to train models by Norviq's providers.
+			in an image you attach or import, and your data is not used to train models by Norviq's providers.
 		</p>
 		<form method="post" action="/settings/ai-consent/revoke" class="mt-4">
 			<NativeButton type="submit" class="btn-secondary px-5"

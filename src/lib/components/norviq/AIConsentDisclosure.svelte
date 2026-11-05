@@ -14,7 +14,7 @@
 		</li>
 		<li>
 			<strong class="text-foreground">What is not sent:</strong> your name, email address or user ID,
-			unless they are visible in an image you attach.
+			unless they are visible in an image you attach or import.
 		</li>
 		<li>
 			<strong class="text-foreground">Who receives it:</strong> Anthropic (Claude) and OpenRouter, which
