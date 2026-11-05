@@ -13,6 +13,9 @@ import {
 	placeRowErrors,
 	skippedRowsText,
 	showsSellTaxNote,
+	settleConfirmOutcome,
+	TRADES_EXPIRED,
+	TRADES_MAYBE_SAVED,
 	SYNCED_COPY,
 	tradesConfirmBody,
 	type TradesProposal
@@ -476,5 +479,22 @@ describe('showsSellTaxNote', () => {
 	});
 	test('hidden with only buys', () => {
 		expect(showsSellTaxNote(withSides(['buy', true], ['buy', true]))).toBe(false);
+	});
+});
+
+describe('settleConfirmOutcome', () => {
+	const expired = { kind: 'tradesExpired', id: 'a1', message: TRADES_EXPIRED };
+	test('a 409 after an attempt says it may have been saved', () => {
+		expect(settleConfirmOutcome(expired, true)).toEqual({
+			...expired,
+			message: TRADES_MAYBE_SAVED
+		});
+	});
+	test('a 409 on the first attempt is still an expired review', () => {
+		expect(settleConfirmOutcome(expired, false)).toEqual(expired);
+	});
+	test('other outcomes pass through', () => {
+		const closed = { kind: 'tradesExpired', id: 'a1', message: 'x' };
+		expect(settleConfirmOutcome(closed, true)).toEqual(closed);
 	});
 });

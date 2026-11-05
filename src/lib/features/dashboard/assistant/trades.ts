@@ -50,6 +50,23 @@ export interface ConfirmTrade {
 }
 
 export const LOW_CONFIDENCE = 0.8;
+export const TRADES_EXPIRED = 'This review expired. Send the screenshot again.';
+/** The backend finishes a claimed save even when the client drops, so a failed answer may still have saved. */
+export const TRADES_MAYBE_SAVED =
+	'This may have been saved. Check your portfolio before sending the screenshot again.';
+/**
+ * The outcome to show for a confirm answer. A 409 ("expired") after this card
+ * already sent a save is not that: the earlier save may have gone through.
+ */
+export function settleConfirmOutcome<T extends { kind: string; message?: string }>(
+	outcome: T,
+	hadEarlierAttempt: boolean
+): T {
+	if (hadEarlierAttempt && outcome.kind === 'tradesExpired' && outcome.message === TRADES_EXPIRED)
+		return { ...outcome, message: TRADES_MAYBE_SAVED };
+	return outcome;
+}
+
 export const TRADES_UPGRADE = 'Saving trades from a screenshot is part of Pro.';
 export const SYNCED_COPY =
 	'This portfolio syncs from IBKR, so saved trades would be overwritten. Pick another portfolio.';

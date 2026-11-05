@@ -6,7 +6,13 @@ import {
 	aiConsentReturnPath,
 	hasAIConsent
 } from '#lib/features/dashboard/ai-consent.server.js';
-import { parseTradesProposal, TRADES_UPGRADE, type RowError } from './trades.js';
+import {
+	parseTradesProposal,
+	TRADES_EXPIRED,
+	TRADES_MAYBE_SAVED,
+	TRADES_UPGRADE,
+	type RowError
+} from './trades.js';
 import type {
 	ActionOutcome,
 	ActionRow,
@@ -491,7 +497,7 @@ export async function confirmAction(
 	};
 }
 
-export const TRADES_EXPIRED = 'This review expired. Send the screenshot again.';
+export { TRADES_EXPIRED };
 export const TRADES_CLOSED =
 	'Those trades were not saved and this review is closed. Send the screenshot again.';
 const TRADES_RETRY = 'That did not go through. Try again.';
@@ -544,7 +550,8 @@ async function stillPending(event: RequestEvent, id: string): Promise<boolean | 
  * AssistantConfirmAction for a trades card: forwards the reviewed rows and maps
  * the answer. A 422 keeps the card open with the errors on their rows, unless
  * the save failed after the claim, which settles the action: then the card is
- * closed, since a retry could only get a 409. A 409 is an expired card.
+ * closed, since a retry could only get a 409. A 409 is an expired card (the card says "may have been saved" when it had already tried).
+ * Any failure that is not a 4xx settles the same way when the action is gone.
  */
 export async function confirmTrades(
 	event: RequestEvent,
@@ -576,6 +583,11 @@ export async function confirmTrades(
 				rowErrors: rowErrorsOf(err.body)
 			};
 		}
+		// A timeout, a dropped connection or a 5xx: the backend may have finished the
+		// save anyway. If the action is gone, say so rather than offer a retry.
+		const clientError = status >= 400 && status < 500;
+		if (!clientError && (await stillPending(event, id)) === false)
+			return { kind: 'tradesExpired', id, message: TRADES_MAYBE_SAVED };
 		const upgrade = status === 403 && isAPIError(err) && err.code === 'upgrade_required';
 		const message = upgrade ? TRADES_UPGRADE : TRADES_RETRY;
 		return { kind: 'tradesError', id, message, rowErrors: [] };

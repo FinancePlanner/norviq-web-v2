@@ -36,6 +36,8 @@ const {
 const event = { url: new URL('http://x/assistant') } as unknown as RequestEvent;
 const input = { portfolioListId: 'L1', trades: [{ symbol: 'AAPL' }] };
 
+const { TRADES_MAYBE_SAVED } = await import('./trades.js');
+
 const refusal = (rowErrors: unknown[]) =>
 	new FakeAPIError(422, 'Some trades need fixing.', undefined, {
 		reason: 'Some trades need fixing.',
@@ -106,8 +108,42 @@ describe('confirmTrades', () => {
 		});
 	});
 
+	test.each([
+		['a 5xx', new FakeAPIError(500, '')],
+		['a timeout or dropped connection', new Error('fetch failed')]
+	])('%s with the action gone closes the card as maybe saved', async (_name, err) => {
+		apiJSON.mockRejectedValueOnce(err).mockResolvedValueOnce([]);
+		expect(await confirmTrades(event, 'a1', input)).toEqual({
+			kind: 'tradesExpired',
+			id: 'a1',
+			message: TRADES_MAYBE_SAVED
+		});
+		expect(TRADES_MAYBE_SAVED).toBe(
+			'This may have been saved. Check your portfolio before sending the screenshot again.'
+		);
+	});
+
+	test.each([
+		['a 5xx', new FakeAPIError(502, '')],
+		['a timeout or dropped connection', new Error('fetch failed')]
+	])('%s with the action still pending keeps the retry line', async (_name, err) => {
+		apiJSON.mockRejectedValueOnce(err).mockResolvedValueOnce([{ id: 'a1', status: 'pending' }]);
+		expect(await confirmTrades(event, 'a1', input)).toEqual({
+			kind: 'tradesError',
+			id: 'a1',
+			message: 'That did not go through. Try again.',
+			rowErrors: []
+		});
+	});
+
+	test('a 4xx does not refetch the action', async () => {
+		apiJSON.mockRejectedValueOnce(new FakeAPIError(400, 'Bad request'));
+		expect((await confirmTrades(event, 'a1', input)).kind).toBe('tradesError');
+		expect(apiJSON).toHaveBeenCalledTimes(1);
+	});
+
 	test('any other failure keeps the card with a retry line', async () => {
-		apiJSON.mockRejectedValueOnce(new FakeAPIError(500, ''));
+		apiJSON.mockRejectedValueOnce(new FakeAPIError(500, '')).mockRejectedValueOnce(new Error('x'));
 		const out = await confirmTrades(event, 'a1', input);
 		expect(out).toMatchObject({ kind: 'tradesError', rowErrors: [] });
 	});

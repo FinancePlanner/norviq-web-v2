@@ -9,6 +9,7 @@
 	import Icon from '#lib/components/norviq/tui/Icon.svelte';
 	import type { ActionOutcome, ActionRow, MessageRow } from '../types.js';
 	import { PLAN_NOT_CONFIRMED } from '../stream.js';
+	import { settleConfirmOutcome } from '../trades.js';
 	import TradesCard from './TradesCard.svelte';
 	import WatchCard from './WatchCard.svelte';
 
@@ -16,10 +17,14 @@
 
 	let outcome = $state<ActionOutcome | null>(null);
 	let busy = $state(false);
+	/** A confirm was sent from this card: a later 409 may mean that save went through. */
+	let attempted = false;
 
 	/** The trades card posts its reviewed rows as JSON; cancel carries nothing. */
 	async function answerTrades(verb: 'confirm' | 'cancel', rows?: unknown) {
 		busy = true;
+		const hadEarlierAttempt = verb === 'confirm' && attempted;
+		if (verb === 'confirm') attempted = true;
 		try {
 			const res = await fetch(`/assistant/actions/${action.id}/${verb}`, {
 				method: 'POST',
@@ -41,7 +46,7 @@
 				return;
 			}
 			if (!res.ok) throw new Error(String(res.status));
-			outcome = (await res.json()) as ActionOutcome;
+			outcome = settleConfirmOutcome((await res.json()) as ActionOutcome, hadEarlierAttempt);
 		} catch {
 			// Keep the card, and say so: a silent failure reads as a dead button.
 			outcome = {
