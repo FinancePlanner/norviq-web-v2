@@ -428,9 +428,21 @@ describe('cellHint', () => {
 		}
 		expect(cellHint('1.234', '5')?.text).toBe('Saves as 1.234, not 1234');
 	});
+	test.each([
+		['1.000', 'Saves as 1, not 1000'],
+		['1.500', 'Saves as 1.5, not 1500'],
+		['10.000', 'Saves as 10, not 10000'],
+		['100.000', 'Saves as 100, not 100000'],
+		['1.050', 'Saves as 1.05, not 1050'],
+		['999.999', 'Saves as 999.999, not 999999'],
+		['1.234', 'Saves as 1.234, not 1234']
+	])('the warning for %s names the saved value', (raw, text) => {
+		expect(cellHint(raw, '5')).toEqual({ text, warn: true });
+	});
 	test('a stored 1.234 shows nothing until it is edited', () => {
 		expect(cellHint('1.234', '1.234')).toBeNull();
 		expect(cellHint(' 1.234 ', '1.234')).toBeNull();
+		expect(cellHint('999.999', '999.999')).toBeNull();
 		expect(cellHint('1.234', undefined)?.warn).toBe(true);
 	});
 	test('other shapes are not warned about', () => {
@@ -442,6 +454,6 @@ describe('cellHint', () => {
 		expect(cellHint('1,5', '5')).toEqual({ text: 'Saves as 1.5', warn: false });
 		expect(cellHint('1.50', '5')).toEqual({ text: 'Saves as 1.5', warn: false });
 		// 1.000 looks like a dot thousands group, so it is the warning, not the plain line.
-		expect(cellHint('1.000', '5')?.warn).toBe(true);
+		expect(cellHint('1.000', '5')).toEqual({ text: 'Saves as 1, not 1000', warn: true });
 	});
 });

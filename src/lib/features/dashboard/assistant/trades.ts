@@ -221,7 +221,8 @@ export function cellHint(
 ): { text: string; warn: boolean } | null {
 	const typed = raw.trim();
 	if (typed !== (stored ?? '').trim() && THOUSANDS_LOOKALIKE.test(typed)) {
-		return { text: `Saves as ${typed}, not ${typed.replace('.', '')}`, warn: true };
+		const saved = formatDecimal(parseDecimal(typed) as number);
+		return { text: `Saves as ${saved}, not ${typed.replace('.', '')}`, warn: true };
 	}
 	const text = savesAs(raw);
 	return text ? { text: `Saves as ${text}`, warn: false } : null;
