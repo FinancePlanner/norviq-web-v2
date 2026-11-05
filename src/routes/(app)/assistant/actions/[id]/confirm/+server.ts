@@ -22,9 +22,10 @@ export const POST: RequestHandler = async (event) => {
 	await requireFeature(event, Feature.AIInsights, 'AI insights');
 	const id = parseUUID(event.params.id);
 	if (!id) return text('Invalid action', { status: 400 });
+	// Every body here is small: refuse a runaway one before reading it.
+	if (Number(event.request.headers.get('content-length')) > MAX_TRADES_BODY_BYTES)
+		return text('Too many trades', { status: 413 });
 	if (event.request.headers.get('content-type')?.includes('application/json')) {
-		if (Number(event.request.headers.get('content-length')) > MAX_TRADES_BODY_BYTES)
-			return text('Too many trades', { status: 413 });
 		const input = readTradesConfirmInput(await event.request.json().catch(() => null));
 		if (!input) return text('Invalid trades', { status: 400 });
 		return json(await confirmTrades(event, id, input));

@@ -63,8 +63,6 @@ export const POST: RequestHandler = async (event) => {
 	} catch {
 		return text('Assistant is temporarily unavailable', { status: 502 });
 	}
-	// The backend sends 403 upgrade_required; 402 is the same refusal from older builds.
-	if (upstream.status === 402) return json({ code: 'upgrade_required' }, { status: 403 });
 	if (upstream.status === 403) {
 		const body = (await upstream.text().catch(() => '')).slice(0, 4096);
 		let reason = '';

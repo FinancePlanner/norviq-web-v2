@@ -14,7 +14,9 @@
 		placeRowErrors,
 		rowProblem,
 		listNameFromSummary,
+		formatDecimal,
 		parseDecimal,
+		savesAs,
 		skippedRowsText,
 		SYNCED_COPY,
 		tradesConfirmBody,
@@ -73,7 +75,7 @@
 		const raw = row[field];
 		if (raw === undefined || raw.trim() === '') return;
 		const n = parseDecimal(raw);
-		if (n !== undefined) row[field] = String(n);
+		if (n !== undefined) row[field] = formatDecimal(n);
 	}
 
 	const proposal = $derived<TradesProposal>({ ...trades, portfolioListId: listId, rows });
@@ -189,6 +191,11 @@
 									aria-label="Shares"
 									disabled={recorded}
 								/>
+								{#if savesAs(row.quantity ?? '')}
+									<p class="mt-0.5 text-xs text-muted-foreground">
+										Saves as {savesAs(row.quantity ?? '')}
+									</p>
+								{/if}
 							</td>
 							<td>
 								<input
@@ -200,6 +207,11 @@
 									aria-label="Price"
 									disabled={recorded}
 								/>
+								{#if savesAs(row.price ?? '')}
+									<p class="mt-0.5 text-xs text-muted-foreground">
+										Saves as {savesAs(row.price ?? '')}
+									</p>
+								{/if}
 							</td>
 							<td>
 								<input
@@ -231,6 +243,11 @@
 									aria-label="Fees"
 									disabled={recorded}
 								/>
+								{#if savesAs(row.fees ?? '')}
+									<p class="mt-0.5 text-xs text-muted-foreground">
+										Saves as {savesAs(row.fees ?? '')}
+									</p>
+								{/if}
 							</td>
 							<td class="text-xs text-muted-foreground">
 								{#if isLowConfidence(row)}

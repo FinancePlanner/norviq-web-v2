@@ -6,7 +6,7 @@ import {
 	aiConsentReturnPath,
 	hasAIConsent
 } from '#lib/features/dashboard/ai-consent.server.js';
-import { parseTradesProposal, type RowError } from './trades.js';
+import { parseTradesProposal, TRADES_UPGRADE, type RowError } from './trades.js';
 import type {
 	ActionOutcome,
 	ActionRow,
@@ -495,7 +495,6 @@ export const TRADES_EXPIRED = 'This review expired. Send the screenshot again.';
 export const TRADES_CLOSED =
 	'Those trades were not saved and this review is closed. Send the screenshot again.';
 const TRADES_RETRY = 'That did not go through. Try again.';
-const TRADES_UPGRADE = 'Saving trades from a screenshot is part of Pro.';
 
 /** The reviewed rows a card posts: the confirm body, validated down to what we forward. */
 export interface TradesConfirmInput {
@@ -577,8 +576,7 @@ export async function confirmTrades(
 				rowErrors: rowErrorsOf(err.body)
 			};
 		}
-		const upgrade =
-			status === 402 || (status === 403 && isAPIError(err) && err.code === 'upgrade_required');
+		const upgrade = status === 403 && isAPIError(err) && err.code === 'upgrade_required';
 		const message = upgrade ? TRADES_UPGRADE : TRADES_RETRY;
 		return { kind: 'tradesError', id, message, rowErrors: [] };
 	}

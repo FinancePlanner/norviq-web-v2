@@ -50,6 +50,7 @@ export interface ConfirmTrade {
 }
 
 export const LOW_CONFIDENCE = 0.8;
+export const TRADES_UPGRADE = 'Saving trades from a screenshot is part of Pro.';
 export const SYNCED_COPY =
 	'This portfolio syncs from IBKR, so saved trades would be overwritten. Pick another portfolio.';
 export const ALREADY_RECORDED = 'already_recorded';
@@ -59,7 +60,7 @@ const isRecord = (v: unknown): v is Record<string, unknown> =>
 
 function text(v: unknown): string | undefined {
 	if (typeof v === 'string') return v;
-	if (typeof v === 'number' && Number.isFinite(v)) return String(v);
+	if (typeof v === 'number' && Number.isFinite(v)) return formatDecimal(v);
 	return undefined;
 }
 
@@ -136,38 +137,67 @@ export function parseTradesProposal(args: string): TradesProposal | null {
 	};
 }
 
+/** One comma and exactly three digits after a non-zero integer part: 1.234 or 1234? */
+const AMBIGUOUS_COMMA = /^[+-]?0*[1-9]\d*,\d{3}$/;
+const PLAIN = /^(\d+|\d*[.,]\d+|\d+\.)$/;
+// "1 234", "1,234,567.5", "1.234.567,5": groups of three after 1-3 digits, one kind of
+// separator throughout, and a decimal part that uses the other mark.
+const GROUPED = [
+	/^([1-9]\d{0,2}(?:,\d{3})+)(?:\.(\d+))?$/,
+	/^([1-9]\d{0,2}(?:\.\d{3})+)(?:,(\d+))?$/,
+	/^([1-9]\d{0,2}(?: \d{3})+)(?:[.,](\d+))?$/,
+	/^([1-9]\d{0,2}(?:\u00a0\d{3})+)(?:[.,](\d+))?$/,
+	/^([1-9]\d{0,2}(?:'\d{3})+)(?:[.,](\d+))?$/
+];
+
 /**
- * Reads "1,5" and "1.5" as 1.5. Undefined for anything that is not a plain
- * decimal, and for anything that could be read two ways: "1,234" is 1.234 in
- * one country and 1234 in another, so it is refused rather than guessed.
- * Dots are never refused as groups, because stored values use them ("1.000" is 1).
+ * Reads a typed number, or says undefined. It accepts a short list of shapes and
+ * nothing else, so it never guesses: "1,5" and "1.5" are 1.5, "1 234" and
+ * "1,234,567" are grouped, and "1,234" is refused because it is 1.234 in one
+ * country and 1234 in another. A single dot group ("1.000") stays a decimal,
+ * because stored values use dots. Only the ends are trimmed, so "100 150.25"
+ * pasted from two cells is judged as typed.
  */
 export function parseDecimal(raw: string): number | undefined {
-	const s = raw.trim().replace(/[\s\u00a0']/g, '');
-	if (s === '') return undefined;
-	const sign = /^[+-]/.test(s) ? s[0] : '';
-	const body = sign ? s.slice(1) : s;
-	const hasComma = body.includes(',');
-	const hasDot = body.includes('.');
+	const trimmed = raw.trim();
+	const sign = /^[+-]/.test(trimmed) ? trimmed[0] : '';
+	const body = sign ? trimmed.slice(1) : trimmed;
+	if (body === '' || AMBIGUOUS_COMMA.test(body)) return undefined;
 	let digits: string;
-	if (hasComma && hasDot) {
-		// "1.234,56" or "1,234.56": thousands groups of three, then the decimal part.
-		const decimal = body.lastIndexOf(',') > body.lastIndexOf('.') ? ',' : '.';
-		const group = decimal === ',' ? '.' : ',';
-		const g = '\\' + group;
-		const d = '\\' + decimal;
-		if (!new RegExp(`^\\d{1,3}(${g}\\d{3})+${d}\\d+$`).test(body)) return undefined;
-		digits = body.split(group).join('').replace(decimal, '.');
-	} else if (hasComma) {
-		if (!/^\d*,\d+$/.test(body)) return undefined;
-		if (/^[1-9]\d*,\d{3}$/.test(body)) return undefined;
+	if (PLAIN.test(body)) {
 		digits = body.replace(',', '.');
 	} else {
-		digits = body;
+		const m = GROUPED.map((re) => re.exec(body)).find((x) => x !== null);
+		if (!m) return undefined;
+		digits = m[1].replace(/\D/g, '') + (m[2] ? '.' + m[2] : '');
 	}
-	if (!/^(\d+\.?\d*|\.\d+)$/.test(digits)) return undefined;
 	const n = Number(sign + digits);
 	return Number.isFinite(n) ? n : undefined;
+}
+
+/** A number as text without an exponent: 5e-7 is "0.0000005". */
+export function formatDecimal(n: number): string {
+	return n.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 });
+}
+
+/**
+ * What a cell will be saved as, when that differs from what the user typed.
+ * Empty when the text is blank, unreadable, or already the saved value.
+ */
+export function savesAs(raw: string): string {
+	if (raw.trim() === '') return '';
+	const n = parseDecimal(raw);
+	if (n === undefined) return '';
+	const text = formatDecimal(n);
+	return text === raw.trim() ? '' : text;
+}
+
+/** The message for a number refused as ambiguous ("1,234"), or '' when it is not that case. */
+export function ambiguousCommaProblem(raw: string): string {
+	const body = raw.trim().replace(/^[+-]/, '');
+	if (!AMBIGUOUS_COMMA.test(raw.trim())) return '';
+	const [whole, tail] = body.split(',');
+	return `Is that ${Number(whole)}${tail} or ${Number(whole)}.${tail}? Type it without the comma.`;
 }
 
 /** True for a row the card flags: confidence below 0.8, or none at all. */
@@ -205,12 +235,15 @@ function isRealDate(raw: string): boolean {
 export function rowProblem(row: TradeRow): string {
 	if (row.symbol.trim() === '') return 'Enter a symbol.';
 	const quantity = parseDecimal(row.quantity);
-	if (quantity === undefined || quantity <= 0) return 'Enter the number of shares.';
+	if (quantity === undefined || quantity <= 0)
+		return ambiguousCommaProblem(row.quantity) || 'Enter the number of shares.';
 	const price = parseDecimal(row.price);
-	if (price === undefined || price <= 0) return 'Enter the price.';
+	if (price === undefined || price <= 0)
+		return ambiguousCommaProblem(row.price) || 'Enter the price.';
 	if (!isRealDate(row.tradeDate)) return 'Enter the date.';
 	const fees = (row.fees ?? '').trim();
-	if (fees !== '' && (parseDecimal(fees) ?? -1) < 0) return 'Fees must be a number, or blank.';
+	if (fees !== '' && (parseDecimal(fees) ?? -1) < 0)
+		return ambiguousCommaProblem(fees) || 'Fees must be a number, or blank.';
 	return '';
 }
 

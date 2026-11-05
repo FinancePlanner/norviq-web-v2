@@ -859,16 +859,12 @@ html .muse-composer textarea:focus-visible {
   cursor: pointer;
 }
 
-.muse-attach:focus-within {
+.muse-attach:has(:focus-visible) {
   outline: 2px solid var(--color-tint);
 }
 
 .muse-attach-disabled {
   cursor: default;
-}
-
-.muse-attach-disabled,
-.muse-attach:disabled {
   opacity: 0.4;
 }
 

@@ -8,6 +8,7 @@
 	import X from '@lucide/svelte/icons/x';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import TextareaField from '#lib/components/norviq/TextareaField.svelte';
+	import { mergeRestored, settleComposer } from '../composer.js';
 	import { MAX_CHAT_IMAGES, ImageUnreadable, prepareChatImage } from '../images.js';
 	import type { MuseChat } from '../muse.svelte.js';
 	import { streamAssistantTurn } from '../stream.js';
@@ -46,16 +47,21 @@
 	let attachments = $state<Attachment[]>([]);
 	let preparing = $state(0);
 	let nextKey = 0;
-	const attachFull = $derived(attachments.length + preparing >= MAX_CHAT_IMAGES);
+	const attachFull = $derived(sending || attachments.length + preparing >= MAX_CHAT_IMAGES);
+
+	/** What was sent and not yet known to be stored; its thumbnails stay alive until then. */
+	let inFlight: Attachment[] = [];
 
 	const isImage = (file: File) => file.type.startsWith('image/');
 
-	function clearAttachments() {
-		for (const a of attachments) URL.revokeObjectURL(a.url);
-		attachments = [];
+	function revoke(list: Attachment[]) {
+		for (const a of list) URL.revokeObjectURL(a.url);
 	}
 
-	onDestroy(clearAttachments);
+	onDestroy(() => {
+		revoke(attachments);
+		revoke(inFlight);
+	});
 
 	function removeAttachment(key: number) {
 		const gone = attachments.find((a) => a.key === key);
@@ -65,7 +71,8 @@
 
 	async function addFiles(picked: File[]) {
 		const images = picked.filter(isImage);
-		if (!imagesEnabled || images.length === 0) return;
+		// Nothing is attached mid-turn: it would be dropped when the box is restored or cleared.
+		if (!imagesEnabled || sending || images.length === 0) return;
 		errorText = '';
 		const room = Math.max(MAX_CHAT_IMAGES - attachments.length - preparing, 0);
 		if (images.length > room) errorText = `Attach up to ${MAX_CHAT_IMAGES} images.`;
@@ -96,7 +103,7 @@
 
 	function onPaste(event: ClipboardEvent) {
 		const files = Array.from(event.clipboardData?.files ?? []).filter(isImage);
-		if (!imagesEnabled || files.length === 0) return;
+		if (!imagesEnabled || sending || files.length === 0) return;
 		event.preventDefault();
 		void addFiles(files);
 	}
@@ -104,12 +111,13 @@
 	const hasFiles = (event: DragEvent) => event.dataTransfer?.types.includes('Files') ?? false;
 
 	function onDragOver(event: DragEvent) {
-		if (imagesEnabled && hasFiles(event)) event.preventDefault();
+		if (imagesEnabled && !sending && hasFiles(event)) event.preventDefault();
 	}
 
 	function onDrop(event: DragEvent) {
 		if (!imagesEnabled || !hasFiles(event)) return;
 		event.preventDefault();
+		if (sending) return;
 		void addFiles(Array.from(event.dataTransfer?.files ?? []));
 	}
 
@@ -121,22 +129,34 @@
 		sending = true;
 		const body = new FormData(form);
 		for (const a of attachments) body.append('image', a.file, a.file.name);
+		const snapshot = { content, attachments };
+		inFlight = attachments;
+		let accepted = false;
 		try {
 			errorText = await streamAssistantTurn({
 				conversationId: vm.id,
 				body,
 				muse,
-				// Only the turn frame clears the composer: a refused image or a
-				// failed turn leaves the text and thumbnails to retry with.
-				onTurn: () => {
+				onAccepted: () => {
+					// The box clears as soon as the stream opens, as it always did.
+					accepted = true;
 					content = '';
-					clearAttachments();
-					return reload(vm.id);
-				}
+					attachments = [];
+				},
+				onTurn: () => reload(vm.id)
 			});
 		} finally {
 			sending = false;
 		}
+		const { restore, discard } = settleComposer(snapshot, { accepted, error: errorText });
+		if (restore) {
+			// The turn failed after the stream opened: the text and images come back.
+			const merged = mergeRestored(restore, { content, attachments });
+			content = merged.content;
+			attachments = merged.attachments;
+		}
+		revoke(discard);
+		inFlight = [];
 	}
 
 	const isComposer = (target: EventTarget | null) => target instanceof HTMLTextAreaElement;

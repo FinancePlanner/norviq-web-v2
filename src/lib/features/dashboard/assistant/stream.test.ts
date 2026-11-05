@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
 	IMAGE_TOO_LARGE,
+	PLAN_NOT_CONFIRMED,
 	TOO_MANY_REQUESTS,
 	UPGRADE_REQUIRED,
 	streamAssistantTurn
@@ -15,6 +16,7 @@ function run(response: Response) {
 		conversationId: 'c1',
 		body: new FormData(),
 		muse,
+		onAccepted: () => {},
 		onTurn: async () => {}
 	});
 }
@@ -28,8 +30,8 @@ describe('streamAssistantTurn errors', () => {
 	test('413 shows the image-too-large copy', async () => {
 		expect(await run(new Response('', { status: 413 }))).toBe(IMAGE_TOO_LARGE);
 	});
-	test('402 shows the upgrade copy', async () => {
-		expect(await run(new Response('', { status: 402 }))).toBe(UPGRADE_REQUIRED);
+	test('402 is neutral: it fires for text turns and failed plan lookups too', async () => {
+		expect(await run(new Response('', { status: 402 }))).toBe(PLAN_NOT_CONFIRMED);
 	});
 	test('429 has its own plain message', async () => {
 		expect(await run(new Response('', { status: 429 }))).toBe(TOO_MANY_REQUESTS);
@@ -73,6 +75,7 @@ describe('streamAssistantTurn errors', () => {
 			conversationId: 'c1',
 			body: new FormData(),
 			muse,
+			onAccepted: () => {},
 			onTurn: async () => {},
 			assign
 		});
@@ -81,49 +84,44 @@ describe('streamAssistantTurn errors', () => {
 	});
 });
 
-describe('the composer survives a failed turn', () => {
-	// The stream always opens before the turn runs, so image_rejected,
-	// upgrade_required and the generic frame all arrive after it opened.
-	// Nothing may report the message as taken until the turn frame arrives.
+describe('streamAssistantTurn and the composer', () => {
 	function runSpied(response: Response) {
 		vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
-		const accepted = vi.fn();
-		const turn = vi.fn(async () => {});
-		const options = {
+		const calls: string[] = [];
+		return streamAssistantTurn({
 			conversationId: 'c1',
 			body: new FormData(),
 			muse,
-			onAccepted: accepted,
-			onTurn: turn
-		};
-		return streamAssistantTurn(options).then((text) => ({ text, accepted, turn }));
+			onAccepted: () => calls.push('accepted'),
+			onTurn: async () => {
+				calls.push('turn');
+			}
+		}).then((text) => ({ text, calls }));
 	}
 
-	test.each([
-		[
-			'image_rejected',
-			'{"message":"Only JPEG, PNG, WebP and GIF images are supported.","code":"image_rejected"}'
-		],
-		['upgrade_required', '{"message":"Upgrade required.","code":"upgrade_required"}'],
-		['the generic frame', '{"message":"The assistant could not complete this turn."}']
-	])('an error frame (%s) does not clear the composer', async (_name, data) => {
-		const { text, accepted, turn } = await runSpied(
+	test('an error frame arrives after the stream opened, so the caller must restore', async () => {
+		const { text, calls } = await runSpied(
 			sse(
 				'event: started\ndata: {}\n\n',
-				`event: error\ndata: ${data}\n\n`,
+				'event: error\ndata: {"message":"Only JPEG, PNG, WebP and GIF images are supported.","code":"image_rejected"}\n\n',
 				'event: done\ndata: {}\n\n'
 			)
 		);
+		expect(calls).toEqual(['accepted']);
 		expect(text).not.toBe('');
-		expect(accepted).not.toHaveBeenCalled();
-		expect(turn).not.toHaveBeenCalled();
 	});
 
-	test('the turn frame hands over to onTurn exactly once', async () => {
-		const { text, turn } = await runSpied(
+	test('the turn frame follows the open, once', async () => {
+		const { text, calls } = await runSpied(
 			sse('event: started\ndata: {}\n\n', 'event: turn\ndata: {}\n\n', 'event: done\ndata: {}\n\n')
 		);
+		expect(calls).toEqual(['accepted', 'turn']);
 		expect(text).toBe('');
-		expect(turn).toHaveBeenCalledTimes(1);
+	});
+
+	test('a status failure never opens the stream', async () => {
+		const { text, calls } = await runSpied(new Response('', { status: 429 }));
+		expect(calls).toEqual([]);
+		expect(text).not.toBe('');
 	});
 });

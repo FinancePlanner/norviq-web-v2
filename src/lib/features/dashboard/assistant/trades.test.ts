@@ -1,7 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import {
 	isLowConfidence,
+	ambiguousCommaProblem,
+	formatDecimal,
 	listNameFromSummary,
+	savesAs,
 	parseDecimal,
 	parseTradesProposal,
 	rowProblem,
@@ -228,7 +231,7 @@ describe('parseDecimal never writes a wrong number', () => {
 		expect(parseDecimal('1,2345')).toBe(1.2345);
 	});
 	test('both marks need proper groups and a decimal part', () => {
-		for (const raw of ['1,2.3', '1.2.3,4', '12,34.5', '1.234.56,7', '1,234,567', '1,234.5,6']) {
+		for (const raw of ['1,2.3', '1.2.3,4', '12,34.5', '1.234.56,7', '1,234.5,6']) {
 			expect(parseDecimal(raw), raw).toBeUndefined();
 		}
 		expect(parseDecimal('1.234,56')).toBe(1234.56);
@@ -266,4 +269,134 @@ test('listNameFromSummary reads the list out of the backend summary', () => {
 	expect(listNameFromSummary('Record 1 buy in Main.')).toBe('Main');
 	expect(listNameFromSummary('Record 2 buys and 1 sell in My IBKR in EUR.')).toBe('My IBKR in EUR');
 	expect(listNameFromSummary('something else')).toBe('');
+});
+
+describe('parseDecimal is a whitelist', () => {
+	const NBSP = '\u00a0';
+	// Every input the reviewer showed being read wrongly.
+	const refused = [
+		'100\t150.25',
+		'1 5',
+		'12 34',
+		"1'5",
+		'1 2 3',
+		'1,234 5',
+		'01,234',
+		'001,500',
+		'0.123,45',
+		'0,123.45',
+		'1,234',
+		'12,345',
+		'1,000',
+		'999,999',
+		'1e3',
+		'Infinity',
+		'NaN',
+		'\uff11\uff12\uff13',
+		'',
+		'  ',
+		'abc',
+		'1,2,3',
+		'1.2.3',
+		'1,234.5,6',
+		`1${NBSP}5`,
+		'1  234',
+		'12 3456',
+		'1.234.5',
+		'--1',
+		'1,',
+		',',
+		'.',
+		'1 234 56'
+	];
+	test.each(refused)('refuses %j', (raw) => expect(parseDecimal(raw)).toBeUndefined());
+
+	const accepted: [string, number][] = [
+		['1 234', 1234],
+		["1'234", 1234],
+		[`1${NBSP}234`, 1234],
+		['.5', 0.5],
+		['5.', 5],
+		[',5', 0.5],
+		['0,123', 0.123],
+		['00,123', 0.123],
+		['1,5', 1.5],
+		['12,34', 12.34],
+		['1.234,56', 1234.56],
+		['1,234.56', 1234.56],
+		['1,234,567', 1234567],
+		['1.234.567', 1234567],
+		['1.000', 1],
+		['1.234', 1.234],
+		['100.5', 100.5],
+		['007', 7],
+		['1 234,5', 1234.5],
+		["1'234.5", 1234.5],
+		['1,234,567.5', 1234567.5],
+		[' 12 ', 12],
+		['-5', -5]
+	];
+	test.each(accepted)('reads %j as %d', (raw, n) => expect(parseDecimal(raw)).toBe(n));
+
+	// The grouped form is valid syntax, so a pasted "100 150.25" is read as one number. The
+	// card shows "Saves as 100150.25" under the cell.
+	test('a space group with a decimal part is read as grouping', () => {
+		expect(parseDecimal('100 150.25')).toBe(100150.25);
+		expect(savesAs('100 150.25')).toBe('100150.25');
+	});
+});
+
+describe('ambiguousCommaProblem', () => {
+	test('says why, with both readings', () => {
+		expect(ambiguousCommaProblem('1,234')).toBe(
+			'Is that 1234 or 1.234? Type it without the comma.'
+		);
+		expect(ambiguousCommaProblem('01,500')).toBe(
+			'Is that 1500 or 1.500? Type it without the comma.'
+		);
+	});
+	test('is empty for everything else', () => {
+		for (const raw of ['0,123', '1,5', '1.234', '', 'abc', '1,234.5']) {
+			expect(ambiguousCommaProblem(raw), raw).toBe('');
+		}
+	});
+	test('rowProblem uses it on shares, price and fees', () => {
+		const base = parseTradesProposal(args([row()]))!.rows[0];
+		for (const field of ['quantity', 'price', 'fees'] as const) {
+			const msg = rowProblem({ ...base, [field]: '1,234' });
+			expect(msg, field).toContain('Is that 1234 or 1.234?');
+		}
+	});
+});
+
+describe('savesAs', () => {
+	test('shows what will be sent only when it differs from what was typed', () => {
+		expect(savesAs('1.000')).toBe('1');
+		expect(savesAs('1,5')).toBe('1.5');
+		expect(savesAs('.5')).toBe('0.5');
+		expect(savesAs('1 234')).toBe('1234');
+		expect(savesAs('100.5')).toBe('');
+		expect(savesAs('12')).toBe('');
+		expect(savesAs(' 12 ')).toBe('');
+	});
+	test('is empty for blank and unreadable text', () => {
+		expect(savesAs('')).toBe('');
+		expect(savesAs('abc')).toBe('');
+		expect(savesAs('1,234')).toBe('');
+	});
+});
+
+describe('formatDecimal', () => {
+	test('never uses an exponent', () => {
+		expect(formatDecimal(5e-7)).toBe('0.0000005');
+		expect(formatDecimal(1e21)).toBe('1000000000000000000000');
+		expect(formatDecimal(1.5)).toBe('1.5');
+		expect(formatDecimal(100)).toBe('100');
+	});
+	test('a stored 5e-7 reads back and can be saved', () => {
+		const p = parseTradesProposal(args([row({ quantity: 5e-7 })]))!;
+		expect(p.rows[0].quantity).toBe('0.0000005');
+		expect(rowProblem(p.rows[0])).toBe('');
+		expect(tradesConfirmBody(p).trades[0]).toMatchObject({ quantity: 5e-7 });
+	});
 });

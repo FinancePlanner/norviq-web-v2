@@ -8,6 +8,7 @@
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import Icon from '#lib/components/norviq/tui/Icon.svelte';
 	import type { ActionOutcome, ActionRow, MessageRow } from '../types.js';
+	import { TRADES_UPGRADE } from '../trades.js';
 	import TradesCard from './TradesCard.svelte';
 	import WatchCard from './WatchCard.svelte';
 
@@ -28,6 +29,11 @@
 						? { Accept: 'application/json' }
 						: { Accept: 'application/json', 'Content-Type': 'application/json' }
 			});
+			if (res.status === 402) {
+				// requireFeature answers 402 for a plan that does not include this.
+				outcome = { kind: 'tradesError', id: action.id, message: TRADES_UPGRADE, rowErrors: [] };
+				return;
+			}
 			if (!res.ok) throw new Error(String(res.status));
 			outcome = (await res.json()) as ActionOutcome;
 		} catch {

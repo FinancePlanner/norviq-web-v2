@@ -98,17 +98,12 @@ describe('confirmTrades', () => {
 		expect(TRADES_EXPIRED).toBe('This review expired. Send the screenshot again.');
 	});
 
-	test('an upgrade refusal (403 upgrade_required, or 402) says Pro, not "try again"', async () => {
+	test('a 403 upgrade_required says Pro, not "try again"', async () => {
 		apiJSON.mockRejectedValueOnce(new FakeAPIError(403, 'Upgrade required.', 'upgrade_required'));
-		const a = await confirmTrades(event, 'a1', input);
-		apiJSON.mockRejectedValueOnce(new FakeAPIError(402, 'Payment required'));
-		const b = await confirmTrades(event, 'a1', input);
-		for (const out of [a, b]) {
-			expect(out).toMatchObject({
-				kind: 'tradesError',
-				message: 'Saving trades from a screenshot is part of Pro.'
-			});
-		}
+		expect(await confirmTrades(event, 'a1', input)).toMatchObject({
+			kind: 'tradesError',
+			message: 'Saving trades from a screenshot is part of Pro.'
+		});
 	});
 
 	test('any other failure keeps the card with a retry line', async () => {

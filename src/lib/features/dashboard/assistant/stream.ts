@@ -18,11 +18,12 @@ export interface StreamTurnOptions {
 	body: FormData;
 	muse: MuseChat;
 	/**
-	 * The `turn` frame: the message is stored. Clear the composer, then re-render
-	 * the conversation (Go's htmx.ajax swap). The composer is never cleared
-	 * earlier: the stream opens before the turn runs, so a refused image or a
-	 * failed turn arrives after it opened and the user's text must survive it.
+	 * The response is a stream: clear the composer (Go's form.reset()). The
+	 * stream opens before the turn runs, so an error frame can still follow;
+	 * the caller keeps a snapshot (composer.ts) to restore from.
 	 */
+	onAccepted: () => void;
+	/** The `turn` frame: re-render the conversation (Go's htmx.ajax swap). */
 	onTurn: () => Promise<void>;
 	/** Navigation hook, so tests need no window. */
 	assign?: (url: string) => void;
@@ -31,6 +32,8 @@ export interface StreamTurnOptions {
 const UNAVAILABLE = 'Assistant unavailable';
 export const IMAGE_TOO_LARGE = 'That image is too large.';
 export const TOO_MANY_REQUESTS = 'Too many requests. Wait a minute and try again.';
+/** The BFF's 402 also fires for text turns, and for a Pro user when the plan lookup fails. */
+export const PLAN_NOT_CONFIRMED = 'Your plan could not be confirmed. Try again in a moment.';
 export const UPGRADE_REQUIRED = 'Attaching images is part of Pro. Upgrade to use it.';
 
 /** The line to show for an `error` frame. Image refusals carry their real reason. */
@@ -60,7 +63,7 @@ export async function streamAssistantTurn(opts: StreamTurnOptions): Promise<stri
 			body: opts.body,
 			headers: { Accept: 'text/event-stream' }
 		});
-		if (response.status === 402) throw new Error(UPGRADE_REQUIRED);
+		if (response.status === 402) throw new Error(PLAN_NOT_CONFIRMED);
 		if (response.status === 413) throw new Error(IMAGE_TOO_LARGE);
 		if (response.status === 429) throw new Error(TOO_MANY_REQUESTS);
 		if (response.status === 403) {
@@ -76,6 +79,7 @@ export async function streamAssistantTurn(opts: StreamTurnOptions): Promise<stri
 			}
 		}
 		if (!response.ok || !response.body) throw new Error(UNAVAILABLE);
+		opts.onAccepted();
 		const reader = response.body.getReader();
 		const decoder = new TextDecoder();
 		let pending = '';

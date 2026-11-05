@@ -80,15 +80,6 @@ test('a body over the cap is refused with 413 before it is read', async () => {
 	expect(apiFetch).not.toHaveBeenCalled();
 });
 
-test('an upstream 402 reaches the reader as the upgrade refusal', async () => {
-	apiFetch.mockResolvedValue(new Response('{"code":"upgrade_required"}', { status: 402 }));
-	const form = new FormData();
-	form.set('content', 'hi');
-	const res = await call(form);
-	expect(res.status).toBe(403);
-	expect(await res.json()).toEqual({ code: 'upgrade_required' });
-});
-
 test('an upstream 403 upgrade_required (body has error, not reason) does too', async () => {
 	apiFetch.mockResolvedValue(
 		new Response('{"success":false,"code":"upgrade_required","error":"Upgrade required."}', {
