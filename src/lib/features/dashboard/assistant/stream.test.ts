@@ -190,3 +190,29 @@ describe('streamAssistantTurn and the composer', () => {
 		expect(text).not.toBe('');
 	});
 });
+
+describe('an expired conversation', () => {
+	test('a conversation_not_found frame calls onConversationGone and shows its message', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi
+				.fn()
+				.mockResolvedValue(
+					sse(
+						'event: error\ndata: {"message":"This conversation no longer exists.","code":"conversation_not_found"}\n\n'
+					)
+				)
+		);
+		const onConversationGone = vi.fn();
+		const text = await streamAssistantTurn({
+			conversationId: 'c1',
+			body: new FormData(),
+			muse,
+			onAccepted: () => {},
+			onTurn: async () => {},
+			onConversationGone
+		});
+		expect(onConversationGone).toHaveBeenCalledOnce();
+		expect(text).toBe('This conversation no longer exists.');
+	});
+});

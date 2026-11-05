@@ -30,6 +30,8 @@ export interface StreamTurnOptions {
 	 * card (AssistantPage), as the BFF's refusal does on a conversation load.
 	 */
 	onConsentRequired?: () => void;
+	/** An `error` frame with code conversation_not_found: the conversation expired or isn't this user's. */
+	onConversationGone?: () => void;
 	/** Navigation hook, so tests need no window. */
 	assign?: (url: string) => void;
 }
@@ -44,6 +46,7 @@ export const UPGRADE_REQUIRED = 'Attaching images is part of Pro. Upgrade to use
 
 /** The `/stream` error-frame code (lowercase, as iOS reads it). The 403 JSON refusals keep reason AI_CONSENT_REQUIRED. */
 export const CONSENT_REQUIRED_CODE = 'ai_consent_required';
+export const CONVERSATION_NOT_FOUND_CODE = 'conversation_not_found';
 
 /** The line to show for an `error` frame. Image refusals carry their real reason. */
 export function errorFrameText(data: Record<string, unknown>): string {
@@ -116,6 +119,7 @@ export async function streamAssistantTurn(opts: StreamTurnOptions): Promise<stri
 					if (kind === 'error') {
 						const data = parseData(dataLine);
 						if (data.code === CONSENT_REQUIRED_CODE) opts.onConsentRequired?.();
+						if (data.code === CONVERSATION_NOT_FOUND_CODE) opts.onConversationGone?.();
 						throw new Error(errorFrameText(data));
 					}
 					if (kind === 'turn') {
