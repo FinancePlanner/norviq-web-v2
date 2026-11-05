@@ -5,11 +5,14 @@
 	// survives closing the card and its answer waits for the next opening.
 	import { onDestroy } from 'svelte';
 	import { page } from '$app/state';
+	import Paperclip from '@lucide/svelte/icons/paperclip';
 	import X from '@lucide/svelte/icons/x';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import TextareaField from '#lib/components/norviq/TextareaField.svelte';
 	import VigIcon from '#lib/components/norviq/VigIcon.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
+	import { ImageAttachments, type Attachment } from '../attachments.svelte.js';
+	import { MAX_CHAT_IMAGES } from '../images.js';
 	import { MuseChat } from '../muse.svelte.js';
 	import {
 		createQuickConversation,
@@ -25,7 +28,11 @@
 	import QuickAssistantStar from './QuickAssistantStar.svelte';
 
 	const muse = new MuseChat();
-	onDestroy(() => muse.destroy());
+	const images = new ImageAttachments({ tooMany: t('Attach up to %d images.', MAX_CHAT_IMAGES) });
+	onDestroy(() => {
+		muse.destroy();
+		images.clear();
+	});
 
 	let dialog = $state<HTMLDialogElement | null>(null);
 	let draft = $state('');
@@ -36,6 +43,17 @@
 	let errorText = $state('');
 	/** Q answered and stored the reply, but reading it back failed. */
 	let replyMissing = $state(false);
+	/** The backend takes images on a turn, as full Q decides it. Asked on first opening. */
+	let imagesEnabled = $state(false);
+	let imagesAsked = false;
+	/** Images on the question in flight, shown under it until the turn settles. */
+	let sentImages = $state<Attachment[]>([]);
+	const canAttach = $derived(imagesEnabled && !sending && !images.full);
+	const hasExchange = $derived(
+		question !== '' || exchange.length > 0 || errorText !== '' || images.error !== ''
+	);
+	/** The trades review card needs a table's width. */
+	const wide = $derived(exchange.some((message) => message.action?.trades));
 
 	const showsButton = $derived(quickQAllowedOn(page.url.pathname));
 	const canOpenInQ = $derived(conversationId !== '' && (exchange.length > 0 || replyMissing));
@@ -47,6 +65,7 @@
 	});
 
 	function resetCard() {
+		images.clear();
 		draft = '';
 		question = '';
 		exchange = [];
@@ -56,6 +75,49 @@
 
 	function onClosed() {
 		if (!sending) resetCard();
+	}
+
+	function open() {
+		dialog?.showModal();
+		if (imagesAsked) return;
+		imagesAsked = true;
+		fetch('/assistant/quick', { headers: { Accept: 'application/json' } })
+			.then((res) => (res.ok ? (res.json() as Promise<{ imagesEnabled?: boolean }>) : null))
+			.then((body) => {
+				imagesEnabled = body?.imagesEnabled === true;
+			})
+			.catch(() => {
+				// Asked again on the next opening.
+				imagesAsked = false;
+			});
+	}
+
+	function onPick(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const files = Array.from(input.files ?? []);
+		input.value = '';
+		if (canAttach) void images.add(files);
+	}
+
+	function onPaste(event: ClipboardEvent) {
+		const files = Array.from(event.clipboardData?.files ?? []).filter((f) =>
+			f.type.startsWith('image/')
+		);
+		if (!imagesEnabled || files.length === 0) return;
+		event.preventDefault();
+		if (!sending) void images.add(files);
+	}
+
+	const hasFiles = (event: DragEvent) => event.dataTransfer?.types.includes('Files') ?? false;
+
+	function onDragOver(event: DragEvent) {
+		if (imagesEnabled && hasFiles(event)) event.preventDefault();
+	}
+
+	function onDrop(event: DragEvent) {
+		if (!imagesEnabled || !hasFiles(event)) return;
+		event.preventDefault();
+		if (!sending) void images.add(Array.from(event.dataTransfer?.files ?? []));
 	}
 
 	function closeOnBackdrop(event: MouseEvent) {
@@ -81,7 +143,7 @@
 		conversationId = id;
 	}
 
-	async function runTurn(content: string, mayRecreate: boolean): Promise<string> {
+	async function runTurn(content: string, files: File[], mayRecreate: boolean): Promise<string> {
 		let id = storedConversation(localStorage);
 		if (!id) {
 			id = await createQuickConversation(fetch, (url) => window.location.assign(url));
@@ -90,6 +152,7 @@
 		}
 		const body = new FormData();
 		body.set('content', content);
+		for (const file of files) body.append('image', file, file.name);
 		const conversation = id;
 		let gone = false;
 		const failure = await streamAssistantTurn({
@@ -104,7 +167,7 @@
 		if (gone) {
 			// Conversations expire after 30 days without a message.
 			forgetConversation(localStorage);
-			if (mayRecreate) return runTurn(content, false);
+			if (mayRecreate) return runTurn(content, files, false);
 		}
 		return failure;
 	}
@@ -112,23 +175,36 @@
 	async function send(event: SubmitEvent) {
 		event.preventDefault();
 		const content = draft.trim();
-		if (content === '' || sending) return;
+		if ((content === '' && images.items.length === 0) || sending || images.preparing > 0) return;
 		sending = true;
+		images.error = '';
+		const sent = images.take();
+		sentImages = sent;
 		errorText = '';
 		replyMissing = false;
 		exchange = [];
 		question = content;
 		draft = '';
 		try {
-			errorText = await runTurn(content, true);
+			errorText = await runTurn(
+				content,
+				sent.map((a) => a.file),
+				true
+			);
 		} catch (error) {
 			muse.fail();
 			errorText = error instanceof Error ? error.message : 'Assistant unavailable';
 		} finally {
 			sending = false;
 		}
+		sentImages = [];
 		// A failed question comes back to the box, unless a new one was typed meanwhile.
-		if (errorText !== '' && draft === '') draft = content;
+		if (errorText !== '') {
+			if (draft === '') draft = content;
+			images.restore(sent);
+		} else {
+			images.release(sent);
+		}
 	}
 
 	function sendOnEnter(event: KeyboardEvent) {
@@ -140,12 +216,7 @@
 </script>
 
 {#if showsButton}
-	<button
-		type="button"
-		class="quick-q-button"
-		aria-label={t('Ask Q')}
-		onclick={() => dialog?.showModal()}
-	>
+	<button type="button" class="quick-q-button" aria-label={t('Ask Q')} onclick={open}>
 		<QuickAssistantStar />
 	</button>
 {/if}
@@ -154,6 +225,7 @@
 <dialog
 	bind:this={dialog}
 	class="quick-q-card glass-card"
+	class:quick-q-wide={wide}
 	aria-labelledby="quick-q-title"
 	onclose={onClosed}
 	onclick={closeOnBackdrop}
@@ -172,7 +244,7 @@
 			</NativeButton>
 		</header>
 
-		{#if question !== '' || exchange.length > 0 || errorText !== ''}
+		{#if hasExchange}
 			<div class="quick-q-exchange" aria-live="polite">
 				{#if exchange.length > 0}
 					{#each exchange as message (message.id)}
@@ -182,6 +254,15 @@
 					<div class="muse-message user">
 						<div class="muse-bubble"><div class="muse-text">{question}</div></div>
 					</div>
+					{#if sentImages.length > 0}
+						<ul class="muse-attachments quick-q-sent" aria-label={t('Attached images')}>
+							{#each sentImages as attachment (attachment.key)}
+								<li class="muse-attachment">
+									<img src={attachment.url} alt={t('Attached screenshot')} />
+								</li>
+							{/each}
+						</ul>
+					{/if}
 				{/if}
 				{#if sending}
 					<p class="quick-q-status" role="status">
@@ -194,22 +275,73 @@
 			</div>
 		{/if}
 
-		<p class="muse-composer-error" role="alert" hidden={errorText === ''}>{errorText}</p>
+		<p class="muse-composer-error" role="alert" hidden={errorText === '' && images.error === ''}>
+			{errorText || images.error}
+		</p>
 
-		<form class="quick-q-form" onsubmit={send} onkeydown={sendOnEnter}>
+		{#if images.items.length > 0 || images.preparing > 0}
+			<ul class="muse-attachments" aria-label={t('Attached images')}>
+				{#each images.items as attachment (attachment.key)}
+					<li class="muse-attachment">
+						<img src={attachment.url} alt={t('Attached screenshot')} />
+						<button
+							type="button"
+							class="muse-attachment-remove"
+							aria-label={t('Remove image')}
+							disabled={sending}
+							onclick={() => images.remove(attachment.key)}
+						>
+							<X class="size-3" />
+						</button>
+					</li>
+				{/each}
+				{#if images.preparing > 0}
+					<li class="muse-attachment-pending" role="status">{t('Preparing…')}</li>
+				{/if}
+			</ul>
+		{/if}
+
+		<form
+			class="quick-q-form"
+			onsubmit={send}
+			onkeydown={sendOnEnter}
+			onpaste={onPaste}
+			ondragover={onDragOver}
+			ondrop={onDrop}
+		>
 			<TextareaField
 				name="content"
 				bind:value={draft}
 				rows={2}
 				placeholder={t('Ask about your finances')}
-				required
+				required={images.items.length === 0}
 				maxlength={12000}
 				autofocus
 				aria-label={t('Ask Q')}
 				wrapperClass="min-w-0 flex-1"
 			/>
-			<NativeButton type="submit" class="btn-primary px-4" disabled={sending}
-				>{t('Send')}</NativeButton
+			{#if imagesEnabled}
+				<label
+					class="muse-attach"
+					class:muse-attach-disabled={!canAttach}
+					title={t('Attach images')}
+				>
+					<input
+						type="file"
+						class="sr-only"
+						accept="image/png,image/jpeg,image/webp,image/gif"
+						multiple
+						disabled={!canAttach}
+						aria-label={t('Attach images')}
+						onchange={onPick}
+					/>
+					<Paperclip class="size-5" />
+				</label>
+			{/if}
+			<NativeButton
+				type="submit"
+				class="btn-primary px-4"
+				disabled={sending || images.preparing > 0}>{t('Send')}</NativeButton
 			>
 		</form>
 		<p class="muse-privacy">
@@ -249,6 +381,13 @@
 		color: var(--foreground);
 		background: var(--color-card-bg);
 	}
+	.quick-q-card.quick-q-wide {
+		width: min(48rem, calc(100vw - 1.5rem));
+		max-height: min(88dvh, 52rem);
+	}
+	.quick-q-sent {
+		align-self: flex-end;
+	}
 	.quick-q-card:not([open]) {
 		display: none;
 	}
@@ -285,6 +424,23 @@
 		gap: 0.75rem;
 		min-height: 0;
 		overflow-y: auto;
+	}
+	/* Flex items grow to their content: without these a wide trades table pushes
+	   the bubble past the card's edge, where it is clipped. */
+	.quick-q-exchange :global(.muse-message),
+	.quick-q-exchange :global(.muse-bubble) {
+		min-width: 0;
+	}
+	.quick-q-exchange :global(.muse-message) {
+		width: 100%;
+	}
+	/* The bubble breaks words anywhere, which stacks a narrow table's headers a
+	   letter per line. The table scrolls sideways in its own wrapper instead. */
+	.quick-q-exchange :global(.muse-bubble table) {
+		overflow-wrap: normal;
+	}
+	.quick-q-exchange :global(.muse-bubble th) {
+		white-space: nowrap;
 	}
 	.quick-q-status {
 		font-size: 0.875rem;

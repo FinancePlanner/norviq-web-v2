@@ -12,8 +12,9 @@ vi.mock('#lib/features/dashboard/assistant/assistant.server.js', () => ({
 	aiConsentRefusal: () => refusal()
 }));
 
-const { POST } = await import('./+server.js');
+const { GET, POST } = await import('./+server.js');
 const call = () => POST({} as Parameters<typeof POST>[0]);
+const ask = () => GET({} as Parameters<typeof GET>[0]);
 
 beforeEach(() => {
 	apiJSON.mockReset();
@@ -48,4 +49,20 @@ test('a missing consent is refused before anything is created', async () => {
 test('a failed create answers 502', async () => {
 	apiJSON.mockRejectedValue(new Error('down'));
 	expect((await call()).status).toBe(502);
+});
+
+test('reports images on when the backend has them on', async () => {
+	apiJSON.mockResolvedValue({ imagesEnabled: true });
+	expect(await (await ask()).json()).toEqual({ imagesEnabled: true });
+	expect(apiJSON.mock.calls[0].slice(1)).toEqual(['GET', '/v1/ai/assistant/preferences']);
+});
+
+test('a preferences outage leaves images off', async () => {
+	apiJSON.mockRejectedValue(new Error('down'));
+	expect(await (await ask()).json()).toEqual({ imagesEnabled: false });
+});
+
+test('the images check sits behind the plan gate too', async () => {
+	requireFeature.mockRejectedValue(new Error('402'));
+	await expect(ask()).rejects.toThrow('402');
 });
