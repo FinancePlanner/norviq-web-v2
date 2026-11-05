@@ -2,6 +2,8 @@
 // the server loaders (assistant.server.ts) and the Svelte components, and
 // sent as JSON by the fragment endpoints that replace the Go HTML fragments.
 
+import type { RowError, TradesProposal } from './trades.js';
+
 export interface PageViewModel {
 	conversations: ConversationRow[];
 	active: ConversationViewModel | null;
@@ -53,6 +55,15 @@ export interface ActionRow {
 	status: string;
 	/** Set for a create_watch action: rendered as the standing-task card. */
 	watch?: WatchProposalRow | null;
+	/** Set for a record_trades action: rendered as the trades card. */
+	trades?: TradesProposal | null;
+	/** The user's portfolio lists, for the trades card's picker. Empty when they could not be loaded. */
+	portfolioLists?: PortfolioListOption[];
+}
+
+export interface PortfolioListOption {
+	id: string;
+	name: string;
 }
 
 /** A standing task the assistant offers to create. */
@@ -102,7 +113,11 @@ export interface ActionResultViewModel {
 export type ActionOutcome =
 	| { kind: 'result'; vm: ActionResultViewModel }
 	| { kind: 'watchResult'; vm: WatchResultViewModel }
-	| { kind: 'watchCard'; id: string; watch: WatchProposalRow; error: string };
+	| { kind: 'watchCard'; id: string; watch: WatchProposalRow; error: string }
+	/** The trades save was refused and the card is still open. rowErrors index the submitted trades. */
+	| { kind: 'tradesError'; id: string; message: string; rowErrors: RowError[] }
+	/** The trades card can no longer be saved (answered, expired, or settled by a failed save). */
+	| { kind: 'tradesExpired'; id: string; message: string };
 
 /** The JSON refusal a script caller gets without AI consent (RenderAIConsentRequired). */
 export interface AIConsentRefusal {

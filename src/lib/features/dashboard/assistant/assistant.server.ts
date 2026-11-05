@@ -6,12 +6,14 @@ import {
 	aiConsentReturnPath,
 	hasAIConsent
 } from '#lib/features/dashboard/ai-consent.server.js';
+import { parseTradesProposal, type RowError } from './trades.js';
 import type {
 	ActionOutcome,
 	ActionRow,
 	ConversationViewModel,
 	MessageRow,
 	PageViewModel,
+	PortfolioListOption,
 	WatchProposalRow,
 	WatchResultViewModel
 } from './types.js';
@@ -29,6 +31,7 @@ type AIUsage = Schemas['AIAssistantUsageResponse'];
 type AITip = Schemas['AITipResponse'];
 type AITurn = Schemas['AIAssistantTurnResponse'];
 type AIPreferences = Schemas['AIAssistantPreferencesResponse'];
+type PortfolioList = Schemas['PortfolioListResponse'];
 
 /** api.PositionMemoListItem (internal/api/position_memos.go). */
 interface PositionMemoListItem {
@@ -203,6 +206,7 @@ export async function loadAssistantConversation(
 		attachConversationMemos(event, id, vm.messages),
 		attachPendingActions(event, id, source, vm.messages)
 	]);
+	await attachPortfolioLists(event, vm.messages);
 	return vm;
 }
 
@@ -230,6 +234,25 @@ async function attachPendingActions(
 		return;
 	}
 	attachActionsToMessages(conversationID, source, messages, actions);
+}
+
+/**
+ * attachPortfolioLists gives each trades card the lists its picker offers. One
+ * request, and only when a card needs it; a failure leaves the card without a
+ * picker, saving to the list it was proposed for.
+ */
+export async function attachPortfolioLists(event: RequestEvent, messages: MessageRow[]) {
+	const cards = messages.flatMap((m) => (m.action?.trades ? [m.action] : []));
+	if (cards.length === 0) return;
+	let lists: PortfolioListOption[];
+	try {
+		const rows = (await apiJSON<PortfolioList[]>(event, 'GET', '/v1/portfolio/lists')) ?? [];
+		lists = rows.map((l) => ({ id: l.id, name: l.name }));
+	} catch (err) {
+		console.warn('portfolio lists load failed', { status: statusOf(err), err });
+		return;
+	}
+	for (const card of cards) card.portfolioLists = lists;
 }
 
 /**
@@ -351,6 +374,8 @@ function assistantCaption(message: AIMessage): string {
 
 /** The pending-action tool name of a proposed standing task. */
 const CREATE_WATCH_TOOL = 'create_watch';
+/** The pending-action tool name of a batch of screenshot trades. */
+const RECORD_TRADES_TOOL = 'record_trades';
 
 export function mapAssistantAction(action: AIPendingAction): ActionRow {
 	const row: ActionRow = {
@@ -361,6 +386,7 @@ export function mapAssistantAction(action: AIPendingAction): ActionRow {
 	};
 	if (action.toolName === CREATE_WATCH_TOOL)
 		row.watch = watchProposalFromArguments(action.arguments, action.summary);
+	if (action.toolName === RECORD_TRADES_TOOL) row.trades = parseTradesProposal(action.arguments);
 	return row;
 }
 
@@ -433,6 +459,7 @@ export async function assistantTurn(
 	}
 	const messages = [message];
 	await attachConversationMemos(event, id, messages);
+	await attachPortfolioLists(event, messages);
 	return messages[0];
 }
 
@@ -461,6 +488,96 @@ export async function confirmAction(
 		kind: 'result',
 		vm: { id, success, message: success ? confirmed!.message : 'The action could not be applied.' }
 	};
+}
+
+export const TRADES_EXPIRED = 'This review expired. Send the screenshot again.';
+export const TRADES_CLOSED =
+	'Those trades were not saved and this review is closed. Send the screenshot again.';
+const TRADES_RETRY = 'That did not go through. Try again.';
+const TRADES_UPGRADE = 'Saving trades from a screenshot is part of Pro.';
+
+/** The reviewed rows a card posts: the confirm body, validated down to what we forward. */
+export interface TradesConfirmInput {
+	portfolioListId?: string;
+	trades: unknown[];
+}
+
+export function readTradesConfirmInput(raw: unknown): TradesConfirmInput | null {
+	if (typeof raw !== 'object' || raw === null) return null;
+	const { portfolioListId, trades } = raw as { portfolioListId?: unknown; trades?: unknown };
+	if (!Array.isArray(trades)) return null;
+	return {
+		trades,
+		portfolioListId: typeof portfolioListId === 'string' ? portfolioListId : undefined
+	};
+}
+
+function rowErrorsOf(body: unknown): RowError[] {
+	const raw = (body as { rowErrors?: unknown } | null)?.rowErrors;
+	if (!Array.isArray(raw)) return [];
+	return raw.flatMap((e): RowError[] => {
+		if (typeof e !== 'object' || e === null) return [];
+		const { index, code, message } = e as Record<string, unknown>;
+		if (typeof index !== 'number') return [];
+		return [
+			{
+				index,
+				code: typeof code === 'string' ? code : '',
+				message: typeof message === 'string' ? message : ''
+			}
+		];
+	});
+}
+
+/** Whether the action is still waiting for an answer. Null when that cannot be told. */
+async function stillPending(event: RequestEvent, id: string): Promise<boolean | null> {
+	try {
+		const actions =
+			(await apiJSON<AIPendingAction[]>(event, 'GET', '/v1/ai/assistant/actions')) ?? [];
+		return actions.some((a) => a.id.toLowerCase() === id.toLowerCase() && a.status === 'pending');
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * AssistantConfirmAction for a trades card: forwards the reviewed rows and maps
+ * the answer. A 422 keeps the card open with the errors on their rows, unless
+ * the save failed after the claim, which settles the action: then the card is
+ * closed, since a retry could only get a 409. A 409 is an expired card.
+ */
+export async function confirmTrades(
+	event: RequestEvent,
+	id: string,
+	input: TradesConfirmInput
+): Promise<ActionOutcome> {
+	try {
+		const confirmed = await apiJSON<AIConfirmedAction>(
+			event,
+			'POST',
+			`/v1/ai/assistant/actions/${id}/confirm`,
+			input
+		);
+		return { kind: 'result', vm: { id, success: true, message: confirmed.message } };
+	} catch (err) {
+		const status = statusOf(err);
+		if (status === 409) return { kind: 'tradesExpired', id, message: TRADES_EXPIRED };
+		if (status === 422 && isAPIError(err)) {
+			if ((await stillPending(event, id)) === false)
+				return { kind: 'tradesExpired', id, message: TRADES_CLOSED };
+			return {
+				kind: 'tradesError',
+				id,
+				message: err.reason || TRADES_RETRY,
+				rowErrors: rowErrorsOf(err.body)
+			};
+		}
+		const message =
+			status === 403 && isAPIError(err) && err.code === 'upgrade_required'
+				? TRADES_UPGRADE
+				: TRADES_RETRY;
+		return { kind: 'tradesError', id, message, rowErrors: [] };
+	}
 }
 
 /**

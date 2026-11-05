@@ -8,12 +8,40 @@
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import Icon from '#lib/components/norviq/tui/Icon.svelte';
 	import type { ActionOutcome, ActionRow, MessageRow } from '../types.js';
+	import TradesCard from './TradesCard.svelte';
 	import WatchCard from './WatchCard.svelte';
 
 	let { action, onreply }: { action: ActionRow; onreply: (message: MessageRow) => void } = $props();
 
 	let outcome = $state<ActionOutcome | null>(null);
 	let busy = $state(false);
+
+	/** The trades card posts its reviewed rows as JSON; cancel carries nothing. */
+	async function answerTrades(verb: 'confirm' | 'cancel', rows?: unknown) {
+		busy = true;
+		try {
+			const res = await fetch(`/assistant/actions/${action.id}/${verb}`, {
+				method: 'POST',
+				body: rows === undefined ? new URLSearchParams() : JSON.stringify(rows),
+				headers:
+					rows === undefined
+						? { Accept: 'application/json' }
+						: { Accept: 'application/json', 'Content-Type': 'application/json' }
+			});
+			if (!res.ok) throw new Error(String(res.status));
+			outcome = (await res.json()) as ActionOutcome;
+		} catch {
+			// Keep the card, and say so: a silent failure reads as a dead button.
+			outcome = {
+				kind: 'tradesError',
+				id: action.id,
+				message: 'That did not go through. Try again.',
+				rowErrors: []
+			};
+		} finally {
+			busy = false;
+		}
+	}
 
 	async function answer(verb: 'confirm' | 'cancel', watch: ActionRow['watch']) {
 		const body = new URLSearchParams();
@@ -83,6 +111,21 @@
 		errorMessage={card.error}
 		{busy}
 		onanswer={(verb) => answer(verb, card.watch)}
+	/>
+{:else if outcome?.kind === 'tradesExpired'}
+	<div id={'assistant-action-' + outcome.id} class="assistant-action">
+		<p class="assistant-kicker"><span>Not applied</span></p>
+		<p class="mt-2 text-sm font-semibold">{outcome.message}</p>
+	</div>
+{:else if action.trades}
+	<TradesCard
+		actionID={action.id}
+		trades={action.trades}
+		lists={action.portfolioLists}
+		{busy}
+		error={outcome?.kind === 'tradesError' ? outcome : null}
+		onsave={(body) => answerTrades('confirm', body)}
+		oncancel={() => answerTrades('cancel')}
 	/>
 {:else if action.watch}
 	{@const watch = action.watch}
