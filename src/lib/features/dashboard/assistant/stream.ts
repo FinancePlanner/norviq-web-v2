@@ -26,7 +26,7 @@ export interface StreamTurnOptions {
 	/** The `turn` frame: re-render the conversation (Go's htmx.ajax swap). */
 	onTurn: () => Promise<void>;
 	/**
-	 * An `error` frame with code AI_CONSENT_REQUIRED: put up the inline consent
+	 * An `error` frame with code ai_consent_required: put up the inline consent
 	 * card (AssistantPage), as the BFF's refusal does on a conversation load.
 	 */
 	onConsentRequired?: () => void;
@@ -42,9 +42,10 @@ export const PLAN_NOT_CONFIRMED = 'Your plan could not be confirmed. Try again i
 export const IMAGES_BUSY = 'Too many large images right now. Try again in a moment.';
 export const UPGRADE_REQUIRED = 'Attaching images is part of Pro. Upgrade to use it.';
 
-/** The line to show for an `error` frame. Image refusals carry their real reason. */
-export const CONSENT_REQUIRED_CODE = 'AI_CONSENT_REQUIRED';
+/** The `/stream` error-frame code (lowercase, as iOS reads it). The 403 JSON refusals keep reason AI_CONSENT_REQUIRED. */
+export const CONSENT_REQUIRED_CODE = 'ai_consent_required';
 
+/** The line to show for an `error` frame. Image refusals carry their real reason. */
 export function errorFrameText(data: Record<string, unknown>): string {
 	if (data.code === 'upgrade_required') return UPGRADE_REQUIRED;
 	return String(data.message || UNAVAILABLE);

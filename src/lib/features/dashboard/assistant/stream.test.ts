@@ -87,8 +87,8 @@ describe('streamAssistantTurn errors', () => {
 
 describe('consent and busy', () => {
 	const consentFrame =
-		'event: error\ndata: {"message":"Allow AI data sharing to use the assistant.","code":"AI_CONSENT_REQUIRED"}\n\n';
-	test('an AI_CONSENT_REQUIRED frame raises the consent card and still returns the error', async () => {
+		'event: error\ndata: {"message":"Allow AI data sharing to use the assistant.","code":"ai_consent_required"}\n\n';
+	test('an ai_consent_required frame raises the consent card and still returns the error', async () => {
 		vi.stubGlobal(
 			'fetch',
 			vi.fn().mockResolvedValue(sse('event: started\ndata: {}\n\n', consentFrame))
