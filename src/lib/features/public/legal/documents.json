@@ -108,7 +108,7 @@
 	},
 	"privacy": {
 		"title": "Privacy Policy",
-		"lastUpdated": "15 October 2026",
+		"lastUpdated": "5 November 2026",
 		"intro": "Norviq is a personal finance and portfolio app for iPhone and the web. This policy explains who is responsible for your data, what we collect, why, how long we keep it, who helps us process it, and the rights you have.",
 		"sections": [
 			{
@@ -302,9 +302,10 @@
 					"Norviq's AI features (the Q assistant, insight cards, summaries, position memos, proactive tips and AI-assisted imports) only run after you give explicit consent. You can withdraw it at any time: on the web in Settings, AI providers; in the iPhone app in the assistant's Assistant settings. AI features then stop and nothing more is sent.",
 					"If you use version 1.4.0 or earlier of the iPhone app, AI features you open there run as before until you update; the update asks for your consent. Background AI features (tips, alerts, Telegram) require consent regardless.",
 					"AI requests go to Anthropic (Claude Haiku, called directly) and OpenRouter, which routes requests to Anthropic models and, for receipt and screenshot text extraction, to OpenAI (gpt-4o-mini). Requests sent through OpenRouter ask providers not to collect or retain the data. Anthropic does not use data sent through its commercial API to train its models.",
-					"Your name, email address and user ID are not sent to AI providers. Only the financial context a feature needs is sent, as listed below.",
+					"An image you attach to Q is sent only for that one message, to Anthropic and OpenRouter (or to your own provider if you connected a working key of your own). Norviq does not store the image. What Q reads from it, such as its reply or trades you save, is kept like any other message.",
+					"Your name, email address and user ID are not sent to AI providers. Only the financial context a feature needs is sent, as listed below. The exception is an image you attach to Q: it is sent as it is, so anything visible in it, such as your name or an account number, goes with it.",
 					"If you connect your own key for Anthropic, OpenAI or another OpenAI-compatible provider, assistant requests go to that provider account under your agreement with that provider.",
-					"AI output is informational. Norviq makes no decisions based solely on automated processing that have legal or similarly significant effects on you (GDPR Art. 22); any change the assistant proposes waits for you to confirm it.",
+					"AI output is informational. Norviq makes no decisions based solely on automated processing that have legal or similarly significant effects on you (GDPR Art. 22). Changes from a message with an image wait for you to confirm them. Q can apply other changes directly, except destructive ones, which wait for you.",
 					"Voice input is transcribed on Norviq's own server. No third party receives your recordings."
 				],
 				"table": {
@@ -317,7 +318,7 @@
 						],
 						[
 							"Q assistant (web, iPhone and Telegram)",
-							"Your messages, plus a financial overview, recent expenses (title, amount, merchant, notes), budgets, crypto holdings, watchlist, trades and goals"
+							"Your messages and any images you attach, plus a financial overview, recent expenses (title, amount, merchant, notes), budgets, crypto holdings, watchlist, trades and goals"
 						],
 						[
 							"Why it moved and screen summaries",

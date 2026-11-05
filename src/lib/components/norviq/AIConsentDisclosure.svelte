@@ -9,17 +9,20 @@
 			<strong class="text-foreground">What is sent:</strong> only the context a feature needs, such as
 			portfolio totals and top holdings for insights, or your recent expenses, budgets, holdings, watchlist
 			and goals when you ask the assistant. Receipts, screenshots and spreadsheets you import are sent
-			to be read.
+			to be read. Images you attach to the assistant are sent too, for that message only. The images are
+			not stored; what Q reads from them is kept like any other message.
 		</li>
 		<li>
-			<strong class="text-foreground">What is not sent:</strong> your name, email address or user ID.
+			<strong class="text-foreground">What is not sent:</strong> your name, email address or user ID,
+			unless they are visible in an image you attach.
 		</li>
 		<li>
 			<strong class="text-foreground">Who receives it:</strong> Anthropic (Claude) and OpenRouter, which
 			routes requests to Anthropic, and to OpenAI to read receipts and screenshots.
 		</li>
 		<li>
-			<strong class="text-foreground">Training:</strong> your data is not used to train AI models.
+			<strong class="text-foreground">Training:</strong> your data is not used to train AI models by Norviq's
+			providers.
 		</li>
 		<li>You can withdraw consent at any time in Settings, AI providers.</li>
 	</ul>
