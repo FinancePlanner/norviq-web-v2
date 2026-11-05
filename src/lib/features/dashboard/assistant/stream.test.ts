@@ -143,9 +143,9 @@ describe('consent and busy', () => {
 		expect(text).toBe(IMAGES_BUSY);
 		expect(onAccepted).not.toHaveBeenCalled();
 	});
-	test('a 503 shows its own body text, and the same plain text when the body is empty', async () => {
+	test('a 503 shows the relayed text, and the generic line when the body is empty', async () => {
 		expect(await run(new Response('Busy for now.', { status: 503 }))).toBe('Busy for now.');
-		expect(await run(new Response('', { status: 503 }))).toBe(IMAGES_BUSY);
+		expect(await run(new Response('', { status: 503 }))).toBe('Assistant unavailable');
 	});
 });
 

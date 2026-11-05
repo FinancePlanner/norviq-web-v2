@@ -75,9 +75,9 @@ export async function streamAssistantTurn(opts: StreamTurnOptions): Promise<stri
 		if (response.status === 413) throw new Error(IMAGE_TOO_LARGE);
 		if (response.status === 429) throw new Error(TOO_MANY_REQUESTS);
 		if (response.status === 503) {
-			// All large-image slots are taken: the BFF relays the backend's reason as text.
+			// All large-image slots are taken: the BFF relays only the backend's JSON reason, as text.
 			const reason = (await response.text().catch(() => '')).trim();
-			throw new Error(reason || IMAGES_BUSY);
+			throw new Error(reason || UNAVAILABLE);
 		}
 		if (response.status === 403) {
 			// AI consent was withdrawn (perhaps on another device): go to the

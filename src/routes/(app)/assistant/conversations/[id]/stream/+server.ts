@@ -83,18 +83,17 @@ export const POST: RequestHandler = async (event) => {
 		return text('Assistant is temporarily unavailable', { status: 403 });
 	}
 	if (upstream.status === 503) {
-		// Large-image slots are full: pass the backend's reason on as plain text.
+		// Only the backend's own JSON reason is shown (large-image slots full).
+		// A proxy's page, an empty body or {"error":true} stay the generic line.
 		const raw = (await upstream.text().catch(() => '')).slice(0, 4096);
-		let reason = raw.trim();
+		let reason = '';
 		try {
-			const parsed = JSON.parse(raw) as { reason?: unknown; error?: unknown };
-			reason = String(parsed.reason ?? parsed.error ?? '').trim();
+			const parsed = JSON.parse(raw) as { reason?: unknown };
+			if (typeof parsed.reason === 'string') reason = parsed.reason.trim().slice(0, 300);
 		} catch {
-			/* plain text already */
+			/* not JSON */
 		}
-		return text(reason || 'Too many large images right now. Try again in a moment.', {
-			status: 503
-		});
+		return text(reason || 'Assistant unavailable', { status: 503 });
 	}
 	const headers = new Headers();
 	for (const name of RELAYED) {

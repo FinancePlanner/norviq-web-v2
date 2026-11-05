@@ -89,13 +89,17 @@
 		</aside>
 		{#if slot.kind === 'conversation'}
 			{#key slot.vm}
+				{@const conversationId = slot.vm.id}
 				<Workspace
 					vm={slot.vm}
 					{muse}
 					imagesEnabled={vm.imagesEnabled}
 					reload={loadWorkspace}
 					onConsentRequired={() => {
-						slot = { kind: 'consent', next: '/assistant' };
+						slot = {
+							kind: 'consent',
+							next: '/assistant?conversation=' + encodeURIComponent(conversationId)
+						};
 						muse.rerender();
 					}}
 				/>

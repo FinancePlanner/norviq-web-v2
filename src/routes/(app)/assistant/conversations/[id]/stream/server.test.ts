@@ -93,13 +93,19 @@ test('an upstream 403 upgrade_required (body has error, not reason) does too', a
 });
 
 test.each([
-	['{"success":false,"reason":"Too many large images right now. Try again in a moment."}'],
-	['Too many large images right now. Try again in a moment.']
-])('an upstream 503 is passed on as a 503 with the reason as text', async (upstreamBody) => {
+	[
+		'{"success":false,"reason":"Too many large images right now. Try again in a moment."}',
+		'Too many large images right now. Try again in a moment.'
+	],
+	['<html><body>503 Service Unavailable</body></html>', 'Assistant unavailable'],
+	['Service Unavailable', 'Assistant unavailable'],
+	['', 'Assistant unavailable'],
+	['{"error":true}', 'Assistant unavailable']
+])('an upstream 503 body %j relays as %j', async (upstreamBody, expected) => {
 	apiFetch.mockResolvedValue(new Response(upstreamBody, { status: 503 }));
 	const form = new FormData();
 	form.set('content', 'hi');
 	const res = await call(form);
 	expect(res.status).toBe(503);
-	expect(await res.text()).toBe('Too many large images right now. Try again in a moment.');
+	expect(await res.text()).toBe(expected);
 });
