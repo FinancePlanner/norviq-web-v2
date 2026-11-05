@@ -145,8 +145,8 @@ const PLAIN = /^(\d+|\d*[.,]\d+|\d+\.)$/;
 const GROUPED = [
 	/^([1-9]\d{0,2}(?:,\d{3})+)(?:\.(\d+))?$/,
 	/^([1-9]\d{0,2}(?:\.\d{3})+)(?:,(\d+))?$/,
-	/^([1-9]\d{0,2}(?: \d{3})+)(?:[.,](\d+))?$/,
-	/^([1-9]\d{0,2}(?:\u00a0\d{3})+)(?:[.,](\d+))?$/,
+	/^([1-9]\d{0,2}(?: \d{3})+)(?:,(\d+))?$/,
+	/^([1-9]\d{0,2}(?:\u00a0\d{3})+)(?:,(\d+))?$/,
 	/^([1-9]\d{0,2}(?:'\d{3})+)(?:[.,](\d+))?$/
 ];
 
@@ -192,6 +192,19 @@ export function savesAs(raw: string): string {
 	return text === raw.trim() ? '' : text;
 }
 
+const SPACE_GROUP_DOT = /^[+-]?[1-9]\d{0,2}([ \u00a0]\d{3})+\.\d+$/;
+
+/** "100 150.25": spaces group digits only before a comma decimal, so this may be two cells pasted together. */
+export function spaceBeforeDotProblem(raw: string): string {
+	return SPACE_GROUP_DOT.test(raw.trim())
+		? 'Spaces and a decimal point do not go together here. Type it without the spaces.'
+		: '';
+}
+
+/** Why a typed number was refused as unclear, or '' when that is not the reason. */
+export const unclearNumberProblem = (raw: string): string =>
+	ambiguousCommaProblem(raw) || spaceBeforeDotProblem(raw);
+
 /** The message for a number refused as ambiguous ("1,234"), or '' when it is not that case. */
 export function ambiguousCommaProblem(raw: string): string {
 	const body = raw.trim().replace(/^[+-]/, '');
@@ -236,14 +249,14 @@ export function rowProblem(row: TradeRow): string {
 	if (row.symbol.trim() === '') return 'Enter a symbol.';
 	const quantity = parseDecimal(row.quantity);
 	if (quantity === undefined || quantity <= 0)
-		return ambiguousCommaProblem(row.quantity) || 'Enter the number of shares.';
+		return unclearNumberProblem(row.quantity) || 'Enter the number of shares.';
 	const price = parseDecimal(row.price);
 	if (price === undefined || price <= 0)
-		return ambiguousCommaProblem(row.price) || 'Enter the price.';
+		return unclearNumberProblem(row.price) || 'Enter the price.';
 	if (!isRealDate(row.tradeDate)) return 'Enter the date.';
 	const fees = (row.fees ?? '').trim();
 	if (fees !== '' && (parseDecimal(fees) ?? -1) < 0)
-		return ambiguousCommaProblem(fees) || 'Fees must be a number, or blank.';
+		return unclearNumberProblem(fees) || 'Fees must be a number, or blank.';
 	return '';
 }
 

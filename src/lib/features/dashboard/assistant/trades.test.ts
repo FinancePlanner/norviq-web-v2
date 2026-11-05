@@ -5,6 +5,7 @@ import {
 	formatDecimal,
 	listNameFromSummary,
 	savesAs,
+	spaceBeforeDotProblem,
 	parseDecimal,
 	parseTradesProposal,
 	rowProblem,
@@ -338,11 +339,26 @@ describe('parseDecimal is a whitelist', () => {
 	];
 	test.each(accepted)('reads %j as %d', (raw, n) => expect(parseDecimal(raw)).toBe(n));
 
-	// The grouped form is valid syntax, so a pasted "100 150.25" is read as one number. The
-	// card shows "Saves as 100150.25" under the cell.
-	test('a space group with a decimal part is read as grouping', () => {
-		expect(parseDecimal('100 150.25')).toBe(100150.25);
-		expect(savesAs('100 150.25')).toBe('100150.25');
+	// R20: spaces group digits only before a comma decimal. A space group followed by a dot
+	// may be two pasted cells, so it is refused with its own message.
+	test('a space or NBSP group followed by a dot decimal is refused', () => {
+		for (const raw of ['100 150.25', `100${NBSP}150.25`, '1 234.5']) {
+			expect(parseDecimal(raw), raw).toBeUndefined();
+			expect(spaceBeforeDotProblem(raw), raw).toContain('Type it without the spaces');
+		}
+		expect(savesAs('100 150.25')).toBe('');
+	});
+	test('the locales that group with spaces, apostrophes or commas keep working', () => {
+		expect(parseDecimal('1 234,56')).toBe(1234.56);
+		expect(parseDecimal(`1${NBSP}234,56`)).toBe(1234.56);
+		expect(parseDecimal("1'234.56")).toBe(1234.56);
+		expect(parseDecimal('1 234')).toBe(1234);
+		expect(spaceBeforeDotProblem('1 234,56')).toBe('');
+		expect(spaceBeforeDotProblem('100.5')).toBe('');
+	});
+	test('rowProblem says why', () => {
+		const base = parseTradesProposal(args([row()]))!.rows[0];
+		expect(rowProblem({ ...base, price: '100 150.25' })).toContain('Type it without the spaces');
 	});
 });
 
