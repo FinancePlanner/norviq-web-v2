@@ -133,6 +133,7 @@
 	<TradesCard
 		actionID={action.id}
 		summary={action.summary}
+		expiresAt={action.expiresAt}
 		trades={action.trades}
 		lists={action.portfolioLists}
 		{busy}

@@ -288,6 +288,13 @@ export function keptRows(p: TradesProposal): TradeRow[] {
 	return p.rows.filter((r) => r.keep && canBeKept(r));
 }
 
+/** Shown while at least one row that would be saved is a sell. */
+export const SELL_TAX_NOTE = 'Sells update realized P&L, not yet your annual tax figures.';
+
+export function showsSellTaxNote(p: TradesProposal): boolean {
+	return keptRows(p).some((r) => r.side === 'sell');
+}
+
 /** Positions of the sent rows among p.rows: submitted index i is row keptIndexes(p)[i]. */
 export function keptIndexes(p: TradesProposal): number[] {
 	const out: number[] = [];

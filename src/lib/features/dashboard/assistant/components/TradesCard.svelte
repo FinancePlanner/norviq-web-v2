@@ -11,6 +11,8 @@
 		canBeKept,
 		isLowConfidence,
 		keptRows,
+		SELL_TAX_NOTE,
+		showsSellTaxNote,
 		placeRowErrors,
 		rowProblem,
 		listNameFromSummary,
@@ -29,6 +31,7 @@
 	let {
 		actionID,
 		summary,
+		expiresAt,
 		trades,
 		lists = [],
 		busy,
@@ -39,6 +42,8 @@
 		actionID: string;
 		/** The action summary ("Record 2 buys in Main."), the only place that names the stored list. */
 		summary: string;
+		/** When the proposal lapses, as the generic card shows it. */
+		expiresAt: string;
 		trades: TradesProposal;
 		lists?: PortfolioListOption[];
 		busy: boolean;
@@ -93,6 +98,7 @@
 			? untrack(() => placeRowErrors(proposal, error.rowErrors))
 			: { byRow: new Map<number, string[]>(), unplaced: [] as string[] }
 	);
+	const showTaxNote = $derived(showsSellTaxNote(proposal));
 	const skipped = $derived(skippedRowsText(trades.skippedRows));
 
 	function save() {
@@ -105,6 +111,7 @@
 	<p class="mt-1 text-xs text-muted-foreground">
 		Check each row against your screenshot. Only ticked rows are saved.
 	</p>
+	<p class="mt-1 text-xs text-muted-foreground">Expires {expiresAt}</p>
 
 	{#if options.length > 1}
 		<label class="mt-3 flex items-center gap-2 text-sm">
@@ -296,6 +303,10 @@
 
 	{#if skipped}
 		<p class="mt-2 text-xs text-muted-foreground">{skipped}</p>
+	{/if}
+
+	{#if showTaxNote}
+		<p class="mt-2 text-xs text-muted-foreground">{SELL_TAX_NOTE}</p>
 	{/if}
 
 	{#if error}

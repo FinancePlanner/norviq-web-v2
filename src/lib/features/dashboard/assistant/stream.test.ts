@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
 	IMAGE_TOO_LARGE,
+	IMAGES_BUSY,
 	PLAN_NOT_CONFIRMED,
 	TOO_MANY_REQUESTS,
 	UPGRADE_REQUIRED,
@@ -81,6 +82,70 @@ describe('streamAssistantTurn errors', () => {
 		});
 		expect(text).toBe('');
 		expect(assign).toHaveBeenCalledWith('/consent');
+	});
+});
+
+describe('consent and busy', () => {
+	const consentFrame =
+		'event: error\ndata: {"message":"Allow AI data sharing to use the assistant.","code":"AI_CONSENT_REQUIRED"}\n\n';
+	test('an AI_CONSENT_REQUIRED frame raises the consent card and still returns the error', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(sse('event: started\ndata: {}\n\n', consentFrame))
+		);
+		const calls: string[] = [];
+		const text = await streamAssistantTurn({
+			conversationId: 'c1',
+			body: new FormData(),
+			muse,
+			onAccepted: () => calls.push('accepted'),
+			onTurn: async () => {},
+			onConsentRequired: () => calls.push('consent')
+		});
+		expect(calls).toEqual(['accepted', 'consent']);
+		expect(text).toBe('Allow AI data sharing to use the assistant.');
+	});
+	test('other error frames do not raise the consent card', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi
+				.fn()
+				.mockResolvedValue(sse('event: error\ndata: {"message":"x","code":"image_rejected"}\n\n'))
+		);
+		const onConsentRequired = vi.fn();
+		await streamAssistantTurn({
+			conversationId: 'c1',
+			body: new FormData(),
+			muse,
+			onAccepted: () => {},
+			onTurn: async () => {},
+			onConsentRequired
+		});
+		expect(onConsentRequired).not.toHaveBeenCalled();
+	});
+	test('a 503 shows the backend reason and never opens the stream', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi
+				.fn()
+				.mockResolvedValue(
+					new Response('Too many large images right now. Try again in a moment.', { status: 503 })
+				)
+		);
+		const onAccepted = vi.fn();
+		const text = await streamAssistantTurn({
+			conversationId: 'c1',
+			body: new FormData(),
+			muse,
+			onAccepted,
+			onTurn: async () => {}
+		});
+		expect(text).toBe(IMAGES_BUSY);
+		expect(onAccepted).not.toHaveBeenCalled();
+	});
+	test('a 503 shows its own body text, and the same plain text when the body is empty', async () => {
+		expect(await run(new Response('Busy for now.', { status: 503 }))).toBe('Busy for now.');
+		expect(await run(new Response('', { status: 503 }))).toBe(IMAGES_BUSY);
 	});
 });
 

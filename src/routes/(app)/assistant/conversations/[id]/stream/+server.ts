@@ -82,6 +82,20 @@ export const POST: RequestHandler = async (event) => {
 		}
 		return text('Assistant is temporarily unavailable', { status: 403 });
 	}
+	if (upstream.status === 503) {
+		// Large-image slots are full: pass the backend's reason on as plain text.
+		const raw = (await upstream.text().catch(() => '')).slice(0, 4096);
+		let reason = raw.trim();
+		try {
+			const parsed = JSON.parse(raw) as { reason?: unknown; error?: unknown };
+			reason = String(parsed.reason ?? parsed.error ?? '').trim();
+		} catch {
+			/* plain text already */
+		}
+		return text(reason || 'Too many large images right now. Try again in a moment.', {
+			status: 503
+		});
+	}
 	const headers = new Headers();
 	for (const name of RELAYED) {
 		const value = upstream.headers.get(name);

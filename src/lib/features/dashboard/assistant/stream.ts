@@ -6,8 +6,8 @@
 // Frames: `started`, `tool` {label}, `error` {message, code?}, `turn` (the reply
 // is stored; reload the transcript), `done`.
 //
-// Statuses that are not frames: 429 (rate limit) and 413 (body too large) come
-// from middleware before the stream opens. Everything the turn itself refuses
+// Statuses that are not frames: 429 (rate limit), 413 (body too large) and 503
+// (large-image slots full) come from middleware before the stream opens. Everything the turn itself refuses
 // (a bad image, a missing plan) is an `error` frame inside a 200 stream.
 
 import type { MuseChat } from './muse.svelte.js';
@@ -25,6 +25,11 @@ export interface StreamTurnOptions {
 	onAccepted: () => void;
 	/** The `turn` frame: re-render the conversation (Go's htmx.ajax swap). */
 	onTurn: () => Promise<void>;
+	/**
+	 * An `error` frame with code AI_CONSENT_REQUIRED: put up the inline consent
+	 * card (AssistantPage), as the BFF's refusal does on a conversation load.
+	 */
+	onConsentRequired?: () => void;
 	/** Navigation hook, so tests need no window. */
 	assign?: (url: string) => void;
 }
@@ -34,9 +39,12 @@ export const IMAGE_TOO_LARGE = 'That image is too large.';
 export const TOO_MANY_REQUESTS = 'Too many requests. Wait a minute and try again.';
 /** The BFF's 402 also fires for text turns, and for a Pro user when the plan lookup fails. */
 export const PLAN_NOT_CONFIRMED = 'Your plan could not be confirmed. Try again in a moment.';
+export const IMAGES_BUSY = 'Too many large images right now. Try again in a moment.';
 export const UPGRADE_REQUIRED = 'Attaching images is part of Pro. Upgrade to use it.';
 
 /** The line to show for an `error` frame. Image refusals carry their real reason. */
+export const CONSENT_REQUIRED_CODE = 'AI_CONSENT_REQUIRED';
+
 export function errorFrameText(data: Record<string, unknown>): string {
 	if (data.code === 'upgrade_required') return UPGRADE_REQUIRED;
 	return String(data.message || UNAVAILABLE);
@@ -66,6 +74,11 @@ export async function streamAssistantTurn(opts: StreamTurnOptions): Promise<stri
 		if (response.status === 402) throw new Error(PLAN_NOT_CONFIRMED);
 		if (response.status === 413) throw new Error(IMAGE_TOO_LARGE);
 		if (response.status === 429) throw new Error(TOO_MANY_REQUESTS);
+		if (response.status === 503) {
+			// All large-image slots are taken: the BFF relays the backend's reason as text.
+			const reason = (await response.text().catch(() => '')).trim();
+			throw new Error(reason || IMAGES_BUSY);
+		}
 		if (response.status === 403) {
 			// AI consent was withdrawn (perhaps on another device): go to the
 			// consent page rather than show a generic failure.
@@ -99,7 +112,11 @@ export async function streamAssistantTurn(opts: StreamTurnOptions): Promise<stri
 					const kind = eventLine ? eventLine.slice(6).trim() : '';
 					if (kind === 'started') muse.begin();
 					if (kind === 'tool') muse.tool(parseData(dataLine).label);
-					if (kind === 'error') throw new Error(errorFrameText(parseData(dataLine)));
+					if (kind === 'error') {
+						const data = parseData(dataLine);
+						if (data.code === CONSENT_REQUIRED_CODE) opts.onConsentRequired?.();
+						throw new Error(errorFrameText(data));
+					}
 					if (kind === 'turn') {
 						await opts.onTurn();
 						answered = true;

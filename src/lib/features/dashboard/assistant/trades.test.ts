@@ -12,6 +12,7 @@ import {
 	rowProblem,
 	placeRowErrors,
 	skippedRowsText,
+	showsSellTaxNote,
 	SYNCED_COPY,
 	tradesConfirmBody,
 	type TradesProposal
@@ -455,5 +456,25 @@ describe('cellHint', () => {
 		expect(cellHint('1.50', '5')).toEqual({ text: 'Saves as 1.5', warn: false });
 		// 1.000 looks like a dot thousands group, so it is the warning, not the plain line.
 		expect(cellHint('1.000', '5')).toEqual({ text: 'Saves as 1, not 1000', warn: true });
+	});
+});
+
+describe('showsSellTaxNote', () => {
+	const withSides = (...rows: Array<['buy' | 'sell', boolean]>): TradesProposal => {
+		const p = parseTradesProposal(args(rows.map(() => row())))!;
+		rows.forEach(([side, keep], i) => {
+			p.rows[i].side = side;
+			p.rows[i].keep = keep;
+		});
+		return p;
+	};
+	test('shown with a kept sell', () => {
+		expect(showsSellTaxNote(withSides(['buy', true], ['sell', true]))).toBe(true);
+	});
+	test('hidden when the only sell is unticked', () => {
+		expect(showsSellTaxNote(withSides(['buy', true], ['sell', false]))).toBe(false);
+	});
+	test('hidden with only buys', () => {
+		expect(showsSellTaxNote(withSides(['buy', true], ['buy', true]))).toBe(false);
 	});
 });

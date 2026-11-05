@@ -20,7 +20,8 @@
 		vm,
 		muse,
 		imagesEnabled = false,
-		reload
+		reload,
+		onConsentRequired
 	}: {
 		vm: ConversationViewModel;
 		muse: MuseChat;
@@ -28,6 +29,8 @@
 		imagesEnabled?: boolean;
 		/** Swaps the workspace for a fresh render of this conversation. */
 		reload: (id: string) => Promise<void>;
+		/** The stream refused for want of AI consent: the page shows the consent card. */
+		onConsentRequired?: () => void;
 	} = $props();
 
 	// The workspace is keyed on vm, so these start from it and are owned here.
@@ -140,6 +143,7 @@
 				conversationId: vm.id,
 				body,
 				muse,
+				onConsentRequired,
 				onAccepted: () => {
 					// The box clears as soon as the stream opens, as it always did.
 					accepted = true;
