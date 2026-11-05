@@ -232,23 +232,11 @@
 					>
 				</p>
 			</div>
-			<!-- Raster crop of the approved artwork, cut clear of its ticker and chart
-			     panels (their numbers are invented). Never wider than half the source. -->
-			<figure class="hero-portrait">
-				<img
-					src="/static/brand/precision/vig-thinking.webp"
-					srcset="/static/brand/precision/vig-thinking-280.webp 222w, /static/brand/precision/vig-thinking.webp 445w"
-					sizes="(min-width: 1024px) 222px, 140px"
-					width="445"
-					height="560"
-					alt="Vig, the Norviq lynx, studying a plan with a hand at the chin"
-					fetchpriority="high"
-				/>
-			</figure>
 		</div>
 	</section>
-	<!-- Today's market brief, the same card signed-in users get on the dashboard.
-	     Collapses (landing.css) when the endpoint has no brief. -->
+	<!-- Today's market brief, the same card signed-in users get on the dashboard:
+	     the hero's picture of the product, with real data. Collapses (landing.css)
+	     when the endpoint has no brief. -->
 	<section
 		class="landing-section landing-market-brief"
 		data-landing-section="market-brief"
