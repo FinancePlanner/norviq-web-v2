@@ -11,18 +11,22 @@ export interface ComposerState<T> {
 
 /**
  * Decides what to do with a snapshot once streamAssistantTurn has returned.
- * `accepted` is whether the stream opened (so the box was cleared) and `error`
- * is the line it returned ('' when the turn was answered).
+ * `accepted` is whether the stream opened (so the box was cleared), `answered`
+ * is whether the `turn` frame arrived (the message is stored), and `error` is
+ * the line it returned ('' when the turn was answered).
  *
  *   not accepted           nothing was cleared: nothing to restore, nothing to discard
+ *   answered               stored, even if something failed after the turn frame
+ *                          (a reload): discard the thumbnails, restore nothing
  *   accepted, error        restore the snapshot; its thumbnails stay in use
- *   accepted, no error     the message is stored: discard the snapshot's thumbnails
+ *   accepted, no error     discard the snapshot's thumbnails
  */
 export function settleComposer<T>(
 	snapshot: ComposerState<T>,
-	turn: { accepted: boolean; error: string }
+	turn: { accepted: boolean; answered: boolean; error: string }
 ): { restore: ComposerState<T> | null; discard: T[] } {
 	if (!turn.accepted) return { restore: null, discard: [] };
+	if (turn.answered) return { restore: null, discard: snapshot.attachments };
 	if (turn.error !== '') return { restore: snapshot, discard: [] };
 	return { restore: null, discard: snapshot.attachments };
 }

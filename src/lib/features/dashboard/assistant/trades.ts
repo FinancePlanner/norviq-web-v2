@@ -205,6 +205,28 @@ export function spaceBeforeDotProblem(raw: string): string {
 export const unclearNumberProblem = (raw: string): string =>
 	ambiguousCommaProblem(raw) || spaceBeforeDotProblem(raw);
 
+const THOUSANDS_LOOKALIKE = /^[1-9]\d{0,2}\.\d{3}$/;
+
+/**
+ * A hint under a numeric cell, or null. An edited cell that looks like a dot
+ * thousands group ("1.234") gets a warning, because it saves as 1.234 and a
+ * user whose country groups with dots may mean 1234. Fractional values are real,
+ * so it is only a warning. A stored value (the cell as it came from the backend)
+ * stays quiet. Otherwise it is the plain "Saves as <n>" when that differs from
+ * what was typed.
+ */
+export function cellHint(
+	raw: string,
+	stored: string | undefined
+): { text: string; warn: boolean } | null {
+	const typed = raw.trim();
+	if (typed !== (stored ?? '').trim() && THOUSANDS_LOOKALIKE.test(typed)) {
+		return { text: `Saves as ${typed}, not ${typed.replace('.', '')}`, warn: true };
+	}
+	const text = savesAs(raw);
+	return text ? { text: `Saves as ${text}`, warn: false } : null;
+}
+
 /** The message for a number refused as ambiguous ("1,234"), or '' when it is not that case. */
 export function ambiguousCommaProblem(raw: string): string {
 	const body = raw.trim().replace(/^[+-]/, '');

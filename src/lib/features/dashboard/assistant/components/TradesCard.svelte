@@ -16,7 +16,7 @@
 		listNameFromSummary,
 		formatDecimal,
 		parseDecimal,
-		savesAs,
+		cellHint,
 		skippedRowsText,
 		SYNCED_COPY,
 		tradesConfirmBody,
@@ -148,6 +148,9 @@
 					{#each rows as row, i (i)}
 						{@const recorded = !canBeKept(row)}
 						{@const rowErrors = placed.byRow.get(i) ?? []}
+						{@const fHint = cellHint(row.fees ?? '', trades.rows[i]?.fees)}
+						{@const pHint = cellHint(row.price ?? '', trades.rows[i]?.price)}
+						{@const qHint = cellHint(row.quantity ?? '', trades.rows[i]?.quantity)}
 						<tr
 							class={isLowConfidence(row) || rowErrors.length > 0
 								? 'bg-[var(--color-warning)]/5'
@@ -191,9 +194,14 @@
 									aria-label="Shares"
 									disabled={recorded}
 								/>
-								{#if savesAs(row.quantity ?? '')}
-									<p class="mt-0.5 text-xs text-muted-foreground">
-										Saves as {savesAs(row.quantity ?? '')}
+								{#if qHint}
+									<p
+										class={[
+											'mt-0.5 text-xs',
+											qHint.warn ? 'text-[var(--color-warning)]' : 'text-muted-foreground'
+										]}
+									>
+										{qHint.text}
 									</p>
 								{/if}
 							</td>
@@ -207,9 +215,14 @@
 									aria-label="Price"
 									disabled={recorded}
 								/>
-								{#if savesAs(row.price ?? '')}
-									<p class="mt-0.5 text-xs text-muted-foreground">
-										Saves as {savesAs(row.price ?? '')}
+								{#if pHint}
+									<p
+										class={[
+											'mt-0.5 text-xs',
+											pHint.warn ? 'text-[var(--color-warning)]' : 'text-muted-foreground'
+										]}
+									>
+										{pHint.text}
 									</p>
 								{/if}
 							</td>
@@ -243,9 +256,14 @@
 									aria-label="Fees"
 									disabled={recorded}
 								/>
-								{#if savesAs(row.fees ?? '')}
-									<p class="mt-0.5 text-xs text-muted-foreground">
-										Saves as {savesAs(row.fees ?? '')}
+								{#if fHint}
+									<p
+										class={[
+											'mt-0.5 text-xs',
+											fHint.warn ? 'text-[var(--color-warning)]' : 'text-muted-foreground'
+										]}
+									>
+										{fHint.text}
 									</p>
 								{/if}
 							</td>

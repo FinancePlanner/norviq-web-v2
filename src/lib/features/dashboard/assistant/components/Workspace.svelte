@@ -36,6 +36,8 @@
 	// svelte-ignore state_referenced_locally
 	let content = $state(vm.seed);
 	let sending = $state(false);
+	/** The stream opened, so the box was cleared and typing is safe again. */
+	let accepted = $state(false);
 	let errorText = $state('');
 
 	/** Downscaled files waiting to go with the next message, each with a thumbnail URL. */
@@ -111,7 +113,7 @@
 	const hasFiles = (event: DragEvent) => event.dataTransfer?.types.includes('Files') ?? false;
 
 	function onDragOver(event: DragEvent) {
-		if (imagesEnabled && !sending && hasFiles(event)) event.preventDefault();
+		if (imagesEnabled && hasFiles(event)) event.preventDefault();
 	}
 
 	function onDrop(event: DragEvent) {
@@ -131,7 +133,8 @@
 		for (const a of attachments) body.append('image', a.file, a.file.name);
 		const snapshot = { content, attachments };
 		inFlight = attachments;
-		let accepted = false;
+		let answered = false;
+		accepted = false;
 		try {
 			errorText = await streamAssistantTurn({
 				conversationId: vm.id,
@@ -143,12 +146,15 @@
 					content = '';
 					attachments = [];
 				},
-				onTurn: () => reload(vm.id)
+				onTurn: () => {
+					answered = true;
+					return reload(vm.id);
+				}
 			});
 		} finally {
 			sending = false;
 		}
-		const { restore, discard } = settleComposer(snapshot, { accepted, error: errorText });
+		const { restore, discard } = settleComposer(snapshot, { accepted, answered, error: errorText });
 		if (restore) {
 			// The turn failed after the stream opened: the text and images come back.
 			const merged = mergeRestored(restore, { content, attachments });
@@ -194,6 +200,7 @@
 							type="button"
 							class="muse-attachment-remove"
 							aria-label="Remove image"
+							disabled={sending}
 							onclick={() => removeAttachment(attachment.key)}
 						>
 							<X class="size-3" />
@@ -216,6 +223,7 @@
 				bind:value={content}
 				placeholder="Ask about your spending, budget, portfolio, or goals…"
 				required={attachments.length === 0}
+				readonly={sending && !accepted}
 				maxlength={12000}
 				autofocus={vm.seed !== ''}
 				aria-label="Message Q"

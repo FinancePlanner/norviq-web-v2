@@ -4,6 +4,7 @@ import {
 	ambiguousCommaProblem,
 	formatDecimal,
 	listNameFromSummary,
+	cellHint,
 	savesAs,
 	spaceBeforeDotProblem,
 	parseDecimal,
@@ -414,5 +415,33 @@ describe('formatDecimal', () => {
 		expect(p.rows[0].quantity).toBe('0.0000005');
 		expect(rowProblem(p.rows[0])).toBe('');
 		expect(tradesConfirmBody(p).trades[0]).toMatchObject({ quantity: 5e-7 });
+	});
+});
+
+describe('cellHint', () => {
+	test('an edited cell that looks like a dot thousands group is warned about', () => {
+		for (const raw of ['1.234', '12.345', '999.999']) {
+			expect(cellHint(raw, '5')).toEqual({
+				text: `Saves as ${raw}, not ${raw.replace('.', '')}`,
+				warn: true
+			});
+		}
+		expect(cellHint('1.234', '5')?.text).toBe('Saves as 1.234, not 1234');
+	});
+	test('a stored 1.234 shows nothing until it is edited', () => {
+		expect(cellHint('1.234', '1.234')).toBeNull();
+		expect(cellHint(' 1.234 ', '1.234')).toBeNull();
+		expect(cellHint('1.234', undefined)?.warn).toBe(true);
+	});
+	test('other shapes are not warned about', () => {
+		for (const raw of ['0.123', '1.23', '1.2345', '1234.567', '100']) {
+			expect(cellHint(raw, '5'), raw).toBeNull();
+		}
+	});
+	test('otherwise it is the plain saves-as line', () => {
+		expect(cellHint('1,5', '5')).toEqual({ text: 'Saves as 1.5', warn: false });
+		expect(cellHint('1.50', '5')).toEqual({ text: 'Saves as 1.5', warn: false });
+		// 1.000 looks like a dot thousands group, so it is the warning, not the plain line.
+		expect(cellHint('1.000', '5')?.warn).toBe(true);
 	});
 });
