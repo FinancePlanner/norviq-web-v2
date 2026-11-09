@@ -1344,15 +1344,6 @@ html .muse-composer textarea:focus-visible {
   margin-top: 0.75rem;
 }
 
-.auth-brand-portrait {
-  width: 13.875rem;
-  height: auto;
-  margin-top: 2.5rem;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: var(--panel-shadow);
-}
-
 /* Grid item, not a flex item: .vigil-auth-shell caps this track at 28rem/448px,
  * so the old lg:max-w-[520px] could never bind and lg:flex-shrink-0 meant
  * nothing. Both were dropped rather than "fixed" — the 28rem track is what

@@ -21,12 +21,19 @@
 	display: none;
 }
 
+/* Straight under the hero, so the product is in the first screen. */
+.landing-market-brief {
+	padding-top: 0;
+}
+
 /* ---------------------------------------------------------------------------
- * Hero (2026-10-30, Precision identity): copy beside a framed portrait of Vig.
+ * Hero (2026-11-05): copy only, centred, with the live market brief straight
+ * below it as the picture of the product.
  *
- * Replaced the fanned wall of sample cards, whose prices and balances were
- * invented. The portrait is a raster crop, so it never renders wider than half
- * its 445 px source (the brand rule against upscaling on 2x screens).
+ * 2026-10-30 put a framed raster portrait of Vig beside the copy, replacing a
+ * fanned wall of sample cards whose prices and balances were invented. The
+ * owner judged the portrait a cropped avatar, not professional, and chose the
+ * product over the mascot. Vig stays inside the app.
  * ------------------------------------------------------------------------- */
 
 .landing-hero-v3 {
@@ -58,44 +65,6 @@
 	gap: 2.5rem;
 	max-width: 68rem;
 	margin-inline: auto;
-}
-
-.hero-portrait {
-	width: 8.75rem;
-	margin: 0;
-}
-
-.hero-portrait img {
-	display: block;
-	width: 100%;
-	height: auto;
-	aspect-ratio: 445 / 560;
-	border: 1px solid var(--border);
-	border-radius: 16px;
-	box-shadow: var(--panel-shadow);
-}
-
-@media (min-width: 1024px) {
-	.hero-layout {
-		grid-template-columns: minmax(0, 1fr) auto;
-		align-items: center;
-		justify-items: start;
-		gap: 4rem;
-		text-align: left;
-	}
-
-	.hero-layout .hero-copy {
-		align-items: flex-start;
-		margin-inline: 0;
-	}
-
-	.hero-layout .hero-web-cta {
-		justify-content: flex-start;
-	}
-
-	.hero-portrait {
-		width: 13.875rem;
-	}
 }
 
 .hero-copy {
