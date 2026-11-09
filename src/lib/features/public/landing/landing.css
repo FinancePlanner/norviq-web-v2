@@ -211,6 +211,26 @@
 }
 
 /* The hero pill jumps here; keep the heading clear of the sticky nav. */
-#eu-tax {
+#eu-tax,
+#ibkr {
 	scroll-margin-top: 6.5rem;
+}
+
+.landing-ibkr-steps {
+	margin-top: 1.5rem;
+	max-width: 42rem;
+	padding-left: 1.25rem;
+	color: var(--landing-muted);
+	font-size: 1rem;
+	line-height: 1.6;
+}
+
+.landing-ibkr-steps li + li {
+	margin-top: 0.75rem;
+}
+
+.landing-ibkr-steps a {
+	color: var(--foreground);
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
 }

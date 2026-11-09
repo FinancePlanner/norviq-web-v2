@@ -382,6 +382,43 @@
 			)}
 		</div>
 	</section>
+	<section id="ibkr" class="landing-section" data-landing-section="ibkr" data-motion-reveal>
+		<div class="landing-pricing-header">
+			<div>
+				<p class="landing-eyebrow">Brokers</p>
+				<h2 class="landing-section-title mt-3">Interactive Brokers, read only.</h2>
+				<p class="landing-section-lead">
+					Norviq reads your IBKR statement. It cannot place a trade, transfer money, or change the
+					account.
+				</p>
+				<ol class="landing-ibkr-steps">
+					<li>
+						From your IBKR account, email
+						<a href="mailto:reportingintegration@interactivebrokers.com"
+							>reportingintegration@interactivebrokers.com</a
+						>
+						and ask them to enable the Norviq Web Service feed.
+					</li>
+					<li>
+						After IBKR enables it, open IBKR Portal → Reporting → Third-party Reports and copy the
+						token and the query ID.
+					</li>
+					<li>
+						In Norviq, open Settings → Integrations, paste both, and connect. Broker sync is part of
+						Pro.
+					</li>
+					<li>
+						Sync reads the previous business day's statement. The token and query ID stay on that
+						user's account.
+					</li>
+				</ol>
+				<p class="landing-section-lead mt-2">
+					Sync fetches the statement. It does not add those positions to the portfolio yet.
+				</p>
+			</div>
+			<a href="/signup" class="instrument-action">Create a free account</a>
+		</div>
+	</section>
 	<section
 		id="eu-tax"
 		class="landing-section landing-filing"

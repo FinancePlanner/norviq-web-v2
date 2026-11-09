@@ -249,10 +249,24 @@
 					</form>
 				</div>
 			{:else}
-				<p class="mt-4 text-sm text-muted-foreground">
-					Ask IBKR to enable the Norviq Web Service feed for your account, then paste the token and
-					query ID from IBKR Portal (Reporting → Third-party Reports).
-				</p>
+				<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+					<li>
+						From your IBKR account, email
+						<a class="underline" href="mailto:reportingintegration@interactivebrokers.com"
+							>reportingintegration@interactivebrokers.com</a
+						>
+						and ask them to enable the Norviq Web Service feed.
+					</li>
+					<li>
+						After IBKR enables it, open IBKR Portal → Reporting → Third-party Reports and copy the
+						token and the query ID.
+					</li>
+					<li>Paste both below and connect. Broker sync is part of Pro.</li>
+					<li>
+						Sync reads the previous business day's statement. The token and query ID stay on your
+						account.
+					</li>
+				</ol>
 				<form
 					method="POST"
 					action="?/ibkrConnect"
