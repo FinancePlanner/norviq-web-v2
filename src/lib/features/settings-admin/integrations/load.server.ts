@@ -127,7 +127,9 @@ function applyIntegrationsFlash(vm: IntegrationsViewModel, query: URLSearchParam
 	}
 	switch ((query.get('ibkr') ?? '').trim().toLowerCase()) {
 		case 'connected':
-			vm.successMessage = 'IBKR connected. Your holdings were imported.';
+			// Not "your holdings were imported": the page itself says that import is
+			// not live yet, and the banner must not contradict the note under it.
+			vm.successMessage = 'IBKR connected. Sync fetches your daily statement.';
 			break;
 		case 'disconnected':
 			vm.successMessage = 'IBKR disconnected.';
@@ -159,13 +161,13 @@ export function formatIBKRSyncMessage(inserted: number, updated: number, removed
 		formatSyncCount('updated', updated),
 		formatSyncCount('removed', removed)
 	]
-		.join(' ')
-		.trim();
+		.filter((part) => part !== '')
+		.join(' ');
 }
 
+// "3 added", never "3 addeds": the label is a participle, not a noun.
 function formatSyncCount(label: string, count: number): string {
-	if (count <= 0) return '';
-	return `${count} ${count !== 1 ? label + 's' : label}`;
+	return count <= 0 ? '' : `${count} ${label}.`;
 }
 
 function mapIBKRConnection(broker: BrokerConnectionResponse): IBKRConnectionVM {

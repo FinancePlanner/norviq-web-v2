@@ -204,8 +204,17 @@
 	color: var(--foreground);
 }
 
+/* On a phone the nav wraps to three rows (logo, appearance, actions) and a
+ * sticky bar that tall covers a fifth of the screen. Let it scroll away. */
+@media (max-width: 639.98px) {
+	.landing-nav {
+		position: static;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.hero-pill-arrow {
+	.hero-pill-arrow,
+	.landing-ibkr-steps a {
 		transition: none;
 	}
 }
@@ -216,13 +225,28 @@
 	scroll-margin-top: 6.5rem;
 }
 
+/* Tailwind's preflight strips list markers. These are ordered steps, so the
+ * numerals are content: restore them, in the heading ink so the sequence reads
+ * before the sentences do. */
 .landing-ibkr-steps {
 	margin-top: 1.5rem;
 	max-width: 42rem;
-	padding-left: 1.25rem;
+	padding-left: 1.5rem;
+	list-style: decimal;
 	color: var(--landing-muted);
 	font-size: 1rem;
 	line-height: 1.6;
+}
+
+.landing-ibkr-steps li {
+	padding-left: 0.375rem;
+	text-wrap: pretty;
+}
+
+.landing-ibkr-steps li::marker {
+	color: var(--landing-heading-top);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
 }
 
 .landing-ibkr-steps li + li {
@@ -230,7 +254,37 @@
 }
 
 .landing-ibkr-steps a {
+	border-radius: 0.125rem;
 	color: var(--foreground);
 	text-decoration: underline;
-	text-underline-offset: 0.15em;
+	text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+	text-underline-offset: 0.2em;
+	/* The address is one 43-character word. The markup offers a break after
+	 * the @; this is the fallback for columns narrower than either half. */
+	overflow-wrap: anywhere;
+	transition: text-decoration-color 180ms ease-out;
+}
+
+.landing-ibkr-steps a:hover {
+	color: var(--color-tint);
+	text-decoration-color: currentColor;
+}
+
+.landing-ibkr-steps a:focus-visible {
+	outline: 2px solid var(--color-tint);
+	outline-offset: 2px;
+}
+
+/* A caveat about the steps, not a fifth step: set it apart from the list. */
+.landing-ibkr-note {
+	margin-top: 1.5rem;
+}
+
+/* Beside the copy (md and up) the section action was being squeezed into a
+ * two-line button. It keeps its width; the copy column gives way instead. */
+@media (min-width: 768px) {
+	.landing-pricing-header .instrument-action {
+		flex: none;
+		white-space: nowrap;
+	}
 }

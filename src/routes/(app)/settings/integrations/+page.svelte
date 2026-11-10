@@ -1,6 +1,7 @@
 <script lang="ts">
 	// Port of settings.IntegrationsPage (integrations.templ).
 	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 	import {
 		CardHeader,
 		CollapsibleSection,
@@ -25,6 +26,10 @@
 	const telegram = $derived(
 		form?.telegramCode ? { ...vm.telegram, ...form.telegramCode } : vm.telegram
 	);
+
+	// Every IBKR action redirects back here with ?ibkr=…; on a full page load
+	// the section must not come back collapsed over the result it just produced.
+	const ibkrOpen = $derived(vm.ibkr.hasConnection || page.url.searchParams.has('ibkr'));
 
 	function confirmIBKRDisconnect(e: MouseEvent) {
 		if (
@@ -210,6 +215,7 @@
 		<CollapsibleSection
 			title="Interactive Brokers (IBKR)"
 			desc="Connect your IBKR account with the Norviq Web Service token and query ID from IBKR Reporting. Each user connects their own credentials; Norviq never places trades."
+			open={ibkrOpen}
 		>
 			<div
 				class="mt-4 rounded-lg border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--foreground)_6%,transparent)] px-4 py-3 text-sm text-muted-foreground"
@@ -252,8 +258,10 @@
 				<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
 					<li>
 						From your IBKR account, email
-						<a class="underline" href="mailto:reportingintegration@interactivebrokers.com"
-							>reportingintegration@interactivebrokers.com</a
+						<a
+							class="[overflow-wrap:anywhere] text-foreground underline underline-offset-2"
+							href="mailto:reportingintegration@interactivebrokers.com"
+							>reportingintegration@<wbr />interactivebrokers.com</a
 						>
 						and ask them to enable the Norviq Web Service feed.
 					</li>
@@ -280,6 +288,9 @@
 							name="token"
 							type="password"
 							autocomplete="off"
+							autocapitalize="off"
+							spellcheck="false"
+							required
 							class="field-input"
 							placeholder="IBKR Web Service token"
 						/>
@@ -291,6 +302,9 @@
 							name="queryId"
 							type="text"
 							autocomplete="off"
+							autocapitalize="off"
+							spellcheck="false"
+							required
 							class="field-input"
 							placeholder="IBKR query ID"
 						/>
