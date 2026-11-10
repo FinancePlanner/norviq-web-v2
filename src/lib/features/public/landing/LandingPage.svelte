@@ -355,7 +355,7 @@
 					Start free with tracking. Upgrade when research gets serious.
 				</p>
 			</div>
-			<a href="/signup" class="instrument-action">Create free account</a>
+			<a href="/signup" class="instrument-action">Create a free account</a>
 		</div>
 		<div class="mt-10 grid gap-4 md:grid-cols-2">
 			{@render planCard(
@@ -395,7 +395,7 @@
 					<li>
 						From your IBKR account, email
 						<a href="mailto:reportingintegration@interactivebrokers.com"
-							>reportingintegration@interactivebrokers.com</a
+							>reportingintegration@<wbr />interactivebrokers.com</a
 						>
 						and ask them to enable the Norviq Web Service feed.
 					</li>
@@ -408,11 +408,11 @@
 						Pro.
 					</li>
 					<li>
-						Sync reads the previous business day's statement. The token and query ID stay on that
-						user's account.
+						Sync reads the previous business day's statement. The token and query ID stay on your
+						account.
 					</li>
 				</ol>
-				<p class="landing-section-lead mt-2">
+				<p class="landing-section-lead landing-ibkr-note">
 					Sync fetches the statement. It does not add those positions to the portfolio yet.
 				</p>
 			</div>
