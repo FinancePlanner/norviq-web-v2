@@ -341,7 +341,8 @@
 .expenses-dca-hero {
 	font-size: clamp(1.35rem, 2.5vw, 1.85rem);
 	font-weight: 700;
-	color: var(--color-tint);
+	color: var(--foreground);
+	font-variant-numeric: tabular-nums;
 	text-align: center;
 }
 
@@ -1011,13 +1012,8 @@
 	font-variant-numeric: tabular-nums;
 }
 
-.cc-ledger-amount[data-direction='up'] {
-	color: var(--color-success);
-}
-
-.cc-ledger-amount[data-direction='down'] {
-	color: var(--color-danger);
-}
+/* Ledger rows are transactions, not performance: a buy is not a gain, so the
+   amount stays in the text colour and its sign carries the direction. */
 
 .cc-ledger-time {
 	font-size: 0.75rem;
@@ -1830,7 +1826,8 @@ html .expenses-ai-tag {
 html .expenses-dca-hero {
 	font-size: clamp(1.35rem, 2.5vw, 1.85rem);
 	font-weight: 700;
-	color: var(--color-tint);
+	color: var(--foreground);
+	font-variant-numeric: tabular-nums;
 	text-align: center;
 }
 
@@ -2201,4 +2198,48 @@ html .cc-ledger-filter[data-active='true'] {
 		size: A4;
 		margin: 12mm;
 	}
+}
+
+/* Budget planner header: the month sits under the title with its own stepper,
+   so the page-level actions stay to one gold action and a More menu. */
+.expenses-month-stepper {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	margin-inline-start: -0.5rem;
+}
+
+.expenses-month-current {
+	min-width: 9ch;
+	text-align: center;
+	font-size: var(--text-subhead, 0.9375rem);
+	font-weight: 600;
+	color: var(--muted-foreground);
+}
+
+.expenses-month-step {
+	display: inline-grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 0.5rem;
+	color: var(--muted-foreground);
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease;
+}
+
+.expenses-month-step:hover {
+	color: var(--foreground);
+	background: color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+.expenses-month-step:focus-visible {
+	outline: 2px solid var(--color-tint);
+	outline-offset: 2px;
+}
+
+/* A hairline divides sub-groups inside one panel instead of a nested box. */
+.expenses-ruled {
+	border-top: 1px solid var(--border);
 }

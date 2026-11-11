@@ -12,7 +12,6 @@
 	import TerminalSummaryCard from '#lib/features/dashboard/panels/TerminalSummaryCard.svelte';
 	import TaxPanel from '#lib/features/dashboard/panels/TaxPanel.svelte';
 	import GuidedStartCard from '#lib/features/auth-onboarding/guided-start/GuidedStartCard.svelte';
-	import XPCardShell from '#lib/features/social/friends/XPCardShell.svelte';
 	import { commandGreeting } from '#lib/features/dashboard/command-center/overview.js';
 
 	let { data } = $props();
@@ -39,15 +38,22 @@
 			<AssetSearch />
 		</div>
 	</header>
-	<MarketBriefShell src="/dashboard/market-brief" />
+	<!-- Calm order: the user's own money, then what needs them, then the market,
+	     then the record. Tools and connections come last, out of the way. XP and
+	     check-ins live on /achievements, not here (PRODUCT.md: no streaks that
+	     push action). -->
 	<GuidedStartCard vm={data.guidedStart} />
-	<OverviewAttentionPanel vm={vm.overview} />
 	<InvestableCapacityHero vm={vm.overview} />
-	<section class="cc-rail cc-rail-now cc-modules" aria-label="Needs you now">
+	<OverviewAttentionPanel vm={vm.overview} />
+	<section class="cc-rail cc-rail-now" aria-label="Needs you now">
 		<ActionQueuePanel queue={vm.queue} />
-		{#if data.social.enabled && data.social.leaderboards}
-			<XPCardShell />
-		{/if}
+	</section>
+	<MarketBriefShell src="/dashboard/market-brief" />
+	<section class="cc-rail cc-rail-ledger" aria-label="Activity ledger">
+		<LedgerPanel ledger={vm.ledger} />
+	</section>
+	<section class="cc-modules cc-tools" aria-labelledby="cc-tools-title">
+		<h2 id="cc-tools-title" class="cc-tools-title">Tools and connections</h2>
 		{#await data.mcpStatus}
 			<MCPStatusWidget />
 		{:then status}
@@ -63,9 +69,6 @@
 		{:then tax}
 			<TaxPanel vm={tax} />
 		{/await}
-	</section>
-	<section class="cc-rail cc-rail-ledger" aria-label="Activity ledger">
-		<LedgerPanel ledger={vm.ledger} />
 	</section>
 	<nav class="cc-more-links" aria-label="More dashboard views">
 		<a href="/dashboard/pulse" class="link-tint text-subhead font-semibold">Open pulse</a>

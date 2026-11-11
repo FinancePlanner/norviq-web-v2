@@ -201,9 +201,9 @@
 		<!-- The figure first, then its supporting KPIs as type — the iOS order. -->
 		<HeroCard {vm} />
 		<vigil.MetricStrip>
-			<vigil.Metric label="Shares" value={vm.totalShares} />
-			<vigil.Metric label="Avg / position" value={vm.avgPositionValue} />
+			<vigil.Metric label="Holdings" value={vm.holdingsValue} />
 			<vigil.Metric label="Cash" value={vm.cashBalance} />
+			<vigil.Metric label="Cost basis" value={vm.costBasis} />
 		</vigil.MetricStrip>
 		<div class="flex flex-wrap items-center justify-between gap-3">
 			<div class="portfolio-filter-row">
@@ -211,6 +211,7 @@
 					<button
 						type="button"
 						class={['portfolio-filter-btn', filter === f.id && 'portfolio-filter-btn-active']}
+						aria-pressed={filter === f.id}
 						onclick={() => (filter = f.id)}>{f.label}</button
 					>
 				{/each}

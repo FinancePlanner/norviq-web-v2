@@ -1,5 +1,7 @@
 <script lang="ts">
-	// dashboard.InvestableCapacityHero + capacityDelta.
+	// dashboard.InvestableCapacityHero + capacityDelta. The figure is the market
+	// value of the user's holdings, cash excluded (/v1/dashboard totalMarketValue),
+	// the same number as the Holdings metric on /portfolio, and labelled as such.
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { overviewLiquidity } from './overview.js';
 	import type { OverviewViewModel } from './types.js';
@@ -20,7 +22,7 @@
 	{/if}
 {/snippet}
 
-<vigil.Hero label="Investable capacity" value={vm.totalWealth} {delta}>
+<vigil.Hero label="Holdings value" value={vm.totalWealth} {delta}>
 	{#if liquidity || vm.spendingThisMonth}
 		<vigil.MetricStrip>
 			{#if liquidity}
@@ -31,5 +33,5 @@
 			{/if}
 		</vigil.MetricStrip>
 	{/if}
-	<a href="/expenses" class="link-tint text-subhead font-semibold">Review DCA capacity</a>
+	<a href="/expenses" class="link-tint text-subhead font-semibold">Plan monthly surplus</a>
 </vigil.Hero>

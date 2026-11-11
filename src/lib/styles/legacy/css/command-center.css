@@ -48,3 +48,17 @@
 .command-center-page .overview-subheader {
 	margin-bottom: var(--space-4);
 }
+
+/* Tools and connections: the panels that sell or configure something sit
+ * after the user's own figures, under a plain heading that spans the grid. */
+.cc-tools {
+	margin-top: var(--space-6);
+}
+
+.cc-tools-title {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: var(--text-headline, 1.0625rem);
+	font-weight: 600;
+	color: var(--muted-foreground);
+}
