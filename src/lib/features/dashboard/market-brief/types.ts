@@ -90,3 +90,13 @@ export function directionKey(direction: string): string {
 export function itemMarker(kind: string): string {
 	return kind === KindEarnings ? '📍' : '📌';
 }
+
+/**
+ * The collapsed card's one line: the first group's leading rows as
+ * name, marker and change ("S&P 500 ▲ +0.42% · Nasdaq ▼ -0.10%"). Only figures
+ * the brief already carries; empty when it has no quotes.
+ */
+export function briefSummaryRows(vm: MarketBriefVM, limit = 3): MarketBriefRowVM[] {
+	const rows = vm.groups.find((g) => g.rows.length > 0)?.rows ?? [];
+	return rows.slice(0, limit);
+}
