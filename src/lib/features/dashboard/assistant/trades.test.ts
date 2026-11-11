@@ -490,8 +490,22 @@ describe('settleConfirmOutcome', () => {
 			message: TRADES_MAYBE_SAVED
 		});
 	});
-	test('a 409 on the first attempt is still an expired review', () => {
+	test('a 409 on the first attempt after expiry is still an expired review', () => {
+		const now = Date.parse('2026-11-11T12:00:00Z');
+		expect(settleConfirmOutcome(expired, false, '2026-11-11T11:59:00Z', now)).toEqual(expired);
+	});
+	test('a 409 on the first attempt with no expiry is still an expired review', () => {
 		expect(settleConfirmOutcome(expired, false)).toEqual(expired);
+	});
+	test('a 409 before the review expires says it may have been saved', () => {
+		const now = Date.parse('2026-11-11T12:00:00Z');
+		expect(settleConfirmOutcome(expired, false, '2026-11-11T12:05:00Z', now)).toEqual({
+			...expired,
+			message: TRADES_MAYBE_SAVED
+		});
+	});
+	test('an unreadable expiry counts as expired', () => {
+		expect(settleConfirmOutcome(expired, false, 'not a date', 0)).toEqual(expired);
 	});
 	test('other outcomes pass through', () => {
 		const closed = { kind: 'tradesExpired', id: 'a1', message: 'x' };

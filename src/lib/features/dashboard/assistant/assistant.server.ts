@@ -10,6 +10,7 @@ import {
 	parseTradesProposal,
 	TRADES_EXPIRED,
 	TRADES_MAYBE_SAVED,
+	TRADES_UNCONFIRMED,
 	TRADES_UPGRADE,
 	type RowError
 } from './trades.js';
@@ -550,8 +551,11 @@ async function stillPending(event: RequestEvent, id: string): Promise<boolean | 
  * AssistantConfirmAction for a trades card: forwards the reviewed rows and maps
  * the answer. A 422 keeps the card open with the errors on their rows, unless
  * the save failed after the claim, which settles the action: then the card is
- * closed, since a retry could only get a 409. A 409 is an expired card (the card says "may have been saved" when it had already tried).
- * Any failure that is not a 4xx settles the same way when the action is gone.
+ * closed, since a retry could only get a 409. A 409, or a 404 for an action
+ * that no longer exists, is an expired card (the card says "may have been saved"
+ * when it had already tried or the review had not expired). Any failure that is
+ * not a 4xx settles the same way when the action is gone, and says the save is
+ * unconfirmed when the action is still pending or its state can't be read.
  */
 export async function confirmTrades(
 	event: RequestEvent,
@@ -568,7 +572,8 @@ export async function confirmTrades(
 		return { kind: 'result', vm: { id, success: true, message: confirmed.message } };
 	} catch (err) {
 		const status = statusOf(err);
-		if (status === 409) return { kind: 'tradesExpired', id, message: TRADES_EXPIRED };
+		if (status === 409 || status === 404)
+			return { kind: 'tradesExpired', id, message: TRADES_EXPIRED };
 		if (status === 422 && isAPIError(err)) {
 			if ((await stillPending(event, id)) === false)
 				return {
@@ -586,8 +591,11 @@ export async function confirmTrades(
 		// A timeout, a dropped connection or a 5xx: the backend may have finished the
 		// save anyway. If the action is gone, say so rather than offer a retry.
 		const clientError = status >= 400 && status < 500;
-		if (!clientError && (await stillPending(event, id)) === false)
-			return { kind: 'tradesExpired', id, message: TRADES_MAYBE_SAVED };
+		if (!clientError) {
+			if ((await stillPending(event, id)) === false)
+				return { kind: 'tradesExpired', id, message: TRADES_MAYBE_SAVED };
+			return { kind: 'tradesError', id, message: TRADES_UNCONFIRMED, rowErrors: [] };
+		}
 		const upgrade = status === 403 && isAPIError(err) && err.code === 'upgrade_required';
 		const message = upgrade ? TRADES_UPGRADE : TRADES_RETRY;
 		return { kind: 'tradesError', id, message, rowErrors: [] };

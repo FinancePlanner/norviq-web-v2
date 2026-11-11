@@ -36,7 +36,7 @@ const {
 const event = { url: new URL('http://x/assistant') } as unknown as RequestEvent;
 const input = { portfolioListId: 'L1', trades: [{ symbol: 'AAPL' }] };
 
-const { TRADES_MAYBE_SAVED } = await import('./trades.js');
+const { TRADES_MAYBE_SAVED, TRADES_UNCONFIRMED } = await import('./trades.js');
 
 const refusal = (rowErrors: unknown[]) =>
 	new FakeAPIError(422, 'Some trades need fixing.', undefined, {
@@ -126,14 +126,27 @@ describe('confirmTrades', () => {
 	test.each([
 		['a 5xx', new FakeAPIError(502, '')],
 		['a timeout or dropped connection', new Error('fetch failed')]
-	])('%s with the action still pending keeps the retry line', async (_name, err) => {
+	])('%s with the action still pending says the save is unconfirmed', async (_name, err) => {
 		apiJSON.mockRejectedValueOnce(err).mockResolvedValueOnce([{ id: 'a1', status: 'pending' }]);
 		expect(await confirmTrades(event, 'a1', input)).toEqual({
 			kind: 'tradesError',
 			id: 'a1',
-			message: 'That did not go through. Try again.',
+			message: TRADES_UNCONFIRMED,
 			rowErrors: []
 		});
+		expect(TRADES_UNCONFIRMED).toBe(
+			"We couldn't confirm this save. Try again; if it went through, this card will say so."
+		);
+	});
+
+	test('a 404 closes the card like a 409', async () => {
+		apiJSON.mockRejectedValueOnce(new FakeAPIError(404, ''));
+		expect(await confirmTrades(event, 'a1', input)).toEqual({
+			kind: 'tradesExpired',
+			id: 'a1',
+			message: TRADES_EXPIRED
+		});
+		expect(apiJSON).toHaveBeenCalledTimes(1);
 	});
 
 	test('a 4xx does not refetch the action', async () => {
@@ -142,10 +155,10 @@ describe('confirmTrades', () => {
 		expect(apiJSON).toHaveBeenCalledTimes(1);
 	});
 
-	test('any other failure keeps the card with a retry line', async () => {
+	test('a lost answer whose refetch also fails keeps the card as unconfirmed', async () => {
 		apiJSON.mockRejectedValueOnce(new FakeAPIError(500, '')).mockRejectedValueOnce(new Error('x'));
 		const out = await confirmTrades(event, 'a1', input);
-		expect(out).toMatchObject({ kind: 'tradesError', rowErrors: [] });
+		expect(out).toMatchObject({ kind: 'tradesError', message: TRADES_UNCONFIRMED, rowErrors: [] });
 	});
 });
 
