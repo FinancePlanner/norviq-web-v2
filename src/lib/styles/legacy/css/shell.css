@@ -183,6 +183,14 @@ html[data-sidebar='collapsed'] .app-sidebar-group-panel {
 	@apply mx-auto max-w-5xl min-w-0;
 }
 
+/* Inside the app shell every page starts at the same left edge, under the
+ * banner and beside the sidebar, whatever its width (Document 54rem, Deck
+ * 72rem, Overview up to 104rem). Centering each width on its own made the
+ * page title jump sideways on every navigation. */
+.app-main > .app-page-content {
+	margin-inline-start: 0;
+}
+
 .section-subnav {
 	@apply mt-4 flex gap-2 overflow-x-auto pr-4 pb-1;
 	-webkit-overflow-scrolling: touch;

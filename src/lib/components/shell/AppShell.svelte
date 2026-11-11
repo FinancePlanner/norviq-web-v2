@@ -240,17 +240,19 @@
 			<main id="main-content" class="app-main" {@attach pageMotion()}>
 				{#if trialExpired}
 					<div
-						class="trial-ended-banner trial-banner glass-card mx-4 mt-4 flex flex-wrap items-center gap-3 p-4"
+						class="trial-ended-banner trial-banner glass-card mb-6 flex flex-wrap items-center gap-3 p-4"
 						role="status"
 					>
-						<span class="pro-badge">Trial ended</span>
+						<span class="pro-badge">{t('Trial ended')}</span>
 						<div class="min-w-0 flex-1">
-							<p class="text-sm font-semibold">Your trial has ended</p>
-							<p class="mt-0.5 text-sm text-muted-foreground">Subscribe to unlock all features.</p>
+							<p class="text-sm font-semibold">{t('Your trial has ended')}</p>
+							<p class="mt-0.5 text-sm text-muted-foreground">
+								{t('Subscribe to unlock all features.')}
+							</p>
 						</div>
 						<a
 							href="/settings/subscription"
-							class="btn-primary w-full shrink-0 px-5 py-2 text-sm sm:w-auto">Subscribe</a
+							class="btn-primary w-full shrink-0 px-5 py-2 text-sm sm:w-auto">{t('Subscribe')}</a
 						>
 					</div>
 				{/if}
