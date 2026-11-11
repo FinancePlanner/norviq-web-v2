@@ -6,9 +6,38 @@
 	import MarketBriefContent from './MarketBriefContent.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { capture } from '#lib/analytics/index.js';
-	import { marketBriefTitleKey, type MarketBriefVM } from './types.js';
+	import {
+		briefSummaryRows,
+		directionKey,
+		directionMarker,
+		directionToneClass,
+		marketBriefTitleKey,
+		type MarketBriefVM
+	} from './types.js';
 
 	let { vm, onnavigate }: { vm: MarketBriefVM; onnavigate?: (url: string) => void } = $props();
+
+	// Collapsed by default: on the dashboard the brief is context, not the
+	// entry point (PRODUCT.md, calm hierarchy). The reader's choice is kept per
+	// browser; storage can be missing or blocked, so every access is guarded.
+	const OPEN_KEY = 'nq.marketBrief.open';
+	let open = $state(false);
+	$effect(() => {
+		try {
+			open = localStorage.getItem(OPEN_KEY) === '1';
+		} catch {
+			/* stays collapsed */
+		}
+	});
+	function toggle() {
+		open = !open;
+		try {
+			localStorage.setItem(OPEN_KEY, open ? '1' : '0');
+		} catch {
+			/* not remembered */
+		}
+	}
+	const summary = $derived(briefSummaryRows(vm));
 
 	const subtitle = $derived(
 		vm.tradingDate +
@@ -80,5 +109,29 @@
 		desc={subtitle}
 		trailing={vm.latestURL || vm.previousURL || vm.shareURL ? toggles : undefined}
 	/>
-	<MarketBriefContent {vm} />
+	{#if summary.length > 0}
+		<p class="market-brief-summary" hidden={open}>
+			{#each summary as row, i (i)}
+				{#if i > 0}<span class="text-muted-foreground" aria-hidden="true"> · </span>{/if}
+				<span class="whitespace-nowrap"
+					>{row.name || row.symbol}
+					<span class={directionToneClass(row.direction)}
+						><span aria-hidden="true">{directionMarker(row.direction)}</span>
+						<span class="sr-only">{t(directionKey(row.direction))}</span>
+						{row.change}</span
+					></span
+				>
+			{/each}
+		</p>
+	{/if}
+	<div id="market-brief-body" hidden={!open}>
+		<MarketBriefContent {vm} />
+	</div>
+	<button
+		type="button"
+		class="market-brief-toggle link-tint text-subhead font-semibold"
+		aria-expanded={open}
+		aria-controls="market-brief-body"
+		onclick={toggle}>{open ? t('Hide brief') : t('Read brief')}</button
+	>
 </vigil.Panel>

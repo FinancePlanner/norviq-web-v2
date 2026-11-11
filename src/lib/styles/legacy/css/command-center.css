@@ -84,3 +84,22 @@
 	color: var(--muted-foreground);
 	font-variant-numeric: tabular-nums;
 }
+
+/* Market brief on the dashboard: one line of the leading quotes, the full
+ * brief behind "Read brief". The line clips rather than wraps. */
+.market-brief-summary {
+	margin: var(--space-2) 0 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: var(--text-subhead, 0.9375rem);
+	font-variant-numeric: tabular-nums;
+}
+
+.market-brief-toggle {
+	margin-top: var(--space-3);
+	padding: 0;
+	background: none;
+	border: 0;
+	cursor: pointer;
+}
