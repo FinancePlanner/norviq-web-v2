@@ -54,16 +54,24 @@ export const TRADES_EXPIRED = 'This review expired. Send the screenshot again.';
 /** The backend finishes a claimed save even when the client drops, so a failed answer may still have saved. */
 export const TRADES_MAYBE_SAVED =
 	'This may have been saved. Check your portfolio before sending the screenshot again.';
+/** A lost answer while the action is still pending: the save may or may not have run. */
+export const TRADES_UNCONFIRMED =
+	"We couldn't confirm this save. Try again; if it went through, this card will say so.";
 /**
- * The outcome to show for a confirm answer. A 409 ("expired") after this card
- * already sent a save is not that: the earlier save may have gone through.
+ * The outcome to show for a confirm answer. A 409 ("expired") is not that when
+ * this card already sent a save, or when the review has not expired yet: the
+ * earlier save, from this card or another tab, may have gone through.
  */
 export function settleConfirmOutcome<T extends { kind: string; message?: string }>(
 	outcome: T,
-	hadEarlierAttempt: boolean
+	hadEarlierAttempt: boolean,
+	expiresAt?: string,
+	now: number = Date.now()
 ): T {
-	if (hadEarlierAttempt && outcome.kind === 'tradesExpired' && outcome.message === TRADES_EXPIRED)
-		return { ...outcome, message: TRADES_MAYBE_SAVED };
+	if (outcome.kind !== 'tradesExpired' || outcome.message !== TRADES_EXPIRED) return outcome;
+	const expiry = expiresAt ? Date.parse(expiresAt) : NaN;
+	const unexpired = Number.isFinite(expiry) && expiry > now;
+	if (hadEarlierAttempt || unexpired) return { ...outcome, message: TRADES_MAYBE_SAVED };
 	return outcome;
 }
 

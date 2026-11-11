@@ -9,7 +9,7 @@
 	import Icon from '#lib/components/norviq/tui/Icon.svelte';
 	import type { ActionOutcome, ActionRow, MessageRow } from '../types.js';
 	import { PLAN_NOT_CONFIRMED } from '../stream.js';
-	import { settleConfirmOutcome } from '../trades.js';
+	import { settleConfirmOutcome, TRADES_UNCONFIRMED } from '../trades.js';
 	import TradesCard from './TradesCard.svelte';
 	import WatchCard from './WatchCard.svelte';
 
@@ -46,13 +46,20 @@
 				return;
 			}
 			if (!res.ok) throw new Error(String(res.status));
-			outcome = settleConfirmOutcome((await res.json()) as ActionOutcome, hadEarlierAttempt);
-		} catch {
-			// Keep the card, and say so: a silent failure reads as a dead button.
+			outcome = settleConfirmOutcome(
+				(await res.json()) as ActionOutcome,
+				hadEarlierAttempt,
+				action.expiresAt
+			);
+		} catch (err) {
+			// Keep the card, and say so: a silent failure reads as a dead button. A
+			// confirm that never got an answer may still have saved.
+			const status = Number(err instanceof Error ? err.message : NaN);
+			const refused = verb === 'cancel' || (status >= 400 && status < 500);
 			outcome = {
 				kind: 'tradesError',
 				id: action.id,
-				message: 'That did not go through. Try again.',
+				message: refused ? 'That did not go through. Try again.' : TRADES_UNCONFIRMED,
 				rowErrors: []
 			};
 		} finally {
