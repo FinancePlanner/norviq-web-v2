@@ -1,0 +1,661 @@
+{
+	"schemaVersion": 2,
+	"generatedAt": "2026-11-11T14:14:59+00:00",
+	"title": "Design System: Norviq",
+	"extensions": {
+		"colorMeta": {
+			"deep-gold": {
+				"role": "primary",
+				"displayName": "Deep Gold",
+				"canonical": "oklch(0.513 0.082 79)",
+				"tonalRamp": [
+					"oklch(0.150 0.039 79)",
+					"oklch(0.264 0.050 79)",
+					"oklch(0.379 0.061 79)",
+					"oklch(0.493 0.072 79)",
+					"oklch(0.607 0.081 79)",
+					"oklch(0.721 0.070 79)",
+					"oklch(0.836 0.059 79)",
+					"oklch(0.950 0.049 79)"
+				]
+			},
+			"champagne-gold": {
+				"role": "primary",
+				"displayName": "Champagne Gold",
+				"canonical": "oklch(0.788 0.089 80)",
+				"tonalRamp": [
+					"oklch(0.150 0.042 80)",
+					"oklch(0.264 0.054 80)",
+					"oklch(0.379 0.066 80)",
+					"oklch(0.493 0.078 80)",
+					"oklch(0.607 0.088 80)",
+					"oklch(0.721 0.076 80)",
+					"oklch(0.836 0.065 80)",
+					"oklch(0.950 0.053 80)"
+				]
+			},
+			"precision-gold": {
+				"role": "primary",
+				"displayName": "Precision Gold",
+				"canonical": "oklch(0.857 0.092 80)",
+				"tonalRamp": [
+					"oklch(0.150 0.044 80)",
+					"oklch(0.264 0.056 80)",
+					"oklch(0.379 0.068 80)",
+					"oklch(0.493 0.081 80)",
+					"oklch(0.607 0.091 80)",
+					"oklch(0.721 0.079 80)",
+					"oklch(0.836 0.067 80)",
+					"oklch(0.950 0.054 80)"
+				]
+			},
+			"warm-page": {
+				"role": "neutral",
+				"displayName": "Warm Page",
+				"canonical": "oklch(0.968 0.009 85)",
+				"tonalRamp": [
+					"oklch(0.150 0.004 85)",
+					"oklch(0.264 0.005 85)",
+					"oklch(0.379 0.007 85)",
+					"oklch(0.493 0.008 85)",
+					"oklch(0.607 0.009 85)",
+					"oklch(0.721 0.008 85)",
+					"oklch(0.836 0.007 85)",
+					"oklch(0.950 0.005 85)"
+				]
+			},
+			"card-white": {
+				"role": "neutral",
+				"displayName": "Card White",
+				"canonical": "oklch(1 0 0)",
+				"tonalRamp": [
+					"oklch(0.150 0.000 0)",
+					"oklch(0.264 0.000 0)",
+					"oklch(0.379 0.000 0)",
+					"oklch(0.493 0.000 0)",
+					"oklch(0.607 0.000 0)",
+					"oklch(0.721 0.000 0)",
+					"oklch(0.836 0.000 0)",
+					"oklch(0.950 0.000 0)"
+				]
+			},
+			"warm-raised": {
+				"role": "neutral",
+				"displayName": "Warm Raised",
+				"canonical": "oklch(0.941 0.012 85)",
+				"tonalRamp": [
+					"oklch(0.150 0.006 85)",
+					"oklch(0.264 0.007 85)",
+					"oklch(0.379 0.009 85)",
+					"oklch(0.493 0.011 85)",
+					"oklch(0.607 0.012 85)",
+					"oklch(0.721 0.010 85)",
+					"oklch(0.836 0.009 85)",
+					"oklch(0.950 0.007 85)"
+				]
+			},
+			"sidebar-warm": {
+				"role": "neutral",
+				"displayName": "Sidebar Warm",
+				"canonical": "oklch(0.947 0.013 87)",
+				"tonalRamp": [
+					"oklch(0.150 0.006 87)",
+					"oklch(0.264 0.008 87)",
+					"oklch(0.379 0.010 87)",
+					"oklch(0.493 0.011 87)",
+					"oklch(0.607 0.013 87)",
+					"oklch(0.721 0.011 87)",
+					"oklch(0.836 0.009 87)",
+					"oklch(0.950 0.008 87)"
+				]
+			},
+			"warm-hairline": {
+				"role": "neutral",
+				"displayName": "Warm Hairline",
+				"canonical": "oklch(0.896 0.017 85)",
+				"tonalRamp": [
+					"oklch(0.150 0.008 85)",
+					"oklch(0.264 0.010 85)",
+					"oklch(0.379 0.013 85)",
+					"oklch(0.493 0.015 85)",
+					"oklch(0.607 0.017 85)",
+					"oklch(0.721 0.015 85)",
+					"oklch(0.836 0.012 85)",
+					"oklch(0.950 0.010 85)"
+				]
+			},
+			"warm-control-border": {
+				"role": "neutral",
+				"displayName": "Warm Control Border",
+				"canonical": "oklch(0.616 0.023 82)",
+				"tonalRamp": [
+					"oklch(0.150 0.011 82)",
+					"oklch(0.264 0.014 82)",
+					"oklch(0.379 0.017 82)",
+					"oklch(0.493 0.020 82)",
+					"oklch(0.607 0.023 82)",
+					"oklch(0.721 0.020 82)",
+					"oklch(0.836 0.017 82)",
+					"oklch(0.950 0.014 82)"
+				]
+			},
+			"midnight-navy": {
+				"role": "neutral",
+				"displayName": "Midnight Navy",
+				"canonical": "oklch(0.221 0.035 260)",
+				"tonalRamp": [
+					"oklch(0.150 0.017 260)",
+					"oklch(0.264 0.021 260)",
+					"oklch(0.379 0.026 260)",
+					"oklch(0.493 0.031 260)",
+					"oklch(0.607 0.035 260)",
+					"oklch(0.721 0.030 260)",
+					"oklch(0.836 0.025 260)",
+					"oklch(0.950 0.021 260)"
+				]
+			},
+			"slate-secondary": {
+				"role": "neutral",
+				"displayName": "Slate Secondary",
+				"canonical": "oklch(0.447 0.034 261)",
+				"tonalRamp": [
+					"oklch(0.150 0.016 261)",
+					"oklch(0.264 0.021 261)",
+					"oklch(0.379 0.025 261)",
+					"oklch(0.493 0.030 261)",
+					"oklch(0.607 0.034 261)",
+					"oklch(0.721 0.029 261)",
+					"oklch(0.836 0.025 261)",
+					"oklch(0.950 0.020 261)"
+				]
+			},
+			"obsidian": {
+				"role": "neutral",
+				"displayName": "Obsidian",
+				"canonical": "oklch(0.172 0.023 260)",
+				"tonalRamp": [
+					"oklch(0.150 0.011 260)",
+					"oklch(0.264 0.014 260)",
+					"oklch(0.379 0.017 260)",
+					"oklch(0.493 0.020 260)",
+					"oklch(0.607 0.023 260)",
+					"oklch(0.721 0.020 260)",
+					"oklch(0.836 0.017 260)",
+					"oklch(0.950 0.014 260)"
+				]
+			},
+			"armor-blue": {
+				"role": "neutral",
+				"displayName": "Armor Blue",
+				"canonical": "oklch(0.28 0.047 260)",
+				"tonalRamp": [
+					"oklch(0.150 0.022 260)",
+					"oklch(0.264 0.029 260)",
+					"oklch(0.379 0.035 260)",
+					"oklch(0.493 0.041 260)",
+					"oklch(0.607 0.047 260)",
+					"oklch(0.721 0.040 260)",
+					"oklch(0.836 0.034 260)",
+					"oklch(0.950 0.028 260)"
+				]
+			},
+			"deep-graphite": {
+				"role": "neutral",
+				"displayName": "Deep Graphite",
+				"canonical": "oklch(0.281 0.026 253)",
+				"tonalRamp": [
+					"oklch(0.150 0.012 253)",
+					"oklch(0.264 0.016 253)",
+					"oklch(0.379 0.019 253)",
+					"oklch(0.493 0.023 253)",
+					"oklch(0.607 0.026 253)",
+					"oklch(0.721 0.022 253)",
+					"oklch(0.836 0.019 253)",
+					"oklch(0.950 0.015 253)"
+				]
+			},
+			"platinum": {
+				"role": "neutral",
+				"displayName": "Platinum",
+				"canonical": "oklch(0.933 0.005 107)",
+				"tonalRamp": [
+					"oklch(0.150 0.002 107)",
+					"oklch(0.264 0.003 107)",
+					"oklch(0.379 0.004 107)",
+					"oklch(0.493 0.004 107)",
+					"oklch(0.607 0.005 107)",
+					"oklch(0.721 0.004 107)",
+					"oklch(0.836 0.004 107)",
+					"oklch(0.950 0.003 107)"
+				]
+			},
+			"muted-silver": {
+				"role": "neutral",
+				"displayName": "Muted Silver",
+				"canonical": "oklch(0.73 0.026 254)",
+				"tonalRamp": [
+					"oklch(0.150 0.012 254)",
+					"oklch(0.264 0.016 254)",
+					"oklch(0.379 0.019 254)",
+					"oklch(0.493 0.023 254)",
+					"oklch(0.607 0.026 254)",
+					"oklch(0.721 0.022 254)",
+					"oklch(0.836 0.019 254)",
+					"oklch(0.950 0.015 254)"
+				]
+			},
+			"navy-control-border": {
+				"role": "neutral",
+				"displayName": "Navy Control Border",
+				"canonical": "oklch(0.574 0.04 260)",
+				"tonalRamp": [
+					"oklch(0.150 0.019 260)",
+					"oklch(0.264 0.024 260)",
+					"oklch(0.379 0.030 260)",
+					"oklch(0.493 0.035 260)",
+					"oklch(0.607 0.040 260)",
+					"oklch(0.721 0.034 260)",
+					"oklch(0.836 0.029 260)",
+					"oklch(0.950 0.024 260)"
+				]
+			},
+			"gain-light": {
+				"role": "semantic",
+				"displayName": "Gain Light",
+				"canonical": "oklch(0.482 0.091 165)",
+				"tonalRamp": [
+					"oklch(0.150 0.043 165)",
+					"oklch(0.264 0.055 165)",
+					"oklch(0.379 0.067 165)",
+					"oklch(0.493 0.080 165)",
+					"oklch(0.607 0.090 165)",
+					"oklch(0.721 0.078 165)",
+					"oklch(0.836 0.066 165)",
+					"oklch(0.950 0.054 165)"
+				]
+			},
+			"loss-light": {
+				"role": "semantic",
+				"displayName": "Loss Light",
+				"canonical": "oklch(0.507 0.152 20)",
+				"tonalRamp": [
+					"oklch(0.150 0.072 20)",
+					"oklch(0.264 0.092 20)",
+					"oklch(0.379 0.113 20)",
+					"oklch(0.493 0.133 20)",
+					"oklch(0.607 0.151 20)",
+					"oklch(0.721 0.130 20)",
+					"oklch(0.836 0.110 20)",
+					"oklch(0.950 0.090 20)"
+				]
+			},
+			"warning-light": {
+				"role": "semantic",
+				"displayName": "Warning Light",
+				"canonical": "oklch(0.498 0.101 68)",
+				"tonalRamp": [
+					"oklch(0.150 0.048 68)",
+					"oklch(0.264 0.061 68)",
+					"oklch(0.379 0.075 68)",
+					"oklch(0.493 0.088 68)",
+					"oklch(0.607 0.100 68)",
+					"oklch(0.721 0.087 68)",
+					"oklch(0.836 0.073 68)",
+					"oklch(0.950 0.060 68)"
+				]
+			},
+			"info-light": {
+				"role": "semantic",
+				"displayName": "Info Light",
+				"canonical": "oklch(0.491 0.097 246)",
+				"tonalRamp": [
+					"oklch(0.150 0.046 246)",
+					"oklch(0.264 0.059 246)",
+					"oklch(0.379 0.072 246)",
+					"oklch(0.493 0.085 246)",
+					"oklch(0.607 0.096 246)",
+					"oklch(0.721 0.083 246)",
+					"oklch(0.836 0.070 246)",
+					"oklch(0.950 0.057 246)"
+				]
+			},
+			"flat-light": {
+				"role": "semantic",
+				"displayName": "Flat Light",
+				"canonical": "oklch(0.491 0.024 251)",
+				"tonalRamp": [
+					"oklch(0.150 0.011 251)",
+					"oklch(0.264 0.015 251)",
+					"oklch(0.379 0.018 251)",
+					"oklch(0.493 0.021 251)",
+					"oklch(0.607 0.024 251)",
+					"oklch(0.721 0.021 251)",
+					"oklch(0.836 0.017 251)",
+					"oklch(0.950 0.014 251)"
+				]
+			},
+			"gain-dark": {
+				"role": "semantic",
+				"displayName": "Gain Dark",
+				"canonical": "oklch(0.707 0.118 169)",
+				"tonalRamp": [
+					"oklch(0.150 0.056 169)",
+					"oklch(0.264 0.072 169)",
+					"oklch(0.379 0.088 169)",
+					"oklch(0.493 0.103 169)",
+					"oklch(0.607 0.117 169)",
+					"oklch(0.721 0.101 169)",
+					"oklch(0.836 0.086 169)",
+					"oklch(0.950 0.070 169)"
+				]
+			},
+			"loss-dark": {
+				"role": "semantic",
+				"displayName": "Loss Dark",
+				"canonical": "oklch(0.674 0.145 17)",
+				"tonalRamp": [
+					"oklch(0.150 0.069 17)",
+					"oklch(0.264 0.088 17)",
+					"oklch(0.379 0.108 17)",
+					"oklch(0.493 0.127 17)",
+					"oklch(0.607 0.144 17)",
+					"oklch(0.721 0.124 17)",
+					"oklch(0.836 0.105 17)",
+					"oklch(0.950 0.086 17)"
+				]
+			},
+			"warning-dark": {
+				"role": "semantic",
+				"displayName": "Warning Dark",
+				"canonical": "oklch(0.787 0.113 73)",
+				"tonalRamp": [
+					"oklch(0.150 0.054 73)",
+					"oklch(0.264 0.069 73)",
+					"oklch(0.379 0.084 73)",
+					"oklch(0.493 0.099 73)",
+					"oklch(0.607 0.112 73)",
+					"oklch(0.721 0.097 73)",
+					"oklch(0.836 0.082 73)",
+					"oklch(0.950 0.067 73)"
+				]
+			},
+			"info-dark": {
+				"role": "semantic",
+				"displayName": "Info Dark",
+				"canonical": "oklch(0.706 0.093 243)",
+				"tonalRamp": [
+					"oklch(0.150 0.044 243)",
+					"oklch(0.264 0.057 243)",
+					"oklch(0.379 0.069 243)",
+					"oklch(0.493 0.081 243)",
+					"oklch(0.607 0.092 243)",
+					"oklch(0.721 0.080 243)",
+					"oklch(0.836 0.067 243)",
+					"oklch(0.950 0.055 243)"
+				]
+			},
+			"flat-dark": {
+				"role": "semantic",
+				"displayName": "Flat Dark",
+				"canonical": "oklch(0.75 0.019 253)",
+				"tonalRamp": [
+					"oklch(0.150 0.009 253)",
+					"oklch(0.264 0.012 253)",
+					"oklch(0.379 0.014 253)",
+					"oklch(0.493 0.017 253)",
+					"oklch(0.607 0.019 253)",
+					"oklch(0.721 0.016 253)",
+					"oklch(0.836 0.014 253)",
+					"oklch(0.950 0.011 253)"
+				]
+			}
+		},
+		"typographyMeta": {
+			"display": {
+				"displayName": "Display",
+				"purpose": "Hero figure, one per view."
+			},
+			"headline": {
+				"displayName": "Headline",
+				"purpose": "Page title (text-title1)."
+			},
+			"title": {
+				"displayName": "Title",
+				"purpose": "Panel and section headings."
+			},
+			"body": {
+				"displayName": "Body",
+				"purpose": "Card titles and primary row text; prose at 1rem/1.6, 65ch."
+			},
+			"subhead": {
+				"displayName": "Subhead",
+				"purpose": "Secondary copy, fields, subtitles."
+			},
+			"label": {
+				"displayName": "Label",
+				"purpose": "Table headers, chips, small controls."
+			},
+			"caption": {
+				"displayName": "Caption",
+				"purpose": "Disclaimers, timestamps."
+			},
+			"mono": {
+				"displayName": "Mono",
+				"purpose": "Code, identifiers, API keys only."
+			}
+		},
+		"shadows": [
+			{
+				"name": "panel",
+				"value": "0 1px 2px oklch(0.221 0.035 260 / 6%), 0 4px 10px oklch(0.221 0.035 260 / 4%)",
+				"purpose": "Existing card at rest; the ceiling for resting surfaces."
+			},
+			{
+				"name": "panel-md",
+				"value": "0 2px 4px oklch(0.221 0.035 260 / 6%), 0 8px 20px oklch(0.221 0.035 260 / 6%)",
+				"purpose": "Popovers and menus."
+			},
+			{
+				"name": "panel-lg",
+				"value": "0 4px 8px oklch(0.221 0.035 260 / 8%), 0 16px 40px oklch(0.221 0.035 260 / 8%)",
+				"purpose": "Dialogs and modal panels."
+			},
+			{
+				"name": "panel-dark",
+				"value": "0 1px 2px oklch(0 0 0 / 24%), 0 6px 14px oklch(0 0 0 / 18%)",
+				"purpose": "Panel level in the dark scope."
+			}
+		],
+		"motion": [
+			{
+				"name": "motion-fast",
+				"value": "140ms",
+				"purpose": "Press feedback, hover colour."
+			},
+			{
+				"name": "motion-med",
+				"value": "240ms",
+				"purpose": "State and component changes."
+			},
+			{
+				"name": "motion-slow",
+				"value": "320ms",
+				"purpose": "View and structural transitions, page section reveal."
+			},
+			{
+				"name": "ease-standard",
+				"value": "cubic-bezier(0.2, 0, 0, 1)",
+				"purpose": "Default state transitions."
+			},
+			{
+				"name": "ease-decelerate",
+				"value": "cubic-bezier(0, 0, 0.2, 1)",
+				"purpose": "Entrances and reveals."
+			},
+			{
+				"name": "ease-expo",
+				"value": "cubic-bezier(0.16, 1, 0.3, 1)",
+				"purpose": "Long, settling movements."
+			}
+		],
+		"breakpoints": [
+			{
+				"name": "sm",
+				"value": "640px"
+			},
+			{
+				"name": "md",
+				"value": "768px"
+			},
+			{
+				"name": "lg",
+				"value": "1024px"
+			},
+			{
+				"name": "xl",
+				"value": "1280px"
+			},
+			{
+				"name": "wide",
+				"value": "1500px"
+			},
+			{
+				"name": "ultra",
+				"value": "1800px"
+			}
+		]
+	},
+	"components": [
+		{
+			"name": "Primary Button",
+			"kind": "button",
+			"refersTo": "button-primary",
+			"description": "The one gold action per view.",
+			"html": "<button class=\"ds-btn-primary\">Subscribe</button>",
+			"css": ".ds-btn-primary{font-family:'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.625rem 1rem;border-radius:1rem;border:1px solid color-mix(in srgb, var(--color-tint, oklch(0.513 0.082 79)) 70%, transparent);background:var(--color-tint, oklch(0.513 0.082 79));color:var(--primary-foreground, #fff);font-size:.875rem;font-weight:600;cursor:pointer;transition:filter 140ms cubic-bezier(0,0,0.2,1)}.ds-btn-primary:hover{filter:brightness(1.05)}.ds-btn-primary:focus-visible{outline:2px solid var(--color-focus, oklch(0.513 0.082 79));outline-offset:2px}.ds-btn-primary:disabled{opacity:.65;cursor:not-allowed}"
+		},
+		{
+			"name": "Accent Outline Button",
+			"kind": "button",
+			"refersTo": "button-secondary",
+			"description": "Secondary in-panel action: gold wash, gold text, hairline border.",
+			"html": "<button class=\"ds-btn-accent\">Add holding</button>",
+			"css": ".ds-btn-accent{font-family:'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;padding:.5rem .875rem;border-radius:.75rem;border:1px solid var(--border, oklch(0.896 0.017 85));background:color-mix(in srgb, var(--color-tint, oklch(0.513 0.082 79)) 9%, var(--color-card-bg, #fff));color:var(--color-tint, oklch(0.513 0.082 79));font-size:.8125rem;font-weight:600;cursor:pointer;transition:background 140ms cubic-bezier(0,0,0.2,1)}.ds-btn-accent:hover{background:color-mix(in srgb, var(--color-tint, oklch(0.513 0.082 79)) 14%, var(--color-card-bg, #fff))}.ds-btn-accent:focus-visible{outline:2px solid var(--color-focus, oklch(0.513 0.082 79));outline-offset:2px}"
+		},
+		{
+			"name": "Text Field",
+			"kind": "input",
+			"refersTo": "input",
+			"description": "Grouped-field input: quiet fill, gold border on focus.",
+			"html": "<input class=\"ds-input\" placeholder=\"Search symbol or company\" />",
+			"css": ".ds-input{font-family:'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;width:100%;max-width:20rem;padding:.625rem .875rem;border-radius:.75rem;border:1px solid transparent;background:color-mix(in srgb, var(--foreground, oklch(0.221 0.035 260)) 4%, transparent);color:var(--foreground, oklch(0.221 0.035 260));font-size:.9375rem;outline:none;transition:border-color 140ms cubic-bezier(0,0,0.2,1)}.ds-input::placeholder{color:var(--muted-foreground, oklch(0.447 0.034 261))}.ds-input:focus{border-color:var(--color-tint, oklch(0.513 0.082 79))}"
+		},
+		{
+			"name": "Sidebar Nav",
+			"kind": "nav",
+			"refersTo": "nav-item-active",
+			"description": "Active item: gold text, faint wash, 2px inset gold rule.",
+			"html": "<nav class=\"ds-nav\"><a href=\"#\">Overview</a><a href=\"#\" aria-current=\"page\">Achievements</a><a href=\"#\">Settings</a></nav>",
+			"css": ".ds-nav{font-family:'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;display:flex;flex-direction:column;gap:2px;width:14rem;padding:.5rem;background:var(--sidebar, oklch(0.947 0.013 87))}.ds-nav a{padding:.5rem .75rem;border-radius:.5rem;font-size:.9375rem;color:var(--sidebar-foreground, oklch(0.221 0.035 260));text-decoration:none;transition:background 140ms cubic-bezier(0,0,0.2,1)}.ds-nav a:hover{background:oklch(0.513 0.082 79 / 10%)}.ds-nav a[aria-current=page]{color:var(--color-tint, oklch(0.513 0.082 79));background:color-mix(in srgb, var(--color-tint, oklch(0.513 0.082 79)) 6%, transparent);box-shadow:inset 2px 0 0 var(--color-tint, oklch(0.513 0.082 79))}.ds-nav a:focus-visible{outline:2px solid var(--color-focus, oklch(0.513 0.082 79));outline-offset:-2px}"
+		},
+		{
+			"name": "Sub-nav Chip",
+			"kind": "chip",
+			"refersTo": "chip-subnav",
+			"description": "Section sub-nav on mobile; active chip in gold wash.",
+			"html": "<div class=\"ds-chips\"><a href=\"#\" class=\"ds-chip is-active\">Overview</a><a href=\"#\" class=\"ds-chip\">Pulse</a><a href=\"#\" class=\"ds-chip\">Activity</a></div>",
+			"css": ".ds-chips{display:flex;gap:.5rem;font-family:'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif}.ds-chip{padding:.375rem .75rem;border-radius:.75rem;border:1px solid var(--border, oklch(0.896 0.017 85));color:var(--muted-foreground, oklch(0.447 0.034 261));font-size:.8125rem;font-weight:600;text-decoration:none;transition:color 140ms cubic-bezier(0,0,0.2,1)}.ds-chip:hover{color:var(--foreground, oklch(0.221 0.035 260))}.ds-chip.is-active{color:var(--color-tint, oklch(0.513 0.082 79));background:var(--color-tint-soft, oklch(0.513 0.082 79 / 9%))}"
+		},
+		{
+			"name": "Action Card",
+			"kind": "card",
+			"refersTo": "card",
+			"description": "Card for a discrete object a user acts on; never the default wrapper.",
+			"html": "<div class=\"ds-card\"><p class=\"ds-card-k\">Budget</p><p class=\"ds-card-t\">Budget drift needs attention</p><p class=\"ds-card-d\">Total expenses are €12.50 over target.</p></div>",
+			"css": ".ds-card{font-family:'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;max-width:24rem;padding:1.25rem;border-radius:1rem;border:1px solid var(--border, oklch(0.896 0.017 85));background:var(--color-card-bg, #fff);box-shadow:0 1px 2px oklch(0.221 0.035 260 / 6%), 0 4px 10px oklch(0.221 0.035 260 / 4%)}.ds-card-k{margin:0;font-size:.75rem;color:var(--muted-foreground, oklch(0.447 0.034 261))}.ds-card-t{margin:.125rem 0 0;font-size:1.0625rem;font-weight:600;color:var(--foreground, oklch(0.221 0.035 260))}.ds-card-d{margin:.25rem 0 0;font-size:.8125rem;color:var(--muted-foreground, oklch(0.447 0.034 261))}"
+		},
+		{
+			"name": "Direction Pill",
+			"kind": "chip",
+			"refersTo": "direction-pill",
+			"description": "Signed change with arrow on a 14% semantic wash.",
+			"html": "<span class=\"ds-delta is-up\"><span aria-hidden=\"true\">▲</span> +€412.30 (+2.26%)</span> <span class=\"ds-delta is-down\"><span aria-hidden=\"true\">▼</span> -$48.45 (-1.18%)</span>",
+			"css": ".ds-delta{font-family:'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;display:inline-flex;align-items:baseline;gap:.25rem;padding:.2rem .6rem;border-radius:999px;font-size:.8125rem;font-weight:600;font-variant-numeric:tabular-nums}.ds-delta.is-up{color:var(--color-gain, oklch(0.482 0.091 165));background:color-mix(in srgb, var(--color-gain, oklch(0.482 0.091 165)) 14%, transparent)}.ds-delta.is-down{color:var(--color-loss, oklch(0.507 0.152 20));background:color-mix(in srgb, var(--color-loss, oklch(0.507 0.152 20)) 14%, transparent)}"
+		},
+		{
+			"name": "Document Section",
+			"kind": "custom",
+			"refersTo": "document-section",
+			"description": "Signature: hairline-ruled section with a numeric table, no card.",
+			"html": "<section class=\"ds-doc\"><h2>Top movers</h2><table><thead><tr><th>Symbol</th><th class=\"n\">Week</th><th class=\"n\">Effect</th></tr></thead><tbody><tr><th>NVDA</th><td class=\"n up\">+5.21%</td><td class=\"n up\">+$190.00</td></tr><tr><th>INTC</th><td class=\"n dn\">-5.58%</td><td class=\"n dn\">-$92.00</td></tr></tbody></table></section>",
+			"css": ".ds-doc{font-family:'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;max-width:32rem;padding-top:1.5rem;border-top:1px solid var(--hairline, oklch(0.3 0.03 85 / 12%))}.ds-doc h2{margin:0;font-size:1.0625rem;font-weight:600;color:var(--foreground, oklch(0.221 0.035 260))}.ds-doc table{width:100%;margin-top:.75rem;border-collapse:collapse;font-size:.8125rem}.ds-doc thead th{padding:0 .75rem .5rem 0;text-align:left;font-weight:500;color:var(--muted-foreground, oklch(0.447 0.034 261))}.ds-doc tbody th,.ds-doc tbody td{padding:.625rem .75rem .625rem 0;border-top:1px solid var(--hairline, oklch(0.3 0.03 85 / 12%));text-align:left;font-weight:400}.ds-doc tbody th{font-weight:600}.ds-doc .n{text-align:right;font-variant-numeric:tabular-nums}.ds-doc .up{color:var(--color-gain, oklch(0.482 0.091 165))}.ds-doc .dn{color:var(--color-loss, oklch(0.507 0.152 20))}"
+		}
+	],
+	"narrative": {
+		"northStar": "The Night Desk",
+		"overview": "An analyst's desk after the close. The room is dark and quiet, one lamp is on, and the light falls on the figures that matter. Norviq's flagship scope is dark (obsidian page, midnight-navy surfaces, platinum type); the light scope is the same desk in daylight, warm paper with navy ink. Both scopes share one rule: nothing decorative competes with a number. Gold is the lamp. It lands on the one primary action, the active place in the navigation, the focus ring, and occasionally the one insight worth noticing, and nowhere else.\n\nDensity is medium. Pages are working documents rather than dashboards of tiles: a clear title, then content set as rows, tables and figures separated by hairline rules. Surfaces are flat at rest. Depth is tonal (page, card, raised surface step through one hue axis per scope) and real shadows are kept for things that float above the page. Motion is short and decelerating, and every screen must stay legible and correct with all motion and effects off.\n\nThe system rejects the trading-app register: no confetti, no glow, no neon, no gradient text, no mesh backgrounds, no celebratory motion around gains or losses, and no SaaS hero-metric tiles.",
+		"keyCharacteristics": [
+			"Dark-first, with a full warm light scope; one OKLCH hue axis per scope (navy 260, warm paper 85).",
+			"Champagne/deep gold as a rare accent; green and red only for financial direction.",
+			"Geist Sans throughout, tabular numerals wherever numbers meet.",
+			"Flat surfaces, hairline rules, tonal layering; shadows only for overlays.",
+			"Restrained and exact controls: crisp edges, quiet fills, one gold action per view."
+		],
+		"rules": [
+			{
+				"name": "The Lamp Rule",
+				"body": "Gold covers about 10% of a screen: the primary action, the active nav item, the focus ring, the selected row, at most one key insight. If two things on a screen are gold and neither is an action or a state, one of them is wrong.",
+				"section": "colors"
+			},
+			{
+				"name": "The Gold Is Not Money Rule",
+				"body": "Gold never means profit. Green and red mean direction and nothing else, and direction is never colour alone: it always carries a sign (+ / −), an arrow (▲ / ▼) or an accessible label.",
+				"section": "colors"
+			},
+			{
+				"name": "The Tabular Rule",
+				"body": "Any number that can sit next to another number (prices, P&L, percentages, budgets, dates in a column) uses tabular figures and right alignment in tables. A changing value in a table is never animated.",
+				"section": "typography"
+			},
+			{
+				"name": "The Sentence-Case Rule",
+				"body": "Headings and labels are sentence case and literal. No uppercase tracked eyebrows above sections.",
+				"section": "typography"
+			},
+			{
+				"name": "The One Edge Rule",
+				"body": "Every app page starts at the main gutter, under the banner and beside the sidebar. Width varies by grammar; the left edge does not.",
+				"section": "layout"
+			},
+			{
+				"name": "The Rule-Over-Card Rule",
+				"body": "If content is read rather than acted on, separate it with a hairline, not a card. Nested cards are never allowed.",
+				"section": "elevation"
+			},
+			{
+				"name": "The No-Glow Rule",
+				"body": "No glow, blur-as-decoration, mesh gradients or neon in either scope.",
+				"section": "elevation"
+			}
+		],
+		"dos": [
+			"**Do** keep gold to the primary action, active nav, focus and selection (The Lamp Rule).",
+			"**Do** use the gain/loss tokens with a sign or arrow for every directional figure.",
+			"**Do** set numbers in tabular figures and right-align numeric table columns.",
+			"**Do** separate read-only content with hairline rules; reserve cards for things a user acts on.",
+			"**Do** start every app page at the main gutter and pick its width from Document, Deck or Canvas.",
+			"**Do** use the motion tokens (140 / 240 / 320ms, decelerating) and make every animation degrade to nothing under reduced motion.",
+			"**Do** check both scopes; light is a first-class user setting."
+		],
+		"donts": [
+			"**Don't** use gold to mean profit, or green and red as decoration.",
+			"**Don't** put white text on champagne gold (1.96:1).",
+			"**Don't** add glow, neon, mesh gradients, gradient text or decorative circuitry.",
+			"**Don't** nest cards, or wrap every section in a card by default.",
+			"**Don't** add shadows to resting surfaces beyond the Panel level.",
+			"**Don't** put uppercase tracked eyebrows above sections.",
+			"**Don't** animate changing values in tables, or celebrate gains and losses with motion.",
+			"**Don't** gate content visibility on an animation; content is visible by default and motion only enhances it."
+		]
+	}
+}
