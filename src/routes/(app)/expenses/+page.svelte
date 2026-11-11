@@ -271,272 +271,165 @@
 					<h2 id="budget-drift-title">Monthly surplus</h2>
 					<p>Spending against your targets. What is left over can go to your investment plan.</p>
 				</div>
-				<span
-					class={'budget-status-' + drift.level + ' rounded-full px-3 py-1 text-xs font-semibold'}
-					>{drift.levelLabel}</span
-				>
-			</div>
-			<div class="grid gap-4 md:grid-cols-4">
-				<div>
-					<p class="field-label">Actual / target</p>
-					<p class="font-semibold tabular-nums">{drift.totalActual} / {drift.totalTarget}</p>
-				</div>
-				<div>
-					<p class="field-label">Drift</p>
-					<p class="font-semibold tabular-nums">{drift.driftAmount} · {drift.driftPercent}</p>
-				</div>
-				<div>
-					<p class="field-label">Investment target</p>
-					<p class="font-semibold tabular-nums">{drift.investmentTarget}</p>
-				</div>
-				<div>
-					<p class="field-label">Capital lost this month</p>
-					<p class="font-semibold tabular-nums">{drift.lostCapital}</p>
-				</div>
-			</div>
-			{#if vm.discipline}
-				<div class="expenses-ruled mt-5 grid gap-4 pt-4 sm:grid-cols-4">
-					<div>
-						<p class="field-label">Discipline score</p>
-						<p class="font-semibold tabular-nums">{vm.discipline.score}</p>
-					</div>
-					<div>
-						<p class="field-label">Within plan</p>
-						<p class="font-semibold">{vm.discipline.compliance}</p>
-					</div>
-				</div>
-			{/if}
-			{#if vm.alertPolicy}
-				<details class="expenses-ruled mt-5 pt-4">
-					<summary class="cursor-pointer font-semibold">Drift alert policy</summary>
-					<form
-						method="POST"
-						action="?/alertPolicy"
-						class="mt-4 grid gap-4 sm:grid-cols-2"
-						use:enhance={withSpinner()}
+				{#if drift.hasTargets}
+					<span
+						class={'budget-status-' + drift.level + ' rounded-full px-3 py-1 text-xs font-semibold'}
+						>{drift.levelLabel}</span
 					>
-						<input type="hidden" name="snapshot_id" value={drift.snapshotID} />
-						<input type="hidden" name="month" value={vm.monthQuery} />
-						<Field
-							name="category_threshold"
-							label="Category threshold (%)"
-							type="number"
-							value={vm.alertPolicy.categoryThreshold}
-							required
-							min="0"
-							max="1000"
-							step="0.1"
-						/>
-						<Field
-							name="total_threshold"
-							label="Total budget threshold (%)"
-							type="number"
-							value={vm.alertPolicy.totalThreshold}
-							required
-							min="0"
-							max="1000"
-							step="0.1"
-						/>
-						<CheckboxField
-							name="alerts_enabled"
-							label="Enable drift alerts"
-							value="true"
-							checked={vm.alertPolicy.alertsEnabled}
-						/>
-						<CheckboxField
-							name="alert_on_unbudgeted"
-							label="Alert on unbudgeted spending"
-							value="true"
-							checked={vm.alertPolicy.alertOnUnbudgeted}
-						/>
-						<div class="sm:col-span-2">
-							<SecondarySubmitButton>Save alert policy</SecondarySubmitButton>
-						</div>
-					</form>
-				</details>
-			{/if}
-			{#if drift.categories.length > 0}
-				<div class="mt-5 overflow-x-auto">
-					<table class="expenses-plan-table">
-						<thead
-							><tr><th>Category</th><th>Status</th><th>Actual</th><th>Target</th><th>Drift</th></tr
-							></thead
-						>
-						<tbody>
-							{#each drift.categories as row (row.id)}
-								<tr
-									><td class="font-semibold">{row.title}</td><td
-										><span class={'budget-status-inline budget-status-' + row.level}
-											>{row.levelLabel}</span
-										></td
-									><td class="tabular-nums">{row.actual}</td><td class="tabular-nums"
-										>{row.target}</td
-									><td class="tabular-nums">{row.drift} · {row.driftPercent}</td></tr
-								>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			{/if}
-			{#if drift.hasSuggestions}
-				<div class="mt-6 border-t border-black/10 pt-5 dark:border-white/10">
-					<div class="flex flex-wrap items-start justify-between gap-3">
-						<div>
-							<h3 class="font-semibold">Next-month reallocation simulator</h3>
-							<p class="text-sm text-muted-foreground">
-								Move spending targets into Investments. No money is transferred and no trade is
-								placed.
-							</p>
-						</div>
-						{#if !isPro}
-							<span class="stock-pro-badge">Pro</span>
-						{/if}
-					</div>
-					{#if isPro}
-						<form
-							method="POST"
-							action="?/reallocation"
-							class="mt-4 space-y-4"
-							oninput={recalc}
-							use:enhance={withSpinner()}
-						>
-							<input type="hidden" name="snapshot_id" value={drift.snapshotID} />
-							<input type="hidden" name="revision" value={String(drift.revision)} />
-							<input type="hidden" name="month" value={vm.monthQuery} />
-							{#if vm.financialGoals.length > 0 || vm.portfolioLists.length > 0}
-								<div
-									class="grid gap-4 rounded-lg border border-black/10 p-4 sm:grid-cols-2 dark:border-white/10"
-								>
-									<SelectField
-										name="portfolio_list_id"
-										label="Investment portfolio"
-										options={destinationPortfolioOptions(vm.portfolioLists)}
-										bind:ref={destinationPortfolio}
-									/>
-									<SelectField
-										name="financial_goal_id"
-										label="Financial goal"
-										options={destinationGoalOptions(vm.financialGoals)}
-										onchange={(e: Event) => {
-											const p = (e.currentTarget as HTMLSelectElement).selectedOptions[0]?.dataset
-												.portfolio;
-											if (p && destinationPortfolio) destinationPortfolio.value = p;
-										}}
-									/>
-									<p class="text-xs text-muted-foreground sm:col-span-2">
-										Selecting a goal also routes the contribution forecast to that goal’s portfolio.
-									</p>
-								</div>
-							{/if}
-							{#each drift.categories as row (row.id)}
-								{#if row.eligible}
-									<label class="block rounded-lg bg-black/5 p-4 dark:bg-white/5">
-										<span class="flex justify-between gap-3 text-sm"
-											><span class="font-semibold">{row.title}</span><span
-												>{row.suggestedCutLabel} suggested</span
-											></span
-										>
-										<NativeInput
-											name={'cut_' + row.id}
-											type="range"
-											value={formatFloat(row.suggestedCut, 2)}
-											class="mt-3 w-full"
-											data-reallocation={true}
-											min="0"
-											max={formatFloat(row.suggestedCut, 2)}
-											step="1"
-											aria-label={'Reduce ' + row.title + ' next month'}
-										/>
-									</label>
-								{/if}
-							{/each}
-							<div class="flex flex-wrap items-center justify-between gap-3">
-								<p class="text-sm">
-									<strong>{money(monthly, drift.currencyCode)}</strong> monthly ·
-									<strong>{money(annual, drift.currencyCode)}</strong> annual runway
-								</p>
-								<SubmitButton>Commit for next month</SubmitButton>
-							</div>
-						</form>
-					{:else}
-						<a class="btn-secondary mt-4 inline-flex" href="/settings/subscription"
-							>Unlock simulator</a
-						>
-					{/if}
-				</div>
-			{/if}
-			<div class="mt-5 flex flex-wrap gap-3">
-				<a
-					class="btn-secondary inline-flex"
-					href={'/expenses/report.pdf?month=' + vm.monthQuery}
-					data-sveltekit-reload
-				>
-					Monthly PDF report
-					{#if !isPro}
-						<span class="stock-pro-badge">Pro</span>
-					{/if}
-				</a>
-				<a class="btn-secondary inline-flex" href="/expenses/year">
-					Historical trends
-					{#if !isPro}
-						<span class="stock-pro-badge">Pro</span>
-					{/if}
-				</a>
+				{/if}
 			</div>
-			{#if isPro}
-				<div class="mt-6 border-t border-black/10 pt-5 dark:border-white/10">
-					<h3 class="font-semibold">Budget templates</h3>
-					<div class="mt-3 flex flex-wrap gap-2">
-						<form method="POST" action="?/templates" class="flex gap-2" use:enhance={withSpinner()}>
-							<input type="hidden" name="snapshot_id" value={drift.snapshotID} />
-							<input type="hidden" name="month" value={vm.monthQuery} />
-							<Field
-								name="name"
-								placeholder="Template name"
-								required
-								maxlength={80}
-								aria-label="Template name"
-							/>
-							<SecondarySubmitButton>Save current targets</SecondarySubmitButton>
-						</form>
-						{#each vm.templates as template (template.id)}
+			{#if !drift.hasTargets}
+				<div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+					<p class="text-subhead text-muted-foreground">
+						Set spending targets for {vm.monthLabel} to see your surplus.
+					</p>
+					<NativeButton
+						class="btn-secondary px-4 py-2 text-sm"
+						onclick={() => openPanel('/expenses/plan-item?month=' + vm.monthQuery)}
+						>Add a target</NativeButton
+					>
+				</div>
+			{:else}
+				<div class="grid gap-4 md:grid-cols-4">
+					<div>
+						<p class="field-label">Actual / target</p>
+						<p class="font-semibold tabular-nums">{drift.totalActual} / {drift.totalTarget}</p>
+					</div>
+					<div>
+						<p class="field-label">Drift</p>
+						<p class="font-semibold tabular-nums">{drift.driftAmount} · {drift.driftPercent}</p>
+					</div>
+					<div>
+						<p class="field-label">Investment target</p>
+						<p class="font-semibold tabular-nums">{drift.investmentTarget}</p>
+					</div>
+					<div>
+						<p class="field-label">Overspend this month</p>
+						<p class="font-semibold tabular-nums">{drift.lostCapital}</p>
+					</div>
+				</div>
+				{#if vm.discipline}
+					<div class="expenses-ruled mt-5 grid gap-4 pt-4 sm:grid-cols-4">
+						<div>
+							<p class="field-label">Discipline score</p>
+							<p class="font-semibold tabular-nums">{vm.discipline.score}</p>
+						</div>
+						<div>
+							<p class="field-label">Within plan</p>
+							<p class="font-semibold">{vm.discipline.compliance}</p>
+						</div>
+					</div>
+				{/if}
+				{#if drift.categories.length > 0}
+					<div class="mt-5 overflow-x-auto">
+						<table class="expenses-plan-table">
+							<thead
+								><tr
+									><th>Category</th><th>Status</th><th>Actual</th><th>Target</th><th>Drift</th></tr
+								></thead
+							>
+							<tbody>
+								{#each drift.categories as row (row.id)}
+									<tr
+										><td class="font-semibold">{row.title}</td><td
+											><span class={'budget-status-inline budget-status-' + row.level}
+												>{row.levelLabel}</span
+											></td
+										><td class="tabular-nums">{row.actual}</td><td class="tabular-nums"
+											>{row.target}</td
+										><td class="tabular-nums">{row.drift} · {row.driftPercent}</td></tr
+									>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+				{/if}
+				{#if drift.hasSuggestions}
+					<div class="mt-6 border-t border-black/10 pt-5 dark:border-white/10">
+						<div class="flex flex-wrap items-start justify-between gap-3">
+							<div>
+								<h3 class="font-semibold">Next-month reallocation simulator</h3>
+								<p class="text-sm text-muted-foreground">
+									Move spending targets into Investments. No money is transferred and no trade is
+									placed.
+								</p>
+							</div>
+							{#if !isPro}
+								<span class="stock-pro-badge">Pro</span>
+							{/if}
+						</div>
+						{#if isPro}
 							<form
 								method="POST"
-								action="?/templateApply"
+								action="?/reallocation"
+								class="mt-4 space-y-4"
+								oninput={recalc}
 								use:enhance={withSpinner()}
-								onsubmit={(e) => {
-									if (
-										!confirm(
-											'Replace this month’s target items with the selected template? Recorded expenses will not be changed.'
-										)
-									)
-										e.preventDefault();
-								}}
 							>
-								<input type="hidden" name="template_id" value={template.id} />
 								<input type="hidden" name="snapshot_id" value={drift.snapshotID} />
 								<input type="hidden" name="revision" value={String(drift.revision)} />
 								<input type="hidden" name="month" value={vm.monthQuery} />
-								<input type="hidden" name="replace_existing" value="true" />
-								<SecondarySubmitButton>Apply {template.name}</SecondarySubmitButton>
-							</form>
-						{/each}
-					</div>
-				</div>
-				{#if vm.reallocations.length > 0}
-					<div class="mt-5">
-						<h3 class="font-semibold">Recent reallocations</h3>
-						<ul class="mt-2 space-y-2">
-							{#each vm.reallocations as event, i (i)}
-								<li
-									class="flex justify-between rounded-xl bg-black/5 px-3 py-2 text-sm dark:bg-white/5"
-								>
-									<span>{event.effectiveMonth}</span><strong
-										>{event.freedCapital} to Investments</strong
+								{#if vm.financialGoals.length > 0 || vm.portfolioLists.length > 0}
+									<div
+										class="grid gap-4 rounded-lg border border-black/10 p-4 sm:grid-cols-2 dark:border-white/10"
 									>
-								</li>
-							{/each}
-						</ul>
+										<SelectField
+											name="portfolio_list_id"
+											label="Investment portfolio"
+											options={destinationPortfolioOptions(vm.portfolioLists)}
+											bind:ref={destinationPortfolio}
+										/>
+										<SelectField
+											name="financial_goal_id"
+											label="Financial goal"
+											options={destinationGoalOptions(vm.financialGoals)}
+											onchange={(e: Event) => {
+												const p = (e.currentTarget as HTMLSelectElement).selectedOptions[0]?.dataset
+													.portfolio;
+												if (p && destinationPortfolio) destinationPortfolio.value = p;
+											}}
+										/>
+										<p class="text-xs text-muted-foreground sm:col-span-2">
+											Selecting a goal also routes the contribution forecast to that goal’s
+											portfolio.
+										</p>
+									</div>
+								{/if}
+								{#each drift.categories as row (row.id)}
+									{#if row.eligible}
+										<label class="block rounded-lg bg-black/5 p-4 dark:bg-white/5">
+											<span class="flex justify-between gap-3 text-sm"
+												><span class="font-semibold">{row.title}</span><span
+													>{row.suggestedCutLabel} suggested</span
+												></span
+											>
+											<NativeInput
+												name={'cut_' + row.id}
+												type="range"
+												value={formatFloat(row.suggestedCut, 2)}
+												class="mt-3 w-full"
+												data-reallocation={true}
+												min="0"
+												max={formatFloat(row.suggestedCut, 2)}
+												step="1"
+												aria-label={'Reduce ' + row.title + ' next month'}
+											/>
+										</label>
+									{/if}
+								{/each}
+								<div class="flex flex-wrap items-center justify-between gap-3">
+									<p class="text-sm">
+										<strong>{money(monthly, drift.currencyCode)}</strong> monthly ·
+										<strong>{money(annual, drift.currencyCode)}</strong> annual runway
+									</p>
+									<SubmitButton>Commit for next month</SubmitButton>
+								</div>
+							</form>
+						{:else}
+							<a class="btn-secondary mt-4 inline-flex" href="/settings/subscription"
+								>Unlock simulator</a
+							>
+						{/if}
 					</div>
 				{/if}
 			{/if}
@@ -811,6 +704,121 @@
 	</vigil.CommandDeck>
 
 	<div class="vigil-list-region">
+		{#if vm.drift && (vm.alertPolicy || isPro)}
+			{@const drift = vm.drift}
+			<section>
+				<CardHeader title="Budget settings" />
+				{#if vm.alertPolicy}
+					<details class="mt-4">
+						<summary class="cursor-pointer font-semibold">Drift alert policy</summary>
+						<form
+							method="POST"
+							action="?/alertPolicy"
+							class="mt-4 grid gap-4 sm:grid-cols-2"
+							use:enhance={withSpinner()}
+						>
+							<input type="hidden" name="snapshot_id" value={drift.snapshotID} />
+							<input type="hidden" name="month" value={vm.monthQuery} />
+							<Field
+								name="category_threshold"
+								label="Category threshold (%)"
+								type="number"
+								value={vm.alertPolicy.categoryThreshold}
+								required
+								min="0"
+								max="1000"
+								step="0.1"
+							/>
+							<Field
+								name="total_threshold"
+								label="Total budget threshold (%)"
+								type="number"
+								value={vm.alertPolicy.totalThreshold}
+								required
+								min="0"
+								max="1000"
+								step="0.1"
+							/>
+							<CheckboxField
+								name="alerts_enabled"
+								label="Enable drift alerts"
+								value="true"
+								checked={vm.alertPolicy.alertsEnabled}
+							/>
+							<CheckboxField
+								name="alert_on_unbudgeted"
+								label="Alert on unbudgeted spending"
+								value="true"
+								checked={vm.alertPolicy.alertOnUnbudgeted}
+							/>
+							<div class="sm:col-span-2">
+								<SecondarySubmitButton>Save alert policy</SecondarySubmitButton>
+							</div>
+						</form>
+					</details>
+				{/if}
+				{#if isPro}
+					<div class="expenses-ruled mt-5 pt-4">
+						<h3 class="font-semibold">Budget templates</h3>
+						<div class="mt-3 flex flex-wrap gap-2">
+							<form
+								method="POST"
+								action="?/templates"
+								class="flex gap-2"
+								use:enhance={withSpinner()}
+							>
+								<input type="hidden" name="snapshot_id" value={drift.snapshotID} />
+								<input type="hidden" name="month" value={vm.monthQuery} />
+								<Field
+									name="name"
+									placeholder="Template name"
+									required
+									maxlength={80}
+									aria-label="Template name"
+								/>
+								<SecondarySubmitButton>Save current targets</SecondarySubmitButton>
+							</form>
+							{#each vm.templates as template (template.id)}
+								<form
+									method="POST"
+									action="?/templateApply"
+									use:enhance={withSpinner()}
+									onsubmit={(e) => {
+										if (
+											!confirm(
+												'Replace this month’s target items with the selected template? Recorded expenses will not be changed.'
+											)
+										)
+											e.preventDefault();
+									}}
+								>
+									<input type="hidden" name="template_id" value={template.id} />
+									<input type="hidden" name="snapshot_id" value={drift.snapshotID} />
+									<input type="hidden" name="revision" value={String(drift.revision)} />
+									<input type="hidden" name="month" value={vm.monthQuery} />
+									<input type="hidden" name="replace_existing" value="true" />
+									<SecondarySubmitButton>Apply {template.name}</SecondarySubmitButton>
+								</form>
+							{/each}
+						</div>
+					</div>
+					{#if vm.reallocations.length > 0}
+						<div class="mt-5">
+							<h3 class="font-semibold">Recent reallocations</h3>
+							<ul class="mt-2 space-y-2">
+								{#each vm.reallocations as event, i (i)}
+									<li class="flex justify-between border-b border-[var(--border)] py-2 text-sm">
+										<span>{event.effectiveMonth}</span><strong
+											>{event.freedCapital} to Investments</strong
+										>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+				{/if}
+			</section>
+		{/if}
 		<section>
 			<CardHeader title="Categories" />
 			<div id="expenses-categories-body">

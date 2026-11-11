@@ -75,7 +75,9 @@ export function formatBudgetCurrency(value: number, code: string): string {
 	const upper = (code ?? '').toUpperCase();
 	const symbol =
 		({ USD: '$', EUR: '€', GBP: '£', JPY: '¥' } as Record<string, string>)[upper] || upper + ' ';
-	return symbol + formatWithCommas(Math.abs(value));
+	const n = formatWithCommas(Math.abs(value));
+	// Two decimals always, matching formatCurrency on the same page.
+	return symbol + (n.includes('.') ? n : n + '.00');
 }
 
 function driftLevelLabel(level: string): string {
@@ -214,6 +216,7 @@ function mapBudgetDrift(value: BudgetDriftDashboard): VM.BudgetDriftVM {
 		lostCapital: formatBudgetCurrency(value.lostInvestmentCapital, ccy),
 		investmentTarget: formatBudgetCurrency(value.investmentContributionTarget, ccy),
 		surplusReady: formatBudgetCurrency(surplus, ccy),
+		hasTargets: value.totalTarget > 0,
 		deployPct:
 			value.investmentContributionTarget > 0
 				? Math.min(100, (surplus / value.investmentContributionTarget) * 100)

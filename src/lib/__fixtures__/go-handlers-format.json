@@ -118,15 +118,15 @@
 	},
 	{
 		"In": 1000,
-		"Currency": "$1,000",
+		"Currency": "$1,000.00",
 		"WithCommas": "1,000",
 		"SignedPercent": "+1000.00%",
 		"CompactNumber": "1.00K",
-		"SignedCurrency": "+$1,000",
+		"SignedCurrency": "+$1,000.00",
 		"Percent": "1000.0%",
 		"Money": "€1000",
 		"MoneySEK": "SEK 1000",
-		"CompactCurrency": "$1,000",
+		"CompactCurrency": "$1,000.00",
 		"ChangeClass": "positive"
 	},
 	{

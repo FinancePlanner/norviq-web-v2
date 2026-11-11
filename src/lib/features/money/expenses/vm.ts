@@ -50,6 +50,8 @@ export interface BudgetDriftVM {
 	lostCapital: string;
 	investmentTarget: string;
 	surplusReady: string;
+	/** False when no spending targets are set: every figure would read $0.00. */
+	hasTargets: boolean;
 	deployPct: number;
 	categories: CategoryDriftVM[];
 	hasSuggestions: boolean;

@@ -49,16 +49,38 @@
 	margin-bottom: var(--space-4);
 }
 
-/* Tools and connections: the panels that sell or configure something sit
- * after the user's own figures, under a plain heading that spans the grid. */
+/* Tools and connections: one quiet panel of rows after the user's own figures.
+ * Each row is a name, a one-line status and a link; details live on the tool. */
 .cc-tools {
-	margin-top: var(--space-6);
+	margin-bottom: var(--stack-gap);
 }
 
-.cc-tools-title {
-	grid-column: 1 / -1;
+.cc-tool-list {
+	margin: var(--space-2) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.cc-tool-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-4);
+	padding: var(--space-3) 0;
+}
+
+.cc-tool-row + .cc-tool-row {
+	border-top: 1px solid var(--border);
+}
+
+.cc-tool-title {
 	margin: 0;
-	font-size: var(--text-headline, 1.0625rem);
 	font-weight: 600;
+}
+
+.cc-tool-status {
+	margin: 0;
+	font-size: var(--text-subhead, 0.9375rem);
 	color: var(--muted-foreground);
+	font-variant-numeric: tabular-nums;
 }
