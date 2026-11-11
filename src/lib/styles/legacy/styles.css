@@ -4332,10 +4332,11 @@ html.dark .pro-badge {
    Replays on every server-rendered navigation (many times a day), so the
    whole cascade must finish well under half a second: 320ms rise, delays
    capped at 150ms → last section settles ~470ms after paint. */
+/* Visible by default: the keyframes run from the hidden state (backwards fill
+   covers the stagger delay), so a section never stays blank when animations
+   are paused, throttled or skipped. */
 .app-main > .app-page-content > * {
-  opacity: 0;
-  transform: translateY(8px);
-  animation: page-section-in 0.32s var(--ease-decelerate) forwards;
+  animation: page-section-in 0.32s var(--ease-decelerate) backwards;
 }
 .app-main > .app-page-content > *:nth-child(1) {
   animation-delay: 0ms;
@@ -4354,9 +4355,9 @@ html.dark .pro-badge {
 }
 
 @keyframes page-section-in {
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
 
