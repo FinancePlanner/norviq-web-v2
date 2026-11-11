@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { buildDigestPage, buildSections, focusAnchor, money, percent } from './viewmodel.js';
+import {
+	buildDigestPage,
+	buildSections,
+	dayLabel,
+	focusAnchor,
+	money,
+	monthLabel,
+	percent,
+	periodLabel
+} from './viewmodel.js';
 import type { DigestPayload, DigestResponse } from './types.js';
 
 const empty = (): DigestPayload => ({
@@ -61,22 +70,83 @@ describe('buildSections', () => {
 			'inflation',
 			'earnings'
 		]);
-		expect(sections[0].lines).toEqual([
-			'+€50.00 (+5.00%), now €1,050.00',
-			'Based on 2 of 3 holdings with prices this week.'
-		]);
-		expect(sections[1].lines).toEqual(['AAPL -10.00%: -$100.00. Guidance cut']);
-		expect(sections[2].lines).toEqual([
-			'Food: €50.00 over (€350.00 of €300.00)',
-			'Fun: €60.00 under (€40.00 of €100.00)'
-		]);
-		expect(sections[3].lines).toEqual(['Yours: 3.10% vs official 2.40% (PT, 2026-10).']);
-		expect(sections[4].title).toBe('Next week');
-		expect(sections[4].lines).toEqual([
-			'NVDA reports on 2026-11-19 (after close)',
-			'WMT reports on 2026-11-18 (before open)',
-			'SAP reports on 2026-11-20'
-		]);
+		const [holdings, movers, budget, inflation, earningsSection] = sections;
+		expect(holdings).toMatchObject({
+			priced: 2,
+			total: 3,
+			rows: [
+				{
+					currency: 'EUR',
+					value: '€1,050.00',
+					change: '+€50.00',
+					changePercent: '+5.00%',
+					direction: 'up'
+				}
+			]
+		});
+		expect(movers).toMatchObject({
+			rows: [
+				{
+					symbol: 'AAPL',
+					changePercent: '-10.00%',
+					contribution: '-$100.00',
+					direction: 'down',
+					why: 'Guidance cut'
+				}
+			]
+		});
+		expect(budget).toMatchObject({
+			monthStart: '2026-11-01',
+			rows: [
+				{ title: 'Food', actual: '€350.00', target: '€300.00', drift: '€50.00', over: true },
+				{ title: 'Fun', actual: '€40.00', target: '€100.00', drift: '€60.00', over: false }
+			]
+		});
+		expect(inflation).toMatchObject({
+			personal: '3.10%',
+			official: '2.40%',
+			country: 'PT',
+			asOf: '2026-10',
+			above: true
+		});
+		expect(earningsSection.title).toBe('Next week');
+		// Sorted by date, the date flagged once per group.
+		expect(earningsSection).toMatchObject({
+			rows: [
+				{ symbol: 'WMT', date: '2026-11-18', firstOfDate: true, timing: 'before-open' },
+				{ symbol: 'NVDA', date: '2026-11-19', firstOfDate: true, timing: 'after-close' },
+				{ symbol: 'SAP', date: '2026-11-20', firstOfDate: true, timing: null }
+			]
+		});
+	});
+
+	it('groups earnings on the same date', () => {
+		const [section] = buildSections({
+			...empty(),
+			earnings: [
+				{ symbol: 'RKLB', date: '2026-11-09', hour: 'amc' },
+				{ symbol: 'ABCL', date: '2026-11-09', hour: 'amc' },
+				{ symbol: 'CRWV', date: '2026-11-10', hour: 'dmh' }
+			]
+		});
+		expect(section).toMatchObject({
+			rows: [
+				{ symbol: 'ABCL', firstOfDate: true },
+				{ symbol: 'RKLB', firstOfDate: false },
+				{ symbol: 'CRWV', firstOfDate: true, timing: 'during' }
+			]
+		});
+	});
+});
+
+describe('dates', () => {
+	it('formats the period, days and months without timezone drift', () => {
+		expect(periodLabel('2026-11-02', '2026-11-08', 'en').replace(/\s/g, ' ')).toBe(
+			'November 2 – 8, 2026'
+		);
+		expect(dayLabel('2026-11-09', 'en')).toBe('Mon, Nov 9');
+		expect(monthLabel('2026-10', 'en')).toBe('October 2026');
+		expect(dayLabel('soon', 'en')).toBe('soon');
 	});
 });
 
