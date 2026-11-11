@@ -18,7 +18,7 @@
 		{#if vm.hasDelta}
 			<span
 				class={[
-					'text-[10px]',
+					'text-[11px]',
 					vm.deltaUp ? 'text-[var(--color-gain)]' : 'text-[var(--color-loss)]'
 				]}
 			>

@@ -229,8 +229,8 @@ export async function loadHoldingsViewModel(
 		chartValues: [],
 		selectedTimeRange,
 		timeRanges: PORTFOLIO_TIME_RANGES,
-		totalShares: '',
-		avgPositionValue: '',
+		holdingsValue: '',
+		costBasis: '',
 		cashBalance: '',
 		positions: [],
 		assetFilters: portfolioAssetFilters(),
@@ -283,21 +283,24 @@ export async function loadHoldingsViewModel(
 	}
 
 	const targetsBySymbol = mapTargetAlertsBySymbol(targetsRes ?? []);
-	let holdingsValue = 0;
-	let totalShares = 0;
-	for (const s of stocks) {
-		holdingsValue += s.shares * s.buyPrice;
-		totalShares += s.shares;
-	}
+	let costBasis = 0;
+	for (const s of stocks) costBasis += s.shares * s.buyPrice;
 	const cashBalance = summary?.cashBalance ?? 0;
-	const totalValue = holdingsValue + cashBalance;
+	// The hero is the portfolio at market prices: the summary's totalValue is
+	// holdings at market plus cash, the same valuation the dashboard uses.
+	// Without the summary only the purchase cost is known, and the label says so
+	// rather than passing cost off as value.
+	const atMarket = summary != null;
+	const totalValue = atMarket ? summary.totalValue : costBasis + cashBalance;
+	const holdingsValue = totalValue - cashBalance;
 	const positionCount = stocks.length;
 
+	vm.heroLabel = atMarket ? 'Portfolio value' : 'Portfolio value at cost';
 	vm.totalValue = formatCurrency(totalValue);
 	vm.heroSubtitle = `${positionCount} positions`;
-	vm.totalShares = formatShares(totalShares);
+	vm.holdingsValue = formatCurrency(holdingsValue);
+	vm.costBasis = formatCurrency(atMarket ? summary.totalCost : costBasis);
 	vm.cashBalance = formatCurrency(cashBalance);
-	vm.avgPositionValue = formatCurrency(positionCount === 0 ? 0 : holdingsValue / positionCount);
 	vm.addPosition.currentPortfolioValue = totalValue;
 
 	if (performance) {

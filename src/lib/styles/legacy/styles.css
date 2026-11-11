@@ -2067,14 +2067,14 @@ html.dark .landing-cta-panel {
 }
 
 .pro-badge {
-  @apply inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold;
+  @apply inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold;
   /* primary-foreground, not white: white on champagne gold is 1.96:1. */
   color: var(--primary-foreground);
   background: var(--color-tint);
 }
 
 .pro-badge-sm {
-  @apply px-1.5 py-px text-[9px];
+  @apply px-1.5 py-px text-[11px];
 }
 
 @import './css/shell.css';
@@ -3659,9 +3659,10 @@ html.dark .health-gauge-arc {
 }
 
 .stock-pro-badge {
-  @apply ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold;
+  @apply ml-2 rounded-full px-2 py-0.5 text-[11px] font-bold;
   background: color-mix(in srgb, var(--color-tint) 20%, transparent);
-  color: var(--color-tint);
+  /* Gold text on a gold tint measured 4.3:1; the text colour carries the label. */
+  color: var(--foreground);
 }
 
 .stock-chart-wrap {
@@ -8074,3 +8075,10 @@ html.dark .pines-search-results {
  * order decides and they must come after Tailwind. See the file's own header;
  * the pre-Tailwind base layer lives in vigil-command.css instead. */
 @import './css/templui-motion.css';
+
+/* Placeholder text measured 4.47:1 on the search field; the muted token clears
+   4.5:1 in both themes (theme.css). */
+.field-input::placeholder {
+  color: var(--muted-foreground);
+  opacity: 1;
+}

@@ -4,7 +4,7 @@
 	// by hx-get into #expense-action-panel) is a native dialog whose panel is the
 	// fragment route's component, fed by preloadData().
 	import { enhance } from '$app/forms';
-	import { preloadData } from '$app/navigation';
+	import { goto, preloadData } from '$app/navigation';
 	import type { Component } from 'svelte';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { allocationPie } from '#lib/charts/index.js';
@@ -18,7 +18,6 @@
 		ListSkeleton,
 		NativeButton,
 		NativeInput,
-		PrimaryButton,
 		ProGateOverlay,
 		SecondarySubmitButton,
 		SelectField,
@@ -26,10 +25,10 @@
 		withSpinner
 	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import * as dialog from '#lib/components/norviq/tui/dialog/index.js';
 	import { staggerOnMount } from '#lib/motion.js';
 	import { formatFloat } from '#lib/format.js';
-	import { resolvePillar } from '#lib/features/money/pillars.js';
 	import { PANEL_CLOSE_EVENT } from '#lib/features/money/expenses/panel.js';
 	import {
 		destinationGoalOptions,
@@ -148,12 +147,6 @@
 	// ---- suggestions: dismissed cards drop out (Go: outerHTML swap with nothing) ----
 	let dismissed = $state<string[]>([]);
 
-	const expensesAITagStyle = (pillar: string) =>
-		!pillar.trim()
-			? '--pillar-color: var(--muted-foreground)'
-			: `--pillar-color: var(${resolvePillar(pillar).colorVar})`;
-	const expensesAITagLabel = (pillar: string) =>
-		!pillar.trim() ? 'Untagged' : resolvePillar(pillar).label;
 	const fmtDeployPct = (pct: number) => (pct < 8 ? '8%' : formatFloat(pct, 0) + '%');
 	const pillarStyle = (colorVar: string) => `--pillar-color: var(${colorVar || '--color-tint'})`;
 	const actionMessage = $derived((form as { message?: string } | null)?.message ?? '');
@@ -165,34 +158,53 @@
 </svelte:head>
 
 {#snippet headerActions()}
-	<a class="btn-secondary inline-flex" href="/expenses/import">Import spreadsheet</a>
+	<DropdownMenu.Root>
+		<DropdownMenu.Trigger class="btn-secondary inline-flex items-center gap-1.5 px-4 py-2 text-sm">
+			More
+			<Icon name="chevron-down" class="h-4 w-4" />
+		</DropdownMenu.Trigger>
+		<DropdownMenu.Content align="end" class="w-56">
+			<DropdownMenu.Item onSelect={() => goto('/expenses/import')}
+				>Import spreadsheet</DropdownMenu.Item
+			>
+			<DropdownMenu.Item
+				onSelect={() =>
+					openPanel('/expenses/receipt/import', {
+						feature: 'receipt_scan',
+						name: 'Receipt scanning'
+					})}>Scan receipts</DropdownMenu.Item
+			>
+			<DropdownMenu.Item onSelect={() => goto('/expenses/financing')}
+				>Plan a purchase</DropdownMenu.Item
+			>
+			<DropdownMenu.Item
+				onSelect={() =>
+					openPanel('/expenses/partner', {
+						feature: 'household_partner',
+						name: 'Household partner'
+					})}
+			>
+				Household partner
+				{#if !isPro}<span class="ms-auto text-footnote text-muted-foreground">Pro</span>{/if}
+			</DropdownMenu.Item>
+		</DropdownMenu.Content>
+	</DropdownMenu.Root>
 	<NativeButton
-		class="btn-secondary inline-flex"
-		onclick={() =>
-			openPanel('/expenses/receipt/import', { feature: 'receipt_scan', name: 'Receipt scanning' })}
+		class="btn-primary w-auto px-5 py-2 text-sm"
+		onclick={() => openPanel('/expenses/record?month=' + vm.monthQuery)}>Record spend</NativeButton
 	>
-		Scan receipts
-	</NativeButton>
-	<PrimaryButton href="/expenses/financing" class="inline-flex">Plan a purchase</PrimaryButton>
-	<div class="flex flex-wrap gap-2">
-		<a href={vm.prevMonthURL} class="btn-secondary px-4 py-2 text-sm">Previous month</a>
-		<a href={vm.nextMonthURL} class="btn-secondary px-4 py-2 text-sm">Next month</a>
-		<NativeButton
-			class="btn-secondary px-4 py-2 text-sm"
-			onclick={() =>
-				openPanel('/expenses/partner', { feature: 'household_partner', name: 'Household partner' })}
+{/snippet}
+
+{#snippet monthStepper()}
+	<nav class="expenses-month-stepper" aria-label="Month">
+		<a href={vm.prevMonthURL} class="expenses-month-step" aria-label="Previous month"
+			><Icon name="chevron-left" class="h-4 w-4" /></a
 		>
-			Partner
-			{#if !isPro}
-				<span class="stock-pro-badge">Pro</span>
-			{/if}
-		</NativeButton>
-		<NativeButton
-			class="btn-primary w-auto px-5 py-2 text-sm"
-			onclick={() => openPanel('/expenses/record?month=' + vm.monthQuery)}
-			>Record spend</NativeButton
+		<span class="expenses-month-current" aria-current="date">{vm.monthLabel}</span>
+		<a href={vm.nextMonthURL} class="expenses-month-step" aria-label="Next month"
+			><Icon name="chevron-right" class="h-4 w-4" /></a
 		>
-	</div>
+	</nav>
 {/snippet}
 
 {#snippet usedDelta()}
@@ -212,7 +224,7 @@
 {/snippet}
 
 <div class="app-page-content vigil-deck-page expenses-planner-page expenses-modern-page">
-	<vigil.ModernPageHeader title="Budget planner" subtitle={vm.monthLabel} actions={headerActions} />
+	<vigil.ModernPageHeader title="Budget planner" meta={monthStepper} actions={headerActions} />
 	{#if vm.hasLoadError}
 		<div class="glass-card p-6" role="alert">
 			<p class="font-semibold">Could not load budget data</p>
@@ -256,13 +268,11 @@
 		>
 			<div class="modern-section-heading">
 				<div>
-					<p class="text-footnote text-muted-foreground tabular-nums">
-						DCA capacity · surplus monitor
-					</p>
-					<h2 id="budget-drift-title">Investable capacity</h2>
-					<p>Actual spending against targets — surplus feeds deploy capacity.</p>
+					<h2 id="budget-drift-title">Monthly surplus</h2>
+					<p>Spending against your targets. What is left over can go to your investment plan.</p>
 				</div>
-				<span class={'budget-status- rounded-full px-3 py-1 text-xs font-semibold' + drift.level}
+				<span
+					class={'budget-status-' + drift.level + ' rounded-full px-3 py-1 text-xs font-semibold'}
 					>{drift.levelLabel}</span
 				>
 			</div>
@@ -285,14 +295,10 @@
 				</div>
 			</div>
 			{#if vm.discipline}
-				<div class="mt-4 grid gap-3 rounded-lg bg-black/5 p-4 sm:grid-cols-3 dark:bg-white/5">
+				<div class="expenses-ruled mt-5 grid gap-4 pt-4 sm:grid-cols-4">
 					<div>
 						<p class="field-label">Discipline score</p>
-						<p class="font-semibold">{vm.discipline.score}</p>
-					</div>
-					<div>
-						<p class="field-label">Completed streak</p>
-						<p class="font-semibold">{vm.discipline.streak}</p>
+						<p class="font-semibold tabular-nums">{vm.discipline.score}</p>
 					</div>
 					<div>
 						<p class="field-label">Within plan</p>
@@ -301,7 +307,7 @@
 				</div>
 			{/if}
 			{#if vm.alertPolicy}
-				<details class="mt-4 rounded-lg bg-black/5 p-4 dark:bg-white/5">
+				<details class="expenses-ruled mt-5 pt-4">
 					<summary class="cursor-pointer font-semibold">Drift alert policy</summary>
 					<form
 						method="POST"
@@ -349,26 +355,29 @@
 					</form>
 				</details>
 			{/if}
-			<div class="mt-5 overflow-x-auto">
-				<table class="expenses-plan-table">
-					<thead
-						><tr><th>Category</th><th>Status</th><th>Actual</th><th>Target</th><th>Drift</th></tr
-						></thead
-					>
-					<tbody>
-						{#each drift.categories as row (row.id)}
-							<tr
-								><td class="font-semibold">{row.title}</td><td
-									><span class={'budget-status-inline budget-status-' + row.level}
-										>{row.levelLabel}</span
-									></td
-								><td class="tabular-nums">{row.actual}</td><td class="tabular-nums">{row.target}</td
-								><td class="tabular-nums">{row.drift} · {row.driftPercent}</td></tr
-							>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+			{#if drift.categories.length > 0}
+				<div class="mt-5 overflow-x-auto">
+					<table class="expenses-plan-table">
+						<thead
+							><tr><th>Category</th><th>Status</th><th>Actual</th><th>Target</th><th>Drift</th></tr
+							></thead
+						>
+						<tbody>
+							{#each drift.categories as row (row.id)}
+								<tr
+									><td class="font-semibold">{row.title}</td><td
+										><span class={'budget-status-inline budget-status-' + row.level}
+											>{row.levelLabel}</span
+										></td
+									><td class="tabular-nums">{row.actual}</td><td class="tabular-nums"
+										>{row.target}</td
+									><td class="tabular-nums">{row.drift} · {row.driftPercent}</td></tr
+								>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			{/if}
 			{#if drift.hasSuggestions}
 				<div class="mt-6 border-t border-black/10 pt-5 dark:border-white/10">
 					<div class="flex flex-wrap items-start justify-between gap-3">
@@ -555,11 +564,7 @@
 					{@render pillarMetric('Planned', pillar.planned, '')}
 					{@render pillarMetric('Actual', pillar.spent, '')}
 					{#if pillar.hasTarget}
-						{@render pillarMetric(
-							'Left',
-							pillar.left,
-							pillar.overspent ? 'is-negative' : 'is-positive'
-						)}
+						{@render pillarMetric('Left', pillar.left, pillar.overspent ? 'is-negative' : '')}
 					{:else}
 						{@render pillarMetric('Left', '--', '')}
 					{/if}
@@ -579,6 +584,63 @@
 		{/each}
 	</div>
 
+	<div class="vigil-list-region">
+		<section>
+			<CardHeader title="Recent activity" />
+			{#if vm.activity.length === 0}
+				<EmptyState
+					title={'Nothing logged in ' + vm.monthLabel}
+					description="Record a purchase, or use the month arrows to see other months."
+					actionLabel="Record spend"
+					actionHref="#"
+				/>
+			{:else}
+				<div>
+					<div class="mt-3 grid gap-2 sm:grid-cols-[1fr_10rem]">
+						<Field
+							type="search"
+							placeholder="Search spending log"
+							bind:value={q}
+							aria-label="Search spending log"
+						/>
+						<SelectField
+							bind:value={pillarFilter}
+							aria-label="Filter spending pillar"
+							options={[
+								{ value: '', label: 'All pillars' },
+								{ value: 'Fundamentals', label: 'Fundamentals' },
+								{ value: 'Future you', label: 'Future you' },
+								{ value: 'Fun', label: 'Fun' }
+							]}
+						/>
+					</div>
+					<ul class="expenses-activity-list mt-4 space-y-2">
+						{#each vm.activity as item (item.id)}
+							<li
+								class="expenses-activity-row"
+								data-title={item.title.toLowerCase()}
+								data-pillar={item.pillar}
+								hidden={!(
+									(!q || item.title.toLowerCase().includes(q.toLowerCase())) &&
+									(!pillarFilter || pillarFilter === item.pillar)
+								)}
+							>
+								<span class="expenses-activity-icon" aria-hidden="true">{item.icon}</span>
+								<div class="min-w-0 flex-1">
+									<p class="truncate font-semibold">{item.title}</p>
+									<p class="text-xs text-muted-foreground">{item.date} · {item.pillar}</p>
+								</div>
+								<p class="spring-pop font-semibold tabular-nums" data-motion="spring">
+									{item.amount}
+								</p>
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
+		</section>
+	</div>
+
 	<section class="expenses-plan-panel">
 		<div class="modern-section-heading">
 			<div>
@@ -586,7 +648,7 @@
 				<p>Line-item budgets within each pillar.</p>
 			</div>
 			<NativeButton
-				class="btn-primary w-auto px-5 py-2 text-sm"
+				class="btn-secondary w-auto px-5 py-2 text-sm"
 				onclick={() => openPanel('/expenses/plan-item?month=' + vm.monthQuery)}
 				>Add item</NativeButton
 			>
@@ -635,39 +697,7 @@
 	</section>
 
 	<!-- CommandDeck (command_deck.templ) -->
-	<vigil.CommandDeck class="is-3col expenses-command-deck">
-		<div class="glass-card dash-panel expenses-deck-panel">
-			<p class="deck-panel-title">Monthly expenses · AI categorized</p>
-			{#if vm.activity.length === 0}
-				<p class="text-sm text-muted-foreground">No spending logged this month.</p>
-			{:else}
-				<vigil.DataTable class="mt-2">
-					<thead>
-						<tr>
-							<th>Date</th>
-							<th>Merchant</th>
-							<th>Amount</th>
-							<th>Tag</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each vm.activity.slice(0, 8) as item (item.id)}
-							<tr>
-								<td class="text-footnote text-muted-foreground tabular-nums">{item.date}</td>
-								<td>{item.title}</td>
-								<td class="expenses-deck-amount">{item.amount}</td>
-								<td
-									><span class="expenses-ai-tag" style={expensesAITagStyle(item.pillar)}
-										>{expensesAITagLabel(item.pillar)}</span
-									></td
-								>
-							</tr>
-						{/each}
-					</tbody>
-				</vigil.DataTable>
-			{/if}
-		</div>
-
+	<vigil.CommandDeck class="is-2col expenses-command-deck">
 		<div
 			id="expenses-dca-panel"
 			class="glass-card dash-panel expenses-deck-panel expenses-dca-panel"
@@ -701,12 +731,13 @@
 							autocomplete="off"
 						/>
 					</div>
-					<SubmitButton class="btn-primary !w-auto shrink-0 px-3">Set ticker</SubmitButton>
+					<SubmitButton class="btn-secondary !w-auto shrink-0 px-3">Set ticker</SubmitButton>
 				</form>
 				<p class="mt-2 text-center text-caption text-muted-foreground">{vm.capacity.disclaimer}</p>
 				{#if vm.drift && vm.drift.hasSuggestions && isPro}
-					<PrimaryButton href="#budget-drift-panel" class="mt-auto text-center"
-						>Review reallocation</PrimaryButton
+					<a
+						href="#budget-drift-panel"
+						class="link-tint mt-auto text-center text-subhead font-semibold">Review reallocation</a
 					>
 				{/if}
 			{:else if vm.drift}
@@ -722,7 +753,7 @@
 					Set salary and pillar targets to calculate leftover cash as units of a holding.
 				</p>
 				<NativeButton
-					class="btn-primary mt-auto w-full"
+					class="btn-secondary mt-auto w-full"
 					onclick={() => openPanel('/expenses/salary?month=' + vm.monthQuery)}
 					>Set up budget</NativeButton
 				>
@@ -891,60 +922,6 @@
 					</ul>
 				{/if}
 			</div>
-		</section>
-		<section>
-			<CardHeader title="Recent activity" />
-			{#if vm.activity.length === 0}
-				<EmptyState
-					title="No expenses logged yet"
-					description="Record a purchase or set up your budget pillars to get started."
-					actionLabel="Record spend"
-					actionHref="#"
-				/>
-			{:else}
-				<div>
-					<div class="mt-3 grid gap-2 sm:grid-cols-[1fr_10rem]">
-						<Field
-							type="search"
-							placeholder="Search spending log"
-							bind:value={q}
-							aria-label="Search spending log"
-						/>
-						<SelectField
-							bind:value={pillarFilter}
-							aria-label="Filter spending pillar"
-							options={[
-								{ value: '', label: 'All pillars' },
-								{ value: 'Fundamentals', label: 'Fundamentals' },
-								{ value: 'Future you', label: 'Future you' },
-								{ value: 'Fun', label: 'Fun' }
-							]}
-						/>
-					</div>
-					<ul class="expenses-activity-list mt-4 space-y-2">
-						{#each vm.activity as item (item.id)}
-							<li
-								class="expenses-activity-row"
-								data-title={item.title.toLowerCase()}
-								data-pillar={item.pillar}
-								hidden={!(
-									(!q || item.title.toLowerCase().includes(q.toLowerCase())) &&
-									(!pillarFilter || pillarFilter === item.pillar)
-								)}
-							>
-								<span class="expenses-activity-icon" aria-hidden="true">{item.icon}</span>
-								<div class="min-w-0 flex-1">
-									<p class="truncate font-semibold">{item.title}</p>
-									<p class="text-xs text-muted-foreground">{item.date} · {item.pillar}</p>
-								</div>
-								<p class="spring-pop font-semibold tabular-nums" data-motion="spring">
-									{item.amount}
-								</p>
-							</li>
-						{/each}
-					</ul>
-				</div>
-			{/if}
 		</section>
 		<section>
 			<CardHeader title="Suggestions" />

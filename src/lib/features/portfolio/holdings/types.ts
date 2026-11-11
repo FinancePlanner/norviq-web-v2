@@ -90,8 +90,10 @@ export interface HoldingsViewModel {
 	chartValues: number[];
 	selectedTimeRange: string;
 	timeRanges: string[];
-	totalShares: string;
-	avgPositionValue: string;
+	/** Holdings at market prices, cash excluded. */
+	holdingsValue: string;
+	/** What the holdings cost to buy. */
+	costBasis: string;
 	cashBalance: string;
 	positions: PositionRowVM[];
 	assetFilters: AssetFilterVM[];

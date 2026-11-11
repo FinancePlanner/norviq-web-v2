@@ -5,8 +5,9 @@
 	let {
 		title,
 		subtitle = '',
+		meta,
 		actions
-	}: { title: string; subtitle?: string; actions?: Snippet } = $props();
+	}: { title: string; subtitle?: string; meta?: Snippet; actions?: Snippet } = $props();
 </script>
 
 <header class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -14,6 +15,9 @@
 		<h1 class="text-title1 font-bold tracking-tight text-balance">{title}</h1>
 		{#if subtitle}
 			<p class="mt-1 max-w-2xl text-subhead text-muted-foreground">{subtitle}</p>
+		{/if}
+		{#if meta}
+			<div class="mt-1">{@render meta()}</div>
 		{/if}
 	</div>
 	{#if actions}

@@ -42,7 +42,7 @@
 
 <div id="add-position-panel">
 	<div class="portfolio-form-header">
-		<h2 id="add-position-title" class="text-xl font-semibold">Add Position</h2>
+		<h2 id="add-position-title" class="text-xl font-semibold">Add position</h2>
 		<NativeButton
 			class="portfolio-form-close"
 			aria-label="Close"
