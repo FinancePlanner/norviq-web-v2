@@ -148,7 +148,9 @@
 	--sidebar-ring: var(--color-focus);
 	--chart-axis: oklch(0.447 0.034 261);
 	--chart-grid: oklch(0.911 0.014 85); /* #E6E1D7 */
-	--chart-line: var(--color-tint);
+	/* Value over time is drawn in ink, not gold: gold marks the one action or
+	   insight on a screen and never means money (DESIGN.md). */
+	--chart-line: var(--foreground);
 	--chart-line-alt: oklch(0.447 0.034 261);
 	--chart-up: var(--color-gain);
 	--chart-down: var(--color-loss);

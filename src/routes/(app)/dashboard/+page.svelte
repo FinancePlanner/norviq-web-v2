@@ -8,9 +8,7 @@
 	import LedgerPanel from '#lib/features/dashboard/command-center/LedgerPanel.svelte';
 	import QuickExpenseModal from '#lib/features/dashboard/command-center/QuickExpenseModal.svelte';
 	import AssetSearch from '#lib/features/dashboard/command-center/AssetSearch.svelte';
-	import MCPStatusWidget from '#lib/features/dashboard/panels/MCPStatusWidget.svelte';
-	import TerminalSummaryCard from '#lib/features/dashboard/panels/TerminalSummaryCard.svelte';
-	import TaxPanel from '#lib/features/dashboard/panels/TaxPanel.svelte';
+	import ToolsPanel from '#lib/features/dashboard/panels/ToolsPanel.svelte';
 	import GuidedStartCard from '#lib/features/auth-onboarding/guided-start/GuidedStartCard.svelte';
 	import { commandGreeting } from '#lib/features/dashboard/command-center/overview.js';
 
@@ -52,24 +50,7 @@
 	<section class="cc-rail cc-rail-ledger" aria-label="Activity ledger">
 		<LedgerPanel ledger={vm.ledger} />
 	</section>
-	<section class="cc-modules cc-tools" aria-labelledby="cc-tools-title">
-		<h2 id="cc-tools-title" class="cc-tools-title">Tools and connections</h2>
-		{#await data.mcpStatus}
-			<MCPStatusWidget />
-		{:then status}
-			<MCPStatusWidget vm={status} />
-		{/await}
-		{#await data.terminalSummary}
-			<TerminalSummaryCard />
-		{:then summary}
-			<TerminalSummaryCard vm={summary} />
-		{/await}
-		{#await data.taxPanel}
-			<TaxPanel />
-		{:then tax}
-			<TaxPanel vm={tax} />
-		{/await}
-	</section>
+	<ToolsPanel mcp={data.mcpStatus} terminal={data.terminalSummary} tax={data.taxPanel} />
 	<nav class="cc-more-links" aria-label="More dashboard views">
 		<a href="/dashboard/pulse" class="link-tint text-subhead font-semibold">Open pulse</a>
 		<a href="/dashboard/activity" class="link-tint text-subhead font-semibold">Full activity</a>

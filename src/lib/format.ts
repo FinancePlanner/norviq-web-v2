@@ -327,11 +327,15 @@ export function formatWithCommas(value: number): string {
 }
 
 /** handlers.formatCurrency (dashboard_data.go): "$1.23M", "$12,345.60", "$12.50". USD only. */
+const withCents = (s: string) => (s.includes('.') ? s : s + '.00');
+
 export function formatCurrency(value: number): string {
 	const abs = Math.abs(value);
 	const sign = value < 0 ? '-' : '';
 	if (abs >= 1_000_000) return `${sign}$${formatFloat(abs / 1_000_000, 2)}M`;
-	if (abs >= 1_000) return `${sign}$${formatWithCommas(abs)}`;
+	// Always two decimals, so $1,000.00 and $400.00 line up in one column.
+	// (The Go port dropped zero cents from 1,000 up, which mixed formats.)
+	if (abs >= 1_000) return `${sign}$${withCents(formatWithCommas(abs))}`;
 	return `${sign}$${formatFloat(abs, 2)}`;
 }
 
