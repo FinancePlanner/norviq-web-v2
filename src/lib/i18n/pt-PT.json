@@ -1115,5 +1115,15 @@
 	"← Profile": "← Perfil",
 	"← Settings": "← Definições",
 	"≈ $19,700": "≈ $19,700",
-	"│": "│"
+	"│": "│",
+	"Weekly digest": "Resumo semanal",
+	"Week of %s to %s": "Semana de %s a %s",
+	"Nothing to report this week": "Nada a reportar esta semana",
+	"Your next digest will show holdings, budget and upcoming earnings.": "O próximo resumo mostrará as participações, o orçamento e os próximos resultados.",
+	"Your holdings this week": "As suas participações esta semana",
+	"Top movers": "Maiores variações",
+	"Spending vs budget": "Despesas vs orçamento",
+	"Your inflation": "A sua inflação",
+	"Next week": "Próxima semana",
+	"Numbers come from your holdings' closing prices and your budget. Not investment advice.": "Os números vêm dos preços de fecho das suas participações e do seu orçamento. Não é aconselhamento de investimento."
 }
