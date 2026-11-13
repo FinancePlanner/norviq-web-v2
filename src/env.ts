@@ -28,6 +28,8 @@ export const variables = defineEnvVars({
 	EDGE_CLIENT_IP_KEY: { schema: optional },
 	// Staging preview only: "user:pass" puts the whole site behind HTTP basic auth.
 	PREVIEW_BASIC_AUTH: { schema: optional },
+	// Beta only (BRD-001, docs/vig-3d.md): the 3D Vig's vig.glb on cdn.norviq.org. Empty is off.
+	VIG_3D_MODEL_URL: { schema: optional },
 	// Dev only: /__dev/login signs in as these staging test accounts.
 	DEV_LOGIN_EMAIL: { schema: optional },
 	DEV_LOGIN_EMAIL_ONBOARDING: { schema: optional },

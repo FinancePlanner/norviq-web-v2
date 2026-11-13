@@ -1,0 +1,14 @@
+{
+	"$schema": "../node_modules/wrangler/config-schema.json",
+	// cdn.norviq.org: Norviq's own address for brand media too heavy for git (BRD-001: the 3D Vig's
+	// model for the web). A Worker with static assets and no code. The files are laid out in
+	// scripts/brand/out/cdn (git-ignored) by scripts/brand/vig_cdn_layout.sh and deployed by hand;
+	// see README.md beside this file.
+	"name": "norviq-cdn",
+	"account_id": "a1140e077254a0b458a463c8af1247b0",
+	"compatibility_date": "2026-10-28",
+	"workers_dev": false,
+	"preview_urls": false,
+	"assets": { "directory": "../scripts/brand/out/cdn" },
+	"routes": [{ "pattern": "cdn.norviq.org", "custom_domain": true }]
+}

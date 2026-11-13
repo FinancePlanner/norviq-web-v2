@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
 import { postAuthRedirect, safeNextPath } from '#lib/server/onboarding.js';
+import { config } from '#lib/server/env.js';
 import { setPostHogCaptureOnce } from '#lib/analytics/runtime.server.js';
 import {
 	apiErrorMessage,
@@ -20,7 +21,13 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		error = 'Could not start social sign in. Check provider configuration and try again.';
 	}
 	const mfaOpen = url.searchParams.get('mfa') === '1' || !!locals.session.data.mfa?.challengeId;
-	return { info, error, mfaOpen, next: safeNextPath(url.searchParams.get('next')) };
+	return {
+		info,
+		error,
+		mfaOpen,
+		next: safeNextPath(url.searchParams.get('next')),
+		vig3DModelURL: config().vig3DModelURL
+	};
 };
 
 // auth.go renderAuthError: 422 + the error banner in #auth-errors.

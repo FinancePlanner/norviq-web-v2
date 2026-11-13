@@ -251,6 +251,17 @@ Flat by default. Depth comes from tonal steps on one hue axis (page → card →
 
 **The No-Glow Rule.** No glow, blur-as-decoration, mesh gradients or neon in either scope.
 
+### Exception: 3D Vig (beta-only experiment, BRD-001)
+
+On **staging only**, the desktop sign-in brand panel may show Vig as a real-time 3D bust. It is
+gated by `VIG_3D_MODEL_URL`, which is empty in production, so production renders the flat image and
+loads no three.js. The flat Vig image is the first paint and stays under reduced motion,
+Save-Data, no WebGL, or a failed load. The canvas replaces it only after a frame is drawn. Motion
+comes only from `design/vig-motion.json` (entrance, a ±4° sway, tilt toward the pointer). There is
+no blink, no light animation and no glow (The No-Glow Rule still holds), and lights use brand
+tokens. Canonical rule: `../docs/precision-identity.md` "Exception: 3D Vig". Architecture:
+`docs/vig-3d.md`.
+
 ## Shapes
 
 Gently rounded, never soft. Cards and primary buttons use a 1rem radius, controls 0.75rem, small elements 0.5rem, and the hero surface 1.25rem. Pills (999px) are only for badges and status chips. Borders are 1px; the only heavier mark is the 2px gold inset rule on the active sidebar item, drawn as an inset shadow so the row never shifts.

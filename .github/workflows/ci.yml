@@ -22,10 +22,16 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run check
       - run: bun run lint
+      # 3D Vig motion (BRD-001): the fixtures must be regenerated after a design/vig-motion.json
+      # change. norviq-ios CI compares its copies against this repo's main.
+      - run: ./scripts/check-vig-motion-drift.sh
+      - run: ./scripts/check-three-imports.sh
       # Only the server project: the client and storybook projects need a
       # browser.
       - run: bunx vitest run --project server
       - run: bun run build
+      # Route budgets must not grow; only the lazy total may, by an explicit --update-lazy.
+      - run: bun scripts/size-budget.mjs
       # After build: the generated types include the built worker's module
       # (GlobalProps.mainModule), so the check depends on the build output.
       - run: bun run types:check

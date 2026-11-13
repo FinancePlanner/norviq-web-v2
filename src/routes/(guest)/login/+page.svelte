@@ -18,4 +18,5 @@
 	mfaOpen={data.mfaOpen}
 	nextPath={data.next}
 	mfa={form && 'mfa' in form ? form.mfa : null}
+	vig3DModelURL={data.vig3DModelURL}
 />

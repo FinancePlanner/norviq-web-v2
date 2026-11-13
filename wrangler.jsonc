@@ -26,7 +26,9 @@
 		"COOKIE_SECURE": "true",
 		"SENTRY_ENVIRONMENT": "production",
 		"POSTHOG_PROJECT_TOKEN": "phc_qHfAXXGQairNucPjrppE2i9i3bf2Hqvyi3UcG9z7jCNN",
-		"POSTHOG_HOST": "https://eu.i.posthog.com"
+		"POSTHOG_HOST": "https://eu.i.posthog.com",
+		// BRD-001 3D Vig: production stays empty (off). Never set it here.
+		"VIG_3D_MODEL_URL": ""
 	},
 	"env": {
 		// Hosted staging preview: `wrangler deploy --env staging` →
@@ -45,7 +47,10 @@
 				"COOKIE_SECURE": "true",
 				"SENTRY_ENVIRONMENT": "staging",
 				"POSTHOG_PROJECT_TOKEN": "",
-				"POSTHOG_HOST": ""
+				"POSTHOG_HOST": "",
+				// BRD-001 3D Vig on sign-in. Set to https://cdn.norviq.org/vig/v<N>/vig.glb once the
+				// CDN is live and the model passed Gate 1 (docs/vig-3d.md). Empty means the flat panel.
+				"VIG_3D_MODEL_URL": ""
 			},
 			// routes would otherwise be inherited and staging would claim norviq.org.
 			"routes": []
