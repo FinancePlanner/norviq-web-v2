@@ -7,7 +7,7 @@
 	// (auth-form-error), a redirect is a full page load (HX-Redirect), and an
 	// MFA challenge opens the modal (showMfaModal).
 	import { enhance } from '$app/forms';
-	import { tick, untrack } from 'svelte';
+	import { onMount, tick, untrack, type Component } from 'svelte';
 	import { scale } from 'svelte/transition';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { staggerOnMount } from '#lib/motion.js';
@@ -34,6 +34,8 @@
 		nextPath?: string;
 		/** Set when a no-JS post came back with an MFA challenge. */
 		mfa?: MFAModalState | null;
+		/** BRD-001: the 3D Vig on sign-in (staging only). Empty means the flat panel. */
+		vig3DModelURL?: string;
 	};
 
 	let {
@@ -42,8 +44,17 @@
 		infoMessage = '',
 		mfaOpen = false,
 		nextPath = '',
-		mfa: mfaIn = null
+		mfa: mfaIn = null,
+		vig3DModelURL = ''
 	}: Props = $props();
+
+	// BRD-001: the beta-only 3D Vig, loaded on mount and only when a model URL is set, so the
+	// production bundle carries just this check.
+	let Vig3D = $state<Component<{ modelUrl: string }>>();
+	onMount(() => {
+		if (vig3DModelURL && !isSignup)
+			void import('#lib/components/norviq/Vig3D.svelte').then((m) => (Vig3D = m.default));
+	});
 
 	let showMfa = $state(untrack(() => mfaOpen || !!mfaIn));
 	// The modal always starts from MFAModal("", 0, "", ""), as in Go.
@@ -213,7 +224,11 @@
 		{:else}
 			<vigil.AuthShell>
 				<vigil.AuthBrandColumn>
-					<AuthBrandPanel />
+					<AuthBrandPanel>
+						{#if Vig3D}
+							<Vig3D modelUrl={vig3DModelURL} />
+						{/if}
+					</AuthBrandPanel>
 				</vigil.AuthBrandColumn>
 				<vigil.AuthFormColumn>
 					<AuthMobileBrand />

@@ -55,7 +55,9 @@ export function config() {
 		// Shared with norviq-backend-v2 (EDGE_CLIENT_IP_KEY). The backend trusts
 		// X-Norviq-Client-IP only when this key matches; see api.ts.
 		edgeClientIPKey: str('EDGE_CLIENT_IP_KEY'),
-		previewBasicAuth: str('PREVIEW_BASIC_AUTH')
+		previewBasicAuth: str('PREVIEW_BASIC_AUTH'),
+		// BRD-001: the 3D Vig on sign-in. Set for staging only; empty (production) means off.
+		vig3DModelURL: str('VIG_3D_MODEL_URL')
 	};
 }
 

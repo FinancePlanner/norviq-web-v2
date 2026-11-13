@@ -29,3 +29,6 @@ project.inlang/cache/
 
 *storybook.log
 storybook-static
+
+# Vig 3D build output (scripts/brand/vig_3d.py)
+scripts/brand/out/
