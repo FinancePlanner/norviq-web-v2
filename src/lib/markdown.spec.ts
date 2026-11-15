@@ -20,6 +20,16 @@ function hrefs(html: string): Record<string, string> {
 }
 
 describe('render', () => {
+	it('renders an assistant reply: bold, lists, no raw asterisks', () => {
+		const html = render(
+			"You're over budget in one pillar: **Fun**.\n\n- **Fun:** spent 377.50 against a planned 235.\n- **Fundamentals:** under plan."
+		);
+		expect(html).toContain('<strong>Fun</strong>');
+		expect(html).toContain('<ul>');
+		expect(html).toContain('<li><strong>Fun:</strong> spent 377.50');
+		expect(html).not.toContain('**');
+	});
+
 	it('strips dangerous markup', () => {
 		const cases: Record<string, string[]> = {
 			'<script>alert(1)</script>\n\nhello': ['<script', 'alert(1)'],
