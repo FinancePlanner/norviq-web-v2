@@ -636,6 +636,42 @@ html .assistant-main.muse-main {
   white-space: pre-wrap;
 }
 
+/* Rendered Markdown (assistant replies): block elements carry the spacing. */
+.muse-text.muse-md {
+  white-space: normal;
+}
+.muse-md > :first-child {
+  margin-top: 0;
+}
+.muse-md > :last-child {
+  margin-bottom: 0;
+}
+.muse-md p,
+.muse-md ul,
+.muse-md ol,
+.muse-md pre,
+.muse-md blockquote,
+.muse-md table {
+  margin: 0 0 0.6em;
+}
+.muse-md ul,
+.muse-md ol {
+  padding-left: 1.25em;
+}
+.muse-md li + li {
+  margin-top: 0.25em;
+}
+.muse-md strong {
+  font-weight: 600;
+}
+.muse-md h2,
+.muse-md h3,
+.muse-md h4 {
+  margin: 0.4em 0 0.4em;
+  font-size: 1em;
+  font-weight: 600;
+}
+
 .muse-message.user .muse-bubble {
   max-width: 85%;
   background: var(--muse-user-bubble);
