@@ -133,7 +133,7 @@ export function mapTechnicals(
 			vm.macdTone = 'negative';
 		}
 	}
-	const ftw = resp.fiftyTwoWeek as { high: number; low: number; positionPct: number };
+	const ftw = resp.fiftyTwoWeek;
 	if (ftw && ftw.high > ftw.low) {
 		vm.has52Week = true;
 		vm.low52 = formatCurrency(ftw.low);

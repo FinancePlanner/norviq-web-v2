@@ -34,7 +34,7 @@ function mcpEndpoint(): string {
 }
 
 async function popString(event: RequestEvent, key: string): Promise<string> {
-	const value = event.locals.session.get<unknown>(key);
+	const value = event.locals.session.get(key);
 	if (value === undefined) return '';
 	await event.locals.session.remove(key);
 	return typeof value === 'string' ? value : '';

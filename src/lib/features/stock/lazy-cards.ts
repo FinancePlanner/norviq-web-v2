@@ -24,12 +24,7 @@ export function compactVolume(value: number): string {
 
 /** mapPressure (stock_pressure.go). */
 export function mapPressure(data: S['MarketPressureResponse']): PressureVM {
-	const volume = data.volume as {
-		relative: number;
-		today: number;
-		average30d: number;
-		changePct: number;
-	};
+	const volume = data.volume;
 	const vm: PressureVM = {
 		symbol: data.symbol,
 		temperature: data.temperature,

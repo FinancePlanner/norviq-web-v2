@@ -30,7 +30,7 @@ export function driftLabel(state: string, months: number | null | undefined): st
 	const has = months !== null && months !== undefined;
 	switch (state) {
 		case 'ahead':
-			return has ? `${-months!} months ahead` : 'Ahead';
+			return has ? `${-months} months ahead` : 'Ahead';
 		case 'behind':
 			return has ? `${months} months behind` : 'Behind';
 		case 'complete':

@@ -75,7 +75,7 @@ async function call<T>(
 	input?: unknown,
 	opts: RawOptions & { timeout?: number } = {}
 ): Promise<Answer<T>> {
-	const headers: Record<string, string> = { ...(opts.headers ?? {}) };
+	const headers: Record<string, string> = { ...opts.headers };
 	let body: string | undefined;
 	if (input !== undefined) {
 		body = JSON.stringify(input);
@@ -508,8 +508,7 @@ export async function aiSuggest(event: RequestEvent, id: string, kind: 'facts' |
 		if (res.status === 0) {
 			setSuggestionUnavailable(vm);
 		} else if (res.status === 200 && res.data) {
-			if (kind === 'facts')
-				shareFactsSuggestionVM(vm, res.data as ShareFactsSuggestion, symbol, tableCurrency);
+			if (kind === 'facts') shareFactsSuggestionVM(vm, res.data, symbol, tableCurrency);
 			else scenarioSuggestionVM(vm, res.data as TerminalScenarioSuggestion, symbol);
 		} else if (isAIConsentRequired(apiErrorFrom(res))) {
 			return consent();

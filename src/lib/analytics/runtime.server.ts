@@ -38,12 +38,12 @@ export async function setPostHogCaptureOnce(
 /** session.TakePostHogCaptureOnce: returns the pending capture and clears it, or null. */
 export async function takePostHogCaptureOnce(locals: Locals): Promise<PostHogCaptureOnce | null> {
 	const session = locals.session;
-	const raw = session.get<unknown>(KEY_POSTHOG_CAPTURE_EVENT);
+	const raw = session.get(KEY_POSTHOG_CAPTURE_EVENT);
 	// Also accept { event, properties } stored under the one key.
 	const packed = raw && typeof raw === 'object' ? (raw as Partial<PostHogCaptureOnce>) : null;
 	const event = packed ? String(packed.event ?? '') : typeof raw === 'string' ? raw : '';
 	if (!event) return null;
-	const propsJSON = session.get<unknown>(KEY_POSTHOG_CAPTURE_PROPS);
+	const propsJSON = session.get(KEY_POSTHOG_CAPTURE_PROPS);
 	await session.remove(KEY_POSTHOG_CAPTURE_EVENT, KEY_POSTHOG_CAPTURE_PROPS);
 
 	const capture: PostHogCaptureOnce = { event };

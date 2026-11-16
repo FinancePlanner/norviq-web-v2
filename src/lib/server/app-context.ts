@@ -71,7 +71,7 @@ export async function loadBillingContext(event: RequestEvent): Promise<BillingCo
 			console.warn('billing context empty; entitlement unknown', res.response.status);
 			return null;
 		}
-		return res.data as BillingContext;
+		return res.data;
 	} catch (err) {
 		console.warn('billing context fetch failed; entitlement unknown', err);
 		return null;

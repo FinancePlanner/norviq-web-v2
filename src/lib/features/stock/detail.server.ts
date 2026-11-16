@@ -776,7 +776,7 @@ async function loadStockCompareTab(event: RequestEvent, vm: DetailViewModel, raw
 		undefined,
 		'insights'
 	);
-	const peers = (insights?.peers ?? []) as S['StockInsightPeerDTO'][];
+	const peers = insights?.peers ?? [];
 	if (comparePeer === '' && peers.length > 0) comparePeer = peers[0].symbol.trim().toUpperCase();
 
 	const tab = vm.compare;

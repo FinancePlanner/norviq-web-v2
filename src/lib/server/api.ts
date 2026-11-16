@@ -147,7 +147,7 @@ export async function apiJSON<T = unknown>(
 	input?: unknown,
 	opts: RawOptions = {}
 ): Promise<T> {
-	const headers = { ...(opts.headers ?? {}) };
+	const headers = { ...opts.headers };
 	let body: string | undefined;
 	if (input !== undefined) {
 		body = JSON.stringify(input);

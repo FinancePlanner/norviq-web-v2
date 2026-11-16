@@ -181,7 +181,7 @@ export function manualPageVMFromQuery(url: URL): ManualPageVM {
 	return vm;
 }
 
-const ASSET_CATEGORIES = ['stock', 'etf', 'crypto'];
+const ASSET_CATEGORIES = new Set(['stock', 'etf', 'crypto']);
 // Go's strconv.ParseFloat: a plain decimal or exponent, no trailing junk.
 const floatPattern = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 const parseFloatStrict = (raw: string) => (floatPattern.test(raw) ? Number(raw) : Number.NaN);
@@ -211,7 +211,7 @@ export function parseBulkManualImport(form: FormData): {
 
 	if (!/^\d{4}-\d{2}-\d{2}$/.test(vm.buyDate) || Number.isNaN(Date.parse(vm.buyDate)))
 		vm.buyDate = today();
-	if (!ASSET_CATEGORIES.includes(vm.category)) vm.category = 'stock';
+	if (!ASSET_CATEGORIES.has(vm.category)) vm.category = 'stock';
 	const category = vm.category;
 
 	const stocks: Array<{

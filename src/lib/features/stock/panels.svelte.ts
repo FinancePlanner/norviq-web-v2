@@ -19,7 +19,7 @@ async function getJSON<T>(url: string, init?: RequestInit): Promise<T | null> {
 	try {
 		const res = await fetch(url, {
 			...init,
-			headers: { accept: 'application/json', ...(init?.headers ?? {}) }
+			headers: { accept: 'application/json', ...init?.headers }
 		});
 		if (!res.ok) return null;
 		return (await res.json()) as T;

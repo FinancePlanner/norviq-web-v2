@@ -366,7 +366,7 @@ export async function loadPlannerViewModel(
 		soft('expenses snapshots fetch failed', getSnapshot(event, month), null),
 		soft(
 			'expenses month report fetch failed',
-			apiJSON<unknown>(event, 'GET', '/v1/reports/expenses', undefined, {
+			apiJSON(event, 'GET', '/v1/reports/expenses', undefined, {
 				query: { from, to, granularity: 'month' }
 			}).then((body) =>
 				Array.isArray(body) && body.length > 0 ? (body[0] as BudgetMonthSummary) : null

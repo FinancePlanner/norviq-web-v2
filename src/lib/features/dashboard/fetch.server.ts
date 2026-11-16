@@ -25,7 +25,7 @@ export async function fetchJSON<T>(
 	opts: RawOptions = {}
 ): Promise<Fetched<T>> {
 	try {
-		const headers = { ...(opts.headers ?? {}) };
+		const headers = { ...opts.headers };
 		let body: string | undefined;
 		if (input !== undefined) {
 			body = JSON.stringify(input);

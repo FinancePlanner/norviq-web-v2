@@ -35,7 +35,7 @@ function lineData(values: readonly number[]) {
 const labelDefaults = { showMinLabel: null, showMaxLabel: null };
 
 function spec(id: string, width: string, height: string, option: OptionObject): ChartSpec {
-	return { id, width, height, option: option as EChartsOption };
+	return { id, width, height, option: option };
 }
 
 /** Monthly spending trend. */

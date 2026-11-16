@@ -394,14 +394,14 @@ export async function saveMarketAdmission(event: RequestEvent) {
 	taxRedirect(str(form, 'jurisdiction').toUpperCase(), year);
 }
 
-const FUND_CLASSIFICATIONS = [
+const FUND_CLASSIFICATIONS = new Set([
 	'equity',
 	'mixed',
 	'real_estate',
 	'foreign_real_estate',
 	'other',
 	'unknown'
-];
+]);
 
 // POST /tax/instruments/{id}/fund-classification (no feature gate in Go)
 export async function saveFundClassification(event: RequestEvent) {
@@ -409,7 +409,7 @@ export async function saveFundClassification(event: RequestEvent) {
 	if (!isUUID(id)) error(404, 'Not found');
 	const form = await event.request.formData();
 	const classification = str(form, 'classification');
-	if (!FUND_CLASSIFICATIONS.includes(classification))
+	if (!FUND_CLASSIFICATIONS.has(classification))
 		return unprocessable('Invalid fund classification');
 	try {
 		await apiJSON(event, 'PUT', `/v1/tax/instruments/${id.toLowerCase()}/fund-classification`, {

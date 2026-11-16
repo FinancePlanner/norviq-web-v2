@@ -122,7 +122,7 @@ export const actions: Actions = {
 		try {
 			await apiJSON(event, 'POST', `/v1/news/thesis-watch/${storyID.toLowerCase()}/feedback`, {
 				signal
-			} as S['ThesisWatchFeedbackRequest']);
+			});
 		} catch (err) {
 			console.warn('thesis watch feedback failed', storyID, err);
 			return fail(502, { feedbackError: 'Could not save feedback' });
