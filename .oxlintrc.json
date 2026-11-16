@@ -1,0 +1,55 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	// Profile: "bug-finding max". Every rule in the correctness, suspicious and
+	// perf categories, plus the type-aware rules from pedantic that catch real
+	// defects. pedantic/style/restriction as whole categories stay off: with
+	// everything on this repo reported 57k hits, most of them taste (no-ternary,
+	// no-magic-numbers, sort-keys) or mutually exclusive (no-named-export vs
+	// SvelteKit's required named exports).
+	// Svelte template rules still run in ESLint (eslint.config.js).
+	"plugins": ["typescript", "unicorn", "oxc", "import", "promise", "vitest", "node"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "error",
+		"perf": "error"
+	},
+	"env": { "browser": true, "node": true, "es2024": true },
+	"ignorePatterns": [
+		"worker-configuration.d.ts",
+		".svelte-kit/**",
+		"build/**",
+		"storybook-static/**",
+		"src/lib/paraglide/**"
+	],
+	"rules": {
+		// Type-aware bug rules that oxlint files under pedantic.
+		"typescript/no-deprecated": "error",
+		"typescript/no-misused-promises": "error",
+		"typescript/switch-exhaustiveness-check": "error",
+		"typescript/no-unsafe-argument": "error",
+		"typescript/no-unsafe-assignment": "error",
+		"typescript/no-unsafe-call": "error",
+		"typescript/no-unsafe-member-access": "error",
+		"typescript/no-unsafe-return": "error",
+		"typescript/only-throw-error": "error",
+		"typescript/prefer-promise-reject-errors": "error",
+		"typescript/require-await": "error",
+		"typescript/restrict-plus-operands": "error",
+		"typescript/return-await": "error",
+		"typescript/no-mixed-enums": "error",
+		"typescript/prefer-nullish-coalescing": "error",
+		// Non-type-aware pedantic rules that catch defects rather than style.
+		"eqeqeq": ["error", "always", { "null": "ignore" }],
+		"array-callback-return": "error",
+		"no-fallthrough": "error",
+		"no-self-compare": "error",
+		"no-promise-executor-return": "error",
+		"no-constructor-return": "error",
+		"no-console": ["error", { "allow": ["warn", "error"] }],
+
+		"no-unused-vars": [
+			"error",
+			{ "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }
+		]
+	}
+}
