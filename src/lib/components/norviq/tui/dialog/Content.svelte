@@ -6,7 +6,7 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLDialogAttributes } from 'svelte/elements';
 	import { cn } from '#lib/utils.js';
-	import { CLOSE_DURATION_MS, getDialogContext } from './dialog.svelte.js';
+	import { CLOSE_DURATION_MS, getDialogContext } from './dialog-state.svelte.js';
 
 	type Props = HTMLDialogAttributes & {
 		hideCloseButton?: boolean;

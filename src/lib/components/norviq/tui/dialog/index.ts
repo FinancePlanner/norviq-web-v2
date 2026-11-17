@@ -16,4 +16,4 @@ export {
 	toggleDialog,
 	isDialogOpen,
 	CLOSE_DURATION_MS
-} from './dialog.svelte.js';
+} from './dialog-state.svelte.js';

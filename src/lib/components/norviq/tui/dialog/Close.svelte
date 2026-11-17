@@ -4,7 +4,7 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn } from '#lib/utils.js';
-	import { getDialogContext, resolveDialog } from './dialog.svelte.js';
+	import { getDialogContext, resolveDialog } from './dialog-state.svelte.js';
 
 	let {
 		for: target,
