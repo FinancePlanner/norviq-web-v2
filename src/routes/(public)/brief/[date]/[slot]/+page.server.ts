@@ -37,7 +37,7 @@ export const load: PageServerLoad = async (event) => {
 		}
 		throw err;
 	}
-	const vm = pageVM(lang, brief!, signedIn);
+	const vm = pageVM(lang, brief, signedIn);
 	// Latest is linked only when this is not it. A failed lookup of the latest
 	// just leaves the link off.
 	try {

@@ -192,8 +192,7 @@ export function buildScenarioPDF(
 		'Maximum drawdown',
 		formatFloat(numberFrom(result, 'maximum_drawdown') * 100, 1) + '%'
 	);
-	const optional = (key: string) =>
-		typeof result[key] === 'number' ? (result[key] as number) : null;
+	const optional = (key: string) => (typeof result[key] === 'number' ? result[key] : null);
 	const goalDelay = optional('goal_delay_months');
 	if (goalDelay !== null) metricLine(pdf, 'Goal delay (months)', formatFloat(goalDelay, 1));
 	const contributionDelta = optional('contribution_delta');

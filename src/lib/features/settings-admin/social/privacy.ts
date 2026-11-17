@@ -41,7 +41,7 @@ export function privacySettingsFrom(
 	if (!raw) return out;
 	out.searchVisibility = typeof raw.searchVisibility === 'string' ? raw.searchVisibility : '';
 	for (const key of Object.keys(emptyPrivacySettings) as (keyof SocialPrivacySettings)[]) {
-		if (key !== 'searchVisibility') (out[key] as boolean) = !!raw[key];
+		if (key !== 'searchVisibility') out[key] = !!raw[key];
 	}
 	return out;
 }

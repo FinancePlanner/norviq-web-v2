@@ -150,7 +150,7 @@ export function subscriptionPlanOptionVMs(
 ): PlanOptionVM[] {
 	if (!ctx) return [];
 	const allowed = new Set(allowedKinds);
-	let options = (ctx.planOptions ?? []) as PlanOption[];
+	let options = ctx.planOptions ?? [];
 	if (options.length === 0) options = fallbackPlanOptions(ctx.plan ?? '', !!ctx.isPremium);
 	const cards: PlanOptionVM[] = [];
 	for (const o of options) {

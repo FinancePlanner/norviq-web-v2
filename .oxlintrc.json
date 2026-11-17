@@ -1,0 +1,96 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	// Profile: "bug-finding max". Every rule in the correctness, suspicious and
+	// perf categories, plus the type-aware rules from pedantic that catch real
+	// defects. pedantic/style/restriction as whole categories stay off: with
+	// everything on this repo reported 57k hits, most of them taste (no-ternary,
+	// no-magic-numbers, sort-keys) or mutually exclusive (no-named-export vs
+	// SvelteKit's required named exports).
+	// Svelte template rules still run in ESLint (eslint.config.js).
+	"plugins": ["typescript", "unicorn", "oxc", "import", "promise", "vitest", "node"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "error",
+		"perf": "error"
+	},
+	"env": { "browser": true, "node": true, "es2024": true },
+	"ignorePatterns": [
+		"worker-configuration.d.ts",
+		".svelte-kit/**",
+		"build/**",
+		"storybook-static/**",
+		"src/lib/paraglide/**"
+	],
+	"overrides": [
+		// `export {}` is what makes an ambient declaration file a module.
+		{ "files": ["**/*.d.ts"], "rules": { "unicorn/require-module-specifiers": "off" } }
+	],
+	"rules": {
+		// Type-aware bug rules that oxlint files under pedantic.
+		"typescript/only-throw-error": "error",
+		"typescript/prefer-promise-reject-errors": "error",
+		"typescript/return-await": "error",
+		"typescript/no-mixed-enums": "error",
+		// Non-type-aware pedantic rules that catch defects rather than style.
+		"eqeqeq": ["error", "always", { "null": "ignore" }],
+		"array-callback-return": "error",
+		"no-self-compare": "error",
+		"no-constructor-return": "error",
+
+		"no-unused-vars": [
+			"error",
+			{ "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }
+		],
+
+		// BACKLOG. Rules of this profile that the existing code still breaks
+		// (count as of 2026-11-17, with --type-aware). They report as warnings so
+		// CI stays green while every clean rule above is already enforced. To
+		// retire one: fix its hits, then delete the line (category rules) or
+		// move it to "error" (pedantic rules). Never add a rule here.
+		"typescript/no-unsafe-type-assertion": "warn", // 178
+		"typescript/no-deprecated": "warn", // 178
+		"typescript/no-base-to-string": "warn", // 144
+		"typescript/no-unsafe-member-access": "warn", // 90
+		"typescript/consistent-return": "warn", // 77
+		"typescript/prefer-nullish-coalescing": "warn", // 65
+		"typescript/no-unnecessary-type-conversion": "warn", // 50
+		"unicorn/no-array-sort": "warn", // 41
+		"unicorn/consistent-function-scoping": "warn", // 32
+		"typescript/no-unsafe-assignment": "warn", // 30
+		"vitest/expect-expect": "warn", // 27
+		"typescript/no-unsafe-argument": "warn", // 26
+		"no-await-in-loop": "warn", // 26
+		"vitest/require-mock-type-parameters": "warn", // 25
+		"typescript/require-await": "warn", // 24
+		"typescript/no-unsafe-call": "warn", // 21
+		"vitest/valid-expect": "warn", // 20
+		"typescript/no-unsafe-return": "warn", // 18
+		"typescript/no-unnecessary-type-assertion": "warn", // 16
+		"no-console": ["warn", { "allow": ["warn", "error"] }], // 16
+		"typescript/switch-exhaustiveness-check": "warn", // 11
+		"typescript/no-misused-promises": "warn", // 10
+		"oxc/no-map-spread": "warn", // 10
+		"vitest/no-conditional-expect": "warn", // 8
+		"no-shadow": "warn", // 8
+		"typescript/restrict-plus-operands": "warn", // 7
+		"no-underscore-dangle": "warn", // 7
+		"typescript/no-redundant-type-constituents": "warn", // 6
+		"typescript/no-misused-spread": "warn", // 6
+		"typescript/no-floating-promises": "warn", // 6
+		"promise/always-return": "warn", // 5
+		"unicorn/prefer-add-event-listener": "warn", // 4
+		"typescript/unbound-method": "warn", // 4
+		"vitest/valid-title": "warn", // 3
+		"typescript/no-unnecessary-type-parameters": "warn", // 3
+		"no-fallthrough": "warn", // 3
+		"unicorn/no-array-reverse": "warn", // 2
+		"import/no-unassigned-import": "warn", // 2
+		"no-promise-executor-return": "warn", // 2
+		"no-new": "warn", // 2
+		"typescript/restrict-template-expressions": "warn", // 1
+		"promise/no-promise-in-callback": "warn", // 1
+		"import/no-named-as-default": "warn", // 1
+		"import/namespace": "warn", // 1
+		"no-useless-concat": "warn" // 1
+	}
+}

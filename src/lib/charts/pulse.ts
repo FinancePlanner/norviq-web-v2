@@ -107,7 +107,7 @@ export function activityHeatmap(
 	const inverted =
 		typeof from === 'string' || typeof to === 'string'
 			? toDay < fromDay
-			: (to as Date).getTime() < (from as Date).getTime();
+			: to.getTime() < from.getTime();
 	if (entries.length === 0 || inverted) return null;
 
 	const data: Array<[string, number]> = [];

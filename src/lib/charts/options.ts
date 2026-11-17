@@ -7,7 +7,6 @@
 // nothing there and only raise "component not imported" errors in dev here:
 //   - the empty `title: {}` / `toolbox: {}` go-echarts adds to every chart;
 //   - SentimentHistoryLine's `markLine` (the "neutral" zero line never rendered).
-import type { EChartsOption } from 'echarts';
 import {
 	allocationColors,
 	colorCyan,
@@ -35,7 +34,7 @@ function lineData(values: readonly number[]) {
 const labelDefaults = { showMinLabel: null, showMaxLabel: null };
 
 function spec(id: string, width: string, height: string, option: OptionObject): ChartSpec {
-	return { id, width, height, option: option as EChartsOption };
+	return { id, width, height, option: option };
 }
 
 /** Monthly spending trend. */

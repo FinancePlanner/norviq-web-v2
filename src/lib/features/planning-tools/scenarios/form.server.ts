@@ -97,7 +97,7 @@ export function defaultString(value: string, fallback: string): string {
 	return value.trim() === '' ? fallback : value.trim();
 }
 
-const ASSET_CATEGORIES = [
+const ASSET_CATEGORIES = new Set([
 	'stock',
 	'etf',
 	'mutual_fund',
@@ -106,8 +106,8 @@ const ASSET_CATEGORIES = [
 	'bond',
 	'real_estate',
 	'commodity'
-];
-export const scenarioAssetCategory = (value: string) => ASSET_CATEGORIES.includes(value);
+]);
+export const scenarioAssetCategory = (value: string) => ASSET_CATEGORIES.has(value);
 
 /** scenarioCryptoHoldingIDs: de-duplicated, every value must be a UUID. */
 export function scenarioCryptoHoldingIDs(form: FormData): string[] | null {

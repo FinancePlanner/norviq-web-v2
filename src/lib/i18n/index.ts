@@ -13,7 +13,7 @@ export type Locale = typeof LANGUAGE_ENGLISH | typeof LANGUAGE_PTPT;
 
 const dictionaries: Record<Locale, Record<string, string>> = {
 	en: {},
-	'pt-PT': ptPT as Record<string, string>
+	'pt-PT': ptPT
 };
 
 export function normalizeLanguage(raw: string | null | undefined): Locale | null {

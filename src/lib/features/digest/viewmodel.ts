@@ -201,11 +201,17 @@ export function buildDigestPage(resp: DigestResponse): DigestPageViewModel {
 	};
 }
 
-const ANCHORS: readonly string[] = ['holdings', 'movers', 'budget', 'inflation', 'earnings'];
+const ANCHORS: ReadonlySet<string> = new Set([
+	'holdings',
+	'movers',
+	'budget',
+	'inflation',
+	'earnings'
+]);
 
 /** The ?s= section to scroll to, only when it names a known anchor. */
 export function focusAnchor(raw: string | null): DigestAnchor | null {
-	return raw && ANCHORS.includes(raw) ? (raw as DigestAnchor) : null;
+	return raw && ANCHORS.has(raw) ? (raw as DigestAnchor) : null;
 }
 
 /** Parses YYYY-MM-DD as a calendar date (UTC midnight), so no timezone shifts the day. */
