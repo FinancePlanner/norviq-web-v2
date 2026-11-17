@@ -63,7 +63,11 @@
 			"error",
 			{ "ignorePrimitives": { "string": true, "number": true, "boolean": true, "bigint": true } }
 		],
-		"typescript/no-unnecessary-type-conversion": "warn", // 50
+		// Off: the String() and !! it flags normalise backend JSON. The generated API
+		// types call those fields string or boolean, but a field the backend omits
+		// arrives as undefined, and the conversion is what keeps that out of the view
+		// models.
+		"typescript/no-unnecessary-type-conversion": "off",
 		// Off: every hit already sorts a fresh array (a spread copy or the result of a
 		// chain), and toSorted() is newer than the browsers the client bundle supports.
 		"unicorn/no-array-sort": "off",
