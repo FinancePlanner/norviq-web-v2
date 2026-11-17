@@ -9,9 +9,10 @@ import type { PostHogCaptureOnce, RuntimeConfig } from './types.js';
 
 export type { RuntimeConfig, PostHogCaptureOnce } from './types.js';
 
-// Resolves to null when the chunk fails to load, so the calls below are no-ops
+let posthogModule: Promise<typeof import('./posthog.js')> | null = null;
+// initAnalytics reports a chunk that failed to load. The calls made after it are then no-ops,
 // rather than one unhandled rejection each.
-let posthogModule: Promise<typeof import('./posthog.js') | null> | null = null;
+const ignore = () => {};
 
 export function initAnalytics(runtime: RuntimeConfig | null | undefined): void {
 	if (runtime?.sentry?.dsn) {
@@ -20,11 +21,8 @@ export function initAnalytics(runtime: RuntimeConfig | null | undefined): void {
 	}
 	const posthog = runtime?.posthog;
 	if (posthog?.token && posthog.host) {
-		posthogModule = import('./posthog.js').catch((err: unknown) => {
-			console.error(err);
-			return null;
-		});
-		void posthogModule.then((m) => m?.initPostHog(posthog));
+		posthogModule = import('./posthog.js');
+		posthogModule.then((m) => m.initPostHog(posthog), console.error);
 		return;
 	}
 	// Go always defined window.norviqAnalytics; without PostHog its calls are
@@ -34,17 +32,17 @@ export function initAnalytics(runtime: RuntimeConfig | null | undefined): void {
 }
 
 export function trackPageview(): void {
-	void posthogModule?.then((m) => m?.capturePageview());
+	posthogModule?.then((m) => m.capturePageview(), ignore);
 }
 
 export function captureOnce(once: PostHogCaptureOnce | null | undefined): void {
 	if (!once?.event) return;
-	void posthogModule?.then((m) => m?.applyCaptureOnce(once));
+	posthogModule?.then((m) => m.applyCaptureOnce(once), ignore);
 }
 
 /** norviqAnalytics.capture for components: no-op until PostHog is initialised. */
 export function capture(event: string, properties?: Record<string, unknown>): void {
-	void posthogModule?.then((m) => m?.norviqAnalytics.capture(event, properties));
+	posthogModule?.then((m) => m.norviqAnalytics.capture(event, properties), ignore);
 }
 
 let sentryWanted = false;

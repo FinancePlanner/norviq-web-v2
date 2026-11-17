@@ -176,18 +176,17 @@ export async function signInWithPasskey(showError: (message: string) => void): P
 /** auth.js bindPasskeyButton, as an attachment for #passkey-sign-in. */
 export function passkeyButton(showError: (message: string) => void): Attachment<HTMLButtonElement> {
 	return (button) => {
-		const run = async () => {
+		const onClick = () => {
 			button.disabled = true;
-			try {
-				await signInWithPasskey(showError);
-			} catch (error) {
-				console.error(error);
-				showError('Could not complete passkey sign in.');
-			} finally {
-				button.disabled = false;
-			}
+			signInWithPasskey(showError)
+				.catch((error: unknown) => {
+					console.error(error);
+					showError('Could not complete passkey sign in.');
+				})
+				.finally(() => {
+					button.disabled = false;
+				});
 		};
-		const onClick = () => void run();
 		button.addEventListener('click', onClick);
 		return () => button.removeEventListener('click', onClick);
 	};
@@ -204,22 +203,22 @@ export function passkeyRegisterButton(
 	onFeedback: (f: PasskeyFeedback) => void
 ): Attachment<HTMLButtonElement> {
 	return (button) => {
-		const run = async () => {
+		const onClick = () => {
 			button.disabled = true;
 			onFeedback(null);
-			try {
-				onFeedback({ kind: 'success', message: await registerPasskey() });
-			} catch (error) {
-				console.error(error);
-				onFeedback({
-					kind: 'error',
-					message: error instanceof Error ? error.message : 'Could not register passkey.'
+			registerPasskey()
+				.then((message) => onFeedback({ kind: 'success', message }))
+				.catch((error: unknown) => {
+					console.error(error);
+					onFeedback({
+						kind: 'error',
+						message: error instanceof Error ? error.message : 'Could not register passkey.'
+					});
+				})
+				.finally(() => {
+					button.disabled = false;
 				});
-			} finally {
-				button.disabled = false;
-			}
 		};
-		const onClick = () => void run();
 		button.addEventListener('click', onClick);
 		return () => button.removeEventListener('click', onClick);
 	};
