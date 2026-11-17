@@ -47,15 +47,16 @@ describe('latestExchange', () => {
 	});
 });
 
+function memory() {
+	const values = new Map<string, string>();
+	return {
+		getItem: (key: string) => values.get(key) ?? null,
+		setItem: (key: string, value: string) => void values.set(key, value),
+		removeItem: (key: string) => void values.delete(key)
+	};
+}
+
 describe('stored conversation', () => {
-	function memory() {
-		const values = new Map<string, string>();
-		return {
-			getItem: (key: string) => values.get(key) ?? null,
-			setItem: (key: string, value: string) => void values.set(key, value),
-			removeItem: (key: string) => void values.delete(key)
-		};
-	}
 	test('round trips and forgets', () => {
 		const storage = memory();
 		expect(storedConversation(storage)).toBeNull();

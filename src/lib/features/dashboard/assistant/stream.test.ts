@@ -149,22 +149,22 @@ describe('consent and busy', () => {
 	});
 });
 
-describe('streamAssistantTurn and the composer', () => {
-	function runSpied(response: Response) {
-		vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
-		const calls: string[] = [];
-		return streamAssistantTurn({
-			conversationId: 'c1',
-			body: new FormData(),
-			muse,
-			onAccepted: () => calls.push('accepted'),
-			onTurn: () => {
-				calls.push('turn');
-				return Promise.resolve();
-			}
-		}).then((text) => ({ text, calls }));
-	}
+function runSpied(response: Response) {
+	vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
+	const calls: string[] = [];
+	return streamAssistantTurn({
+		conversationId: 'c1',
+		body: new FormData(),
+		muse,
+		onAccepted: () => calls.push('accepted'),
+		onTurn: () => {
+			calls.push('turn');
+			return Promise.resolve();
+		}
+	}).then((text) => ({ text, calls }));
+}
 
+describe('streamAssistantTurn and the composer', () => {
 	test('an error frame arrives after the stream opened, so the caller must restore', async () => {
 		const { text, calls } = await runSpied(
 			sse(

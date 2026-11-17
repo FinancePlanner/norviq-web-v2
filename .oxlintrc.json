@@ -56,8 +56,12 @@
 		"typescript/consistent-return": "warn", // 77
 		"typescript/prefer-nullish-coalescing": "warn", // 65
 		"typescript/no-unnecessary-type-conversion": "warn", // 50
-		"unicorn/no-array-sort": "warn", // 41
-		"unicorn/consistent-function-scoping": "warn", // 32
+		// Off: every hit already sorts a fresh array (a spread copy or the result of a
+		// chain), and toSorted() is newer than the browsers the client bundle supports.
+		"unicorn/no-array-sort": "off",
+		// Arrow functions are exempt: handlers are defined inside the effect that
+		// registers them, next to their one use.
+		"unicorn/consistent-function-scoping": ["error", { "checkArrowFunctions": false }],
 		"typescript/no-unsafe-assignment": "warn", // 30
 		// The golden-file specs assert through these helpers.
 		"vitest/expect-expect": [
