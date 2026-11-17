@@ -10,6 +10,8 @@ import { goto } from '$app/navigation';
 // hx-indicator put `.htmx-request` on the result container, not on the form.
 //
 // htmx swapped nothing on a 4xx/5xx; neither does this.
+// T is the preview action's result. The form posts cross-route, so the caller names it.
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- see above
 export function previewEnhance<T>(
 	indicator: () => HTMLElement | null | undefined,
 	onData: (data: T) => void

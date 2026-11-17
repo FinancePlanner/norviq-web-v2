@@ -37,7 +37,7 @@ export const load: PageServerLoad = async (event) => {
 		};
 	}
 	let target = groupLanding(detail);
-	const last = event.locals.session.get<string>(lastChannelKey(groupID));
+	const last = event.locals.session.getString(lastChannelKey(groupID));
 	if (last && (detail.channels ?? []).some((c) => sameID(c.id, last)))
 		target = chatHref(groupID, last);
 	const notice = event.url.searchParams.get('notice') ?? '';

@@ -50,7 +50,7 @@ export function safeNextPath(next: string | null | undefined): string {
 
 export async function resumeStep(event: RequestEvent): Promise<{ step: string; needs: boolean }> {
 	const s = event.locals.session;
-	if (s.get<boolean>(OnboardingKey.Complete)) return { step: '', needs: false };
+	if (s.get(OnboardingKey.Complete)) return { step: '', needs: false };
 	let progress: OnboardingProgress;
 	try {
 		progress = await apiJSON<OnboardingProgress>(event, 'GET', '/v1/onboarding', undefined, {
@@ -69,7 +69,7 @@ export async function resumeStep(event: RequestEvent): Promise<{ step: string; n
 		return { step: '', needs: false };
 	}
 	const step = progress.funnelStep ?? '';
-	if (!s.get<boolean>(OnboardingKey.FunnelResumedSent)) {
+	if (!s.get(OnboardingKey.FunnelResumedSent)) {
 		if (step && !s.get(OnboardingKey.PostHogCaptureEvent)) {
 			await setPostHogCaptureOnce(event.locals, 'onboarding_funnel_resumed', { step });
 		}

@@ -249,7 +249,7 @@ export async function submitSalary(event: RequestEvent) {
 		}
 	}
 	// session.NoteGuidedAction(..., "set_budget")
-	if (event.locals.session.get<string>('guidedStartStep') === 'set_budget') {
+	if (event.locals.session.get('guidedStartStep') === 'set_budget') {
 		await event.locals.session.set('guidedStartStepActed', true);
 	}
 	redirect(303, expensesPlannerURL(month));

@@ -47,7 +47,7 @@ export async function clearOAuthFlow(event: RequestEvent): Promise<void> {
 }
 
 export function oauthIntent(event: RequestEvent): OAuthIntent {
-	return event.locals.session.get<string>(OAuthKey.Intent) === 'link' ? 'link' : 'login';
+	return event.locals.session.get(OAuthKey.Intent) === 'link' ? 'link' : 'login';
 }
 
 export interface OAuthStartResponse {

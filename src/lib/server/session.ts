@@ -167,8 +167,14 @@ export class Session {
 		return this.data.auth?.accessToken ?? '';
 	}
 
-	get<T = unknown>(flag: string): T | undefined {
-		return this.data.flags[flag] as T | undefined;
+	get(flag: string): unknown {
+		return this.data.flags[flag];
+	}
+
+	/** The flag when it holds a string; undefined when unset or anything else. */
+	getString(flag: string): string | undefined {
+		const value = this.data.flags[flag];
+		return typeof value === 'string' ? value : undefined;
 	}
 
 	async set(flag: string, value: unknown): Promise<void> {

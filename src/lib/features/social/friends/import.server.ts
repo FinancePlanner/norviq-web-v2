@@ -63,8 +63,8 @@ export async function popImportFlow(
 	event: RequestEvent,
 	p: ImportProvider
 ): Promise<{ flowID: string; redirectURI: string }> {
-	const flowID = String(event.locals.session.get<string>(p.flowKey) ?? '');
-	const redirectURI = String(event.locals.session.get<string>(p.redirectKey) ?? '');
+	const flowID = event.locals.session.getString(p.flowKey) ?? '';
+	const redirectURI = event.locals.session.getString(p.redirectKey) ?? '';
 	if (flowID || redirectURI) await event.locals.session.remove(p.flowKey, p.redirectKey);
 	return { flowID, redirectURI };
 }

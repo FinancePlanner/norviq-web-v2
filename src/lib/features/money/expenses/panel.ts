@@ -16,6 +16,9 @@ export function closeExpensePanel() {
 	window.dispatchEvent(new CustomEvent(PANEL_CLOSE_EVENT));
 }
 
+// T is the form view model of the action posted to. The form posts cross-route, so there is no
+// generated ActionData to take it from and the caller names it.
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- see above
 export function panelEnhance<T>(
 	onVM: (vm: T) => void,
 	onError?: (status: number, message: string) => void

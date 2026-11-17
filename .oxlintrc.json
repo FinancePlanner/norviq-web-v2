@@ -81,7 +81,7 @@
 		"unicorn/prefer-add-event-listener": "error",
 		"typescript/unbound-method": "error",
 		"vitest/valid-title": "error",
-		"typescript/no-unnecessary-type-parameters": "warn", // 3
+		"typescript/no-unnecessary-type-parameters": "error",
 		"no-fallthrough": "error",
 		"unicorn/no-array-reverse": "error",
 		// Stylesheets are imported for their side effect.

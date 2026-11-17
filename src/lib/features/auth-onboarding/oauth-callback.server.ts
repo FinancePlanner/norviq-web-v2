@@ -75,9 +75,9 @@ async function completeOAuthCallback(
 	if (!provider) error(400, 'Unsupported provider');
 
 	const s = event.locals.session;
-	const flowId = s.get<string>(OAuthKey.FlowID) ?? '';
-	const storedProvider = s.get<string>(OAuthKey.Provider) ?? '';
-	const redirectURI = s.get<string>(OAuthKey.RedirectURI) ?? '';
+	const flowId = s.getString(OAuthKey.FlowID) ?? '';
+	const storedProvider = s.getString(OAuthKey.Provider) ?? '';
+	const redirectURI = s.getString(OAuthKey.RedirectURI) ?? '';
 	if (!flowId || storedProvider !== provider || !redirectURI || !uuidPattern.test(flowId)) {
 		return handleCallbackError(event, 'Your sign-in session expired. Please try again.');
 	}
