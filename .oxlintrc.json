@@ -67,7 +67,11 @@
 		"typescript/no-unsafe-return": "warn", // 18
 		"typescript/no-unnecessary-type-assertion": "warn", // 16
 		"no-console": ["warn", { "allow": ["warn", "error"] }], // 16
-		"typescript/switch-exhaustiveness-check": "warn", // 11
+		// A default clause is how the ported Go switches name their fallback member.
+		"typescript/switch-exhaustiveness-check": [
+			"error",
+			{ "considerDefaultExhaustiveForUnions": true }
+		],
 		"typescript/no-misused-promises": "warn", // 10
 		"oxc/no-map-spread": "warn", // 10
 		"vitest/no-conditional-expect": "warn", // 8

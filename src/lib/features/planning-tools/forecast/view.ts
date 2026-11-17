@@ -41,8 +41,9 @@ export function forecastValue(vm: ForecastVM, field: Field): string {
 			case 'spendingGrowth':
 			case 'inflation':
 				return '2';
+			default:
+				return '';
 		}
-		return '';
 	}
 	switch (field) {
 		case 'name':
