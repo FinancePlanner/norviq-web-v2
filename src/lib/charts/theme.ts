@@ -13,7 +13,7 @@
 export interface ThemeEnv {
 	dark: boolean;
 	/** getComputedStyle(documentElement) custom property, or fallback when unset. */
-	cssVar(name: string, fallback: string): string;
+	cssVar: (name: string, fallback: string) => string;
 	reducedMotion: boolean;
 	coarsePointer: boolean;
 }

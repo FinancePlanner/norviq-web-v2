@@ -77,12 +77,12 @@
 		"typescript/no-redundant-type-constituents": "warn", // 6
 		"typescript/no-misused-spread": "warn", // 6
 		"typescript/no-floating-promises": "warn", // 6
-		"promise/always-return": "warn", // 5
-		"unicorn/prefer-add-event-listener": "warn", // 4
-		"typescript/unbound-method": "warn", // 4
-		"vitest/valid-title": "warn", // 3
+		"promise/always-return": ["error", { "ignoreLastCallback": true }],
+		"unicorn/prefer-add-event-listener": "error",
+		"typescript/unbound-method": "error",
+		"vitest/valid-title": "error",
 		"typescript/no-unnecessary-type-parameters": "warn", // 3
-		"no-fallthrough": "warn", // 3
+		"no-fallthrough": "error",
 		"unicorn/no-array-reverse": "error",
 		// Stylesheets are imported for their side effect.
 		"import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],

@@ -40,8 +40,8 @@ function loadPlaidSDK(): Promise<PlaidSDK> {
 		}
 		const script = document.createElement('script');
 		script.src = PLAID_SDK_URL;
-		script.onload = () => resolve(window.Plaid!);
-		script.onerror = () => reject(new Error('Failed to load Plaid'));
+		script.addEventListener('load', () => resolve(window.Plaid!));
+		script.addEventListener('error', () => reject(new Error('Failed to load Plaid')));
 		document.head.appendChild(script);
 	});
 }

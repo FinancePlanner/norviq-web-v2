@@ -6,9 +6,12 @@ const image = (name: string) => new File([new Uint8Array([1])], name, { type: 'i
 const make = (prepare = async (file: File) => file) =>
 	new ImageAttachments({ prepare, tooMany: 'Attach up to 3 images.' });
 
+const revokeObjectURL = vi.fn<(url: string) => void>();
+
 beforeEach(() => {
 	let n = 0;
-	vi.stubGlobal('URL', { createObjectURL: vi.fn(() => `blob:${n++}`), revokeObjectURL: vi.fn() });
+	revokeObjectURL.mockClear();
+	vi.stubGlobal('URL', { createObjectURL: vi.fn(() => `blob:${n++}`), revokeObjectURL });
 });
 afterEach(() => vi.unstubAllGlobals());
 
@@ -42,7 +45,7 @@ test('take empties the box without revoking, restore puts them back first', asyn
 	await a.add([image('a')]);
 	const sent = a.take();
 	expect(a.items).toHaveLength(0);
-	expect(URL.revokeObjectURL).not.toHaveBeenCalled();
+	expect(revokeObjectURL).not.toHaveBeenCalled();
 	await a.add([image('b')]);
 	a.restore(sent);
 	expect(a.items.map((i) => i.file.name)).toEqual(['a', 'b']);
@@ -53,9 +56,9 @@ test('release and clear revoke thumbnails', async () => {
 	await a.add([image('a'), image('b')]);
 	const sent = a.take();
 	a.release(sent);
-	expect(URL.revokeObjectURL).toHaveBeenCalledTimes(2);
+	expect(revokeObjectURL).toHaveBeenCalledTimes(2);
 	await a.add([image('c')]);
 	a.clear();
 	expect(a.items).toHaveLength(0);
-	expect(URL.revokeObjectURL).toHaveBeenCalledTimes(3);
+	expect(revokeObjectURL).toHaveBeenCalledTimes(3);
 });
