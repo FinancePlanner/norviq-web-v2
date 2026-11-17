@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireSocial } from '#lib/features/social/gates.server.js';
 import { uuidParam } from '#lib/features/settings-admin/social/social.server.js';
@@ -26,8 +26,8 @@ export const POST: RequestHandler = async (event) => {
 		failure = socialErrorMessage(err, 'Could not send the request.');
 	}
 	if (isFetch(event)) {
-		if (failure) return json({ error: failure });
-		return json({
+		if (failure) return Response.json({ error: failure });
+		return Response.json({
 			status:
 				previous === Friendship.IncomingPending ? Friendship.Friends : Friendship.OutgoingPending
 		});

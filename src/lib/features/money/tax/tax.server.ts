@@ -214,7 +214,7 @@ export async function loadFilingPage(
 async function requireTaxOptimization(event: RequestEvent) {
 	const billing = await loadBillingContext(event);
 	if (!isFeatureAvailable(billing, Feature.TaxOptimization)) {
-		error(402, { message: TAX_FEATURE_NAME, proGate: TAX_FEATURE_NAME });
+		error(402, TAX_FEATURE_NAME, { proGate: TAX_FEATURE_NAME });
 	}
 	return isPro(billing);
 }

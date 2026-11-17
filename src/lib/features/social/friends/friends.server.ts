@@ -1,4 +1,4 @@
-import { json, redirect, type RequestEvent } from '@sveltejs/kit';
+import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
 import {
 	socialDo,
@@ -49,7 +49,7 @@ export function respondRedirect(
 	if (notice) query.set('notice', notice);
 	const encoded = query.toString();
 	const location = encoded ? `${path}${path.includes('?') ? '&' : '?'}${encoded}` : path;
-	if (isFetch(event)) return json({ location });
+	if (isFetch(event)) return Response.json({ location });
 	redirect(303, location);
 }
 

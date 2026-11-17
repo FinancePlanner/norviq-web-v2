@@ -103,7 +103,7 @@ export const actions: Actions = {
 		const mode = formChoice(form.get('mode'), 'actual', 'hypothetical');
 		const freePersonal = purpose === 'personal' && ownership === 'individual' && mode === 'actual';
 		if (!freePersonal && !isPro(await loadBillingContext(event))) {
-			error(402, { message: 'Extra portfolios', proGate: 'Extra portfolios' });
+			error(402, 'Extra portfolios', { proGate: 'Extra portfolios' });
 		}
 		const input = {
 			name: formValue(form, 'name').trim(),

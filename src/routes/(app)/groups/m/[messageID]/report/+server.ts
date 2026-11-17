@@ -1,4 +1,4 @@
-import { json, text, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { requireGroups } from '#lib/features/social/gates.server.js';
 import {
 	groupsID,
@@ -17,9 +17,9 @@ export const POST: RequestHandler = async (event) => {
 		await reportGroupMessage(event, messageID, String(form.get('reason') ?? ''));
 	} catch (err) {
 		console.warn('group message report failed', err);
-		return text("That report didn't go through. Try again.", { status: 502 });
+		return new Response("That report didn't go through. Try again.", { status: 502 });
 	}
-	if (event.request.headers.get('X-Groups-Fetch')) return json({ reported: true });
+	if (event.request.headers.get('X-Groups-Fetch')) return Response.json({ reported: true });
 	return new Response(
 		'<p class="p-2 text-xs text-muted-foreground" role="status">Thanks. A person will review it.</p>',
 		{

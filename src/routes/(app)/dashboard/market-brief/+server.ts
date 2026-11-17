@@ -1,4 +1,4 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import {
 	loadMarketBriefCard,
 	parseMarketBriefQuery
@@ -12,7 +12,7 @@ export const GET: RequestHandler = async (event) => {
 	const key = parseMarketBriefQuery(event.url.searchParams, new Date());
 	if (!key) return new Response(null, { status: 400, headers: { 'X-Robots-Tag': 'noindex' } });
 	const vm = await loadMarketBriefCard(event, '/dashboard/market-brief', key);
-	return json(
+	return Response.json(
 		{ vm },
 		{ headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'private, no-store' } }
 	);

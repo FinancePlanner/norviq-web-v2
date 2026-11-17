@@ -1,4 +1,4 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import {
 	getOnboardingProgress,
 	patchOnboardingProgress
@@ -12,11 +12,11 @@ import { guidedCardVM } from '#lib/features/auth-onboarding/guided-start/guided.
 export const POST: RequestHandler = async (event) => {
 	try {
 		await patchOnboardingProgress(event, { guidedStartDismissed: true });
-		return json({ ok: true });
+		return Response.json({ ok: true });
 	} catch (err) {
 		console.warn('guided start: dismiss', err);
 	}
-	return json({
+	return Response.json({
 		ok: false,
 		card: await guidedCardVM(event, await getOnboardingProgress(event), DISMISS_FAILED)
 	});

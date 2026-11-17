@@ -1,4 +1,4 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { getOnboardingProgress } from '#lib/features/auth-onboarding/onboarding/onboarding.server.js';
 import {
 	STEP_TIMEOUT_MS,
@@ -19,7 +19,7 @@ import {
 // the same decision as JSON for GuidedStepLayer.
 export const GET: RequestHandler = async (event) => {
 	const active = activeGuidedStep(event);
-	if (!active) return json({ state: 'none' } satisfies PollResult);
+	if (!active) return Response.json({ state: 'none' } satisfies PollResult);
 	const step = active.step as Step;
 	const elapsed = Date.now() - active.startedAt;
 	const outcome = { step, elapsedMs: elapsed, elsewhere: !active.acted };
@@ -28,15 +28,15 @@ export const GET: RequestHandler = async (event) => {
 	if (p && stepDone(step, p)) {
 		await clearGuidedStep(event);
 		if (allDone(progressOf(p))) await setGuidedShowCompleted(event);
-		return json({ state: 'done', outcome } satisfies PollResult);
+		return Response.json({ state: 'done', outcome } satisfies PollResult);
 	}
 	if (elapsed >= STEP_TIMEOUT_MS) {
 		await clearGuidedStep(event);
-		return json({
+		return Response.json({
 			state: 'ended',
 			event: 'guided_start_step_timed_out',
 			outcome
 		} satisfies PollResult);
 	}
-	return json({ state: 'pending' } satisfies PollResult);
+	return Response.json({ state: 'pending' } satisfies PollResult);
 };

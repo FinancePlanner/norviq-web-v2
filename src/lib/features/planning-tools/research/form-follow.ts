@@ -14,7 +14,7 @@ export async function postAndFollow(e: SubmitEvent) {
 		});
 		if (res.ok && res.redirected) {
 			const url = new URL(res.url);
-			await goto(url.pathname + url.search, { invalidateAll: true });
+			await goto(url.pathname + url.search, { refreshAll: true });
 		}
 	} catch (err) {
 		console.warn('form post failed', form.action, err);

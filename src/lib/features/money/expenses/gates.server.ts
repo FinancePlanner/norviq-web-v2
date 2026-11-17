@@ -9,5 +9,5 @@ export async function isProRequest(event: RequestEvent): Promise<boolean> {
 
 /** The handler-level `if !h.isPro(r) { ProGateOverlay(name) }` check: a 402 Pro gate. */
 export async function requireProInline(event: RequestEvent, featureName: string) {
-	if (!(await isProRequest(event))) error(402, { message: featureName, proGate: featureName });
+	if (!(await isProRequest(event))) error(402, featureName, { proGate: featureName });
 }

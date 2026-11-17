@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireActivityFeed } from '#lib/features/social/gates.server.js';
 import { uuidParam } from '#lib/features/settings-admin/social/social.server.js';
@@ -39,7 +39,7 @@ export const POST: RequestHandler = async (event) => {
 		} else {
 			vm.errorMessage = socialErrorMessage(err, 'Could not send your cheer.');
 		}
-		return json(vm);
+		return Response.json(vm);
 	}
 	if (!err) return respondRedirect(event, '/friends/feed', 'Cheered!', '');
 	if (isNotFound(err))

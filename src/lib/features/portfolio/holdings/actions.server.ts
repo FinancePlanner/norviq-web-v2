@@ -1,5 +1,5 @@
 import { noteGuidedAction } from '../../auth-onboarding/guided-start/guided.server.js';
-import { json, text, type RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import { formatFloat } from '#lib/format.js';
 import { Feature, isFeatureAvailable, isPro } from '#lib/billing.js';
 import { loadBillingContext } from '#lib/server/app-context.js';
@@ -38,8 +38,8 @@ import type {
 // Failures stay plain-text non-2xx responses, which the page ignores exactly as
 // htmx did (noSwap 4xx/5xx).
 
-const panel = (r: PositionActionResult) => json(r);
-const redirectTo = (url: string) => json({ redirect: url } satisfies PositionActionResult);
+const panel = (r: PositionActionResult) => Response.json(r);
+const redirectTo = (url: string) => Response.json({ redirect: url } satisfies PositionActionResult);
 
 async function readForm(event: RequestEvent): Promise<FormData | null> {
 	try {
@@ -55,7 +55,7 @@ async function targetAlertsGate(
 ): Promise<{ blocked: Response | null; pro: boolean }> {
 	const billing = await loadBillingContext(event);
 	if (!isFeatureAvailable(billing, Feature.TargetAlerts)) {
-		return { blocked: text('Price alerts', { status: 402 }), pro: false };
+		return { blocked: new Response('Price alerts', { status: 402 }), pro: false };
 	}
 	return { blocked: null, pro: isPro(billing) };
 }
@@ -104,7 +104,7 @@ function emptyAdd(): AddPositionFormVM {
 
 export async function editForm(event: RequestEvent, id: string): Promise<Response> {
 	const loaded = await loadPositionForm(event, id);
-	if (!loaded.ok) return text(loaded.message, { status: loaded.status });
+	if (!loaded.ok) return new Response(loaded.message, { status: loaded.status });
 	loaded.form.range = normalizePortfolioTimeRange(event.url.searchParams.get('range'));
 	return panel({ panel: 'edit', form: loaded.form });
 }
@@ -113,7 +113,7 @@ export async function editForm(event: RequestEvent, id: string): Promise<Respons
 
 export async function updatePosition(event: RequestEvent, id: string): Promise<Response> {
 	const stockID = parseUUID(id);
-	if (!stockID) return text('Invalid position', { status: 400 });
+	if (!stockID) return new Response('Invalid position', { status: 400 });
 	const f = await readForm(event);
 	if (!f)
 		return panel({
@@ -161,7 +161,7 @@ function emptyEdit(id: string): EditPositionFormVM {
 
 export async function deletePosition(event: RequestEvent, id: string): Promise<Response> {
 	const stockID = parseUUID(id);
-	if (!stockID) return text('Invalid position', { status: 400 });
+	if (!stockID) return new Response('Invalid position', { status: 400 });
 
 	const res = await rawCall(event, 'DELETE', `/v1/stocks/id/${stockID}`);
 	if (!res.networkError) {
@@ -169,7 +169,7 @@ export async function deletePosition(event: RequestEvent, id: string): Promise<R
 		if (reason) {
 			// renderPositionEditRefusal: the edit panel again, carrying the reason.
 			const loaded = await loadPositionForm(event, id);
-			if (!loaded.ok) return text(loaded.message, { status: loaded.status });
+			if (!loaded.ok) return new Response(loaded.message, { status: loaded.status });
 			loaded.form.range = normalizePortfolioTimeRange(event.url.searchParams.get('range'));
 			loaded.form.error = reason;
 			return panel({ panel: 'edit', form: loaded.form });
@@ -177,7 +177,7 @@ export async function deletePosition(event: RequestEvent, id: string): Promise<R
 	}
 	if (res.networkError || (res.status !== 204 && res.status !== 200)) {
 		console.warn('delete stock failed', { stockID, status: res.status });
-		return text('Could not delete this position.', { status: 502 });
+		return new Response('Could not delete this position.', { status: 502 });
 	}
 	return redirectTo(
 		portfolioRedirectURL(normalizePortfolioTimeRange(event.url.searchParams.get('range')))
@@ -189,7 +189,7 @@ export async function deletePosition(event: RequestEvent, id: string): Promise<R
 
 export async function sellForm(event: RequestEvent, id: string): Promise<Response> {
 	const loaded = await loadPositionForm(event, id);
-	if (!loaded.ok) return text(loaded.message, { status: loaded.status });
+	if (!loaded.ok) return new Response(loaded.message, { status: loaded.status });
 	const form: SellPositionFormVM = {
 		id: loaded.stockID,
 		symbol: loaded.form.symbol,
@@ -207,7 +207,7 @@ export async function sellForm(event: RequestEvent, id: string): Promise<Respons
 
 export async function sellPosition(event: RequestEvent, id: string): Promise<Response> {
 	const stockID = parseUUID(id);
-	if (!stockID) return text('Invalid position', { status: 400 });
+	if (!stockID) return new Response('Invalid position', { status: 400 });
 	const f = await readForm(event);
 	const blank: SellPositionFormVM = {
 		id: stockID,
@@ -257,7 +257,7 @@ export async function alertForm(event: RequestEvent, id: string): Promise<Respon
 	const gate = await targetAlertsGate(event);
 	if (gate.blocked) return gate.blocked;
 	const loaded = await loadPositionForm(event, id);
-	if (!loaded.ok) return text(loaded.message, { status: loaded.status });
+	if (!loaded.ok) return new Response(loaded.message, { status: loaded.status });
 
 	const form: PriceAlertFormVM = {
 		stockID: loaded.stockID,
@@ -285,10 +285,10 @@ export async function alertForm(event: RequestEvent, id: string): Promise<Respon
 export async function saveAlert(event: RequestEvent, id: string): Promise<Response> {
 	const gate = await targetAlertsGate(event);
 	if (gate.blocked) return gate.blocked;
-	if (!gate.pro) return text('Pro subscription required', { status: 403 });
+	if (!gate.pro) return new Response('Pro subscription required', { status: 403 });
 
 	const loaded = await loadPositionForm(event, id);
-	if (!loaded.ok) return text(loaded.message, { status: loaded.status });
+	if (!loaded.ok) return new Response(loaded.message, { status: loaded.status });
 	const symbol = loaded.form.symbol;
 	const f = await readForm(event);
 	if (!f) {
@@ -346,13 +346,13 @@ export async function saveAlert(event: RequestEvent, id: string): Promise<Respon
 export async function deleteTargetAlert(event: RequestEvent, id: string): Promise<Response> {
 	const gate = await targetAlertsGate(event);
 	if (gate.blocked) return gate.blocked;
-	if (!gate.pro) return text('Pro subscription required', { status: 403 });
+	if (!gate.pro) return new Response('Pro subscription required', { status: 403 });
 
 	const targetID = parseUUID(id);
-	if (!targetID) return text('Invalid alert', { status: 400 });
+	if (!targetID) return new Response('Invalid alert', { status: 400 });
 	const res = await rawCall(event, 'DELETE', `/v1/targets/${targetID}`);
 	if (res.networkError || (res.status !== 204 && res.status !== 200))
-		return text('Failed to remove alert', { status: 502 });
+		return new Response('Failed to remove alert', { status: 502 });
 	// redirectPortfolio with the raw (un-normalized) range, as Go did.
 	return redirectTo(portfolioRedirectURL(event.url.searchParams.get('range') ?? ''));
 }

@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireActivityFeed } from '#lib/features/social/gates.server.js';
 import { loadFeed } from '#lib/features/social/friends/feed.server.js';
@@ -8,5 +7,5 @@ import { loadFeed } from '#lib/features/social/friends/feed.server.js';
 // navigations (Accept: text/html) get +page.svelte instead.
 export const GET: RequestHandler = async (event) => {
 	await requireActivityFeed(event);
-	return json(await loadFeed(event, true));
+	return Response.json(await loadFeed(event, true));
 };

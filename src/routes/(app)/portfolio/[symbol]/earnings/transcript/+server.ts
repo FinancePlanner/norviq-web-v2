@@ -1,4 +1,3 @@
-import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature, isPro } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -10,11 +9,11 @@ import { loadStockEarningsTranscript } from '#lib/features/stock/fragments.serve
 // data for the transcript dialog.
 export const GET: RequestHandler = async (event) => {
 	await requireFeature(event, Feature.EarningsText, 'Earnings');
-	if (!isPro(await loadBillingContext(event))) return text('Pro required', { status: 403 });
+	if (!isPro(await loadBillingContext(event))) return new Response('Pro required', { status: 403 });
 	const vm = await loadStockEarningsTranscript(
 		event,
 		event.params.symbol,
 		event.url.searchParams.get('date') ?? ''
 	);
-	return json(vm);
+	return Response.json(vm);
 };

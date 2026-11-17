@@ -16,7 +16,7 @@ export function commentSubmit(post: PostRow): SubmitFunction {
 			const target = new URL(result.location, window.location.href);
 			if (target.pathname === '/boards/p/' + pathEscape(post.id)) {
 				formElement.reset();
-				await goto(postURL(post) + target.hash, { invalidateAll: true });
+				await goto(postURL(post) + target.hash, { refreshAll: true });
 				return;
 			}
 		}

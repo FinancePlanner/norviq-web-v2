@@ -1,4 +1,4 @@
-import { json, redirect, text } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -16,7 +16,7 @@ import {
 export const GET: RequestHandler = async (event) => {
 	await requireFeature(event, Feature.AIInsights, 'AI insights');
 	const id = parseUUID(event.params.id);
-	if (!id) return text('Invalid conversation', { status: 400 });
+	if (!id) return new Response('Invalid conversation', { status: 400 });
 	const accept = event.request.headers.get('accept') ?? '';
 	if (accept.includes('text/html') && !accept.includes('application/json')) {
 		redirect(303, '/assistant?conversation=' + id);
@@ -24,6 +24,6 @@ export const GET: RequestHandler = async (event) => {
 	const refusal = await aiConsentRefusal(event);
 	if (refusal) return refusal;
 	const vm = await loadAssistantConversation(event, id);
-	if (!vm) return text('Conversation unavailable', { status: 502 });
-	return json(vm, { headers: { 'cache-control': 'private, no-store' } });
+	if (!vm) return new Response('Conversation unavailable', { status: 502 });
+	return Response.json(vm, { headers: { 'cache-control': 'private, no-store' } });
 };

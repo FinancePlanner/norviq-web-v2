@@ -1,4 +1,4 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { fetchJSON } from '#lib/features/dashboard/fetch.server.js';
 import { isoDate } from '#lib/features/dashboard/shared.js';
 
@@ -14,7 +14,7 @@ function parsePositiveFloat(raw: string): number | null {
 	return Number.isFinite(v) && v > 0 ? v : null;
 }
 
-const fail = (message: string) => json({ error: message });
+const fail = (message: string) => Response.json({ error: message });
 
 export const POST: RequestHandler = async (event) => {
 	let form: FormData;

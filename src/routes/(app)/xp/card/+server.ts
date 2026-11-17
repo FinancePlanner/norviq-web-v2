@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireLeaderboards } from '#lib/features/social/gates.server.js';
 import { loadXPCard } from '#lib/features/social/friends/friends.server.js';
@@ -8,5 +7,5 @@ import { loadXPCard } from '#lib/features/social/friends/friends.server.js';
 // XP + streaks + the viewer's "today" server-side, with X-Timezone.
 export const GET: RequestHandler = async (event) => {
 	await requireLeaderboards(event);
-	return json(await loadXPCard(event));
+	return Response.json(await loadXPCard(event));
 };

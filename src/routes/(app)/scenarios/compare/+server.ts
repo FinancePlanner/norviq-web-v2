@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { apiJSON } from '#lib/server/api.js';
 import {
@@ -32,7 +31,7 @@ export const POST: RequestHandler = async (event) => {
 			runIds: ids
 		});
 		if (!response) return httpError('Comparison unavailable', 502);
-		return json({ runs: response.runs ?? [] } satisfies CompareResponse);
+		return Response.json({ runs: response.runs ?? [] } satisfies CompareResponse);
 	} catch {
 		return httpError('Comparison unavailable', 502);
 	}

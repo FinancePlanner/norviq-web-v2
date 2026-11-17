@@ -26,7 +26,7 @@ export function panelEnhance<T>(
 	return withSpinner(() => async ({ result }) => {
 		if (result.type === 'redirect') {
 			closeExpensePanel();
-			await goto(result.location, { invalidateAll: true });
+			await goto(result.location, { refreshAll: true });
 		} else if (result.type === 'failure') {
 			const vm = (result.data as { vm?: T } | undefined)?.vm;
 			if (vm) onVM(vm);
@@ -40,7 +40,7 @@ export function panelEnhance<T>(
 			onError?.(result.status ?? 500, err?.proGate ?? err?.message ?? '');
 		} else if (result.type === 'success') {
 			closeExpensePanel();
-			await goto(location.href, { invalidateAll: true });
+			await goto(location.href, { refreshAll: true });
 		}
 	});
 }

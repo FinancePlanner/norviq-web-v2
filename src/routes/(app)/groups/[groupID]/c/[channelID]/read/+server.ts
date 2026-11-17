@@ -1,4 +1,4 @@
-import { text, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { requireGroups } from '#lib/features/social/gates.server.js';
 import { markGroupChannelRead, readForm } from '#lib/features/social/groups/groups.server.js';
 import { uuidParam } from '#lib/features/settings-admin/social/social.server.js';
@@ -12,7 +12,7 @@ export const POST: RequestHandler = async (event) => {
 	const raw = String(form.get('seq') ?? '');
 	const seq = /^[+-]?\d+$/.test(raw) ? Number(raw) : NaN;
 	if (!channelID || !Number.isSafeInteger(seq) || seq <= 0)
-		return text('bad request', { status: 400 });
+		return new Response('bad request', { status: 400 });
 	try {
 		await markGroupChannelRead(event, channelID, seq);
 	} catch {

@@ -1,4 +1,4 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import * as timerange from '#lib/timerange.js';
 import { loadLedgerViewModel } from '#lib/features/dashboard/command-center/load.server.js';
 
@@ -11,5 +11,5 @@ export const GET: RequestHandler = async (event) => {
 		timerange.parse(q.get('range')),
 		q.get('domain') ?? ''
 	);
-	return json(vm, { headers: { 'Cache-Control': 'private, no-store' } });
+	return Response.json(vm, { headers: { 'Cache-Control': 'private, no-store' } });
 };

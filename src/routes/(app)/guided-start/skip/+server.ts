@@ -1,4 +1,4 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import type { PollResult, Step } from '#lib/features/auth-onboarding/guided-start/guide.js';
 import {
 	activeGuidedStep,
@@ -8,9 +8,9 @@ import {
 // POST /guided-start/skip (guided_start.go GuidedStartSkip)
 export const POST: RequestHandler = async (event) => {
 	const active = activeGuidedStep(event);
-	if (!active) return json({ state: 'none' } satisfies PollResult);
+	if (!active) return Response.json({ state: 'none' } satisfies PollResult);
 	await clearGuidedStep(event);
-	return json({
+	return Response.json({
 		state: 'ended',
 		event: 'guided_start_step_skipped',
 		outcome: {

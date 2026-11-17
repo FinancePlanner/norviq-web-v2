@@ -11,7 +11,7 @@ type CouponRedemptionResponse = components['schemas']['CouponRedemptionResponse'
 
 // Go Settings case "subscription": LoadSubscriptionVM. The htmx
 // /settings/subscription/status fragment is gone: billing-client.ts calls
-// invalidateAll(), which reruns this load.
+// refreshAll(), which reruns this load.
 export const load: PageServerLoad = async (event) => {
 	const billing = await loadBillingContext(event);
 	return {

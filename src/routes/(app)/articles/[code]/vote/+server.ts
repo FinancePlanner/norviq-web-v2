@@ -1,4 +1,4 @@
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { error, type RequestHandler } from '@sveltejs/kit';
 import { parseSlugCode } from '#lib/features/public/articles/articles.js';
 import {
 	boardsErrorText,
@@ -21,7 +21,7 @@ export const POST: RequestHandler = async (event) => {
 	}
 	try {
 		const vote = await voteArticle(event, code, on);
-		return json({ upvoteCount: vote.upvoteCount, voted: vote.voted });
+		return Response.json({ upvoteCount: vote.upvoteCount, voted: vote.voted });
 	} catch (err) {
 		return new Response(boardsErrorText(err), {
 			status: 422,

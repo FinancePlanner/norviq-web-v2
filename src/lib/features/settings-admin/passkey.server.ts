@@ -1,4 +1,4 @@
-import { json, type RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import { apiFetch } from '#lib/server/api.js';
 import { config } from '#lib/server/env.js';
 import { apiErrorMessage } from './api-errors.js';
@@ -38,12 +38,15 @@ export async function proxyWebAuthn(
 		});
 	} catch (err) {
 		console.error('passkey register', path, err);
-		return json({ error: 'Could not reach the authentication service.' }, { status: 502 });
+		return Response.json({ error: 'Could not reach the authentication service.' }, { status: 502 });
 	}
 	const text = await resp.text().catch(() => '');
 	const ok = resp.status === 200 || (finish && resp.status === 204);
 	if (!ok)
-		return json({ error: apiErrorMessage(text, fallbacks.failure) }, { status: resp.status });
-	if (finish) return json({ message: 'Passkey registered.' });
+		return Response.json(
+			{ error: apiErrorMessage(text, fallbacks.failure) },
+			{ status: resp.status }
+		);
+	if (finish) return Response.json({ message: 'Passkey registered.' });
 	return new Response(text, { status: 200, headers: { 'Content-Type': 'application/json' } });
 }

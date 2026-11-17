@@ -1,4 +1,4 @@
-import { json, type RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { apiFetch, apiJSON, isAPIError } from '#lib/server/api.js';
 import {
@@ -441,7 +441,9 @@ export async function formOf(event: RequestEvent): Promise<FormData> {
  */
 export async function aiConsentRefusal(event: RequestEvent): Promise<Response | null> {
 	if (await hasAIConsent(event)) return null;
-	return json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), { status: 403 });
+	return Response.json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), {
+		status: 403
+	});
 }
 
 /** AssistantTurn: one non-streamed turn, answered as the new message row. */

@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { apiJSON } from '#lib/server/api.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -27,5 +26,5 @@ export const GET: RequestHandler = async (event) => {
 		name: inst.name,
 		beta: inst.beta === true
 	}));
-	return json({ institutions });
+	return Response.json({ institutions });
 };

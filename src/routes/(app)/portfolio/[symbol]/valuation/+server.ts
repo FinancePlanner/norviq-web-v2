@@ -1,4 +1,4 @@
-import { json, redirect, text } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature, isPro } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -12,16 +12,17 @@ import { saveValuation } from '#lib/features/stock/fragments.server.js';
 export const POST: RequestHandler = async (event) => {
 	await requireFeature(event, Feature.ValuationCases, 'Valuation cases');
 	if (!isPro(await loadBillingContext(event)))
-		return text('Pro subscription required', { status: 402 });
+		return new Response('Pro subscription required', { status: 402 });
 	let form: FormData;
 	try {
 		form = await event.request.formData();
 	} catch {
-		return text('Invalid form', { status: 400 });
+		return new Response('Invalid form', { status: 400 });
 	}
-	if (event.params.symbol.trim() === '') return text('Valuation unavailable', { status: 400 });
+	if (event.params.symbol.trim() === '')
+		return new Response('Valuation unavailable', { status: 400 });
 	const result = await saveValuation(event, event.params.symbol, form);
 	const wantsJSON = (event.request.headers.get('accept') ?? '').includes('application/json');
 	if (!wantsJSON && 'redirect' in result) redirect(303, result.redirect);
-	return json(result);
+	return Response.json(result);
 };

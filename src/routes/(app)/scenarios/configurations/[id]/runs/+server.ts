@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import {
 	createSnapshot,
@@ -45,7 +44,7 @@ export const POST: RequestHandler = async (event) => {
 	}
 	try {
 		const run = await queueRun(event, scenarioID, snapshotID, seed);
-		return json({ redirect: '/scenarios?run=' + uid(run.id) } satisfies RedirectResponse, {
+		return Response.json({ redirect: '/scenarios?run=' + uid(run.id) } satisfies RedirectResponse, {
 			status: 201
 		});
 	} catch {

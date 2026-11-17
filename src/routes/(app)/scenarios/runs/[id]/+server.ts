@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { apiJSON } from '#lib/server/api.js';
 import {
@@ -19,7 +18,7 @@ export const GET: RequestHandler = async (event) => {
 	try {
 		const run = await apiJSON<ScenarioRun>(event, 'GET', `/v1/scenario-runs/${id}`);
 		if (!run) return httpError('Run unavailable', 502);
-		return json(run);
+		return Response.json(run);
 	} catch {
 		return httpError('Run unavailable', 502);
 	}
@@ -39,7 +38,7 @@ export const DELETE: RequestHandler = async (event) => {
 	try {
 		const run = await apiJSON<ScenarioRun>(event, 'GET', `/v1/scenario-runs/${id}`);
 		if (!run) return httpError('Canceled run could not be loaded', 502);
-		return json(run);
+		return Response.json(run);
 	} catch {
 		return httpError('Canceled run could not be loaded', 502);
 	}

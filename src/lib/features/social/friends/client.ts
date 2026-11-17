@@ -34,7 +34,7 @@ export function boostedForm(confirmMessage = ''): Attachment<HTMLFormElement> {
 				const res = await postForm(form);
 				const body = (await res.json().catch(() => null)) as { location?: string } | null;
 				if (body?.location) {
-					await goto(body.location, { invalidateAll: true });
+					await goto(body.location, { refreshAll: true });
 					return;
 				}
 				HTMLFormElement.prototype.submit.call(form);

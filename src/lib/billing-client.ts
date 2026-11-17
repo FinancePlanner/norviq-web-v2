@@ -1,5 +1,5 @@
 import type { Attachment } from 'svelte/attachments';
-import { invalidateAll } from '$app/navigation';
+import { refreshAll } from '$app/navigation';
 import { capture } from './analytics/index.js';
 import { isPro, type BillingContext } from './billing.js';
 
@@ -14,7 +14,7 @@ import { isPro, type BillingContext } from './billing.js';
 //
 //   <div id="subscription-root" data-rc-api-key={key} ... {@attach billingPage()}>
 //
-// Differences from Go: the status refresh after a purchase is invalidateAll()
+// Differences from Go: the status refresh after a purchase is refreshAll()
 // instead of an htmx swap of #billing-status, and the settle poll reads
 // /api/v1/billing/me instead of the /settings/subscription/status fragment.
 
@@ -205,7 +205,7 @@ async function pollUntilEntitled(): Promise<boolean> {
 			const res = await fetch('/api/v1/billing/me', { credentials: 'same-origin' });
 			if (!res.ok) continue;
 			if (isPro(await res.json<BillingContext>())) {
-				await invalidateAll();
+				await refreshAll();
 				return true;
 			}
 		} catch {
@@ -239,7 +239,7 @@ async function syncBackendEntitlement(
 		window.location.assign('/onboarding');
 		return;
 	}
-	await invalidateAll();
+	await refreshAll();
 }
 
 const DANGER_CLASS = 'text-[var(--color-danger)]';

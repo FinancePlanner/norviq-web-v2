@@ -1,4 +1,4 @@
-import { json, redirect, text, type RequestHandler } from '@sveltejs/kit';
+import { redirect, type RequestHandler } from '@sveltejs/kit';
 import { requireGroups } from '#lib/features/social/gates.server.js';
 import {
 	boardsErrorText,
@@ -18,9 +18,9 @@ export const POST: RequestHandler = async (event) => {
 	try {
 		await deleteGroupMessage(event, messageID);
 	} catch (err) {
-		if (scripted) return text(boardsErrorText(err), { status: 422 });
+		if (scripted) return new Response(boardsErrorText(err), { status: 422 });
 		groupsRedirectError(err, refererGroupsPath(event), event.url.pathname);
 	}
 	if (!scripted) redirect(303, refererGroupsPath(event));
-	return json({ deleted: true });
+	return Response.json({ deleted: true });
 };

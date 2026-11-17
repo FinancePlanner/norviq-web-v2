@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -23,10 +23,10 @@ export const POST: RequestHandler = async (event) => {
 		/* Go's FormValue on a bad body reads "" */
 	}
 	try {
-		return json(await bookmarkMemo(event, id, bookmarked));
+		return Response.json(await bookmarkMemo(event, id, bookmarked));
 	} catch (err) {
 		if (isAIConsentRequired(err))
-			return json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
+			return Response.json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
 		return new Response('Memo could not be saved\n', { status: 502 });
 	}
 };
