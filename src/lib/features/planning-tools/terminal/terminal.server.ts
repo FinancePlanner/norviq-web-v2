@@ -481,7 +481,7 @@ export async function aiSuggest(event: RequestEvent, id: string, kind: 'facts' |
 	const [ticker, valid] = normalizeTerminalTicker(formGet(form, 'ticker'));
 	vm.ticker = ticker;
 	let symbol = formGet(form, 'symbol');
-	if ([...symbol].length > MAX_SYMBOL_RUNES) symbol = '';
+	if (Array.from(symbol).length > MAX_SYMBOL_RUNES) symbol = '';
 	const tableCurrency = currencyCode(formGet(form, 'currency'));
 	const consent = (): Response =>
 		json({ kind: 'consent', next: aiConsentReturnPath(event) } satisfies SuggestionResult);

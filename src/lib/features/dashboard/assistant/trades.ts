@@ -213,8 +213,8 @@ export function savesAs(raw: string): string {
 	if (raw.trim() === '') return '';
 	const n = parseDecimal(raw);
 	if (n === undefined) return '';
-	const text = formatDecimal(n);
-	return text === raw.trim() ? '' : text;
+	const saved = formatDecimal(n);
+	return saved === raw.trim() ? '' : saved;
 }
 
 const SPACE_GROUP_DOT = /^[+-]?[1-9]\d{0,2}([ \u00a0]\d{3})+\.\d+$/;
@@ -249,8 +249,8 @@ export function cellHint(
 		const saved = formatDecimal(parseDecimal(typed) as number);
 		return { text: `Saves as ${saved}, not ${typed.replace('.', '')}`, warn: true };
 	}
-	const text = savesAs(raw);
-	return text ? { text: `Saves as ${text}`, warn: false } : null;
+	const saved = savesAs(raw);
+	return saved ? { text: `Saves as ${saved}`, warn: false } : null;
 }
 
 /** The message for a number refused as ambiguous ("1,234"), or '' when it is not that case. */

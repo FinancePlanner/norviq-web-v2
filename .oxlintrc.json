@@ -75,11 +75,12 @@
 		"typescript/no-misused-promises": "error",
 		"oxc/no-map-spread": "warn", // 10
 		"vitest/no-conditional-expect": "warn", // 8
-		"no-shadow": "warn", // 8
+		"no-shadow": "error",
 		"typescript/restrict-plus-operands": "error",
-		"no-underscore-dangle": "warn", // 7
-		"typescript/no-redundant-type-constituents": "warn", // 6
-		"typescript/no-misused-spread": "warn", // 6
+		// The queue name is a contract with the landing page's inline script.
+		"no-underscore-dangle": ["error", { "allow": ["__norviqAnalyticsQueue"] }],
+		"typescript/no-redundant-type-constituents": "error",
+		"typescript/no-misused-spread": "error",
 		"typescript/no-floating-promises": "error",
 		"promise/always-return": ["error", { "ignoreLastCallback": true }],
 		"unicorn/prefer-add-event-listener": "error",

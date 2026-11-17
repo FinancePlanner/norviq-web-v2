@@ -64,11 +64,11 @@ export const POST: RequestHandler = async (event) => {
 		return text('Assistant is temporarily unavailable', { status: 502 });
 	}
 	if (upstream.status === 403) {
-		const body = (await upstream.text().catch(() => '')).slice(0, 4096);
+		const refused = (await upstream.text().catch(() => '')).slice(0, 4096);
 		let reason = '';
 		let code = '';
 		try {
-			const parsed = JSON.parse(body) as { reason?: unknown; code?: unknown };
+			const parsed = JSON.parse(refused) as { reason?: unknown; code?: unknown };
 			reason = String(parsed.reason ?? '');
 			code = String(parsed.code ?? '');
 		} catch {

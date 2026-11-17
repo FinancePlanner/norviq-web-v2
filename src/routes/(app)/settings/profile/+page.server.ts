@@ -101,7 +101,9 @@ export const load: PageServerLoad = async (event) => {
 };
 
 /** renderProfileFeedback: the #profile-feedback block shows only the error. */
-const feedback = (errorMessage: string) => ({ feedback: { successMessage: '', errorMessage } });
+const feedback = (message: string) => ({
+	feedback: { successMessage: '', errorMessage: message }
+});
 
 // emailChangeErrorMessage
 function emailChangeErrorMessage(status: number, body: unknown): string {

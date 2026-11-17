@@ -17,7 +17,6 @@ import {
 export type ChartBuilderResponse = components['schemas']['ChartBuilderResponse'];
 export type ChartBuilderMetricCatalogResponse =
 	components['schemas']['ChartBuilderMetricCatalogResponse'];
-type SeriesFormat = components['schemas']['ChartBuilderSeries']['format'];
 
 export const chartBuilderMaxMetrics = 20;
 export const chartBuilderMaxPeers = 3;
@@ -258,7 +257,8 @@ type Num = number | null | undefined;
 export function formatChartBuilderChange(
 	absolute: Num,
 	percent: Num,
-	format: SeriesFormat | string,
+	/** A ChartBuilderSeries format, or whatever else the API sent. */
+	format: string,
 	currency: string | null | undefined
 ): string {
 	if (absolute == null && percent == null) return '—';
@@ -282,7 +282,8 @@ export function formatChartBuilderPercent(value: Num): string {
  */
 export function formatChartBuilderAbsolute(
 	value: number,
-	format: SeriesFormat | string,
+	/** A ChartBuilderSeries format, or whatever else the API sent. */
+	format: string,
 	currency: string | null | undefined
 ): string {
 	const sign = value > 0 ? '+' : '';

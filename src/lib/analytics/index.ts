@@ -37,9 +37,9 @@ export function trackPageview(): void {
 	void posthogModule?.then((m) => m?.capturePageview());
 }
 
-export function captureOnce(capture: PostHogCaptureOnce | null | undefined): void {
-	if (!capture?.event) return;
-	void posthogModule?.then((m) => m?.applyCaptureOnce(capture));
+export function captureOnce(once: PostHogCaptureOnce | null | undefined): void {
+	if (!once?.event) return;
+	void posthogModule?.then((m) => m?.applyCaptureOnce(once));
 }
 
 /** norviqAnalytics.capture for components: no-op until PostHog is initialised. */

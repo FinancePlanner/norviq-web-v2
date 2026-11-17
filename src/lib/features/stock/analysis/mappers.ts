@@ -75,13 +75,13 @@ export function buildAnalysisTabVM(
 	}
 
 	if (financials) {
-		const section = basicFinancialsSection(financials);
-		if (section.metrics.length > 0) tab.sections.push(section);
+		const basics = basicFinancialsSection(financials);
+		if (basics.metrics.length > 0) tab.sections.push(basics);
 	}
 
 	if (growthRows) {
-		const section = financialGrowthSection(growthRows);
-		if (section.metrics.length > 0) tab.sections.push(section);
+		const growth = financialGrowthSection(growthRows);
+		if (growth.metrics.length > 0) tab.sections.push(growth);
 	}
 
 	if (estimates) {

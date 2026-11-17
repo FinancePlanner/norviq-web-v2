@@ -38,7 +38,8 @@ function round(v: number): number {
 export function heatColorScaled(
 	pct: number,
 	scaleMax: number,
-	mode: HeatmapColorMode | string
+	/** A HeatmapColorMode; anything else colours as 'change'. */
+	mode: string
 ): string {
 	if (scaleMax <= 0) scaleMax = 3;
 	let t: number;
