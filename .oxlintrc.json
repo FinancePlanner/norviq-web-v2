@@ -69,7 +69,9 @@
 			{ "assertFunctionNames": ["expect", "matchesGolden", "near", "nearAll"] }
 		],
 		"typescript/no-unsafe-argument": "warn", // 26
-		"no-await-in-loop": "warn", // 26
+		// Off: all 26 hits are sequential by nature (polling, cursor pagination, reading
+		// a stream, retrying at a lower quality, batches with a concurrency cap).
+		"no-await-in-loop": "off",
 		"vitest/require-mock-type-parameters": "error",
 		"typescript/require-await": "error",
 		"typescript/no-unsafe-call": "warn", // 21
