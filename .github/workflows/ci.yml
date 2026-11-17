@@ -1,5 +1,8 @@
 # Checks every PR and every push to main. A green push to main deploys the
 # staging Worker; production is a manual dispatch of deploy.yml.
+#
+# lint, typecheck, test and build are independent jobs so they run at the same
+# time; the slowest one sets the wall time.
 name: CI
 
 on:
@@ -12,23 +15,51 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.4.2
-      - run: bun install --frozen-lockfile
-      - run: bun run check
-      - run: bun run lint
+      - uses: ./.github/actions/setup
+      # oxlint runs everything except Svelte template rules, type-aware rules
+      # included. Its backlog rules report as warnings; only errors fail.
+      - run: bun run lint:ox
+      # ESLint: Svelte-specific rules only (eslint.config.js).
+      - run: bun run lint:svelte
+      - run: bun run format:check
       # 3D Vig motion (BRD-001): the fixtures must be regenerated after a design/vig-motion.json
       # change. norviq-ios CI compares its copies against this repo's main.
       - run: ./scripts/check-vig-motion-drift.sh
       - run: ./scripts/check-three-imports.sh
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - run: bun run check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # --changed needs the base branch to diff against.
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
       # Only the server project: the client and storybook projects need a
       # browser.
-      - run: bunx vitest run --project server
+      # On a PR, run only the tests whose import graph reaches a changed file.
+      # A change to package.json or the vite config reruns everything.
+      - if: github.event_name == 'pull_request'
+        run: bunx vitest run --project server --changed "origin/${{ github.base_ref }}" --passWithNoTests
+      - if: github.event_name != 'pull_request'
+        run: bunx vitest run --project server
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
       - run: bun run build
       # Route budgets must not grow; only the lazy total may, by an explicit --update-lazy.
       - run: bun scripts/size-budget.mjs
@@ -37,7 +68,7 @@ jobs:
       - run: bun run types:check
 
   deploy-staging:
-    needs: check
+    needs: [lint, typecheck, test, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yml
     with:

@@ -7,7 +7,6 @@
 // nothing there and only raise "component not imported" errors in dev here:
 //   - the empty `title: {}` / `toolbox: {}` go-echarts adds to every chart;
 //   - SentimentHistoryLine's `markLine` (the "neutral" zero line never rendered).
-import type { EChartsOption } from 'echarts';
 import {
 	allocationColors,
 	colorCyan,
