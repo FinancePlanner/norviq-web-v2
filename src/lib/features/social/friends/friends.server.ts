@@ -66,7 +66,7 @@ export async function searchUsers(event: RequestEvent, raw: string): Promise<Sea
 		const result = await socialDo<SocialUserSearch>(
 			event,
 			'GET',
-			'/v1/social/users/search?' + new URLSearchParams({ q: query })
+			'/v1/social/users/search?' + new URLSearchParams({ q: query }).toString()
 		);
 		vm.users = result?.users ?? [];
 	} catch (err) {

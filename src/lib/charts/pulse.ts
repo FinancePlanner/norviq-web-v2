@@ -22,7 +22,7 @@ export function pillarTooltip(info: {
 }): string {
 	const v = Number(info.value || 0);
 	return (
-		info.marker +
+		String(info.marker) +
 		' ' +
 		info.seriesName +
 		': $' +
@@ -73,7 +73,7 @@ export const activityRamp: readonly string[] = ['#F3ECDD', '#E2CB9F', '#B07C1E',
 export function heatmapTooltip(info: { value?: unknown }): string {
 	const v = (info.value || []) as unknown[];
 	const n = Number(v[1] || 0);
-	return v[0] + '<br/>' + n + (n === 1 ? ' event' : ' events');
+	return String(v[0]) + '<br/>' + n + (n === 1 ? ' event' : ' events');
 }
 
 function isoDay(d: Date | string, timeZone: string): string {

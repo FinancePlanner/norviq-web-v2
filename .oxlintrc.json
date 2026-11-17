@@ -72,7 +72,7 @@
 		"oxc/no-map-spread": "warn", // 10
 		"vitest/no-conditional-expect": "warn", // 8
 		"no-shadow": "warn", // 8
-		"typescript/restrict-plus-operands": "warn", // 7
+		"typescript/restrict-plus-operands": "error",
 		"no-underscore-dangle": "warn", // 7
 		"typescript/no-redundant-type-constituents": "warn", // 6
 		"typescript/no-misused-spread": "warn", // 6

@@ -8,6 +8,6 @@ import { isFetch, searchUsers } from '#lib/features/social/friends/friends.serve
 export const GET: RequestHandler = async (event) => {
 	await requireSocial(event);
 	const query = (event.url.searchParams.get('q') ?? '').trim();
-	if (!isFetch(event)) redirect(303, '/friends?' + new URLSearchParams({ q: query }));
+	if (!isFetch(event)) redirect(303, '/friends?' + new URLSearchParams({ q: query }).toString());
 	return json(await searchUsers(event, query));
 };

@@ -20,7 +20,7 @@ export const load: PageServerLoad = async (event) => {
 		const board = await socialDo<LeaderboardBoard>(
 			event,
 			'GET',
-			'/v1/social/leaderboards?' + new URLSearchParams({ metric, period })
+			'/v1/social/leaderboards?' + new URLSearchParams({ metric, period }).toString()
 		);
 		return { metric, period, board, errorMessage: '' };
 	} catch (err) {
