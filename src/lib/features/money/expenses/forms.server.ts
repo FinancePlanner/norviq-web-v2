@@ -28,14 +28,15 @@ import {
 } from './planner.server.js';
 import type { BudgetPlanItem, BudgetSnapshot } from './types.js';
 import type * as VM from './vm.js';
+import { formValue } from '#lib/form-value.js';
 
 // Ports of the modal form handlers: expenses.go (record, salary, partner,
 // delete), expenses_plan_item.go, expenses_category.go, expenses_recurring.go.
 // Each submit answers like the Go htmx handler: a redirect (HX-Redirect) on
 // success, or the panel again with an error (`fail(400, { vm })`).
 
-const field = (fd: FormData, name: string) => String(fd.get(name) ?? '').trim();
-const rawField = (fd: FormData, name: string) => String(fd.get(name) ?? '');
+const field = (fd: FormData, name: string) => formValue(fd, name).trim();
+const rawField = (fd: FormData, name: string) => formValue(fd, name);
 const UUID_RE = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
 export const isUUID = (v: string) => UUID_RE.test(v.trim());
 
@@ -249,7 +250,7 @@ export async function submitSalary(event: RequestEvent) {
 		}
 	}
 	// session.NoteGuidedAction(..., "set_budget")
-	if (event.locals.session.get<string>('guidedStartStep') === 'set_budget') {
+	if (event.locals.session.get('guidedStartStep') === 'set_budget') {
 		await event.locals.session.set('guidedStartStepActed', true);
 	}
 	redirect(303, expensesPlannerURL(month));

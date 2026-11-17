@@ -2,10 +2,14 @@
 	"extends": "$app/tsconfig",
 	"compilerOptions": {
 		"strict": true,
-		"types": ["$app/types", "node", "./worker-configuration.d.ts"],
-		"checkJs": false
+		"types": ["$app/types", "node"],
+		"checkJs": false,
+		// Mirrors "imports" in package.json. svelte-check --tsgo type-checks generated
+		// copies of the .svelte files and finds them through this mapping; without it
+		// a component imported as #lib/….svelte has untyped props.
+		"paths": { "#lib/*": ["./src/lib/*"] }
 	},
-	"include": ["src", "vite.config.ts", "playwright.config.ts"],
+	"include": ["src", "vite.config.ts", "playwright.config.ts", "./worker-configuration.d.ts"],
 	"exclude": [
 		"node_modules",
 		".svelte-kit/output",

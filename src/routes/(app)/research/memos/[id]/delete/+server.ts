@@ -1,4 +1,4 @@
-import { error, json, redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -18,7 +18,7 @@ export const POST: RequestHandler = async (event) => {
 		await deleteMemo(event, id);
 	} catch (err) {
 		if (isAIConsentRequired(err))
-			return json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
+			return Response.json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
 		return new Response('Memo could not be deleted\n', { status: 502 });
 	}
 	redirect(303, '/research');

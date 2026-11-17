@@ -1,4 +1,3 @@
-import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -13,6 +12,7 @@ import {
 	formOf,
 	parseUUID
 } from '#lib/features/dashboard/assistant/assistant.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /assistant/conversations/{id}/turn (handlers.AssistantTurn): one
 // non-streamed turn. Go answered the new Message fragment; this answers its
@@ -23,17 +23,17 @@ export const POST: RequestHandler = async (event) => {
 	const refusal = await aiConsentRefusal(event);
 	if (refusal) return refusal;
 	const id = parseUUID(event.params.id);
-	if (!id) return text('Invalid conversation', { status: 400 });
-	const content = String((await formOf(event)).get('content') ?? '').trim();
-	if (!content) return text('Message is required', { status: 400 });
+	if (!id) return new Response('Invalid conversation', { status: 400 });
+	const content = formValue(await formOf(event), 'content').trim();
+	if (!content) return new Response('Message is required', { status: 400 });
 	try {
-		return json(await assistantTurn(event, id, content));
+		return Response.json(await assistantTurn(event, id, content));
 	} catch (err) {
 		if (isAIConsentRequired(err)) {
-			return json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), {
+			return Response.json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), {
 				status: 403
 			});
 		}
-		return text('Assistant is temporarily unavailable', { status: 502 });
+		return new Response('Assistant is temporarily unavailable', { status: 502 });
 	}
 };

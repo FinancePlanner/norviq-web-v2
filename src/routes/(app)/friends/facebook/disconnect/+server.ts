@@ -5,6 +5,7 @@ import {
 	socialDo,
 	socialErrorMessage
 } from '#lib/features/social/friends/friends.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /friends/facebook/disconnect (handlers.FriendsFacebookDisconnect):
 // forgets the linked Facebook account. The results page and friends privacy
@@ -12,8 +13,7 @@ import {
 export const POST: RequestHandler = async (event) => {
 	await requireFacebookImport(event);
 	const form = await event.request.formData();
-	const back =
-		String(form.get('return') ?? '') === 'settings' ? '/settings/friends-privacy' : '/friends';
+	const back = formValue(form, 'return') === 'settings' ? '/settings/friends-privacy' : '/friends';
 	try {
 		await socialDo(event, 'DELETE', '/v1/social/discovery/facebook');
 	} catch (err) {

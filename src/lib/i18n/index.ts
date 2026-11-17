@@ -48,7 +48,7 @@ export function translate(locale: Locale, id: string): string {
 }
 
 /** Format a go-i18n/iOS style template: `%@`, `%s`, `%d`, `%.2f` placeholders in order. */
-export function format(template: string, ...args: unknown[]): string {
+export function format(template: string, ...args: TemplateArg[]): string {
 	let i = 0;
 	return template.replace(/%(\.\d+)?[@sdf]|%%/g, (m, prec: string | undefined) => {
 		if (m === '%%') return '%';
@@ -59,7 +59,10 @@ export function format(template: string, ...args: unknown[]): string {
 	});
 }
 
-export type T = (id: string, ...args: unknown[]) => string;
+/** What a `%@`/`%s`/`%d`/`%f` placeholder can be filled with. */
+export type TemplateArg = string | number | null | undefined;
+
+export type T = (id: string, ...args: TemplateArg[]) => string;
 
 export function translator(locale: Locale): T {
 	return (id, ...args) => {

@@ -5,7 +5,7 @@
 	import { untrack, type Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { cn } from '#lib/utils.js';
-	import { DialogState, registerDialog, setDialogContext } from './dialog.svelte.js';
+	import { DialogState, registerDialog, setDialogContext } from './dialog-state.svelte.js';
 
 	type Props = HTMLAttributes<HTMLDivElement> & {
 		open?: boolean;

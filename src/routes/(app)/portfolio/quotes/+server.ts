@@ -1,4 +1,3 @@
-import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { loadHoldingsQuoteRows } from '#lib/features/portfolio/holdings/holdings.server.js';
 import { quoteRefreshStatusTime } from '#lib/features/portfolio/market.server.js';
@@ -11,7 +10,7 @@ export const GET: RequestHandler = async (event) => {
 	try {
 		rows = await loadHoldingsQuoteRows(event);
 	} catch {
-		return text('Failed to render quote updates', { status: 500 });
+		return new Response('Failed to render quote updates', { status: 500 });
 	}
 	const quotes: PositionQuoteVM[] = rows.map((r) => ({
 		id: r.id,
@@ -23,7 +22,7 @@ export const GET: RequestHandler = async (event) => {
 		totalGL: r.totalGL,
 		totalGLPct: r.totalGLPct
 	}));
-	return json(
+	return Response.json(
 		{ quotes, updatedAt: quoteRefreshStatusTime(new Date()) },
 		{ headers: { 'cache-control': 'no-store' } }
 	);

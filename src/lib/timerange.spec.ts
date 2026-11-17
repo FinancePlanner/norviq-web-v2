@@ -24,9 +24,7 @@ describe('parse', () => {
 		['uppercase is normalized', 'YTD', YTD],
 		['surrounding space is trimmed', '  7d  ', Last7d]
 	];
-	for (const [name, input, want] of cases) {
-		it(name, () => expect(timerange.parse(input)).toBe(want));
-	}
+	it.each(cases)('%s', (_name, input, want) => expect(timerange.parse(input)).toBe(want));
 	it('treats null as empty', () => expect(timerange.parse(null)).toBe(Last30d));
 });
 
@@ -43,7 +41,7 @@ describe('label', () => {
 		[Last12mo, '12 months'],
 		[YTD, 'Year to date']
 	];
-	for (const [key, want] of cases) it(key, () => expect(timerange.label(key)).toBe(want));
+	it.each(cases)('%s', (key, want) => expect(timerange.label(key)).toBe(want));
 	it('falls back to the default for an unknown key', () =>
 		expect(timerange.label('banana')).toBe('30 days'));
 });
@@ -89,13 +87,11 @@ describe('window', () => {
 			at(2026, 8, 13, 0, 0, 0, LISBON)
 		]
 	];
-	for (const [name, key, from, to] of cases) {
-		it(name, () => {
-			const w = timerange.window(key, now, LISBON);
-			expect(w.from.toISOString()).toBe(from.toISOString());
-			expect(w.to.toISOString()).toBe(to.toISOString());
-		});
-	}
+	it.each(cases)('%s', (_name, key, from, to) => {
+		const w = timerange.window(key, now, LISBON);
+		expect(w.from.toISOString()).toBe(from.toISOString());
+		expect(w.to.toISOString()).toBe(to.toISOString());
+	});
 
 	it('lands on Lisbon midnight, not UTC midnight', () => {
 		const w = timerange.window(Today, now, LISBON);

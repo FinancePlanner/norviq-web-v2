@@ -1,17 +1,19 @@
-import { beforeEach, expect, test, vi } from 'vitest';
+import { assert, beforeEach, expect, test, vi } from 'vitest';
 import type { RequestEvent } from '@sveltejs/kit';
 
-const apiFetch = vi.fn();
-vi.mock('#lib/server/api.js', () => ({ apiFetch: (...a: unknown[]) => apiFetch(...a) }));
-vi.mock('#lib/server/guards.js', () => ({ requireFeature: vi.fn() }));
+const apiFetch = vi.fn<typeof import('#lib/server/api.js').apiFetch>();
+vi.mock('#lib/server/api.js', () => ({
+	apiFetch: (...a: Parameters<typeof apiFetch>) => apiFetch(...a)
+}));
+vi.mock('#lib/server/guards.js', () => ({ requireFeature: vi.fn<() => void>() }));
 vi.mock('#lib/billing.js', () => ({ Feature: { AIInsights: 'ai' } }));
 vi.mock('#lib/features/dashboard/ai-consent.server.js', () => ({
 	AI_CONSENT_REQUIRED: 'AI_CONSENT_REQUIRED',
-	aiConsentRequiredJSON: vi.fn(),
-	aiConsentReturnPath: vi.fn()
+	aiConsentRequiredJSON: vi.fn<() => void>(),
+	aiConsentReturnPath: vi.fn<() => void>()
 }));
-vi.mock('#lib/features/dashboard/assistant/assistant.server.js', async () => ({
-	aiConsentRefusal: async () => null,
+vi.mock('#lib/features/dashboard/assistant/assistant.server.js', () => ({
+	aiConsentRefusal: () => Promise.resolve(null),
 	parseUUID: (s: string) => s,
 	formOf: async (e: RequestEvent) => e.request.formData()
 }));
@@ -37,6 +39,7 @@ test('a text turn goes upstream as JSON', async () => {
 	await call(form);
 	const [, , , body, opts] = apiFetch.mock.calls[0];
 	expect(body).toBe('{"content":"hello"}');
+	assert(opts?.headers);
 	expect(opts.headers['Content-Type']).toBe('application/json');
 });
 
@@ -57,6 +60,7 @@ test('attached images go upstream as multipart with content and image parts', as
 	expect(body).toBeInstanceOf(FormData);
 	expect((body as FormData).get('content')).toBe('what is this');
 	expect((body as FormData).getAll('image')).toHaveLength(1);
+	assert(opts?.headers);
 	expect(opts.headers['Content-Type']).toBeUndefined();
 });
 

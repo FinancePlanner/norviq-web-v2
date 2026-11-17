@@ -5,6 +5,7 @@ import {
 	digestUnsubscribeTokenPattern,
 	unsubscribeDigest
 } from '#lib/features/public/digest/digest.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // GET /digest/unsubscribe?token= — Go DigestUnsubscribePage. Only shows a
 // confirm button: link scanners and previews follow GETs, so the GET must
@@ -23,7 +24,7 @@ export const load: PageServerLoad = ({ url, request, setHeaders }) => {
 // POST /digest/unsubscribe — Go DigestUnsubscribeSubmit.
 export const actions: Actions = {
 	default: async (event) => {
-		const token = String((await event.request.formData()).get('token') ?? '');
+		const token = formValue(await event.request.formData(), 'token');
 		if (!digestUnsubscribeTokenPattern.test(token)) error(404, 'Not Found');
 		try {
 			await unsubscribeDigest(event, token);

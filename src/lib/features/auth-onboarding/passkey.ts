@@ -28,33 +28,55 @@ function bufferToBase64URL(buffer: ArrayBuffer): string {
 	return window.btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-type Descriptor = { id: string; [k: string]: unknown };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Loose = any;
+// The WebAuthn options as the server sends them: JSON, so every binary field
+// is a base64url string.
+type Descriptor = Omit<PublicKeyCredentialDescriptor, 'id'> & { id: string };
+export type CreationOptionsJSON = Omit<
+	PublicKeyCredentialCreationOptions,
+	'challenge' | 'user' | 'excludeCredentials'
+> & {
+	challenge: string;
+	user: Omit<PublicKeyCredentialUserEntity, 'id'> & { id: string };
+	excludeCredentials?: Descriptor[];
+};
+export type RequestOptionsJSON = Omit<
+	PublicKeyCredentialRequestOptions,
+	'challenge' | 'allowCredentials'
+> & {
+	challenge: string;
+	allowCredentials?: Descriptor[];
+};
 
-export function normalizeCreationOptions(options: { publicKey: Loose }): CredentialCreationOptions {
-	const publicKey = { ...options.publicKey };
-	publicKey.challenge = base64URLToBuffer(publicKey.challenge);
-	publicKey.user = { ...publicKey.user, id: base64URLToBuffer(publicKey.user.id) };
-	if (publicKey.excludeCredentials) {
-		publicKey.excludeCredentials = publicKey.excludeCredentials.map((item: Descriptor) => ({
-			...item,
-			id: base64URLToBuffer(item.id)
-		}));
-	}
-	return { ...options, publicKey };
+const decodeIDs = (items: Descriptor[] | undefined) =>
+	items?.map((item) => ({ ...item, id: base64URLToBuffer(item.id) }));
+
+export function normalizeCreationOptions(options: {
+	publicKey: CreationOptionsJSON;
+}): CredentialCreationOptions {
+	const json = options.publicKey;
+	return {
+		...options,
+		publicKey: {
+			...json,
+			challenge: base64URLToBuffer(json.challenge),
+			user: { ...json.user, id: base64URLToBuffer(json.user.id) },
+			excludeCredentials: decodeIDs(json.excludeCredentials)
+		}
+	};
 }
 
-export function normalizeRequestOptions(options: { publicKey: Loose }): CredentialRequestOptions {
-	const publicKey = { ...options.publicKey };
-	publicKey.challenge = base64URLToBuffer(publicKey.challenge);
-	if (publicKey.allowCredentials) {
-		publicKey.allowCredentials = publicKey.allowCredentials.map((item: Descriptor) => ({
-			...item,
-			id: base64URLToBuffer(item.id)
-		}));
-	}
-	return { ...options, publicKey };
+export function normalizeRequestOptions(options: {
+	publicKey: RequestOptionsJSON;
+}): CredentialRequestOptions {
+	const json = options.publicKey;
+	return {
+		...options,
+		publicKey: {
+			...json,
+			challenge: base64URLToBuffer(json.challenge),
+			allowCredentials: decodeIDs(json.allowCredentials)
+		}
+	};
 }
 
 export function serializeCredential(credential: PublicKeyCredential) {
@@ -87,9 +109,20 @@ export function serializeRegistrationCredential(credential: PublicKeyCredential)
 
 const jsonHeaders = { Accept: 'application/json', 'Content-Type': 'application/json' };
 
-async function readJSON(res: Response): Promise<Record<string, Loose>> {
+/**
+ * What the passkey endpoints answer with. `begin` sends the options either
+ * wrapped in `publicKey` or bare, so the payload itself may be the options.
+ */
+type Payload<Options> = Partial<Options> & {
+	publicKey?: Options;
+	error?: string;
+	message?: string;
+	redirect?: string;
+};
+
+async function readJSON<Options = object>(res: Response): Promise<Payload<Options>> {
 	try {
-		return (await res.json()) as Record<string, Loose>;
+		return await res.json<Payload<Options>>();
 	} catch {
 		return {};
 	}
@@ -104,13 +137,13 @@ export async function registerPasskey(): Promise<string> {
 		headers: jsonHeaders,
 		body: '{}'
 	});
-	const beginPayload = await readJSON(beginResponse);
+	const beginPayload = await readJSON<CreationOptionsJSON>(beginResponse);
 	if (!beginResponse.ok)
 		throw new Error(beginPayload.error || 'Could not start passkey registration.');
 
 	const requestOptions = beginPayload.publicKey
-		? normalizeCreationOptions(beginPayload as { publicKey: Loose })
-		: normalizeCreationOptions({ publicKey: beginPayload });
+		? normalizeCreationOptions(beginPayload as { publicKey: CreationOptionsJSON })
+		: normalizeCreationOptions({ publicKey: beginPayload as CreationOptionsJSON });
 
 	const credential = (await navigator.credentials.create(
 		requestOptions
@@ -142,15 +175,15 @@ export async function signInWithPasskey(showError: (message: string) => void): P
 		headers: jsonHeaders,
 		body: '{}'
 	});
-	const beginPayload = await readJSON(beginResponse);
+	const beginPayload = await readJSON<RequestOptionsJSON>(beginResponse);
 	if (!beginResponse.ok) {
 		showError(beginPayload.error || 'Could not start passkey sign in.');
 		return;
 	}
 
 	const requestOptions = beginPayload.publicKey
-		? normalizeRequestOptions(beginPayload as { publicKey: Loose })
-		: normalizeRequestOptions({ publicKey: beginPayload });
+		? normalizeRequestOptions(beginPayload as { publicKey: RequestOptionsJSON })
+		: normalizeRequestOptions({ publicKey: beginPayload as RequestOptionsJSON });
 
 	const credential = (await navigator.credentials.get(
 		requestOptions
@@ -176,16 +209,16 @@ export async function signInWithPasskey(showError: (message: string) => void): P
 /** auth.js bindPasskeyButton, as an attachment for #passkey-sign-in. */
 export function passkeyButton(showError: (message: string) => void): Attachment<HTMLButtonElement> {
 	return (button) => {
-		const onClick = async () => {
+		const onClick = () => {
 			button.disabled = true;
-			try {
-				await signInWithPasskey(showError);
-			} catch (error) {
-				console.error(error);
-				showError('Could not complete passkey sign in.');
-			} finally {
-				button.disabled = false;
-			}
+			signInWithPasskey(showError)
+				.catch((error: unknown) => {
+					console.error(error);
+					showError('Could not complete passkey sign in.');
+				})
+				.finally(() => {
+					button.disabled = false;
+				});
 		};
 		button.addEventListener('click', onClick);
 		return () => button.removeEventListener('click', onClick);
@@ -203,20 +236,21 @@ export function passkeyRegisterButton(
 	onFeedback: (f: PasskeyFeedback) => void
 ): Attachment<HTMLButtonElement> {
 	return (button) => {
-		const onClick = async () => {
+		const onClick = () => {
 			button.disabled = true;
 			onFeedback(null);
-			try {
-				onFeedback({ kind: 'success', message: await registerPasskey() });
-			} catch (error) {
-				console.error(error);
-				onFeedback({
-					kind: 'error',
-					message: error instanceof Error ? error.message : 'Could not register passkey.'
+			registerPasskey()
+				.then((message) => onFeedback({ kind: 'success', message }))
+				.catch((error: unknown) => {
+					console.error(error);
+					onFeedback({
+						kind: 'error',
+						message: error instanceof Error ? error.message : 'Could not register passkey.'
+					});
+				})
+				.finally(() => {
+					button.disabled = false;
 				});
-			} finally {
-				button.disabled = false;
-			}
 		};
 		button.addEventListener('click', onClick);
 		return () => button.removeEventListener('click', onClick);

@@ -1,4 +1,3 @@
-import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -21,14 +20,14 @@ const MAX_TRADES_BODY_BYTES = 256 << 10;
 export const POST: RequestHandler = async (event) => {
 	await requireFeature(event, Feature.AIInsights, 'AI insights');
 	const id = parseUUID(event.params.id);
-	if (!id) return text('Invalid action', { status: 400 });
+	if (!id) return new Response('Invalid action', { status: 400 });
 	// Every body here is small: refuse a runaway one before reading it.
 	if (Number(event.request.headers.get('content-length')) > MAX_TRADES_BODY_BYTES)
-		return text('Too many trades', { status: 413 });
+		return new Response('Too many trades', { status: 413 });
 	if (event.request.headers.get('content-type')?.includes('application/json')) {
 		const input = readTradesConfirmInput(await event.request.json().catch(() => null));
-		if (!input) return text('Invalid trades', { status: 400 });
-		return json(await confirmTrades(event, id, input));
+		if (!input) return new Response('Invalid trades', { status: 400 });
+		return Response.json(await confirmTrades(event, id, input));
 	}
-	return json(await confirmAction(event, id, await formOf(event)));
+	return Response.json(await confirmAction(event, id, await formOf(event)));
 };

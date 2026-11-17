@@ -1,12 +1,14 @@
 import { expect, test, vi } from 'vitest';
 
-const confirmTrades = vi.fn(async () => ({ kind: 'result' }));
-vi.mock('#lib/server/guards.js', () => ({ requireFeature: vi.fn() }));
+const confirmTrades = vi.fn<(...args: unknown[]) => Promise<{ kind: string }>>(() =>
+	Promise.resolve({ kind: 'result' })
+);
+vi.mock('#lib/server/guards.js', () => ({ requireFeature: vi.fn<() => void>() }));
 vi.mock('#lib/billing.js', () => ({ Feature: { AIInsights: 'ai' } }));
 vi.mock('#lib/features/dashboard/assistant/assistant.server.js', () => ({
-	confirmAction: vi.fn(),
-	confirmTrades: (...a: unknown[]) => (confirmTrades as (...x: unknown[]) => unknown)(...a),
-	formOf: vi.fn(),
+	confirmAction: vi.fn<() => void>(),
+	confirmTrades: (...a: unknown[]) => confirmTrades(...a),
+	formOf: vi.fn<() => void>(),
 	parseUUID: (s: string) => s,
 	readTradesConfirmInput: (raw: unknown) => raw
 }));

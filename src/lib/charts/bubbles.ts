@@ -55,7 +55,7 @@ interface BubbleData {
 export function bubbleTooltip(periodLabel: string) {
 	const label = ' ' + periodLabel + ' · $';
 	return (info: { data?: BubbleData }): string => {
-		const d = info.data || ({} as BubbleData);
+		const d = info.data ?? ({} as BubbleData);
 		const cap = capFormatter(d.marketCap || 0);
 		const pct = (d.changePct >= 0 ? '+' : '') + d.changePct.toFixed(2) + '%';
 		return '<b>' + d.name + '</b> · ' + (d.fullName || '') + '<br/>' + pct + label + cap + ' cap';
@@ -64,7 +64,7 @@ export function bubbleTooltip(periodLabel: string) {
 
 /** Small bubbles show the ticker only; the percentage needs room. */
 export function bubbleLabel(info: { data?: BubbleData }): string {
-	const d = info.data || ({} as BubbleData);
+	const d = info.data ?? ({} as BubbleData);
 	if (d.symbolSize < 34) return d.name;
 	return d.name + '\n' + (d.changePct >= 0 ? '+' : '') + d.changePct.toFixed(1) + '%';
 }

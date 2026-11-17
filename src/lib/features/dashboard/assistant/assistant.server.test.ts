@@ -12,16 +12,17 @@ class FakeAPIError extends Error {
 	}
 }
 
-const apiJSON = vi.fn();
+const apiJSON =
+	vi.fn<(event: unknown, method: string, path: string, ...rest: unknown[]) => Promise<unknown>>();
 vi.mock('#lib/server/api.js', () => ({
-	apiJSON: (...args: unknown[]) => apiJSON(...args),
-	apiFetch: vi.fn(),
+	apiJSON: (...args: Parameters<typeof apiJSON>) => apiJSON(...args),
+	apiFetch: vi.fn<() => void>(),
 	isAPIError: (e: unknown) => e instanceof FakeAPIError
 }));
 vi.mock('#lib/features/dashboard/ai-consent.server.js', () => ({
-	aiConsentRequiredJSON: vi.fn(),
-	aiConsentReturnPath: vi.fn(),
-	hasAIConsent: vi.fn()
+	aiConsentRequiredJSON: vi.fn<() => void>(),
+	aiConsentReturnPath: vi.fn<() => void>(),
+	hasAIConsent: vi.fn<() => void>()
 }));
 
 const {
@@ -200,10 +201,10 @@ describe('attachPortfolioLists', () => {
 
 describe('loadAssistantPage', () => {
 	test('a preferences failure leaves images off and chat working', async () => {
-		apiJSON.mockImplementation(async (_e: unknown, _m: string, path: string) => {
-			if (path === '/v1/ai/assistant/conversations') return [];
-			if (path === '/v1/ai/assistant/preferences') throw new FakeAPIError(500, '');
-			return null;
+		apiJSON.mockImplementation((_e: unknown, _m: string, path: string) => {
+			if (path === '/v1/ai/assistant/conversations') return Promise.resolve([]);
+			if (path === '/v1/ai/assistant/preferences') return Promise.reject(new FakeAPIError(500, ''));
+			return Promise.resolve(null);
 		});
 		const vm = await loadAssistantPage(event);
 		expect(vm.imagesEnabled).toBe(false);

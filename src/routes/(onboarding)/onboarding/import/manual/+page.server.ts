@@ -11,7 +11,7 @@ import {
 
 // GET /onboarding/import/manual (onboarding.go ImportManual). Reachable after
 // onboarding from Settings → Integrations; no funnel bounce.
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = ({ url }) => {
 	const vm = manualPageVMFromQuery(url);
 	vm.added = url.searchParams.get('added') === '1';
 	return { step: 2, vm };

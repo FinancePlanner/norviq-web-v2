@@ -43,7 +43,7 @@ async function doScreenshotRequest<T>(res: Response): Promise<T> {
 	if (res.status === 409) {
 		let reason = '';
 		try {
-			const env = (await res.json()) as { reason?: string; error?: unknown };
+			const env = await res.json<{ reason?: string; error?: unknown }>();
 			reason = env.reason || (typeof env.error === 'string' ? env.error : '');
 		} catch {
 			/* empty reason */
@@ -60,7 +60,7 @@ async function doScreenshotRequest<T>(res: Response): Promise<T> {
 		}
 	}
 	if (!res.ok) throw new Error(`screenshot import request: backend returned ${res.status}`);
-	return (await res.json()) as T;
+	return res.json<T>();
 }
 
 function screenshotRowVMs(items: Row[] | null | undefined): ScreenshotImportRowVM[] {

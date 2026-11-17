@@ -22,7 +22,7 @@ export async function positionAction(
 	try {
 		const res = await fetch(url, init);
 		if (!res.ok) return null;
-		return (await res.json()) as PositionActionResult;
+		return await res.json<PositionActionResult>();
 	} catch {
 		return null;
 	} finally {

@@ -89,7 +89,8 @@ export interface CryptoMarketsResponse {
 	source: string;
 	asOf: string;
 	isStale: boolean;
-	colorMode: 'change' | 'athDistance' | string;
+	/** 'change' or 'athDistance' (HeatmapColorMode), as the API sent it. */
+	colorMode: string;
 	colorScaleMaxPct: number;
 	attribution?: string | null;
 	summary: {

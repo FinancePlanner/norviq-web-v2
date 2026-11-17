@@ -1,4 +1,3 @@
-import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { boardsErrorText, voteBoardPost } from '#lib/features/social/boards/boards.server.js';
 
@@ -8,8 +7,8 @@ import { boardsErrorText, voteBoardPost } from '#lib/features/social/boards/boar
 export const POST: RequestHandler = async (event) => {
 	try {
 		const vote = await voteBoardPost(event, event.params.id);
-		return json({ score: vote.score, voted: vote.voted });
+		return Response.json({ score: vote.score, voted: vote.voted });
 	} catch (err) {
-		return text(boardsErrorText(err), { status: 422 });
+		return new Response(boardsErrorText(err), { status: 422 });
 	}
 };

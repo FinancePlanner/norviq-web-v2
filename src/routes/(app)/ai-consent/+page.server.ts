@@ -3,7 +3,7 @@ import { grantAIConsent, safeLocalPath } from '#lib/features/auth-onboarding/ai-
 
 // GET /ai-consent (ai_consent.go AIConsentPage): where AI surfaces send the
 // reader after a 403 AI_CONSENT_REQUIRED.
-export const load: PageServerLoad = async ({ url }) => ({
+export const load: PageServerLoad = ({ url }) => ({
 	next: safeLocalPath(url.searchParams.get('next'), url.host) ?? '/assistant'
 });
 

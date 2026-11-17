@@ -1,4 +1,4 @@
-import { error, json, redirect, text, type RequestHandler } from '@sveltejs/kit';
+import { error, redirect, type RequestHandler } from '@sveltejs/kit';
 import { isAPIError } from '#lib/server/api.js';
 import { requireGroups } from '#lib/features/social/gates.server.js';
 import {
@@ -17,6 +17,7 @@ import type {
 	GroupMessagePage,
 	RowsResponse
 } from '#lib/features/social/groups/types.js';
+import { formValue } from '#lib/form-value.js';
 
 // GroupsMessages: the rows (Go: MessageRows fragment, here JSON for
 // GroupChat). ?before= pages back for the older sentinel, ?after= catches up
@@ -35,7 +36,7 @@ export const GET: RequestHandler = async (event) => {
 		page = await groupMessages(event, channelID, query);
 	} catch (err) {
 		if (isAPIError(err) && err.status === 404) error(404, 'Not Found');
-		return text('unavailable', { status: 502 });
+		return new Response('unavailable', { status: 502 });
 	}
 	let messages = page.items ?? [];
 	let prev: GroupMessage | null = null;
@@ -52,7 +53,7 @@ export const GET: RequestHandler = async (event) => {
 	const out: RowsResponse = { rows: buildRows(messages, prev, opts), olderSeq };
 	// More than one page was missed; the script asks again.
 	if (after > 0 && page.hasMoreAfter) out.more = true;
-	return json(out, { headers: { 'cache-control': 'private, no-store' } });
+	return Response.json(out, { headers: { 'cache-control': 'private, no-store' } });
 };
 
 // GroupsSend posts a message and answers with its row. Refusals are plain
@@ -63,20 +64,20 @@ export const POST: RequestHandler = async (event) => {
 	const groupID = groupsID(event.params.groupID);
 	const channelID = groupsID(event.params.channelID);
 	const form = await readForm(event);
-	const body = String(form.get('body') ?? '').trim();
-	let clientID = String(form.get('client_id') ?? '').trim();
+	const body = formValue(form, 'body').trim();
+	let clientID = formValue(form, 'client_id').trim();
 	if (clientID === '') clientID = crypto.randomUUID();
-	if (body === '') return text('Write something first.', { status: 422 });
+	if (body === '') return new Response('Write something first.', { status: 422 });
 	let message: GroupMessage;
 	try {
 		message = await sendGroupMessage(event, channelID, clientID, body);
 	} catch (err) {
 		if (isAPIError(err) && err.status === 429)
-			return text("You're sending messages too fast. Wait a moment.", { status: 429 });
+			return new Response("You're sending messages too fast. Wait a moment.", { status: 429 });
 		if (isAPIError(err) && err.status >= 400 && err.status < 500)
-			return text(boardsErrorText(err), { status: err.status });
+			return new Response(boardsErrorText(err), { status: err.status });
 		console.error('group message send failed', err);
-		return text("Couldn't send. Try again.", { status: 502 });
+		return new Response("Couldn't send. Try again.", { status: 502 });
 	}
 	if (!event.request.headers.get('X-Groups-Send')) {
 		redirect(303, chatHref(groupID, channelID) + '#msg-' + message.seq);
@@ -84,5 +85,5 @@ export const POST: RequestHandler = async (event) => {
 	const rows = buildRows([message], null, rowOptions(event, false, 0));
 	// The chat places the row after what is already on screen.
 	if (rows.length > 0) rows[0].dayLabel = '';
-	return json({ rows, olderSeq: 0 } satisfies RowsResponse);
+	return Response.json({ rows, olderSeq: 0 } satisfies RowsResponse);
 };

@@ -8,6 +8,7 @@ import {
 	socialErrorMessage
 } from '#lib/features/social/friends/friends.server.js';
 import { SocialReportReasons } from '#lib/features/social/friends/types.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /friends/u/{userId}/report (handlers.FriendReport): files a report
 // and, when asked, blocks in the same step — only after the report is
@@ -17,14 +18,14 @@ export const POST: RequestHandler = async (event) => {
 	const userID = uuidParam(event.params.userId);
 	if (!userID) error(400, 'Invalid user');
 	const form = await event.request.formData();
-	let reason = String(form.get('reason') ?? '');
+	let reason = formValue(form, 'reason');
 	if (!SocialReportReasons.includes(reason)) reason = 'other';
 	const report: { targetType: string; targetId: string; reason: string; note?: string } = {
 		targetType: 'user',
 		targetId: userID,
 		reason
 	};
-	const note = String(form.get('note') ?? '').trim();
+	const note = formValue(form, 'note').trim();
 	if (note) {
 		if (Array.from(note).length > 1000) {
 			return respondRedirect(
@@ -46,7 +47,7 @@ export const POST: RequestHandler = async (event) => {
 			socialErrorMessage(err, 'Could not send the report.')
 		);
 	}
-	if (String(form.get('alsoBlock') ?? '') !== '') {
+	if (formValue(form, 'alsoBlock') !== '') {
 		try {
 			await socialDo(event, 'POST', '/v1/social/blocks/' + userID);
 		} catch (err) {

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { assert, describe, expect, it } from 'vitest';
 import {
 	DASH,
 	ErrEmpty,
@@ -150,8 +150,8 @@ describe('parseAmount', () => {
 		};
 		for (const [raw, want] of Object.entries(ok)) {
 			const got = parseAmount(raw);
-			expect(got.ok, raw).toBe(true);
-			if (got.ok) expect(got.value, raw).toBeCloseTo(want, 6);
+			assert(got.ok, raw);
+			expect(got.value, raw).toBeCloseTo(want, 6);
 		}
 		for (const raw of ['', '   ']) {
 			const got = parseAmount(raw);
@@ -181,15 +181,14 @@ describe('Go golden output', () => {
 		});
 	}
 	it('parses like strconv.ParseFloat', () => {
-		for (const row of goFormat.parse) {
-			const got = parseAmount(row.in);
-			if (row.err === '') {
-				expect(got.ok, JSON.stringify(row.in)).toBe(true);
-				if (got.ok) expect(got.value, JSON.stringify(row.in)).toBe(row.out);
-			} else {
-				expect(got.ok, JSON.stringify(row.in)).toBe(false);
-				if (!got.ok) expect(got.error.message, JSON.stringify(row.in)).toBe(row.err);
-			}
+		for (const row of goFormat.parse.filter((r) => r.err === '')) {
+			expect(parseAmount(row.in), JSON.stringify(row.in)).toEqual({ ok: true, value: row.out });
+		}
+		for (const row of goFormat.parse.filter((r) => r.err !== '')) {
+			expect(parseAmount(row.in), JSON.stringify(row.in)).toEqual({
+				ok: false,
+				error: expect.objectContaining({ message: row.err })
+			});
 		}
 	});
 	for (const row of goHandlers) {

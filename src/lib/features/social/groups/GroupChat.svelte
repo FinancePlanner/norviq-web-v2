@@ -150,10 +150,10 @@
 		});
 		// The backend ends each stream after ten minutes; EventSource
 		// reconnects on its own after the retry delay the stream set.
-		es.onerror = () => {
+		es.addEventListener('error', () => {
 			// 401/404: signed out or groups switched off. Stop.
 			if (es.readyState === EventSource.CLOSED) source = null;
-		};
+		});
 	}
 
 	const modQuery = (prefix: string) => (moderator ? `${prefix}mod=1` : '');

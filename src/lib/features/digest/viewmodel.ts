@@ -94,7 +94,7 @@ function currencySymbol(code: string): string {
 export function money(value: number, currency: string): string {
 	const symbol = currencySymbol(currency);
 	const sign = value < 0 ? '-' : '';
-	if ([...symbol].length === 1) return sign + symbol + number(value);
+	if (Array.from(symbol).length === 1) return sign + symbol + number(value);
 	return sign + number(value) + ' ' + symbol;
 }
 

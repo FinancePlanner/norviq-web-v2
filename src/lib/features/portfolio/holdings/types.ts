@@ -3,7 +3,7 @@
 // ECharts options can carry functions that do not serialize.
 
 import type { SentimentBadgeVM } from '#lib/components/norviq/sentiment.js';
-import type { PilotFollowingVM } from '#lib/components/norviq/PilotFollowingBanner.svelte';
+import type { PilotFollowingVM } from '#lib/components/norviq/pilot-following.js';
 import type { SentimentRollupVM } from '../sentiment.js';
 
 export interface PortfolioOptionVM {

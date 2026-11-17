@@ -17,7 +17,7 @@ export { achievementsDo };
 export function parseShowcaseItems(raw: FormDataEntryValue[]): AchievementShowcaseItem[] | null {
 	const items: AchievementShowcaseItem[] = [];
 	for (const entry of raw) {
-		const value = String(entry);
+		const value = typeof entry === 'string' ? entry : '';
 		const i = value.indexOf(ItemSep);
 		if (i < 0) return null;
 		const key = value.slice(0, i);

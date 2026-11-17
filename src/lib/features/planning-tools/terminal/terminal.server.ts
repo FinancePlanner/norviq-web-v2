@@ -1,4 +1,4 @@
-import { json, redirect, type RequestEvent } from '@sveltejs/kit';
+import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { APIError, apiFetch, type RawOptions } from '#lib/server/api.js';
 import { isPro as billingIsPro } from '#lib/billing.js';
 import { loadBillingContext } from '#lib/server/app-context.js';
@@ -47,6 +47,7 @@ import {
 	terminalRowsVM,
 	terminalSampleRow
 } from './vm.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web internal/handlers/terminal*.go. The Go web used a
 // separate generated client (terminalapi); these are the same calls by hand.
@@ -153,8 +154,8 @@ export function sampleDismissed(event: RequestEvent): boolean {
 }
 
 /** terminalSessionExpired: the backend rejected the token — clear it and send to login. */
-export async function terminalSessionExpired(event: RequestEvent): Promise<never> {
-	await event.locals.session.destroy();
+export function terminalSessionExpired(event: RequestEvent): never {
+	event.locals.session.destroy();
 	redirect(303, '/login?next=' + encodeURIComponent(event.url.pathname + event.url.search));
 }
 
@@ -231,7 +232,7 @@ async function workspaceAnswer(event: RequestEvent, mutate?: (vm: WorkspaceVM) =
 	const isPro = await terminalIsPro(event);
 	const { vm } = await loadWorkspace(event, isPro, newCreateForm('', crypto.randomUUID()));
 	mutate?.(vm);
-	return json(vm);
+	return Response.json(vm);
 }
 
 async function readForm(event: RequestEvent): Promise<FormData> {
@@ -242,7 +243,7 @@ async function readForm(event: RequestEvent): Promise<FormData> {
 	}
 }
 
-const formGet = (form: FormData, name: string) => String(form.get(name) ?? '');
+const formGet = (form: FormData, name: string) => formValue(form, name);
 
 // ---------------------------------------------------------------------------
 // Rows
@@ -448,11 +449,11 @@ export async function updatePosition(event: RequestEvent, id: string) {
 		if (code === '') code = found.currency;
 		if (!found.known) {
 			console.warn('terminal row re-read failed', id);
-			return json({ kind: 'unknown' } satisfies RowEditResult);
+			return Response.json({ kind: 'unknown' } satisfies RowEditResult);
 		}
 		saved = found.row;
 	}
-	if (!saved) return json({ kind: 'gone' } satisfies RowEditResult);
+	if (!saved) return Response.json({ kind: 'gone' } satisfies RowEditResult);
 	const row = terminalRowVM(saved, code, await terminalIsPro(event));
 	row.fieldError = problem;
 	row.isFirst = formGet(form, 'isFirst') === 'true';
@@ -464,7 +465,7 @@ export async function updatePosition(event: RequestEvent, id: string) {
 		clearSuggestion: problem === '',
 		footer: summary ? terminalFooterVM(summary) : null
 	};
-	return json(result);
+	return Response.json(result);
 }
 
 // ---------------------------------------------------------------------------
@@ -481,10 +482,10 @@ export async function aiSuggest(event: RequestEvent, id: string, kind: 'facts' |
 	const [ticker, valid] = normalizeTerminalTicker(formGet(form, 'ticker'));
 	vm.ticker = ticker;
 	let symbol = formGet(form, 'symbol');
-	if ([...symbol].length > MAX_SYMBOL_RUNES) symbol = '';
+	if (Array.from(symbol).length > MAX_SYMBOL_RUNES) symbol = '';
 	const tableCurrency = currencyCode(formGet(form, 'currency'));
 	const consent = (): Response =>
-		json({ kind: 'consent', next: aiConsentReturnPath(event) } satisfies SuggestionResult);
+		Response.json({ kind: 'consent', next: aiConsentReturnPath(event) } satisfies SuggestionResult);
 
 	if (!valid) {
 		vm.state = SuggestionState.Invalid;
@@ -520,7 +521,7 @@ export async function aiSuggest(event: RequestEvent, id: string, kind: 'facts' |
 			setSuggestionUnavailable(vm);
 		}
 	}
-	return json({ kind: 'suggestion', vm } satisfies SuggestionResult);
+	return Response.json({ kind: 'suggestion', vm } satisfies SuggestionResult);
 }
 
 function apiErrorFrom(res: Answer<unknown>): APIError {
@@ -594,7 +595,7 @@ function parseAutobuyForm(form: FormData): {
 async function autobuysAnswer(event: RequestEvent, mutate?: (vm: AutobuysVM) => void) {
 	const vm = await loadAutobuys(event);
 	if (mutate && !vm.loadError) mutate(vm);
-	return json(vm);
+	return Response.json(vm);
 }
 
 /** POST /terminal/autobuys (TerminalAutobuyCreate). */

@@ -1,4 +1,3 @@
-import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -14,7 +13,7 @@ export const GET: RequestHandler = async (event) => {
 		'GET',
 		'/v1/ai/assistant/preferences'
 	).catch(() => null);
-	return json(
+	return Response.json(
 		{ imagesEnabled: preferences?.imagesEnabled === true },
 		{ headers: { 'cache-control': 'private, no-store' } }
 	);
@@ -32,9 +31,9 @@ export const POST: RequestHandler = async (event) => {
 			title: 'Quick Q',
 			bindMessaging: false
 		});
-		if (created?.id) return json({ id: created.id });
+		if (created?.id) return Response.json({ id: created.id });
 	} catch (err) {
 		console.warn('quick q create conversation failed', err);
 	}
-	return text('Assistant unavailable', { status: 502 });
+	return new Response('Assistant unavailable', { status: 502 });
 };

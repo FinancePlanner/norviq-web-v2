@@ -17,10 +17,10 @@ export const panels = $state<{
 
 async function getJSON<T>(url: string, init?: RequestInit): Promise<T | null> {
 	try {
-		const res = await fetch(url, {
-			...init,
-			headers: { accept: 'application/json', ...init?.headers }
-		});
+		// Headers, not an object spread: init.headers may be a Headers or a list of pairs.
+		const headers = new Headers(init?.headers);
+		if (!headers.has('accept')) headers.set('accept', 'application/json');
+		const res = await fetch(url, { ...init, headers });
 		if (!res.ok) return null;
 		return (await res.json()) as T;
 	} catch {

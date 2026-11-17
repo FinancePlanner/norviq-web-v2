@@ -4,6 +4,7 @@ import type { components } from '#lib/api/schema.js';
 import { apiJSON } from '#lib/server/api.js';
 import { errorMessage, errorStatus } from '#lib/features/settings-admin/api-errors.js';
 import { shortDate, shortDateTime } from '#lib/features/settings-admin/go-time.js';
+import { formValue } from '#lib/form-value.js';
 
 type ExportListItem = components['schemas']['ExportListItem'];
 
@@ -69,8 +70,8 @@ export const actions: Actions = {
 		} catch {
 			return { errorMessage: 'Invalid form submission.' };
 		}
-		const type = String(form.get('type') ?? '').trim();
-		const format = String(form.get('format') ?? '').trim();
+		const type = formValue(form, 'type').trim();
+		const format = formValue(form, 'format').trim();
 		if (!EXPORT_TYPES.has(type) || !EXPORT_FORMATS.has(format))
 			return { errorMessage: 'Choose a valid data type and format.' };
 		try {

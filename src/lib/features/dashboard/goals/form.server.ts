@@ -6,6 +6,7 @@
 import { redirect } from '@sveltejs/kit';
 import { isAPIError } from '#lib/server/api.js';
 import type { GoalPlanInput } from './types.js';
+import { formValue } from '#lib/form-value.js';
 
 /** strconv.ParseFloat(strings.TrimSpace(v)) + the [min, max] bounds check. */
 export function parseBoundedFloat(
@@ -120,7 +121,7 @@ const GOAL_TYPES = [
 export function financialGoalInputFromForm(
 	form: FormData
 ): { input: GoalPlanInput; message: '' } | { message: string } {
-	const name = String(form.get('name') ?? '').trim();
+	const name = formValue(form, 'name').trim();
 	const target = parseBoundedFloat(form.get('targetAmount'), 1, 1_000_000_000_000);
 	const starting = parseBoundedFloat(
 		defaultString(form.get('startingCapital'), '0'),
@@ -137,11 +138,9 @@ export function financialGoalInputFromForm(
 		0,
 		100
 	);
-	const portfolioID = parseUUID(String(form.get('portfolioId') ?? ''));
+	const portfolioID = parseUUID(formValue(form, 'portfolioId'));
 	const date = form.get('targetDate');
-	const currency = String(form.get('baseCurrency') ?? '')
-		.trim()
-		.toUpperCase();
+	const currency = formValue(form, 'baseCurrency').trim().toUpperCase();
 	if (
 		name === '' ||
 		target === null ||

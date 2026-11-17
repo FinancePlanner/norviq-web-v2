@@ -23,7 +23,21 @@
 	],
 	"overrides": [
 		// `export {}` is what makes an ambient declaration file a module.
-		{ "files": ["**/*.d.ts"], "rules": { "unicorn/require-module-specifiers": "off" } }
+		{ "files": ["**/*.d.ts"], "rules": { "unicorn/require-module-specifiers": "off" } },
+		// Command-line scripts report on stdout.
+		{ "files": ["scripts/**"], "rules": { "no-console": "off" } },
+		// Plain JavaScript has no types to be unsafe against: everything read from
+		// JSON.parse, a Playwright page or the service worker globals is `any`.
+		{
+			"files": ["**/*.mjs", "static/sw.js"],
+			"rules": {
+				"typescript/no-unsafe-argument": "off",
+				"typescript/no-unsafe-assignment": "off",
+				"typescript/no-unsafe-call": "off",
+				"typescript/no-unsafe-member-access": "off",
+				"typescript/no-unsafe-return": "off"
+			}
+		}
 	],
 	"rules": {
 		// Type-aware bug rules that oxlint files under pedantic.
@@ -42,55 +56,95 @@
 			{ "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }
 		],
 
+		// Retired from the backlog on 2026-11-17: the code is clean against these.
+		"typescript/no-base-to-string": "error",
+		"typescript/no-deprecated": "error",
+		"typescript/no-floating-promises": "error",
+		"typescript/no-misused-promises": "error",
+		"typescript/no-misused-spread": "error",
+		"typescript/no-redundant-type-constituents": "error",
+		"typescript/no-unnecessary-type-assertion": "error",
+		"typescript/no-unnecessary-type-parameters": "error",
+		"typescript/require-await": "error",
+		"typescript/restrict-plus-operands": "error",
+		"typescript/restrict-template-expressions": "error",
+		"typescript/unbound-method": "error",
+		"import/namespace": "error",
+		"import/no-named-as-default": "error",
+		"promise/no-promise-in-callback": "error",
+		"unicorn/no-array-reverse": "error",
+		"unicorn/prefer-add-event-listener": "error",
+		"vitest/no-conditional-expect": "error",
+		"vitest/require-mock-type-parameters": "error",
+		"vitest/valid-title": "error",
+		"no-fallthrough": "error",
+		"no-new": "error",
+		"no-promise-executor-return": "error",
+		"no-shadow": "error",
+		"no-useless-concat": "error",
+
+		// Retired with an option that fits how this codebase is written.
+		// A default clause is how the ported Go switches name their fallback member.
+		"typescript/switch-exhaustiveness-check": [
+			"error",
+			{ "considerDefaultExhaustiveForUnions": true }
+		],
+		// `||` on a string, number or boolean is a deliberate "empty counts as missing"
+		// here (form fields, API strings), so only object-typed operands are checked.
+		"typescript/prefer-nullish-coalescing": [
+			"error",
+			{ "ignorePrimitives": { "string": true, "number": true, "boolean": true, "bigint": true } }
+		],
+		// The value of a chain's last then() is not read by anyone.
+		"promise/always-return": ["error", { "ignoreLastCallback": true }],
+		// Arrow functions are exempt: handlers are defined inside the effect that
+		// registers them, next to their one use.
+		"unicorn/consistent-function-scoping": ["error", { "checkArrowFunctions": false }],
+		// Stylesheets are imported for their side effect.
+		"import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
+		// The golden-file specs assert through these helpers.
+		"vitest/expect-expect": [
+			"error",
+			{ "assertFunctionNames": ["expect", "matchesGolden", "near", "nearAll"] }
+		],
+		// expect(value, message) is Vitest's own two-argument form.
+		"vitest/valid-expect": ["error", { "maxArgs": 2 }],
+		// console.log is the stray debugging statement; the levelled calls are the
+		// server's logging (the Go handlers' slog.Debug/Info).
+		"no-console": ["error", { "allow": ["warn", "error", "info", "debug"] }],
+		// The queue name is a contract with the landing page's inline script.
+		"no-underscore-dangle": ["error", { "allow": ["__norviqAnalyticsQueue"] }],
+
+		// Off, because the rule is wrong for this codebase rather than the code.
+		// TypeScript already checks return paths. The hits were handlers that end in
+		// redirect() or error() (both return never), exhaustive switches, and attachments
+		// that return a cleanup only on some paths, which is their contract.
+		"typescript/consistent-return": "off",
+		// The String() and !! it flags normalise backend JSON. The generated API types
+		// call those fields string or boolean, but a field the backend omits arrives as
+		// undefined, and the conversion is what keeps that out of the view models.
+		"typescript/no-unnecessary-type-conversion": "off",
+		// Every hit already sorted a fresh array (a spread copy or the result of a
+		// chain), and toSorted() is newer than the browsers the client bundle supports.
+		"unicorn/no-array-sort": "off",
+		// Every hit copies on purpose (derived option lists, config arrays), and the
+		// alternatives the rule offers mutate the source objects.
+		"oxc/no-map-spread": "off",
+		// All 26 hits were sequential by nature (polling, cursor pagination, reading a
+		// stream, retrying at a lower quality, batches with a concurrency cap).
+		"no-await-in-loop": "off",
+
 		// BACKLOG. Rules of this profile that the existing code still breaks
 		// (count as of 2026-11-17, with --type-aware). They report as warnings so
 		// CI stays green while every clean rule above is already enforced. To
-		// retire one: fix its hits, then delete the line (category rules) or
-		// move it to "error" (pedantic rules). Never add a rule here.
-		"typescript/no-unsafe-type-assertion": "warn", // 178
-		"typescript/no-deprecated": "warn", // 178
-		"typescript/no-base-to-string": "warn", // 144
-		"typescript/no-unsafe-member-access": "warn", // 90
-		"typescript/consistent-return": "warn", // 77
-		"typescript/prefer-nullish-coalescing": "warn", // 65
-		"typescript/no-unnecessary-type-conversion": "warn", // 50
-		"unicorn/no-array-sort": "warn", // 41
-		"unicorn/consistent-function-scoping": "warn", // 32
-		"typescript/no-unsafe-assignment": "warn", // 30
-		"vitest/expect-expect": "warn", // 27
-		"typescript/no-unsafe-argument": "warn", // 26
-		"no-await-in-loop": "warn", // 26
-		"vitest/require-mock-type-parameters": "warn", // 25
-		"typescript/require-await": "warn", // 24
-		"typescript/no-unsafe-call": "warn", // 21
-		"vitest/valid-expect": "warn", // 20
-		"typescript/no-unsafe-return": "warn", // 18
-		"typescript/no-unnecessary-type-assertion": "warn", // 16
-		"no-console": ["warn", { "allow": ["warn", "error"] }], // 16
-		"typescript/switch-exhaustiveness-check": "warn", // 11
-		"typescript/no-misused-promises": "warn", // 10
-		"oxc/no-map-spread": "warn", // 10
-		"vitest/no-conditional-expect": "warn", // 8
-		"no-shadow": "warn", // 8
-		"typescript/restrict-plus-operands": "warn", // 7
-		"no-underscore-dangle": "warn", // 7
-		"typescript/no-redundant-type-constituents": "warn", // 6
-		"typescript/no-misused-spread": "warn", // 6
-		"typescript/no-floating-promises": "warn", // 6
-		"promise/always-return": "warn", // 5
-		"unicorn/prefer-add-event-listener": "warn", // 4
-		"typescript/unbound-method": "warn", // 4
-		"vitest/valid-title": "warn", // 3
-		"typescript/no-unnecessary-type-parameters": "warn", // 3
-		"no-fallthrough": "warn", // 3
-		"unicorn/no-array-reverse": "warn", // 2
-		"import/no-unassigned-import": "warn", // 2
-		"no-promise-executor-return": "warn", // 2
-		"no-new": "warn", // 2
-		"typescript/restrict-template-expressions": "warn", // 1
-		"promise/no-promise-in-callback": "warn", // 1
-		"import/no-named-as-default": "warn", // 1
-		"import/namespace": "warn", // 1
-		"no-useless-concat": "warn" // 1
+		// retire one: fix its hits, then move it to "error". Never add a rule here.
+		// Most of what is left asserts a type onto parsed JSON, a form value or a DOM
+		// lookup; the member-access hits are specs reading into ECharts options.
+		"typescript/no-unsafe-type-assertion": "warn", // 179
+		"typescript/no-unsafe-member-access": "warn", // 35
+		"typescript/no-unsafe-assignment": "warn", // 9
+		"typescript/no-unsafe-argument": "warn", // 5
+		"typescript/no-unsafe-return": "warn", // 3
+		"typescript/no-unsafe-call": "warn" // 2
 	}
 }

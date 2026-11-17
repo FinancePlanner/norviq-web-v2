@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -8,6 +8,7 @@ import {
 	isAIConsentRequired
 } from '#lib/features/dashboard/ai-consent.server.js';
 import { bookmarkMemo, parseUUID } from '#lib/features/planning-tools/research/research.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /research/memos/{id}/bookmark (handlers.ResearchMemoBookmark),
 // bookmarked=true|false. Go answered the MemoSaveButton fragment; this
@@ -18,15 +19,15 @@ export const POST: RequestHandler = async (event) => {
 	if (!id) error(400, 'Invalid memo');
 	let bookmarked = false;
 	try {
-		bookmarked = String((await event.request.formData()).get('bookmarked') ?? '') === 'true';
+		bookmarked = formValue(await event.request.formData(), 'bookmarked') === 'true';
 	} catch {
 		/* Go's FormValue on a bad body reads "" */
 	}
 	try {
-		return json(await bookmarkMemo(event, id, bookmarked));
+		return Response.json(await bookmarkMemo(event, id, bookmarked));
 	} catch (err) {
 		if (isAIConsentRequired(err))
-			return json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
+			return Response.json(aiConsentRequiredJSON(aiConsentReturnPath(event)), { status: 403 });
 		return new Response('Memo could not be saved\n', { status: 502 });
 	}
 };

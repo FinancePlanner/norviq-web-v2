@@ -41,16 +41,16 @@
 		const utterance = new SpeechSynthesisUtterance(text);
 		utterance.rate = 0.96;
 		utterance.pitch = 1;
-		utterance.onstart = () => {
+		utterance.addEventListener('start', () => {
 			playing = true;
 			paused = false;
 			status = 'Playing';
-		};
-		utterance.onend = () => reset();
-		utterance.onerror = () => {
+		});
+		utterance.addEventListener('end', () => reset());
+		utterance.addEventListener('error', () => {
 			reset();
 			status = 'Audio playback stopped.';
-		};
+		});
 		window.speechSynthesis.speak(utterance);
 	}
 

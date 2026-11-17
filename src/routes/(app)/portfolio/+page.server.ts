@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { isPro } from '#lib/billing.js';
 import { loadBillingContext } from '#lib/server/app-context.js';
-import { pilotFollowingFor } from '#lib/components/norviq/PilotFollowingBanner.svelte';
+import { pilotFollowingFor } from '#lib/components/norviq/pilot-following.js';
 import {
 	loadHoldingsViewModel,
 	loadPortfolioOptions

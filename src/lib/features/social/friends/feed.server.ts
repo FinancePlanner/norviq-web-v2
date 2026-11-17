@@ -15,7 +15,8 @@ export async function loadFeed(event: RequestEvent, partial: boolean): Promise<F
 	const vm: FeedVM = { items: [], nextCursor: '', errorMessage: '', loadMoreFailed: false };
 	let path = '/v1/social/feed';
 	let cursor = event.url.searchParams.get('cursor') ?? '';
-	if (cursor !== '' && cursor.length <= 256) path += '?' + new URLSearchParams({ cursor });
+	if (cursor !== '' && cursor.length <= 256)
+		path += '?' + new URLSearchParams({ cursor }).toString();
 	else cursor = '';
 	try {
 		const feed = await achievementsDo<SocialFeedResponse>(event, 'GET', path);

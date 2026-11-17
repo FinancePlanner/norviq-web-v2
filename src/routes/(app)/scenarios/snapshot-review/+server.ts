@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { apiJSON } from '#lib/server/api.js';
 import {
@@ -55,5 +54,5 @@ export const POST: RequestHandler = async (event) => {
 	for (const [name, value] of form.entries()) {
 		if (typeof value === 'string') values.push([name, value]);
 	}
-	return json({ snapshot, values } satisfies SnapshotReviewResponse);
+	return Response.json({ snapshot, values } satisfies SnapshotReviewResponse);
 };

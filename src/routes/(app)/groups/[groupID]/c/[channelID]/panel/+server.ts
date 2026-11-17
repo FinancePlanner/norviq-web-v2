@@ -1,4 +1,4 @@
-import { error, json, text, type RequestHandler } from '@sveltejs/kit';
+import { error, type RequestHandler } from '@sveltejs/kit';
 import { isAPIError } from '#lib/server/api.js';
 import { requireGroups } from '#lib/features/social/gates.server.js';
 import { getGroup, groupsID } from '#lib/features/social/groups/groups.server.js';
@@ -17,7 +17,7 @@ export const GET: RequestHandler = async (event) => {
 		detail = await getGroup(event, groupID);
 	} catch (err) {
 		if (isAPIError(err) && err.status === 404) error(404, 'Not Found');
-		return text('unavailable', { status: 502 });
+		return new Response('unavailable', { status: 502 });
 	}
 	const vm: ChannelPanelVM = {
 		groupId: groupID,
@@ -29,5 +29,5 @@ export const GET: RequestHandler = async (event) => {
 		canInvite: detail.permissions.canInvite,
 		canManage: detail.permissions.canManageChannels
 	};
-	return json(vm, { headers: { 'cache-control': 'private, no-store' } });
+	return Response.json(vm, { headers: { 'cache-control': 'private, no-store' } });
 };

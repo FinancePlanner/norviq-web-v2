@@ -73,7 +73,7 @@ export async function markOnboardingComplete(event: RequestEvent) {
 }
 
 export function isOnboardingComplete(event: RequestEvent): boolean {
-	return !!event.locals.session.get<boolean>(OnboardingKey.Complete);
+	return !!event.locals.session.get(OnboardingKey.Complete);
 }
 
 export async function markQuestionnaireComplete(event: RequestEvent) {
@@ -123,7 +123,7 @@ export const funnelStepAfterWelcome = (step: string) =>
  * (popped once), or the dashboard.
  */
 export async function afterOnboardingPath(event: RequestEvent): Promise<string> {
-	const next = event.locals.session.get<string>(OnboardingKey.PendingNext) ?? '';
+	const next = event.locals.session.getString(OnboardingKey.PendingNext) ?? '';
 	if (next) await event.locals.session.remove(OnboardingKey.PendingNext);
 	if (next.startsWith('/') && !next.startsWith('//')) return next;
 	return '/dashboard';

@@ -1,6 +1,6 @@
 // Ports of norviq-web internal/pages/planning/{grow,retire}_test.go and
 // internal/handlers/planning_test.go (the view-model parts).
-import { describe, expect, it } from 'vitest';
+import { assert, describe, expect, it } from 'vitest';
 import {
 	defaultGrowDraft,
 	defaultRetireDraft,
@@ -86,8 +86,8 @@ describe('grow draft', () => {
 		['unparseable', blankGrow({ years: 'soon', returnPercent: '7' })]
 	])('rejects %s with a readable message', (_, draft) => {
 		const parsed = growRequest(draft);
-		expect(parsed.ok).toBe(false);
-		if (!parsed.ok) expect(parsed.error).not.toBe('');
+		assert(!parsed.ok);
+		expect(parsed.error).not.toBe('');
 	});
 
 	it('reads the horizon naturally', () => {
@@ -126,8 +126,8 @@ describe('retire draft', () => {
 	it('does not let housing exceed the cost of life', () => {
 		const draft = { ...defaultRetireDraft(), monthlyCost: '1000', monthlyHousing: '1500' };
 		const parsed = retireRequest(draft);
-		expect(parsed.ok).toBe(false);
-		if (!parsed.ok) expect(parsed.error).toContain('part of it');
+		assert(!parsed.ok);
+		expect(parsed.error).toContain('part of it');
 	});
 
 	it.each([

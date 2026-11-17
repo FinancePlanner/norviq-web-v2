@@ -2,6 +2,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { api, apiFetch, isAPIError } from '#lib/server/api.js';
 import { formatCurrency, formatFloat } from '#lib/format.js';
+import { formValue } from '#lib/form-value.js';
 
 export const DEFAULT_CSV_PROVIDERS = ['generic', 'ibkr', 'trading212', 'degiro', 'revolut'];
 const MAX_CSV_UPLOAD_BYTES = 12 << 20;
@@ -88,7 +89,7 @@ export async function processCSVUpload(
 		vm.error = 'Could not read the uploaded file.';
 		return vm;
 	}
-	const provider = String(form.get('provider') ?? '').trim();
+	const provider = formValue(form, 'provider').trim();
 	if (!provider) {
 		vm.error = 'Choose a broker format.';
 		return vm;
@@ -197,7 +198,7 @@ export function parseBulkManualImport(form: FormData): {
 	vm: ManualPageVM;
 	error: string;
 } {
-	const get = (k: string) => String(form.get(k) ?? '').trim();
+	const get = (k: string) => formValue(form, k).trim();
 	const vm: ManualPageVM = {
 		rows: [],
 		buyDate: get('buy_date'),

@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { quoteRefreshStatusTime } from '#lib/features/portfolio/market.server.js';
 import { loadWatchlistQuoteRows } from '#lib/features/portfolio/watchlist/watchlist.server.js';
@@ -26,5 +25,5 @@ export const GET: RequestHandler = async (event) => {
 			})
 		)
 	};
-	return json(body, { headers: { 'cache-control': 'no-store' } });
+	return Response.json(body, { headers: { 'cache-control': 'no-store' } });
 };

@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { proxyWebAuthn } from '#lib/features/settings-admin/passkey.server.js';
 
@@ -8,7 +7,7 @@ export const POST: RequestHandler = async (event) => {
 	try {
 		payload = await event.request.text();
 	} catch {
-		return json({ error: 'Invalid passkey response.' }, { status: 400 });
+		return Response.json({ error: 'Invalid passkey response.' }, { status: 400 });
 	}
 	return proxyWebAuthn(
 		event,

@@ -31,6 +31,8 @@ export async function loadAIConsentVM(event: RequestEvent): Promise<AIConsentVM>
 		case 'error':
 			vm.message = "Couldn't update your AI consent. Try again.";
 			break;
+		default:
+			break;
 	}
 	try {
 		const consent = await getAIConsent(event);

@@ -20,6 +20,7 @@ import type {
 	GroupDetail,
 	GroupForm
 } from '#lib/features/social/groups/types.js';
+import { formValue } from '#lib/form-value.js';
 
 // GroupsNew / GroupsCreate (norviq-web internal/handlers/groups.go).
 export const load: PageServerLoad = async (event) => {
@@ -42,7 +43,7 @@ export const actions: Actions = {
 	default: async (event) => {
 		const cfg = await requireGroups(event);
 		const data = await readForm(event);
-		const value = (k: string) => String(data.get(k) ?? '');
+		const value = (k: string) => formValue(data, k);
 		const form: GroupForm = {
 			name: value('name').trim(),
 			description: value('description').trim(),

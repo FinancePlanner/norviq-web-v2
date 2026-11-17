@@ -60,7 +60,7 @@ describe('streamAssistantTurn errors', () => {
 		expect(await run(res)).toBe(UPGRADE_REQUIRED);
 	});
 	test('a consent refusal navigates and shows nothing', async () => {
-		const assign = vi.fn();
+		const assign = vi.fn<(url: string) => void>();
 		vi.stubGlobal(
 			'fetch',
 			vi
@@ -112,7 +112,7 @@ describe('consent and busy', () => {
 				.fn()
 				.mockResolvedValue(sse('event: error\ndata: {"message":"x","code":"image_rejected"}\n\n'))
 		);
-		const onConsentRequired = vi.fn();
+		const onConsentRequired = vi.fn<() => void>();
 		await streamAssistantTurn({
 			conversationId: 'c1',
 			body: new FormData(),
@@ -132,7 +132,7 @@ describe('consent and busy', () => {
 					new Response('Too many large images right now. Try again in a moment.', { status: 503 })
 				)
 		);
-		const onAccepted = vi.fn();
+		const onAccepted = vi.fn<() => void>();
 		const text = await streamAssistantTurn({
 			conversationId: 'c1',
 			body: new FormData(),
@@ -149,21 +149,22 @@ describe('consent and busy', () => {
 	});
 });
 
-describe('streamAssistantTurn and the composer', () => {
-	function runSpied(response: Response) {
-		vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
-		const calls: string[] = [];
-		return streamAssistantTurn({
-			conversationId: 'c1',
-			body: new FormData(),
-			muse,
-			onAccepted: () => calls.push('accepted'),
-			onTurn: async () => {
-				calls.push('turn');
-			}
-		}).then((text) => ({ text, calls }));
-	}
+function runSpied(response: Response) {
+	vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response));
+	const calls: string[] = [];
+	return streamAssistantTurn({
+		conversationId: 'c1',
+		body: new FormData(),
+		muse,
+		onAccepted: () => calls.push('accepted'),
+		onTurn: () => {
+			calls.push('turn');
+			return Promise.resolve();
+		}
+	}).then((text) => ({ text, calls }));
+}
 
+describe('streamAssistantTurn and the composer', () => {
 	test('an error frame arrives after the stream opened, so the caller must restore', async () => {
 		const { text, calls } = await runSpied(
 			sse(
@@ -203,7 +204,7 @@ describe('an expired conversation', () => {
 					)
 				)
 		);
-		const onConversationGone = vi.fn();
+		const onConversationGone = vi.fn<() => void>();
 		const text = await streamAssistantTurn({
 			conversationId: 'c1',
 			body: new FormData(),

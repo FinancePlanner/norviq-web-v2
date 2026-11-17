@@ -14,6 +14,7 @@ import {
 } from '#lib/features/portfolio/market.server.js';
 import { findPortfolioStock } from './detail.server.js';
 import type { QuoteVM, TranscriptViewModel, ValuationFormVM, ValuationResult } from './detail.js';
+import { formValue } from '#lib/form-value.js';
 
 type S = components['schemas'];
 const enc = encodeURIComponent;
@@ -159,7 +160,7 @@ function parseStockValuationForm(
 	form: FormData,
 	symbol: string
 ): { body: S['StockValuationRequest'] | null; error: string } {
-	const val = (k: string) => String(form.get(k) ?? '').trim();
+	const val = (k: string) => formValue(form, k).trim();
 	const parseRange = (lowKey: string, highKey: string) => {
 		const low = parsePositiveFloat(val(lowKey));
 		const high = parsePositiveFloat(val(highKey));

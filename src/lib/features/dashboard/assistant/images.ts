@@ -29,7 +29,9 @@ export function scaledSize(
 }
 
 function toBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob | null> {
-	return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+	return new Promise((resolve) => {
+		canvas.toBlob(resolve, 'image/jpeg', quality);
+	});
 }
 
 /** Throws ImageUnreadable for a file the browser cannot decode (HEIC in Chrome) or that stays over 5 MB. */

@@ -8,6 +8,7 @@ import {
 	errorStatus,
 	readableAPIReasons
 } from '#lib/features/settings-admin/api-errors.js';
+import { formValue } from '#lib/form-value.js';
 
 type GetUserProfileResponse = components['schemas']['GetUserProfileResponse'];
 type LinkedAccounts = components['schemas']['OAuthLinkedAccountsResponse'];
@@ -101,7 +102,9 @@ export const load: PageServerLoad = async (event) => {
 };
 
 /** renderProfileFeedback: the #profile-feedback block shows only the error. */
-const feedback = (errorMessage: string) => ({ feedback: { successMessage: '', errorMessage } });
+const feedback = (message: string) => ({
+	feedback: { successMessage: '', errorMessage: message }
+});
 
 // emailChangeErrorMessage
 function emailChangeErrorMessage(status: number, body: unknown): string {
@@ -120,10 +123,10 @@ export const actions: Actions = {
 		} catch {
 			return feedback('Invalid form submission.');
 		}
-		const username = String(form.get('username') ?? '').trim();
-		const email = String(form.get('email') ?? '').trim();
-		const currentPassword = String(form.get('current_password') ?? '');
-		const newPassword = String(form.get('new_password') ?? '');
+		const username = formValue(form, 'username').trim();
+		const email = formValue(form, 'email').trim();
+		const currentPassword = formValue(form, 'current_password');
+		const newPassword = formValue(form, 'new_password');
 
 		const vm = await loadProfileVM(event, false);
 		if (vm.errorMessage !== '' && vm.username === '' && vm.email === '')
@@ -192,7 +195,7 @@ export const actions: Actions = {
 		} catch {
 			return feedback('Invalid delete request.');
 		}
-		if (String(form.get('confirm') ?? '').trim() !== 'DELETE')
+		if (formValue(form, 'confirm').trim() !== 'DELETE')
 			return feedback('Type DELETE to confirm account removal.');
 		try {
 			await apiJSON(event, 'DELETE', '/v1/users');
@@ -200,7 +203,7 @@ export const actions: Actions = {
 			return feedback('Could not delete your account.');
 		}
 		// session.ClearAuth
-		await event.locals.session.destroy();
+		event.locals.session.destroy();
 		redirect(303, '/login');
 	}
 };

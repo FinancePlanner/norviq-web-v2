@@ -23,7 +23,7 @@ export function enhanceInPlace<T>(h: EnhanceHandlers<T>): SubmitFunction {
 			switch (result.type) {
 				case 'redirect':
 					if (h.hardRedirect) window.location.assign(result.location);
-					else await goto(result.location, { invalidateAll: true });
+					else await goto(result.location, { refreshAll: true });
 					return;
 				case 'success':
 				case 'failure':

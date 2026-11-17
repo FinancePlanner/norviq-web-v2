@@ -4,6 +4,7 @@ import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
 import { apiJSON } from '#lib/server/api.js';
 import { aiConsentReturnPath, hasAIConsent } from '#lib/features/dashboard/ai-consent.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /assistant/conversations (handlers.AssistantCreateConversation): the
 // "New conversation" / "New chat" forms and the suggestion chips (seed) post
@@ -11,7 +12,7 @@ import { aiConsentReturnPath, hasAIConsent } from '#lib/features/dashboard/ai-co
 // and the consent page render inside the shell, as in Go.
 
 // Go registered only POST; chi answered a GET with 405.
-export const load: PageServerLoad = async (event) => {
+export const load: PageServerLoad = (event) => {
 	if (event.request.method === 'GET') error(405, 'Method Not Allowed');
 	return {};
 };
@@ -38,7 +39,7 @@ export const actions: Actions = {
 		if (!id) redirect(303, '/assistant');
 		let target = '/assistant?conversation=' + encodeURIComponent(id);
 		const form = await event.request.formData().catch(() => new FormData());
-		const seed = String(form.get('seed') ?? '').trim();
+		const seed = formValue(form, 'seed').trim();
 		if (seed) target += '&seed=' + encodeURIComponent(seed);
 		redirect(303, target);
 	}

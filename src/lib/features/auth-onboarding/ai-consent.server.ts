@@ -1,6 +1,7 @@
 // internal/handlers/ai_consent.go + middleware.SafeLocalPath.
 import { fail, redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
+import { formValue } from '#lib/form-value.js';
 
 /** middleware.SafeLocalPath: a same-site path (+query), or null. */
 export function safeLocalPath(raw: string | null | undefined, host: string): string | null {
@@ -41,7 +42,7 @@ export interface AIConsent {
 export async function grantAIConsent(event: RequestEvent) {
 	const form = await event.request.formData().catch(() => null);
 	if (!form) return fail(400, { next: '/dashboard', message: 'Invalid form submission.' });
-	const next = safeLocalPath(String(form.get('next') ?? ''), event.url.host) ?? '/dashboard';
+	const next = safeLocalPath(formValue(form, 'next'), event.url.host) ?? '/dashboard';
 	let consent: AIConsent | null = null;
 	try {
 		consent = await apiJSON<AIConsent>(event, 'POST', '/v1/users/ai-consent');

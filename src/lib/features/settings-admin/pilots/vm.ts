@@ -20,6 +20,7 @@ import type {
 	PilotFollowSnapshotResponse,
 	PilotSummary
 } from './types.js';
+import { formValue } from '#lib/form-value.js';
 
 /** The exact label for a pilot whose book is empty. Such a pilot can never be followed. */
 export const NO_TRADES_YET = 'No trades seen yet';
@@ -281,9 +282,9 @@ export function parsePilotFollowForm(
 	isPro: boolean
 ): { req: PilotFollowCreateRequest; vm: FollowFormVM; msg: string } {
 	const vm = newPilotFollowFormVM(detail, isPro);
-	vm.target = String(form.get('target') ?? '').trim();
-	vm.startingCapital = String(form.get('starting_capital') ?? '').trim();
-	vm.idempotencyKey = String(form.get('idempotency_key') ?? '').trim() || crypto.randomUUID();
+	vm.target = formValue(form, 'target').trim();
+	vm.startingCapital = formValue(form, 'starting_capital').trim();
+	vm.idempotencyKey = formValue(form, 'idempotency_key').trim() || crypto.randomUUID();
 	const req: PilotFollowCreateRequest = { pilotSlug: detail.pilot.slug, targetKind: '' };
 	if (!vm.pilot.hasTrades) {
 		return { req, vm, msg: NO_TRADES_YET + ' for this pilot, so there is nothing to follow yet.' };

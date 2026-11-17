@@ -22,6 +22,7 @@ export function socialTimezone(event: RequestEvent): string {
 	const name = (event.cookies.get(TIMEZONE_COOKIE) ?? '').trim();
 	if (!name || name.length > 64 || name === 'Local') return 'UTC';
 	try {
+		// oxlint-disable-next-line no-new -- constructed only for the throw on an unknown zone
 		new Intl.DateTimeFormat('en-US', { timeZone: name });
 		return name;
 	} catch {

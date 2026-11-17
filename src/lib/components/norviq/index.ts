@@ -98,7 +98,7 @@ export type { ShareBarText } from './ShareBar.svelte';
 export * from './market-signals.js';
 export * from './sentiment.js';
 export { mcpStateClass } from './mcp-status.js';
-export { pilotFollowingFor, type PilotFollowingVM } from './PilotFollowingBanner.svelte';
+export { pilotFollowingFor, type PilotFollowingVM } from './pilot-following.js';
 export type { NewsHeadlineVM } from './NewsHeadlineList.svelte';
 export { variantFor } from './NorviqButton.svelte';
 export type { InputType } from './tui/Input.svelte';

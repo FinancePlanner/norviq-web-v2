@@ -11,7 +11,8 @@ export const load: PageServerLoad = async (event) => {
 	let errorMessage = q.get('error') ?? '';
 	let path = '/v1/gamification/xp/events';
 	const cursor = q.get('cursor') ?? '';
-	if (cursor !== '' && cursor.length <= 256) path += '?' + new URLSearchParams({ cursor });
+	if (cursor !== '' && cursor.length <= 256)
+		path += '?' + new URLSearchParams({ cursor }).toString();
 	const [xpResult, historyResult] = await Promise.allSettled([
 		socialDo<XPSummary>(event, 'GET', '/v1/gamification/xp'),
 		socialDo<XPHistory>(event, 'GET', path)

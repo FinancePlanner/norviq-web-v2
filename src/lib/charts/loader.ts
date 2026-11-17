@@ -10,15 +10,13 @@ let loaded: ECharts | null = null;
 
 export function loadECharts(): Promise<ECharts> {
 	if (loaded) return Promise.resolve(loaded);
-	if (!loadPromise) {
-		loadPromise = import('./echarts-slim.js').then(
-			(m) => (loaded = m.echarts),
-			(err) => {
-				loadPromise = null;
-				throw err;
-			}
-		);
-	}
+	loadPromise ??= import('./echarts-slim.js').then(
+		(m) => (loaded = m.echarts),
+		(err) => {
+			loadPromise = null;
+			throw err;
+		}
+	);
 	return loadPromise;
 }
 
@@ -26,7 +24,9 @@ export function loadECharts(): Promise<ECharts> {
 export function ensureECharts(): Promise<ECharts> {
 	if (loaded || loadPromise || document.readyState === 'complete') return loadECharts();
 	return new Promise((resolve, reject) => {
-		const start = () => loadECharts().then(resolve, reject);
+		const start = () => {
+			loadECharts().then(resolve, reject);
+		};
 		if ('requestIdleCallback' in globalThis) requestIdleCallback(start, { timeout: 1800 });
 		else setTimeout(start, 1);
 	});

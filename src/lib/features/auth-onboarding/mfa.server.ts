@@ -11,6 +11,7 @@ import {
 	type AuthResponse,
 	type MFAChallengeResponse
 } from './auth.server.js';
+import { formValue } from '#lib/form-value.js';
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -23,7 +24,7 @@ export async function mfaVerify(event: RequestEvent) {
 	if (!form) return mfaError(event, 'Invalid form submission.');
 	const challengeId = event.locals.session.data.mfa?.challengeId ?? '';
 	if (!challengeId) return mfaError(event, 'Verification session expired. Please sign in again.');
-	const code = String(form.get('code') ?? '').trim();
+	const code = formValue(form, 'code').trim();
 	if (!mfaCodePattern.test(code)) return mfaError(event, 'Enter the 6-digit verification code.');
 	if (!uuidPattern.test(challengeId))
 		return mfaError(event, 'Verification session expired. Please sign in again.');

@@ -1,21 +1,6 @@
-<script lang="ts" module>
-	/** components.PilotFollowingVM */
-	export interface PilotFollowingVM {
-		pilotName: string;
-		followHref: string;
-		paused?: boolean;
-	}
-
-	/** components.PilotFollowingFor — lookup keyed by lower-cased, trimmed portfolio id. */
-	export function pilotFollowingFor(
-		m: Record<string, PilotFollowingVM> | null | undefined,
-		portfolioID: string
-	): PilotFollowingVM | undefined {
-		return m?.[portfolioID.trim().toLowerCase()];
-	}
-</script>
-
 <script lang="ts">
+	import type { PilotFollowingVM } from './pilot-following.js';
+
 	// components.PilotFollowingBanner(vm)
 	let { vm }: { vm: PilotFollowingVM } = $props();
 </script>

@@ -29,23 +29,23 @@ export function initAnalytics(runtime: RuntimeConfig | null | undefined): void {
 }
 
 export function trackPageview(): void {
-	posthogModule?.then((m) => m.capturePageview());
+	void posthogModule?.then((m) => m.capturePageview());
 }
 
-export function captureOnce(capture: PostHogCaptureOnce | null | undefined): void {
-	if (!capture?.event) return;
-	posthogModule?.then((m) => m.applyCaptureOnce(capture));
+export function captureOnce(once: PostHogCaptureOnce | null | undefined): void {
+	if (!once?.event) return;
+	void posthogModule?.then((m) => m.applyCaptureOnce(once));
 }
 
 /** norviqAnalytics.capture for components: no-op until PostHog is initialised. */
 export function capture(event: string, properties?: Record<string, unknown>): void {
-	posthogModule?.then((m) => m.norviqAnalytics.capture(event, properties));
+	void posthogModule?.then((m) => m.norviqAnalytics.capture(event, properties));
 }
 
 let sentryWanted = false;
 
 /** Forwards an unexpected client error to Sentry when a DSN is configured (hooks.client.ts). */
-export function reportClientError(error: unknown): void {
+export function reportClientError(thrown: unknown): void {
 	if (!sentryWanted) return;
-	import('./sentry.js').then((m) => m.captureClientError(error), console.error);
+	import('./sentry.js').then((m) => m.captureClientError(thrown), console.error);
 }

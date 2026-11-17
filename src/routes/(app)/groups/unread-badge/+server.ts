@@ -1,4 +1,4 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { requireGroups } from '#lib/features/social/gates.server.js';
 import { groupUnreadCount } from '#lib/features/social/groups/groups.server.js';
 
@@ -14,5 +14,5 @@ export const GET: RequestHandler = async (event) => {
 	} catch {
 		count = 0;
 	}
-	return json({ count }, { headers: { 'cache-control': 'private, no-store' } });
+	return Response.json({ count }, { headers: { 'cache-control': 'private, no-store' } });
 };

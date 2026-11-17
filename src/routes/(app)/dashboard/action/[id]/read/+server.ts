@@ -1,4 +1,4 @@
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { error, type RequestHandler } from '@sveltejs/kit';
 import {
 	loadActionQueueViewModel,
 	markActionRead
@@ -13,7 +13,7 @@ export const POST: RequestHandler = async (event) => {
 	const id = event.params.id ?? '';
 	if (!UUID.test(id)) error(404, 'Not found');
 	await markActionRead(event, id);
-	return json(await loadActionQueueViewModel(event), {
+	return Response.json(await loadActionQueueViewModel(event), {
 		headers: { 'Cache-Control': 'private, no-store' }
 	});
 };

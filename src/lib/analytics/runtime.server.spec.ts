@@ -13,12 +13,14 @@ function fakeLocals(flags: Record<string, unknown> = {}) {
 	const session = {
 		data: { flags, lastSeen: 0 },
 		get: (k: string) => flags[k],
-		async remove(...keys: string[]) {
+		remove(...keys: string[]) {
 			for (const k of keys) delete flags[k];
 			saves++;
+			return Promise.resolve();
 		},
-		async save() {
+		save() {
 			saves++;
+			return Promise.resolve();
 		}
 	};
 	return { locals: { session } as unknown as App.Locals, flags, saves: () => saves };

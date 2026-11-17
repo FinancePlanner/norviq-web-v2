@@ -1,5 +1,5 @@
 import type { Attachment } from 'svelte/attachments';
-import { invalidateAll } from '$app/navigation';
+import { refreshAll } from '$app/navigation';
 import { capture } from './analytics/index.js';
 import { isPro, type BillingContext } from './billing.js';
 
@@ -14,7 +14,7 @@ import { isPro, type BillingContext } from './billing.js';
 //
 //   <div id="subscription-root" data-rc-api-key={key} ... {@attach billingPage()}>
 //
-// Differences from Go: the status refresh after a purchase is invalidateAll()
+// Differences from Go: the status refresh after a purchase is refreshAll()
 // instead of an htmx swap of #billing-status, and the settle poll reads
 // /api/v1/billing/me instead of the /settings/subscription/status fragment.
 
@@ -50,12 +50,12 @@ export function billingPage(): Attachment<HTMLElement> {
 		};
 
 		root.querySelectorAll<HTMLButtonElement>('[data-action="purchase"]').forEach((button) => {
-			on(button, () => onPurchase(button, restoreURL, ensureConfigured, root));
+			on(button, () => void onPurchase(button, restoreURL, ensureConfigured, root));
 		});
 		const paywallButton = root.querySelector('[data-action="paywall"]');
-		if (paywallButton) on(paywallButton, () => onPaywall(root, restoreURL, ensureConfigured));
+		if (paywallButton) on(paywallButton, () => void onPaywall(root, restoreURL, ensureConfigured));
 
-		hydratePlanPrices(root, ensureConfigured);
+		void hydratePlanPrices(root, ensureConfigured);
 
 		return () => cleanups.forEach((fn) => fn());
 	};
@@ -68,9 +68,9 @@ type Ensure = () => Promise<InstanceType<Purchases> | null>;
 async function hydratePlanPrices(root: HTMLElement, ensureConfigured: Ensure) {
 	const priceNodes = root.querySelectorAll<HTMLElement>('[data-rc-price]');
 	if (priceNodes.length === 0) return;
-	const purchases = await ensureConfigured();
-	if (!purchases) return;
 	try {
+		const purchases = await ensureConfigured();
+		if (!purchases) return;
 		const packages = collectPackages(await purchases.getOfferings());
 		priceNodes.forEach((node) => {
 			const productId = node.dataset.rcPrice ?? '';
@@ -85,8 +85,17 @@ async function hydratePlanPrices(root: HTMLElement, ensureConfigured: Ensure) {
 
 // RevenueCat's package shape has moved between SDK versions; read every field
 // the Go-era bundle read.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type LoosePackage = any;
+interface LooseProduct {
+	identifier?: unknown;
+	currentPrice?: { formattedPrice?: unknown };
+	priceString?: unknown;
+}
+interface LoosePackage {
+	identifier?: unknown;
+	webBillingProduct?: LooseProduct;
+	rcBillingProduct?: LooseProduct;
+	storeProduct?: LooseProduct;
+}
 
 function formattedPrice(pkg: LoosePackage): string {
 	const candidates = [
@@ -95,7 +104,7 @@ function formattedPrice(pkg: LoosePackage): string {
 		pkg.storeProduct?.currentPrice?.formattedPrice,
 		pkg.storeProduct?.priceString
 	];
-	return candidates.find((v) => typeof v === 'string' && v.length > 0) || '';
+	return candidates.find((v): v is string => typeof v === 'string' && v.length > 0) || '';
 }
 
 async function onPurchase(
@@ -193,7 +202,10 @@ function packageMatchesProduct(pkg: LoosePackage, productId: string): boolean {
 const POLL_INTERVAL_MS = 5000;
 const POLL_ATTEMPTS = 24;
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) =>
+	new Promise((resolve) => {
+		setTimeout(resolve, ms);
+	});
 
 async function pollUntilEntitled(): Promise<boolean> {
 	for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt += 1) {
@@ -201,8 +213,8 @@ async function pollUntilEntitled(): Promise<boolean> {
 		try {
 			const res = await fetch('/api/v1/billing/me', { credentials: 'same-origin' });
 			if (!res.ok) continue;
-			if (isPro((await res.json()) as BillingContext)) {
-				await invalidateAll();
+			if (isPro(await res.json<BillingContext>())) {
+				await refreshAll();
 				return true;
 			}
 		} catch {
@@ -236,7 +248,7 @@ async function syncBackendEntitlement(
 		window.location.assign('/onboarding');
 		return;
 	}
-	await invalidateAll();
+	await refreshAll();
 }
 
 const DANGER_CLASS = 'text-[var(--color-danger)]';

@@ -139,7 +139,8 @@ export function portfolioAPIErrorMessage(err: unknown, fallback: string): string
 	if (!err) return fallback;
 	let message: string;
 	if (isAPIError(err)) message = err.reason.trim() || STATUS_TEXT[err.status] || '';
-	else message = err instanceof Error ? err.message.trim() : String(err).trim();
+	else if (err instanceof Error) message = err.message.trim();
+	else message = typeof err === 'string' ? err.trim() : '';
 	if (message !== '' && message !== STATUS_TEXT[500]) return message;
 	return fallback;
 }

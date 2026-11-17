@@ -6,6 +6,7 @@ import {
 	loadNewsTickerSettingsVM,
 	updateNewsTickerSettings
 } from '#lib/features/settings-admin/news-ticker/news-ticker.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web Settings case "news-ticker" and the
 // SettingsNewsTicker{Toggle,AddFeed,RemoveFeed} handlers.
@@ -32,7 +33,7 @@ export const actions: Actions = {
 	toggle: async (event) => {
 		const form = await event.request.formData();
 		// An unchecked switch sends nothing, which reads as "off".
-		const enabled = String(form.get('enabled') ?? '').trim() === 'true';
+		const enabled = formValue(form, 'enabled').trim() === 'true';
 		try {
 			await updateNewsTickerSettings(event, enabled);
 		} catch (err) {
@@ -44,7 +45,7 @@ export const actions: Actions = {
 
 	// POST /settings/news-ticker/feeds
 	addFeed: async (event) => {
-		const raw = String((await event.request.formData()).get('url') ?? '').trim();
+		const raw = formValue(await event.request.formData(), 'url').trim();
 		if (raw === '') plainPostFeedback('Enter a site or feed address.', '');
 		let status: number;
 		try {
@@ -73,7 +74,7 @@ export const actions: Actions = {
 
 	// POST /settings/news-ticker/feeds/{id}/delete
 	removeFeed: async (event) => {
-		const id = String((await event.request.formData()).get('id') ?? '').trim();
+		const id = formValue(await event.request.formData(), 'id').trim();
 		if (!UUID_RE.test(id)) plainPostFeedback('Invalid feed.', '');
 		let status = 0;
 		try {

@@ -1,4 +1,4 @@
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { error, type RequestHandler } from '@sveltejs/kit';
 import { Feature } from '#lib/billing.js';
 import { apiFetch } from '#lib/server/api.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -18,7 +18,7 @@ const MAX_RECEIPT_IMAGE_BYTES = 8 << 20;
 
 function consentRefusal(next: string) {
 	// RenderAIConsentRequired for a script fetch: the backend's 403 shape + consentUrl.
-	return json(
+	return Response.json(
 		{
 			error: true,
 			reason: AI_CONSENT_REQUIRED_REASON,

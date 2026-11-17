@@ -7,6 +7,7 @@ import {
 	loadWatchlistViewModel,
 	processWatchlistCSVUpload
 } from '#lib/features/portfolio/watchlist/watchlist.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // GET /portfolio/watchlist (handlers.PortfolioWatchlist) plus the watchlist
 // mutations that were HTMX posts against sibling URLs:
@@ -25,7 +26,7 @@ export const load: PageServerLoad = async (event) => {
 	return { vm };
 };
 
-const str = (form: FormData, key: string) => String(form.get(key) ?? '').trim();
+const str = (form: FormData, key: string) => formValue(form, key).trim();
 
 /** submitWatchlistList: create or rename a theme, then land on it. */
 async function submitWatchlistList(event: Parameters<Actions[string]>[0], listID: string) {

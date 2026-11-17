@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireActivityFeed } from '#lib/features/social/gates.server.js';
 import { uuidParam } from '#lib/features/settings-admin/social/social.server.js';
@@ -10,6 +10,7 @@ import {
 	socialErrorMessage
 } from '#lib/features/social/friends/friends.server.js';
 import type { CongratsVM } from '#lib/features/social/friends/types.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /friends/feed/{activityId}/congrats (handlers.FeedCongrats). The form
 // carries the count the row showed so the replacement can say count+1
@@ -19,9 +20,9 @@ export const POST: RequestHandler = async (event) => {
 	const activityID = uuidParam(event.params.activityId);
 	if (!activityID) error(400, 'Invalid activity');
 	const form = await event.request.formData();
-	const rawCount = String(form.get('count') ?? '');
+	const rawCount = formValue(form, 'count');
 	const count = /^[+-]?\d+$/.test(rawCount) ? Math.max(Number(rawCount), 0) : 0; // strconv.Atoi, errors → 0
-	const already = String(form.get('congratulated') ?? '') === '1';
+	const already = formValue(form, 'congratulated') === '1';
 	let err: unknown = null;
 	try {
 		await socialDo(event, 'POST', '/v1/social/feed/' + activityID + '/congrats');
@@ -39,7 +40,7 @@ export const POST: RequestHandler = async (event) => {
 		} else {
 			vm.errorMessage = socialErrorMessage(err, 'Could not send your cheer.');
 		}
-		return json(vm);
+		return Response.json(vm);
 	}
 	if (!err) return respondRedirect(event, '/friends/feed', 'Cheered!', '');
 	if (isNotFound(err))

@@ -62,7 +62,8 @@ function canonicalPillarKey(key: string): string {
 
 function humanisePillarKey(key: string): string {
 	let out = '';
-	[...key].forEach((r, i) => {
+	// By code point, as Go ranged over runes.
+	Array.from(key).forEach((r, i) => {
 		const upper = r !== r.toLowerCase() && r === r.toUpperCase();
 		out += i > 0 && upper ? ' ' + r.toLowerCase() : r;
 	});

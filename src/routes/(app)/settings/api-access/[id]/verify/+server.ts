@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import {
 	verifyPollURL,
@@ -28,7 +27,7 @@ export const GET: RequestHandler = async (event) => {
 		keepPolling: false,
 		pollURL: verifyPollURL(tokenID, startedAt)
 	};
-	if (tokenID === '') return json(vm);
+	if (tokenID === '') return Response.json(vm);
 
 	let tokens;
 	try {
@@ -36,16 +35,16 @@ export const GET: RequestHandler = async (event) => {
 	} catch (err) {
 		// A transient backend blip should not end the wizard.
 		console.warn('list PAT for connection verify failed', err);
-		return json({ ...vm, state: 'waiting', keepPolling: true });
+		return Response.json({ ...vm, state: 'waiting', keepPolling: true });
 	}
 	const lastUsedAt = tokens.find((t) => t.id === tokenID)?.lastUsedAt;
 	if (lastUsedAt) {
-		return json({
+		return Response.json({
 			...vm,
 			state: 'connected',
 			lastUsed: formatRelativeTime(new Date(lastUsedAt), new Date(now))
 		});
 	}
-	if (now - startedAt >= VERIFY_POLL_WINDOW_MS) return json(vm);
-	return json({ ...vm, state: 'waiting', keepPolling: true });
+	if (now - startedAt >= VERIFY_POLL_WINDOW_MS) return Response.json(vm);
+	return Response.json({ ...vm, state: 'waiting', keepPolling: true });
 };

@@ -1,6 +1,6 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
-import type { PilotFollowingVM } from '#lib/components/norviq/PilotFollowingBanner.svelte';
+import type { PilotFollowingVM } from '#lib/components/norviq/pilot-following.js';
 
 // middleware.AttachPilotsAvailability + handlers.pilotFollowingByPortfolio.
 //

@@ -1,7 +1,7 @@
 // oauth.go PasskeyBegin / PasskeyFinish: proxy the WebAuthn login ceremony to
 // the backend, forwarding the browser's Origin (the backend checks it against
 // the relying party).
-import { json, type RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import { apiFetch } from '#lib/server/api.js';
 import { config } from '#lib/server/env.js';
 import { postAuthRedirect } from '#lib/server/onboarding.js';
@@ -38,7 +38,7 @@ async function proxy(
 		return { status: res.status, text: await res.text() };
 	} catch (err) {
 		console.error('passkey', path, err);
-		return json({ error: 'Could not reach the authentication service.' }, { status: 502 });
+		return Response.json({ error: 'Could not reach the authentication service.' }, { status: 502 });
 	}
 }
 
@@ -46,10 +46,13 @@ export async function passkeyBegin(event: RequestEvent): Promise<Response> {
 	const r = await proxy(event, '/v1/auth/webauthn/login/options', '{}');
 	if (r instanceof Response) return r;
 	if (r.status === 404 || r.status === 501) {
-		return json({ error: 'Passkey sign-in is not enabled on the server yet.' }, { status: 501 });
+		return Response.json(
+			{ error: 'Passkey sign-in is not enabled on the server yet.' },
+			{ status: 501 }
+		);
 	}
 	if (r.status !== 200) {
-		return json(
+		return Response.json(
 			{ error: apiErrorMessage(r.text, 'Could not start passkey sign in.') },
 			{ status: r.status }
 		);
@@ -62,15 +65,18 @@ export async function passkeyFinish(event: RequestEvent): Promise<Response> {
 	try {
 		payload = await event.request.text();
 	} catch {
-		return json({ error: 'Invalid passkey response.' }, { status: 400 });
+		return Response.json({ error: 'Invalid passkey response.' }, { status: 400 });
 	}
 	const r = await proxy(event, '/v1/auth/webauthn/login/verify', payload);
 	if (r instanceof Response) return r;
 	if (r.status === 404 || r.status === 501) {
-		return json({ error: 'Passkey sign-in is not enabled on the server yet.' }, { status: 501 });
+		return Response.json(
+			{ error: 'Passkey sign-in is not enabled on the server yet.' },
+			{ status: 501 }
+		);
 	}
 	if (r.status !== 200) {
-		return json(
+		return Response.json(
 			{ error: apiErrorMessage(r.text, 'Could not verify passkey.') },
 			{ status: r.status }
 		);
@@ -82,9 +88,9 @@ export async function passkeyFinish(event: RequestEvent): Promise<Response> {
 		auth = null;
 	}
 	if (!auth?.token)
-		return json({ error: 'Unexpected passkey response from server.' }, { status: 502 });
+		return Response.json({ error: 'Unexpected passkey response from server.' }, { status: 502 });
 
 	await event.locals.session.saveAuth(auth);
 	await setPostHogCaptureOnce(event.locals, 'user_logged_in', { method: 'passkey' });
-	return json({ redirect: await postAuthRedirect(event, '') });
+	return Response.json({ redirect: await postAuthRedirect(event, '') });
 }

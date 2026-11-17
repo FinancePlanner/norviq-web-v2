@@ -14,6 +14,7 @@ import {
 	type LoginOutcomeBody
 } from './auth.server.js';
 import { OAuthKey, clearOAuthFlow, oauthIntent, parseOAuthProvider } from './oauth.server.js';
+import { formValue } from '#lib/form-value.js';
 
 export type CallbackResult = { error: string; next: string };
 
@@ -52,10 +53,10 @@ export async function oauthCallbackPOST(event: RequestEvent): Promise<CallbackRe
 		error(405, 'Method not allowed');
 	const form = await event.request.formData().catch(() => null);
 	if (!form) return handleCallbackError(event, 'Could not read Apple sign-in response.');
-	const code = String(form.get('code') ?? '').trim();
-	const state = String(form.get('state') ?? '').trim();
+	const code = formValue(form, 'code').trim();
+	const state = formValue(form, 'state').trim();
 	if (!code || !state) {
-		if (String(form.get('error') ?? '').trim()) {
+		if (formValue(form, 'error').trim()) {
 			return handleCallbackError(event, 'Sign in was canceled or denied by Apple.');
 		}
 		return handleCallbackError(
@@ -75,9 +76,9 @@ async function completeOAuthCallback(
 	if (!provider) error(400, 'Unsupported provider');
 
 	const s = event.locals.session;
-	const flowId = s.get<string>(OAuthKey.FlowID) ?? '';
-	const storedProvider = s.get<string>(OAuthKey.Provider) ?? '';
-	const redirectURI = s.get<string>(OAuthKey.RedirectURI) ?? '';
+	const flowId = s.getString(OAuthKey.FlowID) ?? '';
+	const storedProvider = s.getString(OAuthKey.Provider) ?? '';
+	const redirectURI = s.getString(OAuthKey.RedirectURI) ?? '';
 	if (!flowId || storedProvider !== provider || !redirectURI || !uuidPattern.test(flowId)) {
 		return handleCallbackError(event, 'Your sign-in session expired. Please try again.');
 	}

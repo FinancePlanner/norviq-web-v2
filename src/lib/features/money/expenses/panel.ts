@@ -16,6 +16,9 @@ export function closeExpensePanel() {
 	window.dispatchEvent(new CustomEvent(PANEL_CLOSE_EVENT));
 }
 
+// T is the form view model of the action posted to. The form posts cross-route, so there is no
+// generated ActionData to take it from and the caller names it.
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- see above
 export function panelEnhance<T>(
 	onVM: (vm: T) => void,
 	onError?: (status: number, message: string) => void
@@ -23,7 +26,7 @@ export function panelEnhance<T>(
 	return withSpinner(() => async ({ result }) => {
 		if (result.type === 'redirect') {
 			closeExpensePanel();
-			await goto(result.location, { invalidateAll: true });
+			await goto(result.location, { refreshAll: true });
 		} else if (result.type === 'failure') {
 			const vm = (result.data as { vm?: T } | undefined)?.vm;
 			if (vm) onVM(vm);
@@ -37,7 +40,7 @@ export function panelEnhance<T>(
 			onError?.(result.status ?? 500, err?.proGate ?? err?.message ?? '');
 		} else if (result.type === 'success') {
 			closeExpensePanel();
-			await goto(location.href, { invalidateAll: true });
+			await goto(location.href, { refreshAll: true });
 		}
 	});
 }

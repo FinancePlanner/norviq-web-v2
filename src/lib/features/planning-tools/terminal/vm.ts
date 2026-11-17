@@ -553,8 +553,8 @@ const UNITS: [number, string][] = [
  * compactLabel approximates format.CompactCurrency for the moment between
  * blur and the server's answer, which replaces it (terminal.js).
  */
-export function compactLabel(raw: unknown, symbol = ''): string {
-	const text = String(raw ?? '').trim();
+export function compactLabel(raw: string, symbol = ''): string {
+	const text = raw.trim();
 	if (text === '') return '';
 	const n = Number(text.replace(/[\s,$€£¥]/g, ''));
 	if (!Number.isFinite(n)) return text;

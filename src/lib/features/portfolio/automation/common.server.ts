@@ -1,4 +1,5 @@
 import { isAPIError } from '#lib/server/api.js';
+import { formValue } from '#lib/form-value.js';
 
 // Shared bits of handlers/portfolio_workspace.go, wealth_automation.go and
 // internal/api (ParseFloat / ParseInt / formChoice / validUUID).
@@ -43,14 +44,14 @@ export function portfolioAPIErrorMessage(err: unknown, fallback: string): string
 
 /** api.ParseFloat: strconv.ParseFloat on the trimmed value, 0 on error. */
 export function parseFloatGo(value: FormDataEntryValue | null | undefined): number {
-	const s = String(value ?? '').trim();
+	const s = typeof value === 'string' ? value.trim() : '';
 	if (s === '' || !/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s)) return 0;
 	return Number(s);
 }
 
 /** api.ParseInt: strconv.Atoi on the trimmed value, 0 on error. */
 export function parseIntGo(value: FormDataEntryValue | null | undefined): number {
-	const s = String(value ?? '').trim();
+	const s = typeof value === 'string' ? value.trim() : '';
 	return /^[+-]?\d+$/.test(s) ? Number(s) : 0;
 }
 
@@ -59,7 +60,9 @@ export function parseOptionalFloat(raw: FormDataEntryValue | null | undefined): 
 	value?: number;
 	error?: true;
 } {
-	const s = String(raw ?? '').trim();
+	// An uploaded file is not a number.
+	if (raw instanceof File) return { error: true };
+	const s = (raw ?? '').trim();
 	if (s === '') return {};
 	if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s)) return { error: true };
 	return { value: Number(s) };
@@ -78,5 +81,6 @@ export function validUUID(raw: string | null | undefined): string | null {
 		: null;
 }
 
-export const formString = (form: FormData, key: string) => String(form.get(key) ?? '');
-export const formAll = (form: FormData, key: string) => form.getAll(key).map((v) => String(v));
+export const formString = (form: FormData, key: string) => formValue(form, key);
+export const formAll = (form: FormData, key: string) =>
+	form.getAll(key).map((v) => (typeof v === 'string' ? v : ''));

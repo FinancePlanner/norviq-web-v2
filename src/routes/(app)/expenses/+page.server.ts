@@ -12,6 +12,7 @@ import {
 	parseFloatStrict
 } from '#lib/features/money/expenses/planner.server.js';
 import type { BudgetTemplateItem } from '#lib/features/money/expenses/types.js';
+import { formValue } from '#lib/form-value.js';
 
 // GET /expenses (ExpensesPlanner). The tax teaser (Go: hx-get
 // /expenses/tax-teaser, hx-trigger="load") is streamed: the promise is not
@@ -22,7 +23,7 @@ export const load: PageServerLoad = async (event) => {
 	return { vm, taxTeaser: loadTaxTeaser(event, null, null) };
 };
 
-const field = (fd: FormData, name: string) => String(fd.get(name) ?? '').trim();
+const field = (fd: FormData, name: string) => formValue(fd, name).trim();
 const monthTarget = (fd: FormData) => expensesPlannerURL(parseExpensesMonth(field(fd, 'month')));
 const intStrict = (raw: string) => (/^[+-]?\d+$/.test(raw) ? Number(raw) : null);
 
@@ -94,7 +95,7 @@ export const actions: Actions = {
 		for (const [key, value] of fd.entries()) {
 			if (!key.startsWith('cut_')) continue;
 			const id = key.slice(4);
-			const amount = parseFloatStrict(String(value).trim());
+			const amount = parseFloatStrict(typeof value === 'string' ? value.trim() : '');
 			if (isUUID(id) && amount !== null && amount > 0) adjustments.push({ planItemId: id, amount });
 		}
 		if (adjustments.length === 0) return fail(400, { message: 'Select at least one adjustment' });

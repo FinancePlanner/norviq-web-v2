@@ -42,14 +42,14 @@ export async function startGuidedStep(
 
 export function activeGuidedStep(event: RequestEvent): ActiveGuidedStep | null {
 	const s = sess(event);
-	const step = s.get<string>(GuidedKey.Step) ?? '';
+	const step = s.getString(GuidedKey.Step) ?? '';
 	if (!step) return null;
 	return {
 		step,
-		startedAt: Number(s.get<number>(GuidedKey.StepStartedAt) ?? 0),
-		source: s.get<string>(GuidedKey.StepSource) ?? '',
-		announced: !!s.get<boolean>(GuidedKey.StepAnnounced),
-		acted: !!s.get<boolean>(GuidedKey.StepActed)
+		startedAt: Number(s.get(GuidedKey.StepStartedAt) ?? 0),
+		source: s.getString(GuidedKey.StepSource) ?? '',
+		announced: !!s.get(GuidedKey.StepAnnounced),
+		acted: !!s.get(GuidedKey.StepActed)
 	};
 }
 
@@ -60,8 +60,7 @@ export function activeGuidedStep(event: RequestEvent): ActiveGuidedStep | null {
  * from their form actions.
  */
 export async function noteGuidedAction(event: RequestEvent, step: string) {
-	if (sess(event).get<string>(GuidedKey.Step) === step)
-		await sess(event).set(GuidedKey.StepActed, true);
+	if (sess(event).get(GuidedKey.Step) === step) await sess(event).set(GuidedKey.StepActed, true);
 }
 
 export async function clearGuidedStep(event: RequestEvent) {
@@ -80,7 +79,7 @@ export async function setGuidedPendingSource(event: RequestEvent, source: string
 }
 
 export async function takeGuidedPendingSource(event: RequestEvent): Promise<string> {
-	const v = sess(event).get<string>(GuidedKey.PendingSource) ?? '';
+	const v = sess(event).getString(GuidedKey.PendingSource) ?? '';
 	if (v) await sess(event).remove(GuidedKey.PendingSource);
 	return v;
 }
@@ -90,7 +89,7 @@ export async function setGuidedShowCompleted(event: RequestEvent) {
 }
 
 async function markOnce(event: RequestEvent, key: string): Promise<boolean> {
-	if (sess(event).get<boolean>(key)) return false;
+	if (sess(event).get(key)) return false;
 	await sess(event).set(key, true);
 	return true;
 }
@@ -109,7 +108,7 @@ export async function guidedCardVM(
 		fireCardShown: false,
 		fireCompleted: false
 	};
-	if (!cardVisible(progress, !!sess(event).get<boolean>(GuidedKey.ShowCompleted))) return hidden;
+	if (!cardVisible(progress, !!sess(event).get(GuidedKey.ShowCompleted))) return hidden;
 	const vm: CardVM = {
 		visible: true,
 		progress: p,

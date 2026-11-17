@@ -49,7 +49,7 @@ describe('session', () => {
 		expect(store.has(SESSION_COOKIE)).toBe(false);
 		expect(store.has(`${SESSION_COOKIE}.0`) && store.has(`${SESSION_COOKIE}.1`)).toBe(true);
 		const again = await Session.load(cookies, opts);
-		expect(again.get<string>('big')?.length).toBe(6000);
+		expect(again.getString('big')?.length).toBe(6000);
 	});
 
 	it('expires after the idle timeout', async () => {

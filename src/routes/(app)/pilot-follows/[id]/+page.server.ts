@@ -19,6 +19,7 @@ import type {
 	PilotFollowResponse,
 	PilotFollowSnapshotResponse
 } from '#lib/features/settings-admin/pilots/types.js';
+import { formValue } from '#lib/form-value.js';
 
 /** pilotFollowIDFrom: anything but a UUID is a 404. Lower-cased, as uuid.UUID.String() prints it. */
 function followIDFrom(event: RequestEvent): string {
@@ -73,7 +74,7 @@ export const actions: Actions = {
 		} catch {
 			error(400, 'Invalid form submission.');
 		}
-		const status = String(form.get('status') ?? '').trim();
+		const status = formValue(form, 'status').trim();
 		if (status !== 'active' && status !== 'paused') error(400, 'Invalid status.');
 		const page = '/pilot-follows/' + followID;
 		const res = await pilotsCall<PilotFollowResponse>(

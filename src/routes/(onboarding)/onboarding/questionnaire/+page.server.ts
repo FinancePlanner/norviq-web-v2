@@ -8,6 +8,7 @@ import {
 	recordFunnelStep,
 	saveQuestionnaireAnswers
 } from '#lib/features/auth-onboarding/onboarding/onboarding.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // GET /onboarding/questionnaire (onboarding.go Questionnaire)
 export const load: PageServerLoad = async (event) => {
@@ -24,7 +25,7 @@ export const actions: Actions = {
 		const form = await event.request.formData().catch(() => null);
 		// Go re-rendered the questionnaire on a parse error.
 		if (!form) return;
-		const goal = String(form.get('goal') ?? '').trim();
+		const goal = formValue(form, 'goal').trim();
 		const list = (key: string) => form.getAll(key).map(String).join(',');
 		const painPoints = list('pain_points');
 		const holdingsPreference = list('holdings_preference');

@@ -96,7 +96,7 @@ export async function createVigScene(opts: VigSceneOptions): Promise<VigScene> {
 			new GLTFLoader().loadAsync(opts.modelUrl),
 			fetch(modelInfoUrl, { mode: 'cors' }).then((r) => {
 				if (!r.ok) throw new Error(`vig3d: ${modelInfoUrl} ${r.status}`);
-				return r.json() as Promise<VigModel>;
+				return r.json<VigModel>();
 			})
 		]);
 

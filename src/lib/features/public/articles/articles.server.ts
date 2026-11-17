@@ -147,7 +147,7 @@ export async function uploadArticleImage(event: RequestEvent, file: File): Promi
 	body.set('file', file, file.name);
 	const res = await apiFetch(event, 'POST', '/v1/articles/images', body);
 	if (!res.ok) throw await boardsError(res);
-	const out = (await res.json()) as { id?: string };
+	const out = await res.json<{ id?: string }>();
 	return out.id ?? '';
 }
 
@@ -163,7 +163,7 @@ export async function fetchArticleImage(event: RequestEvent, id: string): Promis
 async function boardsError(res: Response): Promise<APIError> {
 	let envelope: { code?: string; reason?: string } = {};
 	try {
-		envelope = (await res.json()) as typeof envelope;
+		envelope = await res.json<typeof envelope>();
 	} catch {
 		/* not JSON */
 	}

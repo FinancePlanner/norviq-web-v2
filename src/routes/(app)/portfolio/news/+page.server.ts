@@ -4,6 +4,7 @@ import type { components } from '#lib/api/schema.js';
 import { apiJSON } from '#lib/server/api.js';
 import { isUUID } from '#lib/features/portfolio/analytics/allocation.server.js';
 import { loadNewsViewModel } from '#lib/features/portfolio/analytics/subpages.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // GET /portfolio/news (handlers.PortfolioNews) plus the saved-article and
 // Thesis Watch fragments/mutations (portfolio_news_saved.go,
@@ -42,7 +43,7 @@ async function submitNewsArticle(event: RequestEvent, articleID: string) {
 		return fail(400, { articleID, articleError: 'Invalid form submission.', values: {} });
 	}
 	const values: Record<string, string> = {};
-	for (const key of FIELDS) values[key] = String(form.get(key) ?? '').trim();
+	for (const key of FIELDS) values[key] = formValue(form, key).trim();
 	const failWith = (status: number, articleError: string) =>
 		fail(status, { articleID, articleError, values });
 
@@ -116,7 +117,7 @@ export const actions: Actions = {
 		if (!isUUID(storyID)) return fail(400, { feedbackError: 'Invalid story ID' });
 		const form = await event.request.formData().catch(() => null);
 		if (!form) return fail(400, { feedbackError: 'Invalid feedback' });
-		const signal = String(form.get('signal') ?? '').trim();
+		const signal = formValue(form, 'signal').trim();
 		if (!THESIS_WATCH_SIGNALS.has(signal))
 			return fail(400, { feedbackError: 'Invalid feedback signal' });
 		try {

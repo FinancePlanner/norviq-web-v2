@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireLeaderboards } from '#lib/features/social/gates.server.js';
 import {
@@ -20,7 +19,7 @@ export const POST: RequestHandler = async (event) => {
 	} catch (err) {
 		failure = socialErrorMessage(err, 'Could not check in. Try again.');
 	}
-	if (isFetch(event)) return json(result ? { result } : { error: failure });
+	if (isFetch(event)) return Response.json(result ? { result } : { error: failure });
 	if (!result) return respondRedirect(event, '/xp', '', failure);
 	if (result.alreadyCheckedIn)
 		return respondRedirect(event, '/xp', 'Already checked in today.', '');

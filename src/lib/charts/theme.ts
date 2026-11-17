@@ -13,7 +13,7 @@
 export interface ThemeEnv {
 	dark: boolean;
 	/** getComputedStyle(documentElement) custom property, or fallback when unset. */
-	cssVar(name: string, fallback: string): string;
+	cssVar: (name: string, fallback: string) => string;
 	reducedMotion: boolean;
 	coarsePointer: boolean;
 }
@@ -115,7 +115,7 @@ export function isAltLineColor(color: unknown): boolean {
 
 /** Parse #rgb/#rrggbb into [r,g,b]; null for anything else (a token may resolve to oklch). */
 export function parseHex(hex: unknown): [number, number, number] | null {
-	const raw = String(hex || '').trim();
+	const raw = typeof hex === 'string' ? hex.trim() : '';
 	const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(raw);
 	if (short)
 		return [short[1], short[2], short[3]].map((c) => parseInt(c + c, 16)) as [
@@ -139,8 +139,11 @@ const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : [v]);
 export function pillarColor(series: unknown, env: ThemeEnv): string {
 	const item = series && typeof series === 'object' ? (series as Obj) : { name: series };
 	if (item.colorVar)
-		return env.cssVar(String(item.colorVar), env.cssVar('--muted-foreground', '#57626e'));
-	switch (String(item.name || '').toLowerCase()) {
+		return env.cssVar(
+			typeof item.colorVar === 'string' ? item.colorVar : '',
+			env.cssVar('--muted-foreground', '#57626e')
+		);
+	switch ((typeof item.name === 'string' ? item.name : '').toLowerCase()) {
 		case 'fundamentals':
 			return env.cssVar('--color-pillar-fundamentals', '#80612a');
 		case 'future you':
@@ -396,7 +399,7 @@ export function buildTooltipOption(
 
 function formatUSD(value: unknown): string {
 	const n = Number(value);
-	if (!Number.isFinite(n)) return String(value ?? '');
+	if (!Number.isFinite(n)) return typeof value === 'string' ? value : '';
 	return new Intl.NumberFormat('en-US', {
 		style: 'currency',
 		currency: 'USD',
@@ -409,7 +412,8 @@ export function wealthTooltipFormatter(params: unknown): string {
 	const items = Array.isArray(params) ? params : [params];
 	const first = items[0] as Obj | undefined;
 	if (!first) return '';
-	const date = first.axisValueLabel ?? first.name ?? '';
+	const label = first.axisValueLabel ?? first.name;
+	const date = typeof label === 'string' ? label : '';
 	const data = first.data as Obj | number | undefined;
 	const value = (data && typeof data === 'object' ? data.value : undefined) ?? first.value ?? data;
 	return `${date}<br/><strong>${formatUSD(value)}</strong>`;

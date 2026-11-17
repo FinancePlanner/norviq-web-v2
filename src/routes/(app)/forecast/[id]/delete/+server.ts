@@ -1,4 +1,4 @@
-import { redirect, text } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { apiJSON } from '#lib/server/api.js';
 import {
@@ -11,11 +11,11 @@ import {
 export const POST: RequestHandler = async (event) => {
 	await requireNetWorthForecasting(event);
 	const id = parseUUID(event.params.id);
-	if (!id) return text('404 page not found\n', { status: 404 });
+	if (!id) return new Response('404 page not found\n', { status: 404 });
 	try {
 		await apiJSON(event, 'DELETE', `/v1/net-worth-forecasts/${id}`);
 	} catch {
-		return text('Could not delete forecast\n', { status: 422 });
+		return new Response('Could not delete forecast\n', { status: 422 });
 	}
 	redirect(303, '/forecast');
 };

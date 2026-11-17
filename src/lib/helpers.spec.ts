@@ -24,12 +24,9 @@ describe('safe redirect', () => {
 		}
 	});
 	it('throws a SvelteKit redirect', () => {
-		try {
-			safeRedirect(303, '//evil.com');
-			expect.unreachable();
-		} catch (err) {
-			expect(err).toMatchObject({ status: 303, location: '/' });
-		}
+		expect(() => safeRedirect(303, '//evil.com')).toThrow(
+			expect.objectContaining({ status: 303, location: '/' })
+		);
 	});
 });
 

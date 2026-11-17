@@ -1,6 +1,6 @@
 // Server half of the /scenarios port: norviq-web internal/handlers/scenarios.go
 // form parsing and internal/api/service.go FetchScenarioWorkspace.
-import { json, text, type RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
 import { requireFeature } from '#lib/server/guards.js';
 import { Feature } from '#lib/billing.js';
@@ -21,13 +21,14 @@ export const requireScenarioPlanning = (event: RequestEvent) =>
 
 /** h.scenarioFormError: 422 with the FormErrorBanner message (rendered by the page). */
 export const formError = (message: string) =>
-	json({ formError: message } satisfies FormErrorResponse, { status: 422 });
+	Response.json({ formError: message } satisfies FormErrorResponse, { status: 422 });
 
 /** http.Error(w, message, status). */
-export const httpError = (message: string, status: number) => text(message + '\n', { status });
+export const httpError = (message: string, status: number) =>
+	new Response(message + '\n', { status });
 
 /** h.scenarioMutationRedirect: HX-Redirect /scenarios with 204. The page navigates. */
-export const mutationRedirect = () => json({ redirect: '/scenarios' });
+export const mutationRedirect = () => Response.json({ redirect: '/scenarios' });
 
 /** r.FormValue(name): the first value, or "". */
 export function formValue(form: FormData, name: string): string {

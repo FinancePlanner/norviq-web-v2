@@ -1,4 +1,3 @@
-import { json, text } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
@@ -13,6 +12,7 @@ import {
 	formOf,
 	parseUUID
 } from '#lib/features/dashboard/assistant/assistant.server.js';
+import { formValue, scalarText } from '#lib/form-value.js';
 
 // POST /assistant/conversations/{id}/stream (handlers.AssistantStreamTurn).
 // The composer posts its form here; this turns it into the backend's JSON
@@ -33,14 +33,14 @@ export const POST: RequestHandler = async (event) => {
 	const refusal = await aiConsentRefusal(event);
 	if (refusal) return refusal;
 	const id = parseUUID(event.params.id);
-	if (!id) return text('Invalid conversation', { status: 400 });
+	if (!id) return new Response('Invalid conversation', { status: 400 });
 	// Refuse before buffering a body the backend would refuse anyway.
 	if (Number(event.request.headers.get('content-length')) > MAX_BODY_BYTES)
-		return text('That image is too large.', { status: 413 });
+		return new Response('That image is too large.', { status: 413 });
 	const form = await formOf(event);
-	const content = String(form.get('content') ?? '').trim();
+	const content = formValue(form, 'content').trim();
 	const images = form.getAll('image').filter((f): f is File => f instanceof File && f.size > 0);
-	if (!content && images.length === 0) return text('Message is required', { status: 400 });
+	if (!content && images.length === 0) return new Response('Message is required', { status: 400 });
 	let body: BodyInit;
 	let contentType: Record<string, string> = {};
 	if (images.length > 0) {
@@ -61,26 +61,26 @@ export const POST: RequestHandler = async (event) => {
 			signal: event.request.signal
 		});
 	} catch {
-		return text('Assistant is temporarily unavailable', { status: 502 });
+		return new Response('Assistant is temporarily unavailable', { status: 502 });
 	}
 	if (upstream.status === 403) {
-		const body = (await upstream.text().catch(() => '')).slice(0, 4096);
+		const refused = (await upstream.text().catch(() => '')).slice(0, 4096);
 		let reason = '';
 		let code = '';
 		try {
-			const parsed = JSON.parse(body) as { reason?: unknown; code?: unknown };
-			reason = String(parsed.reason ?? '');
-			code = String(parsed.code ?? '');
+			const parsed = JSON.parse(refused) as { reason?: unknown; code?: unknown };
+			reason = scalarText(parsed.reason);
+			code = scalarText(parsed.code);
 		} catch {
 			/* not JSON */
 		}
-		if (code === 'upgrade_required') return json({ code }, { status: 403 });
+		if (code === 'upgrade_required') return Response.json({ code }, { status: 403 });
 		if (reason === AI_CONSENT_REQUIRED) {
-			return json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), {
+			return Response.json(aiConsentRequiredJSON(aiConsentReturnPath(event, { self: false })), {
 				status: 403
 			});
 		}
-		return text('Assistant is temporarily unavailable', { status: 403 });
+		return new Response('Assistant is temporarily unavailable', { status: 403 });
 	}
 	if (upstream.status === 503) {
 		// Only the backend's own JSON reason is shown (large-image slots full).
@@ -93,7 +93,7 @@ export const POST: RequestHandler = async (event) => {
 		} catch {
 			/* not JSON */
 		}
-		return text(reason || 'Assistant unavailable', { status: 503 });
+		return new Response(reason || 'Assistant unavailable', { status: 503 });
 	}
 	const headers = new Headers();
 	for (const name of RELAYED) {

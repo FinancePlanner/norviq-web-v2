@@ -39,6 +39,7 @@ import type {
 	PositionRowVM,
 	ShareLinkVM
 } from './types.js';
+import { formValue } from '#lib/form-value.js';
 
 // Ports handlers/portfolio_data.go, quote_refresh.go (holdings half),
 // portfolio_position*.go helpers, portfolio_onepage.go and pilot_following.go.
@@ -437,7 +438,7 @@ function validDate(raw: string): boolean {
 	return t.getUTCFullYear() === y && t.getUTCMonth() === m - 1 && t.getUTCDate() === d;
 }
 
-const formStr = (f: FormData, k: string) => String(f.get(k) ?? '').trim();
+const formStr = (f: FormData, k: string) => formValue(f, k).trim();
 
 export interface StockRequest {
 	symbol: string;
@@ -463,7 +464,7 @@ export function parseAddPositionRequest(f: FormData): {
 		buyPrice: formStr(f, 'buy_price'),
 		buyDate: formStr(f, 'buy_date'),
 		notes: formStr(f, 'notes'),
-		range: normalizePortfolioTimeRange(String(f.get('range') ?? '')),
+		range: normalizePortfolioTimeRange(formValue(f, 'range')),
 		error: '',
 		currentPortfolioValue: 0
 	};
