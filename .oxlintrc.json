@@ -23,7 +23,9 @@
 	],
 	"overrides": [
 		// `export {}` is what makes an ambient declaration file a module.
-		{ "files": ["**/*.d.ts"], "rules": { "unicorn/require-module-specifiers": "off" } }
+		{ "files": ["**/*.d.ts"], "rules": { "unicorn/require-module-specifiers": "off" } },
+		// Command-line scripts report on stdout.
+		{ "files": ["scripts/**"], "rules": { "no-console": "off" } }
 	],
 	"rules": {
 		// Type-aware bug rules that oxlint files under pedantic.
@@ -66,15 +68,19 @@
 		"vitest/valid-expect": "warn", // 20
 		"typescript/no-unsafe-return": "warn", // 18
 		"typescript/no-unnecessary-type-assertion": "warn", // 16
-		"no-console": ["warn", { "allow": ["warn", "error"] }], // 16
+		// console.log is the stray debugging statement; the levelled calls are the
+		// server's logging (the Go handlers' slog.Debug/Info).
+		"no-console": ["error", { "allow": ["warn", "error", "info", "debug"] }],
 		// A default clause is how the ported Go switches name their fallback member.
 		"typescript/switch-exhaustiveness-check": [
 			"error",
 			{ "considerDefaultExhaustiveForUnions": true }
 		],
 		"typescript/no-misused-promises": "error",
-		"oxc/no-map-spread": "warn", // 10
-		"vitest/no-conditional-expect": "warn", // 8
+		// Off: every hit copies on purpose (derived option lists, config arrays), and
+		// the alternatives the rule offers mutate the source objects.
+		"oxc/no-map-spread": "off",
+		"vitest/no-conditional-expect": "error",
 		"no-shadow": "error",
 		"typescript/restrict-plus-operands": "error",
 		// The queue name is a contract with the landing page's inline script.
