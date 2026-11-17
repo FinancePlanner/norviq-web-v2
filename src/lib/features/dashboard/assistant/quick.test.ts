@@ -83,15 +83,16 @@ describe('stored conversation', () => {
 });
 
 describe('createQuickConversation', () => {
-	const answering = (response: Response) => vi.fn(async () => response) as unknown as typeof fetch;
-	const assign = vi.fn();
+	const answering = (response: Response) =>
+		vi.fn<() => Promise<Response>>(async () => response) as unknown as typeof fetch;
+	const assign = vi.fn<(url: string) => void>();
 
 	test('returns the new id', async () => {
 		const request = answering(Response.json({ id: 'c1' }));
 		await expect(createQuickConversation(request, assign)).resolves.toBe('c1');
 	});
 	test('leaves for the consent page when consent is missing', async () => {
-		const go = vi.fn();
+		const go = vi.fn<(url: string) => void>();
 		const request = answering(
 			Response.json(
 				{ reason: 'AI_CONSENT_REQUIRED', consentUrl: '/ai-consent?next=%2Fdashboard' },

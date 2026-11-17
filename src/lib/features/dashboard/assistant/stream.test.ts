@@ -60,7 +60,7 @@ describe('streamAssistantTurn errors', () => {
 		expect(await run(res)).toBe(UPGRADE_REQUIRED);
 	});
 	test('a consent refusal navigates and shows nothing', async () => {
-		const assign = vi.fn();
+		const assign = vi.fn<(url: string) => void>();
 		vi.stubGlobal(
 			'fetch',
 			vi
@@ -112,7 +112,7 @@ describe('consent and busy', () => {
 				.fn()
 				.mockResolvedValue(sse('event: error\ndata: {"message":"x","code":"image_rejected"}\n\n'))
 		);
-		const onConsentRequired = vi.fn();
+		const onConsentRequired = vi.fn<() => void>();
 		await streamAssistantTurn({
 			conversationId: 'c1',
 			body: new FormData(),
@@ -132,7 +132,7 @@ describe('consent and busy', () => {
 					new Response('Too many large images right now. Try again in a moment.', { status: 503 })
 				)
 		);
-		const onAccepted = vi.fn();
+		const onAccepted = vi.fn<() => void>();
 		const text = await streamAssistantTurn({
 			conversationId: 'c1',
 			body: new FormData(),
@@ -203,7 +203,7 @@ describe('an expired conversation', () => {
 					)
 				)
 		);
-		const onConversationGone = vi.fn();
+		const onConversationGone = vi.fn<() => void>();
 		const text = await streamAssistantTurn({
 			conversationId: 'c1',
 			body: new FormData(),

@@ -12,16 +12,17 @@ class FakeAPIError extends Error {
 	}
 }
 
-const apiJSON = vi.fn();
+const apiJSON =
+	vi.fn<(event: unknown, method: string, path: string, ...rest: unknown[]) => Promise<unknown>>();
 vi.mock('#lib/server/api.js', () => ({
-	apiJSON: (...args: unknown[]) => apiJSON(...args),
-	apiFetch: vi.fn(),
+	apiJSON: (...args: Parameters<typeof apiJSON>) => apiJSON(...args),
+	apiFetch: vi.fn<() => void>(),
 	isAPIError: (e: unknown) => e instanceof FakeAPIError
 }));
 vi.mock('#lib/features/dashboard/ai-consent.server.js', () => ({
-	aiConsentRequiredJSON: vi.fn(),
-	aiConsentReturnPath: vi.fn(),
-	hasAIConsent: vi.fn()
+	aiConsentRequiredJSON: vi.fn<() => void>(),
+	aiConsentReturnPath: vi.fn<() => void>(),
+	hasAIConsent: vi.fn<() => void>()
 }));
 
 const {

@@ -1,8 +1,8 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 
-const apiJSON = vi.fn();
-const refusal = vi.fn();
-const requireFeature = vi.fn();
+const apiJSON = vi.fn<(...args: unknown[]) => Promise<unknown>>();
+const refusal = vi.fn<() => Promise<Response | null>>();
+const requireFeature = vi.fn<(...args: unknown[]) => Promise<unknown>>();
 vi.mock('#lib/server/api.js', () => ({ apiJSON: (...a: unknown[]) => apiJSON(...a) }));
 vi.mock('#lib/server/guards.js', () => ({
 	requireFeature: (...a: unknown[]) => requireFeature(...a)

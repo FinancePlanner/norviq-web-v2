@@ -11,7 +11,10 @@ const revokeObjectURL = vi.fn<(url: string) => void>();
 beforeEach(() => {
 	let n = 0;
 	revokeObjectURL.mockClear();
-	vi.stubGlobal('URL', { createObjectURL: vi.fn(() => `blob:${n++}`), revokeObjectURL });
+	vi.stubGlobal('URL', {
+		createObjectURL: vi.fn<() => string>(() => `blob:${n++}`),
+		revokeObjectURL
+	});
 });
 afterEach(() => vi.unstubAllGlobals());
 

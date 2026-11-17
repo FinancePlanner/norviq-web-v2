@@ -59,13 +59,18 @@
 		"unicorn/no-array-sort": "warn", // 41
 		"unicorn/consistent-function-scoping": "warn", // 32
 		"typescript/no-unsafe-assignment": "warn", // 30
-		"vitest/expect-expect": "warn", // 27
+		// The golden-file specs assert through these helpers.
+		"vitest/expect-expect": [
+			"error",
+			{ "assertFunctionNames": ["expect", "matchesGolden", "near", "nearAll"] }
+		],
 		"typescript/no-unsafe-argument": "warn", // 26
 		"no-await-in-loop": "warn", // 26
-		"vitest/require-mock-type-parameters": "warn", // 25
+		"vitest/require-mock-type-parameters": "error",
 		"typescript/require-await": "warn", // 24
 		"typescript/no-unsafe-call": "warn", // 21
-		"vitest/valid-expect": "warn", // 20
+		// expect(value, message) is Vitest's own two-argument form.
+		"vitest/valid-expect": ["error", { "maxArgs": 2 }],
 		"typescript/no-unsafe-return": "warn", // 18
 		"typescript/no-unnecessary-type-assertion": "warn", // 16
 		// console.log is the stray debugging statement; the levelled calls are the
