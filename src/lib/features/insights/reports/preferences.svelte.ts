@@ -37,7 +37,7 @@ export function loadReportsPreferences(catalog = cardCatalog()): ReportsPreferen
 	try {
 		const order = sanitizeOrder(JSON.parse(localStorage.getItem(ORDER_KEY) || 'null'), catalog);
 		const hidden = sanitizeHidden(JSON.parse(localStorage.getItem(HIDDEN_KEY) || 'null'), catalog);
-		return { order: order || fallbackOrder, hidden };
+		return { order: order ?? fallbackOrder, hidden };
 	} catch {
 		return { order: fallbackOrder, hidden: [] };
 	}

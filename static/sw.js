@@ -102,6 +102,6 @@ function networkFirst(request) {
       return response
     })
     .catch(() =>
-      caches.match(request).then((cached) => cached || caches.match('/'))
+      caches.match(request).then((cached) => cached ?? caches.match('/'))
     )
 }

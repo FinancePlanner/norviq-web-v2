@@ -79,7 +79,7 @@ function sign(pct: number): string {
 export function treemapTooltip(periodLabel: string) {
 	const label = ' ' + periodLabel + ' · $';
 	return (info: { data?: TileData; name?: string }): string => {
-		const d = info.data || ({} as TileData);
+		const d = info.data ?? ({} as TileData);
 		if (!d.symbol) return info.name ?? '';
 		const cap = capFormatter(d.value as number);
 		const pct = sign(d.changePct) + d.changePct.toFixed(2) + '%';
@@ -88,7 +88,7 @@ export function treemapTooltip(periodLabel: string) {
 }
 
 export function treemapLabel(info: { data?: TileData; name?: string }): string {
-	const d = info.data || ({} as TileData);
+	const d = info.data ?? ({} as TileData);
 	if (!d.symbol) return info.name ?? '';
 	return d.symbol + '\n' + sign(d.changePct) + d.changePct.toFixed(1) + '%';
 }

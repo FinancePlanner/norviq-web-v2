@@ -88,6 +88,6 @@ export function captureShare(event: string, properties: Record<string, unknown>)
 		w.norviqAnalytics.capture(event, properties);
 		return;
 	}
-	w.__norviqAnalyticsQueue = w.__norviqAnalyticsQueue || [];
+	w.__norviqAnalyticsQueue ??= [];
 	w.__norviqAnalyticsQueue.push([event, properties]);
 }

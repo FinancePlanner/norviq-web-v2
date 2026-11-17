@@ -10,15 +10,13 @@ let loaded: ECharts | null = null;
 
 export function loadECharts(): Promise<ECharts> {
 	if (loaded) return Promise.resolve(loaded);
-	if (!loadPromise) {
-		loadPromise = import('./echarts-slim.js').then(
-			(m) => (loaded = m.echarts),
-			(err) => {
-				loadPromise = null;
-				throw err;
-			}
-		);
-	}
+	loadPromise ??= import('./echarts-slim.js').then(
+		(m) => (loaded = m.echarts),
+		(err) => {
+			loadPromise = null;
+			throw err;
+		}
+	);
 	return loadPromise;
 }
 

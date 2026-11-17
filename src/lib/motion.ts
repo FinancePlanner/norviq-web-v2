@@ -52,7 +52,7 @@ export function animateValue(
 	const fmt = el.dataset.format || '';
 	// Match the decimal precision of the target so cents never vanish mid-count.
 	// eslint-disable-next-line no-sparse-arrays -- [match, group] shape for the fallback
-	const decimals = (toText.match(/\.(\d+)/) || [, ''])[1].length;
+	const decimals = (toText.match(/\.(\d+)/) ?? [, ''])[1].length;
 
 	const ease =
 		easing === 'spring'

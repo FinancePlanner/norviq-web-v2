@@ -59,7 +59,7 @@ export function multiSeriesValueFormatter(
 
 function valueAt(values: MultiSeriesData['values'], index: number): number | '-' {
 	const v = index < values.length ? values[index] : null;
-	return v === null || v === undefined ? '-' : v;
+	return v ?? '-';
 }
 
 function aligned(values: MultiSeriesData['values'], count: number) {

@@ -53,8 +53,16 @@
 		"typescript/no-deprecated": "warn", // 178
 		"typescript/no-base-to-string": "error",
 		"typescript/no-unsafe-member-access": "warn", // 90
-		"typescript/consistent-return": "warn", // 77
-		"typescript/prefer-nullish-coalescing": "warn", // 65
+		// Off: TypeScript already checks return paths. The hits are handlers that end in
+		// redirect() or error() (both return never), exhaustive switches, and attachments
+		// that return a cleanup only on some paths, which is their contract.
+		"typescript/consistent-return": "off",
+		// `||` on a string, number or boolean is a deliberate "empty counts as missing"
+		// here (form fields, API strings), so only object-typed operands are checked.
+		"typescript/prefer-nullish-coalescing": [
+			"error",
+			{ "ignorePrimitives": { "string": true, "number": true, "boolean": true, "bigint": true } }
+		],
 		"typescript/no-unnecessary-type-conversion": "warn", // 50
 		// Off: every hit already sorts a fresh array (a spread copy or the result of a
 		// chain), and toSorted() is newer than the browsers the client bundle supports.
