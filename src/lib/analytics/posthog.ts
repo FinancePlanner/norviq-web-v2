@@ -1,6 +1,6 @@
 // Port of norviq-web internal/server/assets/posthog.js. Loaded lazily by
 // index.ts, only when PostHog is configured.
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import type { PostHogCaptureOnce, RuntimePostHogConfig } from './types.js';
 
 let enabled = false;

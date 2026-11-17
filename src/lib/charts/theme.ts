@@ -409,7 +409,8 @@ export function wealthTooltipFormatter(params: unknown): string {
 	const items = Array.isArray(params) ? params : [params];
 	const first = items[0] as Obj | undefined;
 	if (!first) return '';
-	const date = first.axisValueLabel ?? first.name ?? '';
+	const label = first.axisValueLabel ?? first.name ?? '';
+	const date = typeof label === 'string' ? label : String(label);
 	const data = first.data as Obj | number | undefined;
 	const value = (data && typeof data === 'object' ? data.value : undefined) ?? first.value ?? data;
 	return `${date}<br/><strong>${formatUSD(value)}</strong>`;

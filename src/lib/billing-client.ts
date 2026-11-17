@@ -193,7 +193,10 @@ function packageMatchesProduct(pkg: LoosePackage, productId: string): boolean {
 const POLL_INTERVAL_MS = 5000;
 const POLL_ATTEMPTS = 24;
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) =>
+	new Promise((resolve) => {
+		setTimeout(resolve, ms);
+	});
 
 async function pollUntilEntitled(): Promise<boolean> {
 	for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt += 1) {

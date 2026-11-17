@@ -83,14 +83,15 @@
 		"vitest/valid-title": "warn", // 3
 		"typescript/no-unnecessary-type-parameters": "warn", // 3
 		"no-fallthrough": "warn", // 3
-		"unicorn/no-array-reverse": "warn", // 2
-		"import/no-unassigned-import": "warn", // 2
-		"no-promise-executor-return": "warn", // 2
-		"no-new": "warn", // 2
-		"typescript/restrict-template-expressions": "warn", // 1
-		"promise/no-promise-in-callback": "warn", // 1
-		"import/no-named-as-default": "warn", // 1
-		"import/namespace": "warn", // 1
-		"no-useless-concat": "warn" // 1
+		"unicorn/no-array-reverse": "error",
+		// Stylesheets are imported for their side effect.
+		"import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }],
+		"no-promise-executor-return": "error",
+		"no-new": "error",
+		"typescript/restrict-template-expressions": "error",
+		"promise/no-promise-in-callback": "error",
+		"import/no-named-as-default": "error",
+		"import/namespace": "error",
+		"no-useless-concat": "error"
 	}
 }

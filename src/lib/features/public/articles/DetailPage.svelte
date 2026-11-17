@@ -16,6 +16,8 @@
 
 	let { vm }: { vm: DetailVM } = $props();
 
+	// A literal closing script tag here would end this component's own script block.
+	// oxlint-disable-next-line no-useless-concat -- split on purpose, see above
 	const jsonLDTag = $derived('<script type="application/ld+json">' + vm.jsonLD + '</' + 'script>');
 
 	// share.js recordView: the view beacon. Anonymous pages are CDN-cached, so

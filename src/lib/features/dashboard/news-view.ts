@@ -41,6 +41,7 @@ export function externalNewsRedirectURL(raw: string): string | null {
 	const rebuilt = `${scheme}://${host}${escapePath(path)}${query}`;
 	// Host validation (url.Parse rejects spaces and the like in the host too).
 	try {
+		// oxlint-disable-next-line no-new -- constructed only for the throw on an invalid URL
 		new URL(rebuilt);
 	} catch {
 		return null;

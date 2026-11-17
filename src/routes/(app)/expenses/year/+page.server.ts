@@ -86,8 +86,8 @@ export const load: PageServerLoad = async (event) => {
 		values.push(spent);
 	}
 
-	const thisYear = [...yearRows].reverse().find((r) => r.year === year);
-	const lastYear = [...yearRows].reverse().find((r) => r.year === year - 1);
+	const thisYear = yearRows.findLast((r) => r.year === year);
+	const lastYear = yearRows.findLast((r) => r.year === year - 1);
 
 	return {
 		year,

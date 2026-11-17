@@ -45,7 +45,7 @@ export function capture(event: string, properties?: Record<string, unknown>): vo
 let sentryWanted = false;
 
 /** Forwards an unexpected client error to Sentry when a DSN is configured (hooks.client.ts). */
-export function reportClientError(error: unknown): void {
+export function reportClientError(thrown: unknown): void {
 	if (!sentryWanted) return;
-	import('./sentry.js').then((m) => m.captureClientError(error), console.error);
+	import('./sentry.js').then((m) => m.captureClientError(thrown), console.error);
 }

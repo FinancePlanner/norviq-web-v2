@@ -17,6 +17,7 @@ export function initSentry(config: RuntimeSentryConfig | undefined): void {
 		// sendDefaultPii: false (Sentry 9); Sentry 11 replaced it with
 		// dataCollection, whose defaults collect, so each part is switched off.
 		dataCollection: { userInfo: false, cookies: false, httpBodies: [] },
+		// oxlint-disable-next-line import/namespace -- the rule resolves the package's server entry; the browser entry exports it
 		integrations: [Sentry.browserTracingIntegration()],
 		initialScope: { tags: { platform: 'javascript' } }
 	});
