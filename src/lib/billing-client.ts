@@ -85,8 +85,17 @@ async function hydratePlanPrices(root: HTMLElement, ensureConfigured: Ensure) {
 
 // RevenueCat's package shape has moved between SDK versions; read every field
 // the Go-era bundle read.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type LoosePackage = any;
+interface LooseProduct {
+	identifier?: unknown;
+	currentPrice?: { formattedPrice?: unknown };
+	priceString?: unknown;
+}
+interface LoosePackage {
+	identifier?: unknown;
+	webBillingProduct?: LooseProduct;
+	rcBillingProduct?: LooseProduct;
+	storeProduct?: LooseProduct;
+}
 
 function formattedPrice(pkg: LoosePackage): string {
 	const candidates = [
@@ -95,7 +104,7 @@ function formattedPrice(pkg: LoosePackage): string {
 		pkg.storeProduct?.currentPrice?.formattedPrice,
 		pkg.storeProduct?.priceString
 	];
-	return candidates.find((v) => typeof v === 'string' && v.length > 0) || '';
+	return candidates.find((v): v is string => typeof v === 'string' && v.length > 0) || '';
 }
 
 async function onPurchase(
