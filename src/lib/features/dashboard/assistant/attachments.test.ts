@@ -3,7 +3,7 @@ import { ImageAttachments } from './attachments.svelte.js';
 import { ImageUnreadable } from './images.js';
 
 const image = (name: string) => new File([new Uint8Array([1])], name, { type: 'image/png' });
-const make = (prepare = async (file: File) => file) =>
+const make = (prepare = (file: File) => Promise.resolve(file)) =>
 	new ImageAttachments({ prepare, tooMany: 'Attach up to 3 images.' });
 
 const revokeObjectURL = vi.fn<(url: string) => void>();
@@ -34,9 +34,7 @@ test('stops at three and says so', async () => {
 });
 
 test('an unreadable image shows its reason and takes no slot', async () => {
-	const a = make(async () => {
-		throw new ImageUnreadable('That image is too large.');
-	});
+	const a = make(() => Promise.reject(new ImageUnreadable('That image is too large.')));
 	await a.add([image('big.png')]);
 	expect(a.items).toHaveLength(0);
 	expect(a.preparing).toBe(0);

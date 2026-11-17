@@ -126,7 +126,7 @@ export const actions: Actions = {
 				}
 				throw new Error(`scan receipt batch: backend returned ${res.status}`);
 			}
-			resp = (await res.json()) as ReceiptBatchScanResponse;
+			resp = await res.json<ReceiptBatchScanResponse>();
 		} catch (err) {
 			console.error('scan receipt batch', err);
 			vm.error = 'Could not read those receipts. Try again, or enter the expense manually.';

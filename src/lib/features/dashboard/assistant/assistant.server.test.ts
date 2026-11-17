@@ -201,10 +201,10 @@ describe('attachPortfolioLists', () => {
 
 describe('loadAssistantPage', () => {
 	test('a preferences failure leaves images off and chat working', async () => {
-		apiJSON.mockImplementation(async (_e: unknown, _m: string, path: string) => {
-			if (path === '/v1/ai/assistant/conversations') return [];
-			if (path === '/v1/ai/assistant/preferences') throw new FakeAPIError(500, '');
-			return null;
+		apiJSON.mockImplementation((_e: unknown, _m: string, path: string) => {
+			if (path === '/v1/ai/assistant/conversations') return Promise.resolve([]);
+			if (path === '/v1/ai/assistant/preferences') return Promise.reject(new FakeAPIError(500, ''));
+			return Promise.resolve(null);
 		});
 		const vm = await loadAssistantPage(event);
 		expect(vm.imagesEnabled).toBe(false);

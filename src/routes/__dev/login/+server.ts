@@ -21,7 +21,7 @@ export const GET: RequestHandler = async (event) => {
 		auth?: Parameters<typeof event.locals.session.saveAuth>[0];
 	}>(event, 'POST', '/v1/auth/login', { email, password }, { auth: 'none' });
 	const auth = res.auth ?? (res as unknown as Parameters<typeof event.locals.session.saveAuth>[0]);
-	await event.locals.session.destroy();
+	event.locals.session.destroy();
 	await event.locals.session.saveAuth(auth);
 	redirect(303, event.url.searchParams.get('next') || '/dashboard');
 };

@@ -89,7 +89,7 @@ const jsonHeaders = { Accept: 'application/json', 'Content-Type': 'application/j
 
 async function readJSON(res: Response): Promise<Record<string, Loose>> {
 	try {
-		return (await res.json()) as Record<string, Loose>;
+		return await res.json<Record<string, Loose>>();
 	} catch {
 		return {};
 	}

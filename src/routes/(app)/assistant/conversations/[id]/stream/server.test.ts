@@ -12,8 +12,8 @@ vi.mock('#lib/features/dashboard/ai-consent.server.js', () => ({
 	aiConsentRequiredJSON: vi.fn<() => void>(),
 	aiConsentReturnPath: vi.fn<() => void>()
 }));
-vi.mock('#lib/features/dashboard/assistant/assistant.server.js', async () => ({
-	aiConsentRefusal: async () => null,
+vi.mock('#lib/features/dashboard/assistant/assistant.server.js', () => ({
+	aiConsentRefusal: () => Promise.resolve(null),
 	parseUUID: (s: string) => s,
 	formOf: async (e: RequestEvent) => e.request.formData()
 }));

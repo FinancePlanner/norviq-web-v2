@@ -67,12 +67,12 @@
 		"typescript/no-unsafe-argument": "warn", // 26
 		"no-await-in-loop": "warn", // 26
 		"vitest/require-mock-type-parameters": "error",
-		"typescript/require-await": "warn", // 24
+		"typescript/require-await": "error",
 		"typescript/no-unsafe-call": "warn", // 21
 		// expect(value, message) is Vitest's own two-argument form.
 		"vitest/valid-expect": ["error", { "maxArgs": 2 }],
 		"typescript/no-unsafe-return": "warn", // 18
-		"typescript/no-unnecessary-type-assertion": "warn", // 16
+		"typescript/no-unnecessary-type-assertion": "error",
 		// console.log is the stray debugging statement; the levelled calls are the
 		// server's logging (the Go handlers' slog.Debug/Info).
 		"no-console": ["error", { "allow": ["warn", "error", "info", "debug"] }],

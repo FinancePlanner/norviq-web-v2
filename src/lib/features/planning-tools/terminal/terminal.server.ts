@@ -153,8 +153,8 @@ export function sampleDismissed(event: RequestEvent): boolean {
 }
 
 /** terminalSessionExpired: the backend rejected the token — clear it and send to login. */
-export async function terminalSessionExpired(event: RequestEvent): Promise<never> {
-	await event.locals.session.destroy();
+export function terminalSessionExpired(event: RequestEvent): never {
+	event.locals.session.destroy();
 	redirect(303, '/login?next=' + encodeURIComponent(event.url.pathname + event.url.search));
 }
 

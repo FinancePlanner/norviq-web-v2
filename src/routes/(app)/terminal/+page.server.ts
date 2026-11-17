@@ -22,7 +22,7 @@ export const load: PageServerLoad = async (event) => {
 	const [normalized, ok] = normalizeTerminalTicker(event.url.searchParams.get('ticker'));
 	const create = newCreateForm(ok ? normalized : '', crypto.randomUUID());
 	const { vm, status } = await loadWorkspace(event, isPro, create);
-	if (status === 401) await terminalSessionExpired(event);
+	if (status === 401) terminalSessionExpired(event);
 	const page: TerminalPageVM = {
 		...vm,
 		copy: {

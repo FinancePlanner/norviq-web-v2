@@ -158,8 +158,9 @@ describe('streamAssistantTurn and the composer', () => {
 			body: new FormData(),
 			muse,
 			onAccepted: () => calls.push('accepted'),
-			onTurn: async () => {
+			onTurn: () => {
 				calls.push('turn');
+				return Promise.resolve();
 			}
 		}).then((text) => ({ text, calls }));
 	}

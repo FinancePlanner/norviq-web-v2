@@ -202,7 +202,7 @@ export const actions: Actions = {
 			return feedback('Could not delete your account.');
 		}
 		// session.ClearAuth
-		await event.locals.session.destroy();
+		event.locals.session.destroy();
 		redirect(303, '/login');
 	}
 };

@@ -84,7 +84,7 @@ export class ReceiptScan {
 				body: JSON.stringify({ payload })
 			});
 			if (!resp.ok) throw new Error(`status ${resp.status}`);
-			const data = (await resp.json()) as ReceiptDraftResponse;
+			const data = await resp.json<ReceiptDraftResponse>();
 			if (!data.recognized || !data.draft) {
 				this.error = 'That QR code isn’t a recognized receipt. Try another or enter manually.';
 				this.scanning = true;
@@ -122,7 +122,7 @@ export class ReceiptScan {
 				}
 			}
 			if (!resp.ok) throw new Error(`status ${resp.status}`);
-			const data = (await resp.json()) as ReceiptDraftResponse;
+			const data = await resp.json<ReceiptDraftResponse>();
 			if (!data.recognized || !data.draft) {
 				this.error = 'Couldn’t read that receipt photo. Try another or enter manually.';
 				return;

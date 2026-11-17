@@ -1,8 +1,8 @@
 import { expect, test, vi } from 'vitest';
 
-const confirmTrades = vi.fn<(...args: unknown[]) => Promise<{ kind: string }>>(async () => ({
-	kind: 'result'
-}));
+const confirmTrades = vi.fn<(...args: unknown[]) => Promise<{ kind: string }>>(() =>
+	Promise.resolve({ kind: 'result' })
+);
 vi.mock('#lib/server/guards.js', () => ({ requireFeature: vi.fn<() => void>() }));
 vi.mock('#lib/billing.js', () => ({ Feature: { AIInsights: 'ai' } }));
 vi.mock('#lib/features/dashboard/assistant/assistant.server.js', () => ({

@@ -102,7 +102,7 @@ export const actions: Actions = {
 
 		let analysis: SpreadsheetImportAnalysisResponse;
 		try {
-			analysis = (await res.json()) as SpreadsheetImportAnalysisResponse;
+			analysis = await res.json<SpreadsheetImportAnalysisResponse>();
 		} catch {
 			return errorPanel(UNAVAILABLE);
 		}

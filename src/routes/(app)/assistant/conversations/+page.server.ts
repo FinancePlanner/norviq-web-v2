@@ -11,7 +11,7 @@ import { aiConsentReturnPath, hasAIConsent } from '#lib/features/dashboard/ai-co
 // and the consent page render inside the shell, as in Go.
 
 // Go registered only POST; chi answered a GET with 405.
-export const load: PageServerLoad = async (event) => {
+export const load: PageServerLoad = (event) => {
 	if (event.request.method === 'GET') error(405, 'Method Not Allowed');
 	return {};
 };

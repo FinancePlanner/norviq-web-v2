@@ -25,7 +25,7 @@ async function refreshIfNeeded(event: Parameters<Handle>[0]['event']) {
 	const now = Math.floor(Date.now() / 1000);
 	if (!auth.tokenExpiresAt || now < auth.tokenExpiresAt - 60) return;
 	if (!auth.refreshToken) {
-		await event.locals.session.destroy();
+		event.locals.session.destroy();
 		return;
 	}
 	try {
@@ -41,7 +41,7 @@ async function refreshIfNeeded(event: Parameters<Handle>[0]['event']) {
 		await event.locals.session.saveAuth(resp);
 	} catch (err) {
 		console.error('refresh session token', err);
-		await event.locals.session.destroy();
+		event.locals.session.destroy();
 	}
 }
 

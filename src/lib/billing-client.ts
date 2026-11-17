@@ -204,7 +204,7 @@ async function pollUntilEntitled(): Promise<boolean> {
 		try {
 			const res = await fetch('/api/v1/billing/me', { credentials: 'same-origin' });
 			if (!res.ok) continue;
-			if (isPro((await res.json()) as BillingContext)) {
+			if (isPro(await res.json<BillingContext>())) {
 				await invalidateAll();
 				return true;
 			}

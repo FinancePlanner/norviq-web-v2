@@ -188,7 +188,7 @@ export async function loadFilingPage(
 	}
 	if (res.status === 200) {
 		try {
-			vm.preview = (await res.json()) as FilingPackPreviewResponse;
+			vm.preview = await res.json<FilingPackPreviewResponse>();
 			vm.isPro = true;
 			if (vm.jurisdiction === '') vm.jurisdiction = vm.preview.jurisdiction;
 		} catch {

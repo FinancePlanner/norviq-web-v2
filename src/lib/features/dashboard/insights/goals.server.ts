@@ -62,7 +62,7 @@ async function lookupManualGoal(
 			await res.body?.cancel().catch(() => {});
 			return null;
 		}
-		const goals = ((await res.json()) as Goal[] | null) ?? [];
+		const goals = (await res.json<Goal[] | null>()) ?? [];
 		const goal = goals.find((g) => g.id.toLowerCase() === id);
 		if (!goal || goal.statusUpdatedBy === 'system') return null;
 		return { id, goal };

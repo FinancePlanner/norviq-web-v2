@@ -57,7 +57,7 @@ export class BankLink {
 			const Plaid = await loadPlaidSDK();
 			const sessionResp = await fetch('/settings/banks/link-session', { method: 'POST' });
 			if (!sessionResp.ok) throw new Error(`link session ${sessionResp.status}`);
-			const { linkToken } = (await sessionResp.json()) as { linkToken?: string | null };
+			const { linkToken } = await sessionResp.json<{ linkToken?: string | null }>();
 			if (!linkToken) throw new Error('no link token');
 
 			const handler = Plaid.create({

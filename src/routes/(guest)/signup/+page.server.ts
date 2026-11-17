@@ -10,7 +10,7 @@ import {
 } from '#lib/features/auth-onboarding/auth.server.js';
 
 // auth.go SignupPage
-export const load: PageServerLoad = async ({ url }) => ({
+export const load: PageServerLoad = ({ url }) => ({
 	next: safeNextPath(url.searchParams.get('next'))
 });
 

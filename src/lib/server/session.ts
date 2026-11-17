@@ -222,7 +222,7 @@ export class Session {
 	}
 
 	// Equivalent of sm.Destroy: drops auth and every flag.
-	async destroy(): Promise<void> {
+	destroy(): void {
 		this.data = { flags: {}, lastSeen: 0 };
 		this.#clearCookies();
 	}

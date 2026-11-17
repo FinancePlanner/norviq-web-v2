@@ -13,7 +13,7 @@ const feedbackTopics = [
 	'Other'
 ];
 
-export const load: PageServerLoad = async () => ({ topics: feedbackTopics });
+export const load: PageServerLoad = () => ({ topics: feedbackTopics });
 
 export const actions: Actions = {
 	// Go SettingsFeedbackSubmit: POST /settings/feedback, same URL.

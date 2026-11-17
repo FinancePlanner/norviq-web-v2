@@ -84,7 +84,7 @@ describe('stored conversation', () => {
 
 describe('createQuickConversation', () => {
 	const answering = (response: Response) =>
-		vi.fn<() => Promise<Response>>(async () => response) as unknown as typeof fetch;
+		vi.fn<() => Promise<Response>>(() => Promise.resolve(response)) as unknown as typeof fetch;
 	const assign = vi.fn<(url: string) => void>();
 
 	test('returns the new id', async () => {

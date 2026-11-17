@@ -13,7 +13,7 @@ import {
 } from '#lib/features/auth-onboarding/auth.server.js';
 
 // auth.go LoginPage
-export const load: PageServerLoad = async ({ url, locals }) => {
+export const load: PageServerLoad = ({ url, locals }) => {
 	let info = '';
 	let error = '';
 	if (url.searchParams.get('registered') === '1') info = 'Account created. Please sign in.';

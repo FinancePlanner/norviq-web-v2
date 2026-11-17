@@ -214,7 +214,7 @@ async function fetchBrief(event: RequestEvent, key: Key): Promise<Entry> {
 		});
 		if (res.status === 200)
 			return {
-				vm: mapMarketBrief((await res.json()) as BriefResponse, key.lang),
+				vm: mapMarketBrief(await res.json<BriefResponse>(), key.lang),
 				expires: Date.now() + CACHE_TTL
 			};
 		await res.body?.cancel().catch(() => {});
