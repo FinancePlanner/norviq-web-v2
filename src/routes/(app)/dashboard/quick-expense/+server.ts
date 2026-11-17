@@ -1,6 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { fetchJSON } from '#lib/features/dashboard/fetch.server.js';
 import { isoDate } from '#lib/features/dashboard/shared.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /dashboard/quick-expense — AppHandler.DashboardQuickExpense. 204 on
 // success (the modal closes); errors answer 200 with { error }, the message
@@ -23,7 +24,7 @@ export const POST: RequestHandler = async (event) => {
 	} catch {
 		return fail('Invalid form submission.');
 	}
-	const field = (k: string) => String(form.get(k) ?? '').trim();
+	const field = (k: string) => formValue(form, k).trim();
 	const title = field('title');
 	const pillar = field('pillar') || 'fundamentals';
 	const occurredRaw = field('occurred_on');

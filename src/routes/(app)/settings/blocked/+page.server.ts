@@ -8,6 +8,7 @@ import {
 	uuidParam
 } from '#lib/features/settings-admin/social/social.server.js';
 import type { SocialUserSummary } from '#lib/features/settings-admin/social/privacy.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web handlers.BlockedUsers / BlockedUserUnblock
 // (internal/handlers/social_settings.go), behind RequireSocial. Go's
@@ -40,7 +41,7 @@ export const actions: Actions = {
 	unblock: async (event) => {
 		await requireSocial(event);
 		const form = await event.request.formData();
-		const userID = uuidParam(String(form.get('userId') ?? ''));
+		const userID = uuidParam(formValue(form, 'userId'));
 		if (!userID) error(400, 'Invalid user');
 		try {
 			await socialDo(event, 'DELETE', '/v1/social/blocks/' + userID);

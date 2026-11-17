@@ -2,6 +2,7 @@ import type { Actions, PageServerLoad } from './$types';
 import type { components } from '#lib/api/schema.js';
 import { apiJSON } from '#lib/server/api.js';
 import { errorMessage } from '#lib/features/settings-admin/api-errors.js';
+import { formValue } from '#lib/form-value.js';
 
 type FeedbackResponse = components['schemas']['FeedbackResponse'];
 
@@ -24,8 +25,8 @@ export const actions: Actions = {
 		} catch {
 			return { success: false, message: 'Invalid form submission.' };
 		}
-		const topic = String(form.get('topic') ?? '').trim();
-		const message = String(form.get('message') ?? '').trim();
+		const topic = formValue(form, 'topic').trim();
+		const message = formValue(form, 'message').trim();
 		if (topic === '' || message === '')
 			return { success: false, message: 'Topic and message are required.' };
 		try {

@@ -14,6 +14,7 @@ import {
 	type TelegramCode
 } from '#lib/features/settings-admin/integrations/load.server.js';
 import { telegramAlertLabel } from '#lib/features/settings-admin/integrations/types.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web Settings case "integrations" (settings.go) plus the
 // Telegram (settings_telegram.go) and IBKR (settings_ibkr.go) handlers. The Go
@@ -86,7 +87,7 @@ export const actions: Actions = {
 		} catch {
 			redirect(303, telegramStatusURL('error', 'Invalid form submission.'));
 		}
-		const kind = String(form.get('kind') ?? '').trim();
+		const kind = formValue(form, 'kind').trim();
 		if (kind === '') redirect(303, telegramStatusURL('error', 'Invalid form submission.'));
 		const enabled = form.get('enabled') === 'true';
 		try {
@@ -112,8 +113,8 @@ export const actions: Actions = {
 		} catch {
 			redirect(303, integrationsErrorURL('Invalid form submission.'));
 		}
-		const token = String(form.get('token') ?? '').trim();
-		const queryId = String(form.get('queryId') ?? '').trim();
+		const token = formValue(form, 'token').trim();
+		const queryId = formValue(form, 'queryId').trim();
 		if (token === '' || queryId === '')
 			redirect(303, integrationsErrorURL('Token and query ID are required.'));
 		try {

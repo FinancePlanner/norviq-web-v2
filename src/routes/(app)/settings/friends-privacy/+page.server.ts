@@ -13,6 +13,7 @@ import {
 	SearchVisibility,
 	type SocialPrivacySettings
 } from '#lib/features/settings-admin/social/privacy.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web handlers.FriendsPrivacy / FriendsPrivacySubmit
 // (internal/handlers/social_settings.go), behind RequireSocial.
@@ -59,7 +60,7 @@ export const actions: Actions = {
 			);
 		}
 		current.searchVisibility = formChoice(
-			String(form.get('searchVisibility') ?? ''),
+			formValue(form, 'searchVisibility'),
 			current.searchVisibility,
 			SearchVisibility.Everyone,
 			SearchVisibility.FriendsOfFriends,

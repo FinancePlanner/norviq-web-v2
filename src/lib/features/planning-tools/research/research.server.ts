@@ -9,6 +9,7 @@ import type {
 	PositionMemoCard,
 	ResearchPageVM
 } from './types.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web internal/handlers/{research,research_data,position_memos}.go
 // and internal/api/position_memos.go.
@@ -163,7 +164,7 @@ export async function submitResearch(event: RequestEvent) {
 	} catch {
 		return fail(400, { error: 'Invalid form submission.' });
 	}
-	const get = (k: string) => String(form.get(k) ?? '').trim();
+	const get = (k: string) => formValue(form, k).trim();
 	const symbol = get('symbol').toUpperCase();
 	const thesis = get('thesis');
 	if (symbol === '' || thesis === '')
@@ -189,7 +190,7 @@ export async function deleteResearch(event: RequestEvent): Promise<Response> {
 	let id = ((event.params as { id?: string }).id ?? '').trim();
 	if (id === '') {
 		try {
-			id = String((await event.request.formData()).get('id') ?? '').trim();
+			id = formValue(await event.request.formData(), 'id').trim();
 		} catch {
 			/* no form */
 		}

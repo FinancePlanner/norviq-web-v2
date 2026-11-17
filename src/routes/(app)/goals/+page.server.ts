@@ -21,6 +21,7 @@ import type {
 	PlanningGoalWhatIfResponse,
 	PortfolioListSummary
 } from '#lib/features/dashboard/goals/types.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web internal/handlers/goal_planning.go.
 //
@@ -128,7 +129,7 @@ export const actions: Actions = {
 	// a failure leaves #what-if-result as it was.
 	whatIf: async (event) => {
 		const form = await event.request.formData();
-		const id = parseUUID(String(form.get('goalId') ?? ''));
+		const id = parseUUID(formValue(form, 'goalId'));
 		if (!id) return fail(400, { whatIfError: 'Invalid financial goal' });
 		const contribution = parseBoundedFloat(form.get('monthlyContribution'), 0, 1_000_000_000);
 		if (contribution === null)
@@ -157,8 +158,8 @@ export const actions: Actions = {
 	// POST /goals/{id}/suggestions/{suggestionID}/accept → FinancialGoalSuggestionAccept
 	accept: async (event) => {
 		const form = await event.request.formData();
-		const goalID = parseUUID(String(form.get('goalId') ?? ''));
-		const suggestionID = parseUUID(String(form.get('suggestionId') ?? ''));
+		const goalID = parseUUID(formValue(form, 'goalId'));
+		const suggestionID = parseUUID(formValue(form, 'suggestionId'));
 		if (!goalID || !suggestionID) error(400, 'Invalid adjustment');
 		const path = `/v1/financial-goals/${encodeURIComponent(goalID)}/suggestions/${encodeURIComponent(suggestionID)}/accept`;
 		try {

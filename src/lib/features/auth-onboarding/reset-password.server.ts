@@ -2,6 +2,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
 import { apiErrorMessage, emailPattern } from './auth.server.js';
+import { formValue } from '#lib/form-value.js';
 
 export type ResetResult = { success: string; error: string };
 const ok = (success: string): ResetResult => ({ success, error: '' });
@@ -10,9 +11,9 @@ const bad = (error: string): ResetResult => ({ success: '', error });
 export async function resetPasswordSubmit(event: RequestEvent): Promise<ResetResult> {
 	const form = await event.request.formData().catch(() => null);
 	if (!form) return bad('Invalid form submission.');
-	const email = String(form.get('email') ?? '').trim();
-	const code = String(form.get('code') ?? '').trim();
-	const newPassword = String(form.get('new_password') ?? '');
+	const email = formValue(form, 'email').trim();
+	const code = formValue(form, 'code').trim();
+	const newPassword = formValue(form, 'new_password');
 	if (!emailPattern.test(email)) return bad('Enter a valid email address.');
 	if (code === '' || new TextEncoder().encode(newPassword).length < 8) {
 		return bad('Enter the reset code and a password of at least 8 characters.');
@@ -36,7 +37,7 @@ export async function resetPasswordSubmit(event: RequestEvent): Promise<ResetRes
 export async function resetPasswordResend(event: RequestEvent): Promise<ResetResult> {
 	const form = await event.request.formData().catch(() => null);
 	if (!form) return bad('Invalid form submission.');
-	const email = String(form.get('email') ?? '').trim();
+	const email = formValue(form, 'email').trim();
 	if (!emailPattern.test(email))
 		return bad('Enter a valid email address to resend your reset code.');
 	let message = 'If an account exists for that email, we sent a new reset code.';

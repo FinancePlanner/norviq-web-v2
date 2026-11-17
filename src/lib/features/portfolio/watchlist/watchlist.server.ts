@@ -24,6 +24,7 @@ import {
 	type WatchlistRowVM,
 	type WatchlistViewModel
 } from './types.js';
+import { formValue } from '#lib/form-value.js';
 
 // Ports LoadWatchlistViewModel / mapPortfolioWatchlistRows /
 // LoadWatchlistQuoteRows (handlers/portfolio_subpages_data.go,
@@ -260,7 +261,7 @@ export async function processWatchlistCSVUpload(
 		vm.error = 'Could not read the uploaded file.';
 		return vm;
 	}
-	const listID = String(form.get('list_id') ?? '').trim();
+	const listID = formValue(form, 'list_id').trim();
 	const vm = emptyCSVImportVM(listID, await watchlistListName(event, listID));
 
 	const file = form.get('file');

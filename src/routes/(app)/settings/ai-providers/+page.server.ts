@@ -10,6 +10,7 @@ import {
 	truncateMessage,
 	type UserAIProviderKind
 } from '#lib/features/settings-admin/ai-providers/providers.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web Settings case "ai-providers" (LoadAIProvidersVM) and
 // SettingsAIProvidersConnect / Verify / Disconnect. The submitted key goes
@@ -40,9 +41,9 @@ export const actions: Actions = {
 	// POST /settings/ai-providers
 	connect: async (event) => {
 		const form = await event.request.formData();
-		const provider = String(form.get('provider') ?? '').trim();
-		const apiKey = String(form.get('apiKey') ?? '').trim();
-		let label = String(form.get('label') ?? '').trim();
+		const provider = formValue(form, 'provider').trim();
+		const apiKey = formValue(form, 'apiKey').trim();
+		let label = formValue(form, 'label').trim();
 		if (label === '') label = provider;
 		if (provider === '' || apiKey === '')
 			return fail(400, { errorMessage: 'Choose a provider and paste a key.' });
@@ -54,9 +55,9 @@ export const actions: Actions = {
 			baseURL?: string;
 			defaultModel?: string;
 		} = { provider: provider as UserAIProviderKind, label, apiKey };
-		const baseURL = String(form.get('baseURL') ?? '').trim();
+		const baseURL = formValue(form, 'baseURL').trim();
 		if (baseURL !== '') body.baseURL = baseURL;
-		const defaultModel = String(form.get('defaultModel') ?? '').trim();
+		const defaultModel = formValue(form, 'defaultModel').trim();
 		if (defaultModel !== '') body.defaultModel = defaultModel;
 
 		let res;
@@ -78,7 +79,7 @@ export const actions: Actions = {
 
 	// POST /settings/ai-providers/{id}/verify
 	verify: async (event) => {
-		const id = parseCredentialID(String((await event.request.formData()).get('id') ?? ''));
+		const id = parseCredentialID(formValue(await event.request.formData(), 'id'));
 		if (!id) return fail(400, { errorMessage: 'Could not test this key.' });
 		try {
 			// Go ignores the status: only a transport failure is an error.
@@ -94,7 +95,7 @@ export const actions: Actions = {
 
 	// POST /settings/ai-providers/{id}/disconnect
 	disconnect: async (event) => {
-		const id = parseCredentialID(String((await event.request.formData()).get('id') ?? ''));
+		const id = parseCredentialID(formValue(await event.request.formData(), 'id'));
 		if (!id) return fail(400, { errorMessage: 'Could not disconnect this key.' });
 		try {
 			await api(event).DELETE('/v1/ai/credentials/{credentialId}', {

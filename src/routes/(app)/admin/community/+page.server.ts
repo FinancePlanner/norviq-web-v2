@@ -16,6 +16,7 @@ import {
 	boardsErrorText,
 	boardsFailure
 } from '#lib/features/settings-admin/admin/boards-admin.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web handlers.BoardsAdmin* (internal/handlers/boards.go).
 // There is no admin middleware: the backend enforces its admin allowlist, and
@@ -46,7 +47,7 @@ export const load: PageServerLoad = async (event) => {
 	};
 };
 
-const formString = (form: FormData, key: string) => String(form.get(key) ?? '');
+const formString = (form: FormData, key: string) => formValue(form, key);
 
 export const actions: Actions = {
 	sanction: async (event) => {

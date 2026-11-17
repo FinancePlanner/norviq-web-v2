@@ -8,6 +8,7 @@ import {
 	loginRedirectAfterSignup,
 	validateSignup
 } from '#lib/features/auth-onboarding/auth.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // auth.go SignupPage
 export const load: PageServerLoad = ({ url }) => ({
@@ -21,11 +22,11 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await event.request.formData().catch(() => null);
 		if (!form) return authError('Invalid form submission.');
-		const username = String(form.get('username') ?? '').trim();
-		const email = String(form.get('email') ?? '').trim();
-		const password = String(form.get('password') ?? '');
-		const confirmPassword = String(form.get('confirmPassword') ?? '');
-		const dateOfBirth = String(form.get('dateOfBirth') ?? '').trim();
+		const username = formValue(form, 'username').trim();
+		const email = formValue(form, 'email').trim();
+		const password = formValue(form, 'password');
+		const confirmPassword = formValue(form, 'confirmPassword');
+		const dateOfBirth = formValue(form, 'dateOfBirth').trim();
 
 		const msg = validateSignup(username, email, password, confirmPassword, dateOfBirth);
 		if (msg) return authError(msg);
@@ -58,6 +59,6 @@ export const actions: Actions = {
 		// this session is a resume (session.SettleFunnelResumed).
 		await s.set(OnboardingKey.FunnelResumedSent, true);
 
-		redirect(303, loginRedirectAfterSignup(safeNextPath(String(form.get('next') ?? ''))));
+		redirect(303, loginRedirectAfterSignup(safeNextPath(formValue(form, 'next'))));
 	}
 };

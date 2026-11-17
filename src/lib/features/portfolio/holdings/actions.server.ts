@@ -31,6 +31,7 @@ import type {
 	PriceAlertFormVM,
 	SellPositionFormVM
 } from './types.js';
+import { formValue } from '#lib/form-value.js';
 
 // The holdings position endpoints: handlers/portfolio_position.go and
 // portfolio_position_actions.go. Go answered HTMX with an HTML panel (200) or
@@ -130,7 +131,7 @@ export async function updatePosition(event: RequestEvent, id: string): Promise<R
 		buyPrice: formStr(f, 'buy_price'),
 		buyDate: formStr(f, 'buy_date'),
 		notes: formStr(f, 'notes'),
-		range: normalizePortfolioTimeRange(String(f.get('range') ?? '')),
+		range: normalizePortfolioTimeRange(formValue(f, 'range')),
 		error: ''
 	};
 	const parsed = parseAddPositionRequest(f);
@@ -229,7 +230,7 @@ export async function sellPosition(event: RequestEvent, id: string): Promise<Res
 		shares: formStr(f, 'shares'),
 		sellPrice: formStr(f, 'sell_price'),
 		sellDate: formStr(f, 'sell_date'),
-		range: normalizePortfolioTimeRange(String(f.get('range') ?? '')),
+		range: normalizePortfolioTimeRange(formValue(f, 'range')),
 		error: ''
 	};
 	const fail = (error: string) => panel({ panel: 'sell', form: { ...form, error } });
@@ -314,7 +315,7 @@ export async function saveAlert(event: RequestEvent, id: string): Promise<Respon
 		targetID: formStr(f, 'target_id'),
 		targetPrice: formStr(f, 'target_price'),
 		direction: formStr(f, 'direction') === 'below' ? 'below' : 'above',
-		range: normalizePortfolioTimeRange(String(f.get('range') ?? '')),
+		range: normalizePortfolioTimeRange(formValue(f, 'range')),
 		error: '',
 		showProGate: false
 	};

@@ -8,6 +8,7 @@ import {
 	validISODate
 } from '#lib/features/dashboard/goals/form.server.js';
 import type { PlanningGoalContributionInput } from '#lib/features/dashboard/goals/types.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /goals/{id}/contributions → FinancialGoalContributionCreate.
 //
@@ -23,7 +24,7 @@ export const POST: RequestHandler = async (event) => {
 	if (!validISODate(date)) redirectFinancialGoals('', 'Choose a valid contribution date.');
 	const request: PlanningGoalContributionInput = { amount, occurredAt: date };
 	// `json:"note,omitempty"`
-	const note = String(form.get('note') ?? '').trim();
+	const note = formValue(form, 'note').trim();
 	if (note) request.note = note;
 	try {
 		await apiJSON(

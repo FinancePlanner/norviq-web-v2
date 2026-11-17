@@ -5,6 +5,7 @@ import {
 	reportArticle,
 	requireArticles
 } from '#lib/features/public/articles/articles.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /articles/{code}/report → ArticlesHandler.Report
 export const POST: RequestHandler = async (event) => {
@@ -15,8 +16,8 @@ export const POST: RequestHandler = async (event) => {
 	let note = '';
 	try {
 		const form = await event.request.formData();
-		reason = String(form.get('reason') ?? '');
-		note = String(form.get('note') ?? '').trim();
+		reason = formValue(form, 'reason');
+		note = formValue(form, 'note').trim();
 	} catch {
 		/* the backend refuses an empty reason */
 	}

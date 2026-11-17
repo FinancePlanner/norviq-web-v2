@@ -24,6 +24,7 @@ import type {
 	WatchProposalRow,
 	WatchResultViewModel
 } from './types.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web internal/handlers/assistant.go (loaders and mappers) and
 // the memo helpers it borrows from position_memos.go.
@@ -422,7 +423,7 @@ function watchProposalFromArguments(args: string, summary: string): WatchProposa
 
 /** watchProposalFromForm: the proposal the card posted back with its button. */
 export function watchProposalFromForm(form: FormData): WatchProposalRow {
-	const v = (k: string) => String(form.get(k) ?? '').trim();
+	const v = (k: string) => formValue(form, k).trim();
 	return { title: v('title'), scheduleHuman: v('schedule'), spec: v('spec') };
 }
 
@@ -491,7 +492,7 @@ export async function confirmAction(
 	} catch (err) {
 		status = statusOf(err);
 	}
-	if (String(form.get('kind') ?? '') === 'watch')
+	if (formValue(form, 'kind') === 'watch')
 		return watchConfirmOutcome(id, watchProposalFromForm(form), status, confirmed);
 	const success = confirmed !== null;
 	return {
@@ -662,7 +663,7 @@ export async function cancelAction(
 	form: FormData
 ): Promise<ActionOutcome> {
 	const success = (await noContent(event, 'POST', `/v1/ai/assistant/actions/${id}/cancel`)) === 204;
-	if (String(form.get('kind') ?? '') === 'watch') {
+	if (formValue(form, 'kind') === 'watch') {
 		const watch = watchProposalFromForm(form);
 		if (!success)
 			return { kind: 'watchCard', id, watch, error: 'That did not go through. Try again.' };

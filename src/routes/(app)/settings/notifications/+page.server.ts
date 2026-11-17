@@ -2,6 +2,7 @@ import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import type { components } from '#lib/api/schema.js';
 import { apiJSON } from '#lib/server/api.js';
 import { errorMessage, errorStatus } from '#lib/features/settings-admin/api-errors.js';
+import { formValue } from '#lib/form-value.js';
 
 type Prefs = components['schemas']['EarningsNotificationPreferencesResponse'];
 
@@ -63,7 +64,7 @@ export const actions: Actions = {
 	// re-renders the form from the backend's answer.
 	earnings: async (event) => {
 		const form = await event.request.formData();
-		const enabled = String(form.get('earnings_enabled') ?? '').trim() === '1';
+		const enabled = formValue(form, 'earnings_enabled').trim() === '1';
 		try {
 			const prefs = await apiJSON<Prefs>(event, 'PUT', '/v1/notifications/earnings/preferences', {
 				enabled

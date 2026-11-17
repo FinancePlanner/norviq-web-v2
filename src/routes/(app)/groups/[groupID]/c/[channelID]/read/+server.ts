@@ -2,6 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { requireGroups } from '#lib/features/social/gates.server.js';
 import { markGroupChannelRead, readForm } from '#lib/features/social/groups/groups.server.js';
 import { uuidParam } from '#lib/features/settings-admin/social/social.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // GroupsMarkRead moves the viewer's read marker; the backend only moves it
 // forward and syncs the viewer's other devices.
@@ -9,7 +10,7 @@ export const POST: RequestHandler = async (event) => {
 	await requireGroups(event);
 	const channelID = uuidParam(event.params.channelID);
 	const form = await readForm(event);
-	const raw = String(form.get('seq') ?? '');
+	const raw = formValue(form, 'seq');
 	const seq = /^[+-]?\d+$/.test(raw) ? Number(raw) : NaN;
 	if (!channelID || !Number.isSafeInteger(seq) || seq <= 0)
 		return new Response('bad request', { status: 400 });

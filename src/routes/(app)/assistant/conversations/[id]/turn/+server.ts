@@ -12,6 +12,7 @@ import {
 	formOf,
 	parseUUID
 } from '#lib/features/dashboard/assistant/assistant.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /assistant/conversations/{id}/turn (handlers.AssistantTurn): one
 // non-streamed turn. Go answered the new Message fragment; this answers its
@@ -23,7 +24,7 @@ export const POST: RequestHandler = async (event) => {
 	if (refusal) return refusal;
 	const id = parseUUID(event.params.id);
 	if (!id) return new Response('Invalid conversation', { status: 400 });
-	const content = String((await formOf(event)).get('content') ?? '').trim();
+	const content = formValue(await formOf(event), 'content').trim();
 	if (!content) return new Response('Message is required', { status: 400 });
 	try {
 		return Response.json(await assistantTurn(event, id, content));

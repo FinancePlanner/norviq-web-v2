@@ -51,7 +51,7 @@
 		// move it to "error" (pedantic rules). Never add a rule here.
 		"typescript/no-unsafe-type-assertion": "warn", // 178
 		"typescript/no-deprecated": "warn", // 178
-		"typescript/no-base-to-string": "warn", // 144
+		"typescript/no-base-to-string": "error",
 		"typescript/no-unsafe-member-access": "warn", // 90
 		"typescript/consistent-return": "warn", // 77
 		"typescript/prefer-nullish-coalescing": "warn", // 65

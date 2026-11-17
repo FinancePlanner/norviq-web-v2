@@ -1,6 +1,7 @@
 import type { Actions } from './$types';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
 import { emailPattern } from '#lib/features/auth-onboarding/auth.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // auth.go ForgotPasswordSubmit → renderForgotResult(success, error): the form
 // re-renders with one banner. Go answered 200 either way.
@@ -8,7 +9,7 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await event.request.formData().catch(() => null);
 		if (!form) return { success: '', error: 'Invalid form submission.' };
-		const email = String(form.get('email') ?? '').trim();
+		const email = formValue(form, 'email').trim();
 		if (!emailPattern.test(email)) return { success: '', error: 'Enter a valid email address.' };
 		let message = 'If an account exists for that email, we sent reset instructions.';
 		try {

@@ -98,5 +98,6 @@ export function goSprint(value: unknown): string {
 			.map((k) => `${k}:${goSprint((value as Obj)[k])}`);
 		return 'map[' + entries.join(' ') + ']';
 	}
-	return String(value);
+	// Nothing else comes out of JSON.
+	return typeof value === 'bigint' ? value.toString() : '';
 }

@@ -9,6 +9,7 @@ import {
 	validatedBankHostedURL,
 	type BankLinkSession
 } from '#lib/features/settings-admin/banks/load.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of SettingsBanks (settings_banks.go), also served by Settings case
 // "banks". The page itself is not gated (non-Pro readers see the upsell); every
@@ -24,7 +25,7 @@ const gate = (event: RequestEvent) => requireFeature(event, Feature.BankSync, 'B
 
 async function formID(event: RequestEvent): Promise<{ id: string; form: FormData }> {
 	const form = await event.request.formData();
-	return { id: encodeURIComponent(String(form.get('id') ?? '')), form };
+	return { id: encodeURIComponent(formValue(form, 'id')), form };
 }
 
 export const actions: Actions = {
@@ -51,7 +52,7 @@ export const actions: Actions = {
 	import: async (event) => {
 		await gate(event);
 		const { id, form } = await formID(event);
-		const pillar = String(form.get('pillar') ?? '');
+		const pillar = formValue(form, 'pillar');
 		try {
 			await apiJSON(event, 'POST', `/v1/banks/transactions/${id}/import`, { pillar });
 		} catch (err) {
@@ -74,7 +75,7 @@ export const actions: Actions = {
 	connectEU: async (event) => {
 		await gate(event);
 		const form = await event.request.formData();
-		const institutionId = String(form.get('institution_id') ?? '').trim();
+		const institutionId = formValue(form, 'institution_id').trim();
 		if (institutionId === '') redirect(303, '/settings/banks');
 		const redirectURI = config().publicBaseURL + '/settings/banks';
 		let session: BankLinkSession;

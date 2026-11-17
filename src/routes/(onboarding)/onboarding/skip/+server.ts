@@ -5,11 +5,12 @@ import {
 	markPaywallComplete,
 	recordFunnelComplete
 } from '#lib/features/auth-onboarding/onboarding/onboarding.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // POST /onboarding/skip (onboarding.go Skip)
 export const POST: RequestHandler = async (event) => {
 	const form = await event.request.formData().catch(() => null);
-	const step = String(form?.get('step') ?? '').trim();
+	const step = formValue(form, 'step').trim();
 	// redirect() throws, so each branch ends there.
 	if (step === 'import') redirect(303, '/onboarding/budget');
 	if (step === 'paywall') {

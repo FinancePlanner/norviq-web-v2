@@ -1,6 +1,7 @@
 // onboarding.go Budget / BudgetSubmit and onboarding.BudgetPillars.
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON, isAPIError } from '#lib/server/api.js';
+import { formValue } from '#lib/form-value.js';
 
 /** internal/onboarding/pillars.go BudgetPillars (StockPlanShared raw values). */
 export const BUDGET_PILLARS = [
@@ -33,13 +34,13 @@ function parsePositiveFloat(raw: string): number | null {
 
 /** Returns '' once the snapshot is saved, else the form error. */
 export async function submitBudget(event: RequestEvent, form: FormData): Promise<string> {
-	const salary = parsePositiveFloat(String(form.get('net_salary') ?? '').trim());
+	const salary = parsePositiveFloat(formValue(form, 'net_salary').trim());
 	if (salary === null) return 'Enter a valid monthly net salary.';
 
 	const shares: Record<string, number> = {};
 	let total = 0;
 	for (const p of BUDGET_PILLARS) {
-		const raw = String(form.get('share_' + p.key) ?? '').trim();
+		const raw = formValue(form, 'share_' + p.key).trim();
 		if (!raw) continue;
 		const v = parsePositiveFloat(raw);
 		if (v === null) return 'Enter valid percentage splits for each pillar.';
@@ -51,7 +52,7 @@ export async function submitBudget(event: RequestEvent, form: FormData): Promise
 	// The form collects percentages; targetShares is a fraction of net salary.
 	for (const k of Object.keys(shares)) shares[k] = shares[k] / 100;
 
-	const monthRaw = String(form.get('month') ?? '').trim();
+	const monthRaw = formValue(form, 'month').trim();
 	const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(monthRaw) ? monthRaw : thisMonth();
 
 	try {

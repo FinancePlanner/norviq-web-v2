@@ -12,6 +12,7 @@ import {
 	formOf,
 	parseUUID
 } from '#lib/features/dashboard/assistant/assistant.server.js';
+import { formValue, scalarText } from '#lib/form-value.js';
 
 // POST /assistant/conversations/{id}/stream (handlers.AssistantStreamTurn).
 // The composer posts its form here; this turns it into the backend's JSON
@@ -37,7 +38,7 @@ export const POST: RequestHandler = async (event) => {
 	if (Number(event.request.headers.get('content-length')) > MAX_BODY_BYTES)
 		return new Response('That image is too large.', { status: 413 });
 	const form = await formOf(event);
-	const content = String(form.get('content') ?? '').trim();
+	const content = formValue(form, 'content').trim();
 	const images = form.getAll('image').filter((f): f is File => f instanceof File && f.size > 0);
 	if (!content && images.length === 0) return new Response('Message is required', { status: 400 });
 	let body: BodyInit;
@@ -68,8 +69,8 @@ export const POST: RequestHandler = async (event) => {
 		let code = '';
 		try {
 			const parsed = JSON.parse(refused) as { reason?: unknown; code?: unknown };
-			reason = String(parsed.reason ?? '');
-			code = String(parsed.code ?? '');
+			reason = scalarText(parsed.reason);
+			code = scalarText(parsed.code);
 		} catch {
 			/* not JSON */
 		}

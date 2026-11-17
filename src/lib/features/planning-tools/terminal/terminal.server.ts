@@ -47,6 +47,7 @@ import {
 	terminalRowsVM,
 	terminalSampleRow
 } from './vm.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web internal/handlers/terminal*.go. The Go web used a
 // separate generated client (terminalapi); these are the same calls by hand.
@@ -242,7 +243,7 @@ async function readForm(event: RequestEvent): Promise<FormData> {
 	}
 }
 
-const formGet = (form: FormData, name: string) => String(form.get(name) ?? '');
+const formGet = (form: FormData, name: string) => formValue(form, name);
 
 // ---------------------------------------------------------------------------
 // Rows

@@ -5,11 +5,12 @@ import {
 	groupsAction,
 	readForm
 } from '#lib/features/social/groups/groups.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // GroupsCreateChannel: lower-cased, without a leading #.
 export const POST: RequestHandler = async (event) => {
 	await requireGroups(event);
-	let name = String((await readForm(event)).get('name') ?? '')
+	let name = formValue(await readForm(event), 'name')
 		.trim()
 		.toLowerCase();
 	if (name.startsWith('#')) name = name.slice(1);

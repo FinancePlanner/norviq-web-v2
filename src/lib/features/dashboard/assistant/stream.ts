@@ -51,7 +51,7 @@ export const CONVERSATION_NOT_FOUND_CODE = 'conversation_not_found';
 /** The line to show for an `error` frame. Image refusals carry their real reason. */
 export function errorFrameText(data: Record<string, unknown>): string {
 	if (data.code === 'upgrade_required') return UPGRADE_REQUIRED;
-	return String(data.message || UNAVAILABLE);
+	return typeof data.message === 'string' && data.message !== '' ? data.message : UNAVAILABLE;
 }
 
 function parseData(line: string | undefined): Record<string, unknown> {

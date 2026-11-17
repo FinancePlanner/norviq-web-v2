@@ -10,6 +10,7 @@ import {
 	transferGroup,
 	readForm
 } from '#lib/features/social/groups/groups.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // GroupsMember runs a member action: role, kick, ban or transfer.
 export const POST: RequestHandler = async (event) => {
@@ -20,7 +21,7 @@ export const POST: RequestHandler = async (event) => {
 	return groupsAction(event, 'member', async (groupID) => {
 		switch (action) {
 			case 'role': {
-				const role = String(form.get('role') ?? '');
+				const role = formValue(form, 'role');
 				if (role !== 'admin' && role !== 'member') throw refusal(422, 'Unknown role.');
 				return setGroupMemberRole(event, groupID, userID, role);
 			}

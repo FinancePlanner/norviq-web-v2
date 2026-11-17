@@ -19,6 +19,7 @@ import {
 	formatMonthDayYear,
 	formatRelativeTime
 } from '#lib/features/settings-admin/api-access/time.js';
+import { formValue } from '#lib/form-value.js';
 
 // Port of norviq-web Settings case "api-access" (LoadAPIAccessVM +
 // AttachConnectPanel) and SettingsAPIAccessCreate / SettingsAPIAccessRevoke.
@@ -103,13 +104,13 @@ export const actions: Actions = {
 			return fail(403, { errorMessage: 'Norviq Pro is required to create tokens.' });
 		}
 		const form = await event.request.formData();
-		const name = String(form.get('name') ?? '').trim();
+		const name = formValue(form, 'name').trim();
 		const scopes = form.getAll('scopes').map(String);
 		if (name === '' || scopes.length === 0) {
 			return fail(400, { errorMessage: 'Enter a name and select at least one permission.' });
 		}
 		// strconv.Atoi: anything but a plain integer is 0, which the backend defaults.
-		const rawDays = String(form.get('expiresInDays') ?? '').trim();
+		const rawDays = formValue(form, 'expiresInDays').trim();
 		const expiresInDays = /^[+-]?\d+$/.test(rawDays) ? Number.parseInt(rawDays, 10) : 0;
 
 		let created;
@@ -121,7 +122,7 @@ export const actions: Actions = {
 		// Go's htmx path: stash the token in one-shot flashes and refresh the
 		// page so the new token, the connect tab and the verify wizard show once.
 		await event.locals.session.set(FLASH_NEW_TOKEN, created.token);
-		await event.locals.session.set(FLASH_NEW_TOKEN_CLIENT, String(form.get('client') ?? '').trim());
+		await event.locals.session.set(FLASH_NEW_TOKEN_CLIENT, formValue(form, 'client').trim());
 		await event.locals.session.set(FLASH_NEW_TOKEN_ID, created.id);
 		redirect(303, '/settings/api-access');
 	},
@@ -129,7 +130,7 @@ export const actions: Actions = {
 	// POST /settings/api-access/{id}/revoke
 	revoke: async (event) => {
 		const form = await event.request.formData();
-		const id = String(form.get('id') ?? '').trim();
+		const id = formValue(form, 'id').trim();
 		if (id === '') return fail(400, { errorMessage: 'Could not revoke the token.' });
 		try {
 			await revokePersonalAccessToken(event, id);

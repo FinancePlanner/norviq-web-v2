@@ -6,6 +6,7 @@ import {
 	isUUID,
 	loadAllocationViewModel
 } from '#lib/features/portfolio/analytics/allocation.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // GET /portfolio/allocation (handlers.PortfolioAllocation) plus the portfolio
 // list fragments and mutations (handlers/portfolio_lists.go):
@@ -31,7 +32,7 @@ async function submitPortfolioList(event: RequestEvent, listID: string) {
 	} catch {
 		return fail(400, { listID, listError: 'Invalid form submission.', name: '' });
 	}
-	const name = String(form.get('name') ?? '').trim();
+	const name = formValue(form, 'name').trim();
 	if (name === '') return fail(400, { listID, listError: 'Enter a list name.', name });
 
 	const body: S['PortfolioListRequest'] = { name };

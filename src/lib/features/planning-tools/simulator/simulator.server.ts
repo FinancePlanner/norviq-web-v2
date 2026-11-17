@@ -20,6 +20,7 @@ import {
 	type PageViewModel,
 	type SimulatorActionData
 } from './vm.js';
+import { formValue } from '#lib/form-value.js';
 
 const simulationsBase = '/v1/portfolio/simulations';
 
@@ -61,7 +62,7 @@ export async function simulatorPreview(event: RequestEvent): Promise<SimulatorAc
 
 	// "Add position" is a submit so the page works without JavaScript; it grows
 	// the draft rather than running a simulation.
-	if (String(form.get('action') ?? '').trim() === 'add-row') {
+	if (formValue(form, 'action').trim() === 'add-row') {
 		if (vm.draft.legs.length < maxSimulatorRows) addLeg(vm.draft);
 		return { vm, scope: 'page' };
 	}

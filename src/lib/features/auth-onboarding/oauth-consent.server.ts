@@ -2,6 +2,7 @@
 // client authorization). Hand-written in Go; not in the OpenAPI spec.
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
+import { formValue } from '#lib/form-value.js';
 
 export interface OAuthFlowDetail {
 	clientName: string;
@@ -32,7 +33,7 @@ export function isSafeRedirectURL(raw: string): boolean {
 export async function decideConsent(event: RequestEvent, approve: boolean): Promise<never> {
 	const form = await event.request.formData().catch(() => null);
 	if (!form) error(400, 'Invalid form submission.');
-	const flowId = String(form.get('flow_id') ?? '').trim();
+	const flowId = formValue(form, 'flow_id').trim();
 	if (!flowId) error(400, 'Missing flow_id.');
 	let redirectURL = '';
 	try {

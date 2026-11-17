@@ -9,6 +9,7 @@ import { apiFetch } from '#lib/server/api.js';
 import type { FocusPointVM } from '../types.js';
 import { loadFocusPoints } from './load.server.js';
 import type { Goal } from './mappers.js';
+import { formValue } from '#lib/form-value.js';
 
 export interface FocusPointsResult {
 	focusPoints: FocusPointVM[];
@@ -76,7 +77,7 @@ async function result(event: RequestEvent, goalsError: boolean): Promise<FocusPo
 	return { focusPoints: await loadFocusPoints(event), goalsError };
 }
 
-const field = (data: FormData, name: string) => String(data.get(name) ?? '').trim();
+const field = (data: FormData, name: string) => formValue(data, name).trim();
 
 /** POST /dashboard/insights/goals. An empty title is a silent no-op. */
 export async function createGoal(event: RequestEvent, data: FormData) {

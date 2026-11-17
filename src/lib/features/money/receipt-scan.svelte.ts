@@ -152,9 +152,9 @@ export class ReceiptScan {
 	// Merchant tax id, currency and the scan source have no visible input; the
 	// hidden fields carry them so the server keeps the VAT trail.
 	applyReceiptProvenance(draft: ReceiptDraft) {
-		const set = (id: string, value: unknown) => {
+		const set = (id: string, value: string | number) => {
 			const el = document.getElementById(id) as HTMLInputElement | null;
-			if (el) el.value = value === null || value === undefined ? '' : String(value);
+			if (el) el.value = String(value);
 		};
 		set('receipt-source', draft.source || '');
 		set('receipt-merchant', draft.merchant || '');

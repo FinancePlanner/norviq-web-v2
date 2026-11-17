@@ -11,6 +11,7 @@ import {
 	saveMFAChallenge,
 	type LoginOutcomeBody
 } from '#lib/features/auth-onboarding/auth.server.js';
+import { formValue } from '#lib/form-value.js';
 
 // auth.go LoginPage
 export const load: PageServerLoad = ({ url, locals }) => {
@@ -38,8 +39,8 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await event.request.formData().catch(() => null);
 		if (!form) return authError('Invalid form submission.');
-		const email = String(form.get('email') ?? '').trim();
-		const password = String(form.get('password') ?? '');
+		const email = formValue(form, 'email').trim();
+		const password = formValue(form, 'password');
 		if (email === '' || password === '') return authError('Email and password are required.');
 		if (!emailPattern.test(email)) return authError('Enter a valid email address.');
 
@@ -76,6 +77,6 @@ export const actions: Actions = {
 
 		await event.locals.session.saveAuth(outcome.auth);
 		await setPostHogCaptureOnce(event.locals, 'user_logged_in', { method: 'email' });
-		redirect(303, await postAuthRedirect(event, String(form.get('next') ?? '')));
+		redirect(303, await postAuthRedirect(event, formValue(form, 'next')));
 	}
 };

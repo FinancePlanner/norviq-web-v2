@@ -16,7 +16,7 @@ const FAILED_MS = 2400;
  */
 export function toolStatus(label: unknown): string {
 	let phrase =
-		String(label ?? '')
+		(typeof label === 'string' ? label : '')
 			.trim()
 			.replace(/(…|\.\.\.)$/, '')
 			.trim() || 'working';
