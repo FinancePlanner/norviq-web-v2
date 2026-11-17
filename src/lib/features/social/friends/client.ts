@@ -22,7 +22,7 @@ export function postForm(form: HTMLFormElement): Promise<Response> {
  */
 export function boostedForm(confirmMessage = ''): Attachment<HTMLFormElement> {
 	return (form) => {
-		const onSubmit = async (e: SubmitEvent) => {
+		const run = async (e: SubmitEvent) => {
 			if (confirmMessage && !confirm(confirmMessage)) {
 				e.preventDefault();
 				return;
@@ -44,6 +44,8 @@ export function boostedForm(confirmMessage = ''): Attachment<HTMLFormElement> {
 				form.classList.remove('htmx-request');
 			}
 		};
+		// run() calls preventDefault before its first await, so still within the event dispatch.
+		const onSubmit = (e: SubmitEvent) => void run(e);
 		form.addEventListener('submit', onSubmit);
 		return () => form.removeEventListener('submit', onSubmit);
 	};

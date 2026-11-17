@@ -72,7 +72,7 @@
 			"error",
 			{ "considerDefaultExhaustiveForUnions": true }
 		],
-		"typescript/no-misused-promises": "warn", // 10
+		"typescript/no-misused-promises": "error",
 		"oxc/no-map-spread": "warn", // 10
 		"vitest/no-conditional-expect": "warn", // 8
 		"no-shadow": "warn", // 8
@@ -80,7 +80,7 @@
 		"no-underscore-dangle": "warn", // 7
 		"typescript/no-redundant-type-constituents": "warn", // 6
 		"typescript/no-misused-spread": "warn", // 6
-		"typescript/no-floating-promises": "warn", // 6
+		"typescript/no-floating-promises": "error",
 		"promise/always-return": ["error", { "ignoreLastCallback": true }],
 		"unicorn/prefer-add-event-listener": "error",
 		"typescript/unbound-method": "error",

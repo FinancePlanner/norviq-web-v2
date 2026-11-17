@@ -9,7 +9,9 @@ import type { PostHogCaptureOnce, RuntimeConfig } from './types.js';
 
 export type { RuntimeConfig, PostHogCaptureOnce } from './types.js';
 
-let posthogModule: Promise<typeof import('./posthog.js')> | null = null;
+// Resolves to null when the chunk fails to load, so the calls below are no-ops
+// rather than one unhandled rejection each.
+let posthogModule: Promise<typeof import('./posthog.js') | null> | null = null;
 
 export function initAnalytics(runtime: RuntimeConfig | null | undefined): void {
 	if (runtime?.sentry?.dsn) {
@@ -18,8 +20,11 @@ export function initAnalytics(runtime: RuntimeConfig | null | undefined): void {
 	}
 	const posthog = runtime?.posthog;
 	if (posthog?.token && posthog.host) {
-		posthogModule = import('./posthog.js');
-		posthogModule.then((m) => m.initPostHog(posthog), console.error);
+		posthogModule = import('./posthog.js').catch((err: unknown) => {
+			console.error(err);
+			return null;
+		});
+		void posthogModule.then((m) => m?.initPostHog(posthog));
 		return;
 	}
 	// Go always defined window.norviqAnalytics; without PostHog its calls are
@@ -29,17 +34,17 @@ export function initAnalytics(runtime: RuntimeConfig | null | undefined): void {
 }
 
 export function trackPageview(): void {
-	posthogModule?.then((m) => m.capturePageview());
+	void posthogModule?.then((m) => m?.capturePageview());
 }
 
 export function captureOnce(capture: PostHogCaptureOnce | null | undefined): void {
 	if (!capture?.event) return;
-	posthogModule?.then((m) => m.applyCaptureOnce(capture));
+	void posthogModule?.then((m) => m?.applyCaptureOnce(capture));
 }
 
 /** norviqAnalytics.capture for components: no-op until PostHog is initialised. */
 export function capture(event: string, properties?: Record<string, unknown>): void {
-	posthogModule?.then((m) => m.norviqAnalytics.capture(event, properties));
+	void posthogModule?.then((m) => m?.norviqAnalytics.capture(event, properties));
 }
 
 let sentryWanted = false;

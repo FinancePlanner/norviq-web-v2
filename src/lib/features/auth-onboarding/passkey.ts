@@ -176,7 +176,7 @@ export async function signInWithPasskey(showError: (message: string) => void): P
 /** auth.js bindPasskeyButton, as an attachment for #passkey-sign-in. */
 export function passkeyButton(showError: (message: string) => void): Attachment<HTMLButtonElement> {
 	return (button) => {
-		const onClick = async () => {
+		const run = async () => {
 			button.disabled = true;
 			try {
 				await signInWithPasskey(showError);
@@ -187,6 +187,7 @@ export function passkeyButton(showError: (message: string) => void): Attachment<
 				button.disabled = false;
 			}
 		};
+		const onClick = () => void run();
 		button.addEventListener('click', onClick);
 		return () => button.removeEventListener('click', onClick);
 	};
@@ -203,7 +204,7 @@ export function passkeyRegisterButton(
 	onFeedback: (f: PasskeyFeedback) => void
 ): Attachment<HTMLButtonElement> {
 	return (button) => {
-		const onClick = async () => {
+		const run = async () => {
 			button.disabled = true;
 			onFeedback(null);
 			try {
@@ -218,6 +219,7 @@ export function passkeyRegisterButton(
 				button.disabled = false;
 			}
 		};
+		const onClick = () => void run();
 		button.addEventListener('click', onClick);
 		return () => button.removeEventListener('click', onClick);
 	};

@@ -77,7 +77,11 @@ function cacheFirst(request) {
     return fetch(request).then((response) => {
       if (response.ok) {
         const copy = response.clone()
-        caches.open(CACHE).then((cache) => cache.put(request, copy))
+        // Best effort: a failed cache write must not surface as an unhandled rejection.
+        caches
+          .open(CACHE)
+          .then((cache) => cache.put(request, copy))
+          .catch(() => {})
       }
       return response
     })
@@ -89,7 +93,11 @@ function networkFirst(request) {
     .then((response) => {
       if (response.ok) {
         const copy = response.clone()
-        caches.open(CACHE).then((cache) => cache.put(request, copy))
+        // Best effort: a failed cache write must not surface as an unhandled rejection.
+        caches
+          .open(CACHE)
+          .then((cache) => cache.put(request, copy))
+          .catch(() => {})
       }
       return response
     })

@@ -50,12 +50,12 @@ export function billingPage(): Attachment<HTMLElement> {
 		};
 
 		root.querySelectorAll<HTMLButtonElement>('[data-action="purchase"]').forEach((button) => {
-			on(button, () => onPurchase(button, restoreURL, ensureConfigured, root));
+			on(button, () => void onPurchase(button, restoreURL, ensureConfigured, root));
 		});
 		const paywallButton = root.querySelector('[data-action="paywall"]');
-		if (paywallButton) on(paywallButton, () => onPaywall(root, restoreURL, ensureConfigured));
+		if (paywallButton) on(paywallButton, () => void onPaywall(root, restoreURL, ensureConfigured));
 
-		hydratePlanPrices(root, ensureConfigured);
+		void hydratePlanPrices(root, ensureConfigured);
 
 		return () => cleanups.forEach((fn) => fn());
 	};
@@ -68,9 +68,9 @@ type Ensure = () => Promise<InstanceType<Purchases> | null>;
 async function hydratePlanPrices(root: HTMLElement, ensureConfigured: Ensure) {
 	const priceNodes = root.querySelectorAll<HTMLElement>('[data-rc-price]');
 	if (priceNodes.length === 0) return;
-	const purchases = await ensureConfigured();
-	if (!purchases) return;
 	try {
+		const purchases = await ensureConfigured();
+		if (!purchases) return;
 		const packages = collectPackages(await purchases.getOfferings());
 		priceNodes.forEach((node) => {
 			const productId = node.dataset.rcPrice ?? '';
