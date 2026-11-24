@@ -34,6 +34,8 @@ export interface ChartTabVM {
 	error: string;
 	labels: string[];
 	values: number[];
+	/** The listing currency (profile.currency); null when unknown. */
+	currency: string | null;
 }
 
 export interface StatementsTabVM {
@@ -66,6 +68,8 @@ export interface ForecastTabVM {
 	scenarios: ForecastScenarioVM[];
 	/** WealthLine("stock-forecast-chart") inputs; null when Go had no chart. */
 	chart: { labels: string[]; values: number[] } | null;
+	/** The currency of the projected share prices (the listing currency); null when unknown. */
+	currency: string | null;
 }
 
 export interface ComparePeerVM {

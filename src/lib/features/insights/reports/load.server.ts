@@ -13,6 +13,7 @@ import {
 } from '#lib/format.js';
 import { normalizeReportTab } from '#lib/nav.js';
 import { getJSON } from '#lib/features/dashboard/fetch.server.js';
+import { loadBudgetCurrency } from '#lib/features/dashboard/budget-currency.server.js';
 import { goFormat, parseTime } from '#lib/features/dashboard/shared.js';
 import { resolvePillar } from '#lib/features/dashboard/pillars.js';
 import { mapFinancialHealth, mapInsightCards } from '#lib/features/dashboard/insights/mappers.js';
@@ -371,11 +372,12 @@ export async function loadReportsViewModel(
 	isPro: boolean
 ): Promise<ReportsPageVM> {
 	// Four independent reads; a failure of one only blanks its cards.
-	const [overview, insights, performance, statistics] = await Promise.all([
+	const [overview, insights, performance, statistics, budgetCurrency] = await Promise.all([
 		getJSON<Overview>(event, '/v1/reports/overview'),
 		getJSON<S['DashboardInsightsResponse']>(event, '/v1/dashboard/insights'),
 		getJSON<Performance>(event, '/v1/portfolio/performance'),
-		getJSON<S['StatisticsDTO']>(event, '/v1/statistics/overview')
+		getJSON<S['StatisticsDTO']>(event, '/v1/statistics/overview'),
+		loadBudgetCurrency(event)
 	]);
 	for (const [name, r] of [
 		['reports overview', overview],
@@ -387,7 +389,10 @@ export async function loadReportsViewModel(
 	}
 	const o = overview.data;
 	const p = performance.data;
+	const currency = p?.baseCurrency?.trim().toUpperCase() || null;
 	const vm: ReportsPageVM = {
+		currency,
+		spendCurrency: budgetCurrency || currency,
 		tab: normalizeReportTab(tab),
 		activePath,
 		isPro,

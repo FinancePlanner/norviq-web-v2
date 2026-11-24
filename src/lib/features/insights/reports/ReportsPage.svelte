@@ -15,6 +15,7 @@
 	} from '#lib/components/norviq/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { allocationPie, spendingLine, wealthLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import type { ChartSpec } from '#lib/charts/index.js';
 	import { animateValue, staggerOnMount } from '#lib/motion.js';
 	import FinancialHealthCard from '#lib/features/dashboard/insights/FinancialHealthCard.svelte';
@@ -38,7 +39,10 @@
 
 	const netWorthChart = $derived(
 		vm.netWorth.chart
-			? wealthLine('reports-net-worth-chart', vm.netWorth.chart.labels, vm.netWorth.chart.values)
+			? wealthLine('reports-net-worth-chart', vm.netWorth.chart.labels, vm.netWorth.chart.values, {
+					currency: vm.currency,
+					locale: locale()
+				})
 			: null
 	);
 	const performanceChart = $derived(
@@ -46,7 +50,8 @@
 			? wealthLine(
 					'reports-performance-chart',
 					vm.performance.chart.labels,
-					vm.performance.chart.values
+					vm.performance.chart.values,
+					{ currency: vm.currency, locale: locale() }
 				)
 			: null
 	);
@@ -61,7 +66,10 @@
 	);
 	const spendingChart = $derived(
 		vm.spending.chart
-			? spendingLine('reports-spending-chart', vm.spending.chart.labels, vm.spending.chart.values)
+			? spendingLine('reports-spending-chart', vm.spending.chart.labels, vm.spending.chart.values, {
+					currency: vm.spendCurrency,
+					locale: locale()
+				})
 			: null
 	);
 	const savingsChart = $derived(
@@ -69,13 +77,19 @@
 			? wealthLine(
 					'reports-savings-rate-chart',
 					vm.savingsRate.chart.labels,
-					vm.savingsRate.chart.values
+					vm.savingsRate.chart.values,
+					// A rate in percent, and not a gain or loss: ink, not green or red.
+					{ valueFormat: 'percent', trend: 'neutral', locale: locale() }
 				)
 			: null
 	);
 	const cashFlowChart = $derived(
 		vm.cashFlow.chart
-			? wealthLine('reports-cashflow-chart', vm.cashFlow.chart.labels, vm.cashFlow.chart.values)
+			? wealthLine('reports-cashflow-chart', vm.cashFlow.chart.labels, vm.cashFlow.chart.values, {
+					currency: vm.spendCurrency,
+					locale: locale(),
+					trend: 'neutral'
+				})
 			: null
 	);
 

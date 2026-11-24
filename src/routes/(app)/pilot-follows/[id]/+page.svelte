@@ -5,6 +5,7 @@
 	import { SecondarySubmitButton, withSpinner } from '#lib/components/norviq/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { wealthLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import SymbolLink from '#lib/features/settings-admin/pilots/SymbolLink.svelte';
 	import { DISCLAIMER } from '#lib/features/settings-admin/pilots/vm.js';
 	import type { PageProps } from './$types';
@@ -15,7 +16,10 @@
 	// build fell back to "The value chart is unavailable right now."
 	const chart = $derived(
 		vm.chartLabels.length >= 2
-			? wealthLine('pilot_follow_value', vm.chartLabels, vm.chartValues)
+			? wealthLine('pilot_follow_value', vm.chartLabels, vm.chartValues, {
+					currency: vm.currency,
+					locale: locale()
+				})
 			: null
 	);
 	const chartNote = $derived(

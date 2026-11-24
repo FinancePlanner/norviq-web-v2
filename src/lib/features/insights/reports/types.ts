@@ -121,6 +121,10 @@ export interface CashFlowCardVM {
 }
 
 export interface ReportsPageVM {
+	/** Portfolio charts' currency (performance baseCurrency); null when unknown. */
+	currency: string | null;
+	/** Spending and cash-flow charts' currency: the month's budget currency, else `currency`. */
+	spendCurrency: string | null;
 	tab: string;
 	activePath: string;
 	isPro: boolean;

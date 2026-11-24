@@ -108,3 +108,13 @@ export function signedPercent(fraction: number, locale: AppLocale): string {
 	});
 	return normalise(f.format(fraction));
 }
+
+/** A value already in percent points, one decimal, sign only when negative: 12.5 → "12.5%". */
+export function percentPoints(value: number, locale: AppLocale): string {
+	const f = formatter(locale, {
+		style: 'percent',
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1
+	});
+	return normalise(f.format(value / 100));
+}

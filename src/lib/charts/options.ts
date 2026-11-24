@@ -40,7 +40,10 @@ function spec(id: string, width: string, height: string, option: OptionObject): 
 /** Tags a spec with the currency its tooltip and y axis print in. */
 function withMoney(chart: ChartSpec | null, m: MoneySeries | undefined): ChartSpec | null {
 	if (!chart || !m) return chart;
-	return { ...chart, currency: m.currency ?? null, locale: m.locale };
+	const tagged: ChartSpec = { ...chart, currency: m.currency ?? null, locale: m.locale };
+	if (m.trend) tagged.trend = m.trend;
+	if (m.valueFormat) tagged.valueFormat = m.valueFormat;
+	return tagged;
 }
 
 /** Monthly spending trend. */
@@ -67,9 +70,10 @@ export function wealthLine(
 export function priceLine(
 	chartID: string,
 	labels: readonly string[],
-	values: readonly number[]
+	values: readonly number[],
+	money?: MoneySeries
 ): ChartSpec | null {
-	return trendLine(chartID, labels, values, 'Price', colorTint, 0.18);
+	return withMoney(trendLine(chartID, labels, values, 'Price', colorTint, 0.18), money);
 }
 
 function trendLine(

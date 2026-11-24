@@ -21,6 +21,8 @@ interface StockListItem {
 
 interface QuoteResponse {
 	symbol: string;
+	/** The quote's currency; the price chart prints it. */
+	currency?: string;
 	c: number;
 	d?: number | null;
 	dp?: number | null;
@@ -129,6 +131,11 @@ export async function loadTradingDashboard(
 		selectedPrice: '-',
 		selectedChange: '-',
 		chart: await loadChart(event, selected, stocks !== null),
+		currencies: Object.fromEntries(
+			[...quotes]
+				.filter(([, q]) => (q.currency ?? '').trim() !== '')
+				.map(([s, q]) => [s, q.currency!.trim()])
+		),
 		isPro
 	};
 }

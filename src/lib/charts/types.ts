@@ -31,12 +31,18 @@ export interface ChartSpec {
 	currency?: string | null;
 	/** App locale for that money. */
 	locale?: AppLocale;
+	/** 'neutral' keeps a value line in ink instead of gain/loss (spec § 5.5 rule 5). */
+	trend?: 'direction' | 'neutral';
+	/** 'percent' prints the series as percent points instead of money. */
+	valueFormat?: 'money' | 'percent';
 }
 
-/** The currency and locale a money series is formatted in. */
+/** How a value series is printed and coloured (tooltip, y axis, line colour). */
 export interface MoneySeries {
 	currency?: string | null;
 	locale?: AppLocale;
+	trend?: 'direction' | 'neutral';
+	valueFormat?: 'money' | 'percent';
 }
 
 /** A plain JSON-ish option object, cast to EChartsOption once it is built. */

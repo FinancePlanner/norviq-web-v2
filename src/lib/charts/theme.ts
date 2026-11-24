@@ -9,7 +9,7 @@
 // runs again whenever html.dark flips. EChart.svelte drives it; everything
 // here is pure apart from the default DOM environment, so it is unit tested.
 
-import { compactMoney, money, type AppLocale } from '../money.js';
+import { compactMoney, money, percentPoints, type AppLocale } from '../money.js';
 
 /** Where the theme reads appearance from. domThemeEnv() is the browser one. */
 export interface ThemeEnv {
@@ -431,9 +431,12 @@ export function buildTooltipOption(
 	return tooltip;
 }
 
-function formatMoney(value: unknown, env: Pick<ThemeEnv, 'currency' | 'locale'>): string {
+type ValueEnv = Pick<ThemeEnv, 'currency' | 'locale' | 'valueFormat'>;
+
+function formatValue(value: unknown, env: ValueEnv): string {
 	const n = Number(value);
 	if (!Number.isFinite(n)) return typeof value === 'string' ? value : '';
+	if (env.valueFormat === 'percent') return percentPoints(n, env.locale ?? 'en');
 	return money(n, env.currency, env.locale ?? 'en');
 }
 
@@ -441,10 +444,7 @@ function formatMoney(value: unknown, env: Pick<ThemeEnv, 'currency' | 'locale'>)
  * Tooltip for wealth/spending lines: "<date><br/><strong>€12,345.00</strong>",
  * in the series' currency and the app locale (DS 2.0 money contract).
  */
-export function wealthTooltipFormatter(
-	params: unknown,
-	env: Pick<ThemeEnv, 'currency' | 'locale'> = {}
-): string {
+export function wealthTooltipFormatter(params: unknown, env: ValueEnv = {}): string {
 	const items = Array.isArray(params) ? params : [params];
 	const first = items[0] as Obj | undefined;
 	if (!first) return '';
@@ -452,23 +452,24 @@ export function wealthTooltipFormatter(
 	const date = typeof label === 'string' ? label : '';
 	const data = first.data as Obj | number | undefined;
 	const value = (data && typeof data === 'object' ? data.value : undefined) ?? first.value ?? data;
-	return `${date}<br/><strong>${formatMoney(value, env)}</strong>`;
+	return `${date}<br/><strong>${formatValue(value, env)}</strong>`;
 }
 
-/** Compact money on a value axis ("$48.43K"), only when the series' currency is known. */
+/**
+ * The value axis in the series' unit: percent points, or compact money
+ * ("$48.43K") when the currency is known. Otherwise the axis is left alone.
+ */
 function withMoneyAxis(axes: unknown, env: ThemeEnv): unknown {
 	const currency = env.currency;
-	if (!currency || !axes) return axes;
 	const locale = env.locale ?? 'en';
+	const percent = env.valueFormat === 'percent';
+	if ((!currency && !percent) || !axes) return axes;
+	const formatter = percent
+		? (v: number) => percentPoints(v, locale)
+		: (v: number) => compactMoney(v, currency, locale);
 	return list(axes).map((raw) => {
 		const axis = obj(raw);
-		return {
-			...axis,
-			axisLabel: {
-				...obj(axis.axisLabel),
-				formatter: (v: number) => compactMoney(v, currency, locale)
-			}
-		};
+		return { ...axis, axisLabel: { ...obj(axis.axisLabel), formatter } };
 	});
 }
 

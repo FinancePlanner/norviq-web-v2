@@ -36,6 +36,10 @@
 		/** ISO 4217 code of a money series (tooltip, y axis). Absent is unknown, never USD. */
 		currency?: string | null;
 		locale?: AppLocale;
+		/** 'neutral' keeps a value line in ink instead of gain/loss. */
+		trend?: 'direction' | 'neutral';
+		/** 'percent' prints values as percent points instead of money. */
+		valueFormat?: 'money' | 'percent';
 	}
 
 	let {
@@ -47,7 +51,9 @@
 		onclick,
 		themed,
 		currency,
-		locale
+		locale,
+		trend,
+		valueFormat
 	}: Props = $props();
 
 	let node: HTMLDivElement;
@@ -67,7 +73,7 @@
 
 	function applyTheme(c: ECharts) {
 		if (!shouldTheme()) return;
-		const env = { ...domThemeEnv(), currency, locale };
+		const env = { ...domThemeEnv(), currency, locale, trend, valueFormat };
 		c.setOption(themedOptionPatch(c.getOption() as Record<string, unknown>, id, env));
 		fadeIn();
 	}

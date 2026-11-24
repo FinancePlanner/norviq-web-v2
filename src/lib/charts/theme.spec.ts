@@ -283,6 +283,15 @@ describe('themedOptionPatch', () => {
 		expect(html).toBe('2 jan<br/><strong>105\u00a0000,40\u00a0€</strong>');
 	});
 
+	it('prints a percent series as percent points in the tooltip and on the axis', () => {
+		const e = env(false, {}, { valueFormat: 'percent', locale: 'pt-PT' });
+		const next = themedOptionPatch(wealth, 'stock_compare_chart', e);
+		expect(call(field(next, 'tooltip', 'formatter'), [{ name: '3', value: 12.5 }])).toBe(
+			'3<br/><strong>12,5%</strong>'
+		);
+		expect(call(field(next, 'yAxis', 0, 'axisLabel', 'formatter'), -3.21)).toBe('\u22123,2%');
+	});
+
 	it('never prints a dollar sign in a tooltip without a currency', () => {
 		const html = wealthTooltipFormatter(
 			[{ axisValueLabel: 'Jan 2', data: { value: 105000.4 } }],

@@ -4,6 +4,7 @@ import {
 	compactMoney,
 	money,
 	normalise,
+	percentPoints,
 	signedMoney,
 	signedPercent,
 	type AppLocale
@@ -81,5 +82,13 @@ describe('money', () => {
 
 	it('normalises narrow and thin spaces and hyphen-minus', () => {
 		expect(normalise('1 234 € -3')).toBe(`1${NBSP}234${NBSP}€ ${MINUS}3`);
+	});
+});
+
+describe('percentPoints', () => {
+	it('prints a value already in percent with one decimal in the locale', () => {
+		expect(percentPoints(12.5, 'en')).toBe('12.5%');
+		expect(percentPoints(-3.21, 'pt-PT')).toBe(`${MINUS}3,2%`);
+		expect(percentPoints(0, 'en')).toBe('0.0%');
 	});
 });
