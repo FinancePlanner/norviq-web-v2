@@ -336,7 +336,9 @@ export async function loadCoinPage(event: RequestEvent, rawSymbol: string): Prom
 		vm.chart = {
 			id: `crypto_coin_${symbol.toLowerCase()}_${rangeValue}`,
 			labels: sorted.map((p) => p.date),
-			closes: sorted.map((p) => p.close)
+			closes: sorted.map((p) => p.close),
+			// The route only admits <ticker>USD symbols, so the closes are in USD.
+			currency: symbol.endsWith('USD') ? 'USD' : null
 		};
 	}
 	return vm;

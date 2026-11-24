@@ -4,11 +4,20 @@
 	import * as table from '#lib/components/norviq/tui/table/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { wealthLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import type { ForecastTabVM } from '../detail.js';
 
 	let { vm }: { vm: ForecastTabVM } = $props();
+	// Projected share prices in the listing currency. A projection is not a
+	// gain or loss, so the line stays ink.
 	const spec = $derived(
-		vm.chart ? wealthLine('stock-forecast-chart', vm.chart.labels, vm.chart.values) : null
+		vm.chart
+			? wealthLine('stock-forecast-chart', vm.chart.labels, vm.chart.values, {
+					currency: vm.currency,
+					locale: locale(),
+					trend: 'neutral'
+				})
+			: null
 	);
 </script>
 

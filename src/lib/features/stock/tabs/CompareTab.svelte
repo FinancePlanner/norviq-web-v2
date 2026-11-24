@@ -4,12 +4,19 @@
 	import * as table from '#lib/components/norviq/tui/table/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { wealthLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import { staggerOnMount } from '#lib/motion.js';
 	import type { CompareTabVM } from '../detail.js';
 
 	let { vm, symbol }: { vm: CompareTabVM; symbol: string } = $props();
+	// The series is % change from the first close, so it prints as percent points.
 	const spec = $derived(
-		vm.chart ? wealthLine('stock-compare-chart', vm.chart.labels, vm.chart.values) : null
+		vm.chart
+			? wealthLine('stock-compare-chart', vm.chart.labels, vm.chart.values, {
+					valueFormat: 'percent',
+					locale: locale()
+				})
+			: null
 	);
 	const peerURL = (peer: string) =>
 		`/portfolio/${symbol.toLowerCase()}/compare?peer=${peer.toUpperCase()}`;

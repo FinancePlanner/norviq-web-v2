@@ -28,6 +28,8 @@ import type {
 	SectorGainsRowVM,
 	SectorGainsViewModel
 } from './types.js';
+import { money, type AppLocale } from '#lib/money.js';
+import { loadAccountCurrency } from '../account-currency.server.js';
 
 // Port of handlers/portfolio_subpages_data.go LoadSectorGainsViewModel,
 // LoadEarningsViewModel, LoadDividendsViewModel and LoadNewsViewModel. The Go
@@ -203,38 +205,42 @@ function mapUpcomingEarnings(
 }
 
 export function emptyDividendsViewModel(): DividendsViewModel {
-	return { annualProjectedIncome: '', upcoming: [], monthlyChart: null, loadError: false };
+	return {
+		annualProjectedIncome: '',
+		upcoming: [],
+		monthlyChart: null,
+		currency: null,
+		loadError: false
+	};
 }
 
-export async function loadDividendsViewModel(event: RequestEvent): Promise<DividendsViewModel> {
+/**
+ * The dividends page in the account currency (the payload carries none), so
+ * the totals and the chart tooltip print the same money (DS 2.0).
+ */
+export function mapDividends(
+	data: S['PortfolioDividendsResponse'],
+	fmt: { currency: string | null; locale: AppLocale }
+): DividendsViewModel {
 	const vm = emptyDividendsViewModel();
-	const res = await tryJSON<S['PortfolioDividendsResponse']>(
-		event,
-		'GET',
-		'/v1/portfolio/dividends'
-	);
-	if (res.failed) {
-		vm.loadError = true;
-		return vm;
-	}
-	if (!res.data) return vm;
-
+	const cash = (v: number) => money(v, fmt.currency, fmt.locale);
 	const goJan2 = (raw: string) => {
 		const d = civilDate(raw);
 		return d ? formatJan2(d) : raw;
 	};
-	vm.annualProjectedIncome = formatCurrency(res.data.annualProjectedIncome);
-	vm.upcoming = (res.data.upcomingDividends ?? []).map((div) => ({
+	vm.currency = fmt.currency;
+	vm.annualProjectedIncome = cash(data.annualProjectedIncome);
+	vm.upcoming = (data.upcomingDividends ?? []).map((div) => ({
 		symbol: div.symbol,
 		exDividendDate: goJan2(div.exDividendDate),
 		paymentDate: goJan2(div.paymentDate),
-		amountPerShare: formatCurrency(div.amountPerShare),
-		projectedTotal: formatCurrency(div.projectedTotal)
+		amountPerShare: cash(div.amountPerShare),
+		projectedTotal: cash(div.projectedTotal)
 	}));
 
 	const labels: string[] = [];
 	const values: number[] = [];
-	for (const month of res.data.monthlyBreakdown ?? []) {
+	for (const month of data.monthlyBreakdown ?? []) {
 		// time.Parse("2006-01", …): exactly YYYY-MM with a valid month.
 		const m = /^(\d{4})-(\d{2})$/.exec(month.month);
 		labels.push(m && +m[2] >= 1 && +m[2] <= 12 ? monthAbbrev(+m[2] - 1) : month.month);
@@ -242,6 +248,20 @@ export async function loadDividendsViewModel(event: RequestEvent): Promise<Divid
 	}
 	if (labels.length > 0) vm.monthlyChart = { labels, values };
 	return vm;
+}
+
+export async function loadDividendsViewModel(event: RequestEvent): Promise<DividendsViewModel> {
+	const vm = emptyDividendsViewModel();
+	const [res, account] = await Promise.all([
+		tryJSON<S['PortfolioDividendsResponse']>(event, 'GET', '/v1/portfolio/dividends'),
+		loadAccountCurrency(event)
+	]);
+	if (res.failed) {
+		vm.loadError = true;
+		return vm;
+	}
+	if (!res.data) return vm;
+	return mapDividends(res.data, { currency: account.currency, locale: event.locals.locale });
 }
 
 const NEWS_FILTERS = new Set(['holdings', 'watchlist', 'sectors', 'market', 'saved']);

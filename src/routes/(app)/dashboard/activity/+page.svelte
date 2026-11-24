@@ -61,7 +61,9 @@
 							initial={{
 								activities: vm.activities,
 								activityLimit: vm.activityLimit,
-								hasMoreActivities: vm.hasMoreActivities
+								hasMoreActivities: vm.hasMoreActivities,
+								currency: vm.currency,
+								spendCurrency: vm.spendCurrency
 							}}
 						/>
 					{/key}

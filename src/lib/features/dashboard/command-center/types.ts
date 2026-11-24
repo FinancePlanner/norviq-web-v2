@@ -6,6 +6,7 @@
 // serialise from +page.server.ts.
 
 import type { PillarSlice } from '#lib/charts/index.js';
+import type { OverviewDeltaVM } from './overview-vm.js';
 import type {
 	ActivityItemVM,
 	FinancialHealthVM,
@@ -23,19 +24,32 @@ export interface SeriesData {
 export interface OverviewViewModel {
 	greeting: string;
 	username: string;
+	/** The page's currency (performance baseCurrency); null when unknown, never USD by default. */
+	currency: string | null;
+	/** Spend figures' currency: this month's budget currency, else `currency`. */
+	spendCurrency: string | null;
 	totalWealth: string;
-	ytdPercent: string;
-	ytdPositive: boolean;
+	/** The portfolio change over the fetched range; null when stale or too short. */
+	delta: OverviewDeltaVM | null;
+	/** "Prices as of 11 Nov 2026" when the series is stale. */
+	asOfCaption: string | null;
 	portfolioPeriodPercent: string;
 	portfolioPeriodSuffix: string;
 	portfolioPeriodPositive: boolean;
 	/** Go WealthChartHTML: null where Go had "". */
 	wealthChart: SeriesData | null;
+	/** Shown instead of the wealth chart when its history is stale or too short. */
+	wealthChartNote: string | null;
+	/** The wealth chart's accessible name: "Portfolio up 3.2% over 1 month". */
+	wealthChartSummary: string | null;
 	spendingThisMonth: string;
 	spendingPeriodPercent: string;
+	spendingPeriodSuffix: string;
 	spendingPeriodPositive: boolean;
 	/** Go SpendingChartHTML. */
 	spendingChart: SeriesData | null;
+	/** Shown instead of the monthly spend chart when the range covers a single month. */
+	spendingChartNote: string | null;
 	activities: ActivityItemVM[];
 	recentSpend: RecentSpendItemVM[];
 	financialHealth: FinancialHealthVM;

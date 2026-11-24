@@ -251,7 +251,8 @@ export interface CoinPageVM {
 	rangeLabel: string;
 	ranges: RangeLink[];
 	/** charts.PriceLine inputs; null when there is no history. */
-	chart: { id: string; labels: string[]; closes: number[] } | null;
+	/** currency: the quote currency the FMP symbol names (BTCUSD → USD). */
+	chart: { id: string; labels: string[]; closes: number[]; currency: string | null } | null;
 	stats: CoinStat[];
 	errorMessage: string;
 }

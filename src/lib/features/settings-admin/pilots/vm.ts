@@ -411,6 +411,7 @@ export function buildPilotFollowDetailVM(f: PilotFollowResponse): FollowDetailVM
 		chartLabels: [],
 		chartValues: [],
 		chartNote: '',
+		currency: (f.currency ?? '').trim() || null,
 		events: [],
 		eventsError: false,
 		notice: '',

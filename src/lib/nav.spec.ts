@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { activeTab, bottomTabsMore, isMoreTab, Path, sidebarItemsFor, socialOff } from './nav.js';
+import ptPT from './i18n/pt-PT.json';
+import {
+	activeTab,
+	bottomTabs,
+	bottomTabsMore,
+	isMoreTab,
+	Path,
+	sidebarItemsFor,
+	socialOff,
+	type SocialConfig
+} from './nav.js';
 
 const id = (s: string) => s;
 const items = (social = socialOff) =>
@@ -34,5 +44,34 @@ describe('tools navigation', () => {
 	it('reaches Tools from the bottom More list', () => {
 		expect(bottomTabsMore(id, socialOff).map((i) => i.path)).toContain('/tools');
 		expect(isMoreTab('tools')).toBe(true);
+	});
+});
+
+describe('pt-PT navigation', () => {
+	const allSocial: SocialConfig = {
+		enabled: true,
+		contactsDiscovery: true,
+		xImport: true,
+		facebookImport: true,
+		leaderboards: true,
+		messaging: true,
+		groups: true,
+		groupsPublic: true,
+		achievements: true,
+		activityFeed: true
+	};
+
+	it('translates every navigation label (DS 2.0 A10)', () => {
+		const seen = new Set<string>();
+		const capture = (s: string) => {
+			seen.add(s);
+			return s;
+		};
+		sidebarItemsFor(capture, { social: allSocial, articles: true, locked: () => false });
+		bottomTabs(capture);
+		bottomTabsMore(capture, allSocial);
+		const catalog = new Set(Object.keys(ptPT));
+		expect(seen.size).toBeGreaterThan(40);
+		expect([...seen].filter((key) => !catalog.has(key)).sort()).toEqual([]);
 	});
 });

@@ -135,6 +135,8 @@ export interface DividendsViewModel {
 	annualProjectedIncome: string;
 	upcoming: DividendProjectedItemVM[];
 	monthlyChart: { labels: string[]; values: number[] } | null;
+	/** The account currency the figures and the chart print in; null when unknown. */
+	currency: string | null;
 	loadError: boolean;
 }
 

@@ -15,6 +15,7 @@
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { wealthLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import {
 		priceSeries,
 		tradingChangeClass,
@@ -29,8 +30,15 @@
 	const vm = $derived(data.vm);
 
 	let series = $derived<PriceSeries | null>(data.vm.chart);
+	// The symbol the chart shows, for its quote currency (DS 2.0 money contract).
+	let chartSymbol = $derived(data.vm.selectedSymbol);
 	const chart = $derived(
-		series ? wealthLine('stock-price-chart', series.labels, series.values) : null
+		series
+			? wealthLine('stock-price-chart', series.labels, series.values, {
+					currency: vm.currencies[chartSymbol.trim().toUpperCase()] ?? null,
+					locale: locale()
+				})
+			: null
 	);
 
 	// updateOrderPanelFromRow: the hidden symbol inputs and both limit prices.
@@ -45,6 +53,7 @@
 			);
 			if (!res.ok) return;
 			series = priceSeries((await res.json()) as StockHistory[]);
+			chartSymbol = symbol;
 		} catch (err) {
 			console.warn('trading chart load failed', err);
 		}

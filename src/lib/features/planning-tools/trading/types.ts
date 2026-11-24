@@ -22,6 +22,8 @@ export interface TradingDashboardVM {
 	selectedChange: string;
 	/** The selected symbol's price history (Go: ChartHTML from the stock chart tab); null = no chart. */
 	chart: PriceSeries | null;
+	/** Quote currency by upper-cased symbol, for the price chart's tooltip and axis. */
+	currencies: Record<string, string>;
 	isPro: boolean;
 }
 

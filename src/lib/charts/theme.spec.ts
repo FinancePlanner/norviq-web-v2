@@ -39,8 +39,9 @@ describe('chartKind', () => {
 
 describe('palette', () => {
 	it('falls back per appearance and reads overrides', () => {
-		expect(getChartPalette(env(false)).line).toBe('#80612a');
-		expect(getChartPalette(env(true)).line).toBe('#d8b477');
+		// --chart-line is ink (--foreground); gold is never a data colour (DESIGN.md).
+		expect(getChartPalette(env(false)).line).toBe('#111b2b');
+		expect(getChartPalette(env(true)).line).toBe('#e9e9e5');
 		expect(getChartPalette(env(false)).up).toBe('#1b6e51');
 		expect(getChartPalette(env(true)).down).toBe('#e16d75');
 		expect(getChartPalette(env(false, { '--chart-line': '#123456' })).line).toBe('#123456');
@@ -71,6 +72,14 @@ describe('palette', () => {
 });
 
 describe('themedOptionPatch', () => {
+	/** A formatter the patch installed, called the way ECharts calls it. */
+	const call = (f: unknown, arg: unknown): string => {
+		expect(typeof f).toBe('function');
+		return typeof f === 'function' ? String(Reflect.apply(f, undefined, [arg])) : '';
+	};
+	const field = (o: unknown, ...path: (string | number)[]): unknown =>
+		path.reduce<unknown>((v, k) => (v && typeof v === 'object' ? Reflect.get(v, k) : undefined), o);
+
 	const wealth = {
 		tooltip: [{ trigger: 'axis', axisPointer: { type: 'line' } }],
 		xAxis: [{ type: 'category', axisLabel: { color: '#8D8371' } }],
@@ -86,18 +95,18 @@ describe('themedOptionPatch', () => {
 			triggerOn: 'mousemove|click',
 			transitionDuration: 0.12
 		});
-		expect(next.tooltip.formatter).toBe(wealthTooltipFormatter);
+		expect(typeof next.tooltip.formatter).toBe('function');
 		expect(next.xAxis[0].axisLabel.color).toBe('#9da9b8');
 		expect(next.xAxis[0].axisPointer).toEqual({ show: true, snap: true });
 		expect(next.yAxis[0].splitLine.lineStyle).toEqual({ color: '#344258', type: 'dashed' });
-		expect(next.series[0].lineStyle.color).toBe('#d8b477');
-		expect(next.series[0].areaStyle).toEqual({ opacity: 0.18, color: '#d8b477' });
+		expect(next.series[0].lineStyle.color).toBe('#e9e9e5');
+		expect(next.series[0].areaStyle).toEqual({ opacity: 0.18, color: '#e9e9e5' });
 		expect(next.series[0].showSymbol).toBe(false);
 		expect(next.animationDuration).toBe(320);
 		expect(next.visualMap).toBeUndefined();
 	});
 
-	it('keeps red lines red and spending lines alt, honours coarse pointers and reduced motion', () => {
+	it('keeps red lines red and spending lines ink, honours coarse pointers and reduced motion', () => {
 		const down = { ...wealth, series: [{ type: 'line', lineStyle: { color: '#f23645' } }] };
 		const next = themedOptionPatch(
 			down,
@@ -110,7 +119,102 @@ describe('themedOptionPatch', () => {
 		expect(next.animationDuration).toBe(0);
 		expect(next.xAxis).toBe(down.xAxis); // spark: axes untouched
 		const spending = themedOptionPatch(wealth, 'spending_chart', env(false)) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-		expect(spending.series[0].lineStyle.color).toBe('#4a5568');
+		expect(spending.series[0].lineStyle.color).toBe('#111b2b');
+	});
+
+	describe('line colour follows direction (spec § 5.5 rule 5, DESIGN.md Gold Is Not Money)', () => {
+		const line = (values: number[], color = '#D8B477') => ({
+			...wealth,
+			series: [{ type: 'line', lineStyle: { color }, data: values.map((value) => ({ value })) }]
+		});
+		const color = (o: unknown) => field(o, 'series', 0, 'lineStyle', 'color');
+
+		const dir = (dark: boolean) => env(dark, {}, { trend: 'direction' });
+
+		it('paints a rising or flat value line marked directional in gain, a falling one in loss', () => {
+			expect(color(themedOptionPatch(line([100, 90, 120]), 'wealth_chart', dir(false)))).toBe(
+				'#1b6e51'
+			);
+			expect(color(themedOptionPatch(line([100, 100]), 'portfolio_chart', dir(true)))).toBe(
+				'#42b894'
+			);
+			expect(color(themedOptionPatch(line([120, 130, 100]), 'wealth_chart', dir(false)))).toBe(
+				'#ab3640'
+			);
+		});
+
+		it('keeps an unmarked value line in ink: direction colour is opt-in', () => {
+			expect(color(themedOptionPatch(line([100, 120]), 'stock_price_chart', env(false)))).toBe(
+				'#111b2b'
+			);
+		});
+
+		it('leaks no gold anywhere in the patched option (A13)', () => {
+			const gold = {
+				...wealth,
+				color: ['#D8B477'],
+				series: [
+					{
+						type: 'line',
+						data: [{ value: 1 }, { value: 2 }],
+						lineStyle: { color: '#D8B477' },
+						itemStyle: { color: '#D8B477' },
+						areaStyle: { color: '#D8B477', opacity: 0.25 },
+						emphasis: { focus: 'series', itemStyle: { color: '#D8B477' } }
+					}
+				]
+			};
+			for (const e of [env(false), dir(true)]) {
+				const next = themedOptionPatch(gold, 'wealth_chart', e);
+				expect(JSON.stringify(next).toLowerCase()).not.toContain('#d8b477');
+				expect(field(next, 'series', 0, 'itemStyle', 'color')).toBe(color(next));
+				expect(field(next, 'series', 0, 'emphasis', 'itemStyle', 'color')).toBe(color(next));
+				expect(field(next, 'color', 0)).toBe(color(next));
+			}
+		});
+
+		it('never leaves a value line gold', () => {
+			for (const values of [[1], [], [1, 2]]) {
+				const c = color(themedOptionPatch(line(values), 'stock_price_chart', env(true)));
+				expect(c).not.toBe('#d8b477');
+			}
+		});
+
+		it('keeps a non-directional series in ink', () => {
+			expect(
+				color(
+					themedOptionPatch(line([100, 90]), 'reports_savings_rate_chart', {
+						...env(false),
+						trend: 'neutral'
+					})
+				)
+			).toBe('#111b2b');
+			expect(color(themedOptionPatch(line([1, 2]), 'spending_chart', env(false)))).toBe('#111b2b');
+		});
+
+		it('leaves the series of a multi-line chart to the builder', () => {
+			const multi = {
+				...wealth,
+				series: [
+					{ type: 'line', lineStyle: { color: '#4f78a8' }, data: [1, 2] },
+					{ type: 'line', lineStyle: { color: '#80612a' }, data: [2, 1] }
+				]
+			};
+			const next = themedOptionPatch(multi, 'compare_multi', env(false));
+			expect(field(next, 'series', 1, 'lineStyle', 'color')).not.toBe('#ab3640');
+			expect(field(next, 'series', 0, 'lineStyle', 'color')).not.toBe('#1b6e51');
+		});
+	});
+
+	it('hides the legend of a single-series chart (A9: it overlapped the x axis)', () => {
+		const single = { ...wealth, legend: {} };
+		expect(field(themedOptionPatch(single, 'spending_chart', env(false)), 'legend', 'show')).toBe(
+			false
+		);
+		const multi = { ...single, series: [...wealth.series, ...wealth.series] };
+		expect(
+			field(themedOptionPatch(multi, 'spending_chart', env(false)), 'legend', 'show')
+		).not.toBe(false);
 	});
 
 	it('themes the activity calendar and visualMap', () => {
@@ -197,9 +301,44 @@ describe('themedOptionPatch', () => {
 		});
 	});
 
-	it('formats the wealth tooltip in whole dollars', () => {
-		expect(wealthTooltipFormatter([{ axisValueLabel: 'Jan 2', data: { value: 105000.4 } }])).toBe(
-			'Jan 2<br/><strong>$105,000</strong>'
+	it('formats the wealth tooltip in the series currency and locale', () => {
+		const next = themedOptionPatch(
+			wealth,
+			'wealth_chart',
+			env(true, {}, { currency: 'EUR', locale: 'pt-PT' })
 		);
+		const html = call(field(next, 'tooltip', 'formatter'), [
+			{ axisValueLabel: '2 jan', data: { value: 105000.4 } }
+		]);
+		expect(html).toContain('€');
+		expect(html).not.toContain('$');
+		expect(html).toBe('2 jan<br/><strong>105\u00a0000,40\u00a0€</strong>');
+	});
+
+	it('prints a percent series as percent points in the tooltip and on the axis', () => {
+		const e = env(false, {}, { valueFormat: 'percent', locale: 'pt-PT' });
+		const next = themedOptionPatch(wealth, 'stock_compare_chart', e);
+		expect(call(field(next, 'tooltip', 'formatter'), [{ name: '3', value: 12.5 }])).toBe(
+			'3<br/><strong>12,5%</strong>'
+		);
+		expect(call(field(next, 'yAxis', 0, 'axisLabel', 'formatter'), -3.21)).toBe('\u22123,2%');
+	});
+
+	it('never prints a dollar sign in a tooltip without a currency', () => {
+		const html = wealthTooltipFormatter(
+			[{ axisValueLabel: 'Jan 2', data: { value: 105000.4 } }],
+			env(false)
+		);
+		expect(html).toBe('Jan 2<br/><strong>105,000.40\u00a0\u2014</strong>');
+	});
+
+	it('labels the wealth and spending y axis in compact money when the currency is known', () => {
+		const e = env(false, {}, { currency: 'USD', locale: 'en' });
+		for (const id of ['wealth_chart', 'spending_chart']) {
+			const next = themedOptionPatch(wealth, id, e);
+			expect(call(field(next, 'yAxis', 0, 'axisLabel', 'formatter'), 48432.05)).toBe('$48.43K');
+		}
+		const bare = themedOptionPatch(wealth, 'wealth_chart', env(false));
+		expect(field(bare, 'yAxis', 0, 'axisLabel', 'formatter')).toBeUndefined();
 	});
 });

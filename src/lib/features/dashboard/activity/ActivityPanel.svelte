@@ -5,7 +5,7 @@
 	// the server-rendered rows. `error` is Go's vm.LoadErrors["activities"].
 	import { onMount } from 'svelte';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { t } from '#lib/i18n/context.svelte.js';
+	import { locale, t } from '#lib/i18n/context.svelte.js';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import type { ActivityItemVM } from '../types.js';
 	import ActivityFeedBody from './ActivityFeedBody.svelte';
@@ -13,12 +13,21 @@
 
 	let {
 		activities,
-		error = false
-	}: { activities: ActivityItemVM[] | null | undefined; error?: boolean } = $props();
+		error = false,
+		currency = null,
+		spendCurrency = null
+	}: {
+		activities: ActivityItemVM[] | null | undefined;
+		error?: boolean;
+		/** The account currency the server rendered the rows in; the poll keeps it. */
+		currency?: string | null;
+		/** The budget currency expense rows use; null falls back to `currency`. */
+		spendCurrency?: string | null;
+	} = $props();
 
 	const feed = createQuery(() => ({
 		queryKey: activityFeedQueryKey,
-		queryFn: fetchActivityFeed,
+		queryFn: () => fetchActivityFeed({ currency, spendCurrency, locale: locale() }),
 		initialData: activities ?? [],
 		initialDataUpdatedAt: Date.now(),
 		refetchInterval: 60_000,

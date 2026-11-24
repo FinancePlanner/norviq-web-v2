@@ -193,6 +193,8 @@ export interface FollowDetailVM {
 	chartLabels: string[];
 	chartValues: number[];
 	chartNote: string;
+	/** The follow's currency, for the value chart's tooltip and axis; null when unknown. */
+	currency: string | null;
 	events: EventRowVM[];
 	eventsError: boolean;
 	notice: string;

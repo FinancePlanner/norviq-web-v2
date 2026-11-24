@@ -1,4 +1,5 @@
 import type { EChartsOption } from 'echarts';
+import type { AppLocale } from '../money.js';
 
 /** The parameters ECharts passes to a click handler (the parts the Norviq charts read). */
 export interface ChartClickParams {
@@ -26,6 +27,25 @@ export interface ChartSpec {
 	class?: string;
 	option: EChartsOption;
 	onclick?: (params: ChartClickParams) => void;
+	/** ISO 4217 code of a money series; the tooltip and y axis use it. Absent is unknown, never USD. */
+	currency?: string | null;
+	/** App locale for that money. */
+	locale?: AppLocale;
+	/** 'neutral' keeps a value line in ink instead of gain/loss (spec § 5.5 rule 5). */
+	trend?: 'direction' | 'neutral';
+	/** 'percent' prints the series as percent points instead of money. */
+	valueFormat?: 'money' | 'percent';
+	/** A text summary for assistive tech ("Portfolio up 3.2% over 1 month"). */
+	summary?: string | null;
+}
+
+/** How a value series is printed and coloured (tooltip, y axis, line colour). */
+export interface MoneySeries {
+	currency?: string | null;
+	locale?: AppLocale;
+	trend?: 'direction' | 'neutral';
+	valueFormat?: 'money' | 'percent';
+	summary?: string | null;
 }
 
 /** A plain JSON-ish option object, cast to EChartsOption once it is built. */

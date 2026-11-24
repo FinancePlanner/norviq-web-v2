@@ -2,6 +2,7 @@
 	// pages/portfolio/dividends.templ DividendsPage
 	import EChart from '#lib/charts/EChart.svelte';
 	import { spendingLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import { EmptyState, ProGateWrap } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import type { PageProps } from './$types';
@@ -10,7 +11,12 @@
 	const vm = $derived(data.vm);
 	const chart = $derived(
 		vm.monthlyChart
-			? spendingLine('dividends-monthly-chart', vm.monthlyChart.labels, vm.monthlyChart.values)
+			? spendingLine('dividends-monthly-chart', vm.monthlyChart.labels, vm.monthlyChart.values, {
+					// The payload carries no currency: the account's, as the totals use.
+					currency: vm.currency,
+					locale: locale(),
+					trend: 'neutral'
+				})
 			: null
 	);
 </script>

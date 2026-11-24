@@ -15,6 +15,7 @@
 	} from '#lib/components/norviq/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { allocationPie, spendingLine, wealthLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import type { ChartSpec } from '#lib/charts/index.js';
 	import { animateValue, staggerOnMount } from '#lib/motion.js';
 	import FinancialHealthCard from '#lib/features/dashboard/insights/FinancialHealthCard.svelte';
@@ -38,7 +39,12 @@
 
 	const netWorthChart = $derived(
 		vm.netWorth.chart
-			? wealthLine('reports-net-worth-chart', vm.netWorth.chart.labels, vm.netWorth.chart.values)
+			? wealthLine('reports-net-worth-chart', vm.netWorth.chart.labels, vm.netWorth.chart.values, {
+					currency: vm.currency,
+					locale: locale(),
+					trend: 'direction',
+					summary: vm.netWorth.chartSummary
+				})
 			: null
 	);
 	const performanceChart = $derived(
@@ -46,7 +52,13 @@
 			? wealthLine(
 					'reports-performance-chart',
 					vm.performance.chart.labels,
-					vm.performance.chart.values
+					vm.performance.chart.values,
+					{
+						currency: vm.currency,
+						locale: locale(),
+						trend: 'direction',
+						summary: vm.performance.chartSummary
+					}
 				)
 			: null
 	);
@@ -61,7 +73,10 @@
 	);
 	const spendingChart = $derived(
 		vm.spending.chart
-			? spendingLine('reports-spending-chart', vm.spending.chart.labels, vm.spending.chart.values)
+			? spendingLine('reports-spending-chart', vm.spending.chart.labels, vm.spending.chart.values, {
+					currency: vm.spendCurrency,
+					locale: locale()
+				})
 			: null
 	);
 	const savingsChart = $derived(
@@ -69,13 +84,19 @@
 			? wealthLine(
 					'reports-savings-rate-chart',
 					vm.savingsRate.chart.labels,
-					vm.savingsRate.chart.values
+					vm.savingsRate.chart.values,
+					// A rate in percent, and not a gain or loss: ink, not green or red.
+					{ valueFormat: 'percent', trend: 'neutral', locale: locale() }
 				)
 			: null
 	);
 	const cashFlowChart = $derived(
 		vm.cashFlow.chart
-			? wealthLine('reports-cashflow-chart', vm.cashFlow.chart.labels, vm.cashFlow.chart.values)
+			? wealthLine('reports-cashflow-chart', vm.cashFlow.chart.labels, vm.cashFlow.chart.values, {
+					currency: vm.spendCurrency,
+					locale: locale(),
+					trend: 'neutral'
+				})
 			: null
 	);
 
@@ -84,7 +105,9 @@
 		const raf = requestAnimationFrame(() => {
 			node.querySelectorAll<HTMLElement>('.report-card-hero').forEach((el) => {
 				const v = (el.textContent ?? '').trim();
-				if (!v || el.dataset.animated || !/\d/.test(v)) return;
+				// The count re-renders the digits en-US style, so a figure in
+				// another locale (pt-PT "1234,50 €") is shown as it is.
+				if (!v || el.dataset.animated || !/\d/.test(v) || locale() !== 'en') return;
 				el.dataset.prevValue = v;
 				el.dataset.animated = 'true';
 				const numMatch = v.replace(/[^0-9.-]/g, '');
@@ -109,10 +132,15 @@
 		<article class="report-card glass-card card-hover p-5 md:p-6">
 			<CardHeader title="Net worth" desc="Total wealth over time" />
 			{#if c.available}
-				<p class="report-card-hero spring-pop mt-4" data-format="$" data-motion="spring">
+				<p
+					class="report-card-hero spring-pop mt-4"
+					data-format={c.totalValue.startsWith('$') ? '$' : undefined}
+					data-motion="spring"
+				>
 					{c.totalValue}
 				</p>
 				{#if c.changeLabel}<p class={reportChangeClass(c.changePositive)}>{c.changeLabel}</p>{/if}
+				{#if c.asOfCaption}<p class="text-caption text-muted-foreground">{c.asOfCaption}</p>{/if}
 				<div class="report-card-chart mt-4 min-h-[180px]">
 					{@render chartOrPlaceholder(netWorthChart)}
 				</div>
@@ -161,6 +189,9 @@
 			{:else if c.available}
 				{#if c.changeLabel}<p class={'mt-4 ' + reportChangeClass(c.changePositive)}>
 						{c.changeLabel}
+					</p>{/if}
+				{#if c.asOfCaption}<p class="mt-4 text-caption text-muted-foreground">
+						{c.asOfCaption}
 					</p>{/if}
 				<div class="report-card-chart mt-4 min-h-[180px]">
 					{@render chartOrPlaceholder(performanceChart)}

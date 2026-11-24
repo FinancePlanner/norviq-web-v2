@@ -5,6 +5,7 @@
 
 import type { components } from '#lib/api/schema.js';
 import { formatCurrency, formatFloat } from '#lib/format.js';
+import { money, type AppLocale } from '#lib/money.js';
 import { clampPercent } from '../shared.js';
 import type { FinancialHealthVM, FocusPointVM, InsightCardVM } from '../types.js';
 
@@ -64,7 +65,14 @@ export function financialHealthTone(status: string): string {
 	}
 }
 
-export function mapInsightCards(insights: DashboardInsights | null | undefined): InsightCardVM[] {
+/**
+ * `fmt` prints the cash buffer in the account currency (DS 2.0 money
+ * contract); without it the card keeps the Go port's dollar format.
+ */
+export function mapInsightCards(
+	insights: DashboardInsights | null | undefined,
+	fmt?: { currency: string | null; locale: AppLocale }
+): InsightCardVM[] {
 	if (!insights) return [];
 	return [
 		{
@@ -90,7 +98,9 @@ export function mapInsightCards(insights: DashboardInsights | null | undefined):
 		},
 		{
 			title: 'Cash buffer',
-			value: formatCurrency(insights.cashBuffer),
+			value: fmt
+				? money(insights.cashBuffer, fmt.currency, fmt.locale)
+				: formatCurrency(insights.cashBuffer),
 			detail: 'Liquid reserve',
 			iconKind: 'cash',
 			tone: 'blue'

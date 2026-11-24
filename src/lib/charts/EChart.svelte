@@ -20,6 +20,7 @@
 	import { ensureECharts } from './loader.js';
 	import { FADE_WRAPPERS, domThemeEnv, themedOptionPatch } from './theme.js';
 	import type { ChartClickParams } from './types.js';
+	import type { AppLocale } from '../money.js';
 
 	interface Props {
 		/** DOM id; also picks the chart "kind" for theming (spark…, spending…, allocation…). */
@@ -32,6 +33,15 @@
 		onclick?: (params: ChartClickParams) => void;
 		/** Apply the Norviq theme patch. Default: only inside .app-page-content, as in Go. */
 		themed?: boolean;
+		/** ISO 4217 code of a money series (tooltip, y axis). Absent is unknown, never USD. */
+		currency?: string | null;
+		locale?: AppLocale;
+		/** 'neutral' keeps a value line in ink instead of gain/loss. */
+		trend?: 'direction' | 'neutral';
+		/** 'percent' prints values as percent points instead of money. */
+		valueFormat?: 'money' | 'percent';
+		/** A text summary; the canvas is then announced as an image with this name. */
+		summary?: string | null;
 	}
 
 	let {
@@ -41,7 +51,12 @@
 		height = '220px',
 		class: klass = '',
 		onclick,
-		themed
+		themed,
+		currency,
+		locale,
+		trend,
+		valueFormat,
+		summary
 	}: Props = $props();
 
 	let node: HTMLDivElement;
@@ -61,7 +76,8 @@
 
 	function applyTheme(c: ECharts) {
 		if (!shouldTheme()) return;
-		c.setOption(themedOptionPatch(c.getOption() as Record<string, unknown>, id, domThemeEnv()));
+		const env = { ...domThemeEnv(), currency, locale, trend, valueFormat };
+		c.setOption(themedOptionPatch(c.getOption() as Record<string, unknown>, id, env));
 		fadeIn();
 	}
 
@@ -124,5 +140,13 @@
      max-widths) that the Go web's CSS did not have; the class stays for the
      legacy `.overview-* .container` rules. -->
 <div class="container" style="max-width:none">
-	<div bind:this={node} class={['item', klass]} {id} style:width style:height></div>
+	<div
+		bind:this={node}
+		class={['item', klass]}
+		{id}
+		style:width
+		style:height
+		role={summary ? 'img' : undefined}
+		aria-label={summary || undefined}
+	></div>
 </div>

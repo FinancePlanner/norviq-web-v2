@@ -3,13 +3,13 @@
 	// history for the chart tab, so the overview always shows the empty state.
 	import { EmptyState, SectionCard } from '#lib/components/norviq/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
-	import { wealthLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import type { ChartTabVM } from '../detail.js';
+	import { priceChartSpec } from '../price-chart.js';
 
 	let { chart }: { chart: ChartTabVM } = $props();
-	const spec = $derived(
-		chart.hasData ? wealthLine('stock-price-chart', chart.labels, chart.values) : null
-	);
+	// Tooltip and axis in the listing currency (DS 2.0 money contract).
+	const spec = $derived(priceChartSpec(chart, locale()));
 </script>
 
 <div class="mt-6">

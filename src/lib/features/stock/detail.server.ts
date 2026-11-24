@@ -18,7 +18,7 @@ import {
 	sentimentBadgeClass,
 	sentimentPostCountLabel
 } from '#lib/components/norviq/sentiment.js';
-import { goFormat } from '#lib/features/dashboard/shared.js';
+import { priceChartTab } from './price-chart.js';
 import { formatShares } from '#lib/features/portfolio/market.server.js';
 import { loadEarningsVisualizerViewModel } from '#lib/features/portfolio/earningsviz/visualizer.server.js';
 import { loadAnalysisTab } from './analysis/load.server.js';
@@ -121,7 +121,7 @@ export function emptyDetailViewModel(symbol: string, tab: string): DetailViewMod
 		targets: [],
 		consensus: emptyConsensus(),
 		basicFinancials: { hasData: false, error: '', metrics: [] },
-		chart: { hasData: false, error: '', labels: [], values: [] },
+		chart: { hasData: false, error: '', labels: [], values: [], currency: null },
 		chartBuilder: { groups: [], error: '' },
 		statements: {
 			hasData: false,
@@ -134,7 +134,7 @@ export function emptyDetailViewModel(symbol: string, tab: string): DetailViewMod
 			ratiosPeriod: ''
 		},
 		analysis: emptyAnalysisTab(),
-		forecast: { hasData: false, scenarios: [], chart: null },
+		forecast: { hasData: false, scenarios: [], chart: null, currency: null },
 		compare: { hasData: false, peers: [], selectedPeer: '', rows: [], chart: null },
 		news: { hasData: false, articles: [] },
 		sentiment: emptySentiment(),
@@ -629,12 +629,7 @@ async function loadStockChartTab(event: RequestEvent, vm: DetailViewModel) {
 		vm.chart.error = 'No price history available for this period.';
 		return;
 	}
-	vm.chart = {
-		hasData: true,
-		error: '',
-		labels: bars.map((b) => goFormat(new Date(b.date), 'Jan 2')),
-		values: bars.map((b) => b.close)
-	};
+	vm.chart = priceChartTab(bars, vm.currency);
 }
 
 function formatStatementPeriod(
@@ -757,7 +752,8 @@ async function loadStockForecastTab(event: RequestEvent, vm: DetailViewModel) {
 				sharePriceHigh: formatCurrency(year.sharePriceHigh)
 			}))
 		})),
-		chart: null
+		chart: null,
+		currency: vm.currency.trim() || null
 	};
 	const base = scenarios.find((s) => String(s.kind) === 'base' && (s.years ?? []).length > 0);
 	if (base) {

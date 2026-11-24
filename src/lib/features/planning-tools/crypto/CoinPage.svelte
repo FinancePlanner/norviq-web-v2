@@ -2,13 +2,19 @@
 	// crypto.CoinPage(vm) — internal/pages/crypto/coin.templ.
 	import EChart from '#lib/charts/EChart.svelte';
 	import { priceLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import { EmptyState } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import type { CoinPageVM } from './types.js';
 
 	let { vm }: { vm: CoinPageVM } = $props();
 	const chart = $derived(
-		vm.chart ? priceLine(vm.chart.id, vm.chart.labels, vm.chart.closes) : null
+		vm.chart
+			? priceLine(vm.chart.id, vm.chart.labels, vm.chart.closes, {
+					currency: vm.chart.currency,
+					locale: locale()
+				})
+			: null
 	);
 </script>
 

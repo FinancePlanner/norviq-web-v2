@@ -2,7 +2,7 @@
 	// dashboard.ActivityListSection(vm): the timeline rows + "Load more".
 	// Go's button hx-get'd /dashboard/activity-list?limit=N and swapped this
 	// section (outerHTML); here it fetches the larger page and replaces the rows.
-	import { t } from '#lib/i18n/context.svelte.js';
+	import { locale, t } from '#lib/i18n/context.svelte.js';
 	import InsetList from '#lib/components/norviq/vigil/InsetList.svelte';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import ActivityRow from './ActivityRow.svelte';
@@ -21,7 +21,11 @@
 		const button = e.currentTarget as HTMLElement;
 		button.classList.add('htmx-request');
 		try {
-			list = await fetchActivityList(nextActivityLimit(list.activityLimit));
+			list = await fetchActivityList(nextActivityLimit(list.activityLimit), {
+				currency: list.currency,
+				spendCurrency: list.spendCurrency,
+				locale: locale()
+			});
 		} finally {
 			button.classList.remove('htmx-request');
 			loading = false;
