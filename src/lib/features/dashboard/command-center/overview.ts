@@ -87,7 +87,7 @@ export function overviewAttention(vm: OverviewViewModel): OverviewAttentionVM {
 		};
 	}
 	if (vm.spendingPeriodPercent) {
-		const [metric, suffix] = overviewMetricParts(vm.spendingPeriodPercent, 'vs last month');
+		const [metric, suffix] = overviewMetricParts(vm.spendingPeriodPercent, vm.spendingPeriodSuffix);
 		return {
 			...none,
 			show: true,

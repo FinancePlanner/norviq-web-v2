@@ -2,7 +2,10 @@
 	// dashboard.InvestableCapacityHero + capacityDelta. The figure is the market
 	// value of the user's holdings, cash excluded (/v1/dashboard totalMarketValue),
 	// the same number as the Holdings metric on /portfolio, and labelled as such.
+	// DS 2.0 P1: in the account currency, and the change is measured over the
+	// fetched range with its basis, hidden when the history is stale.
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import { t } from '#lib/i18n/context.svelte.js';
 	import { overviewLiquidity } from './overview.js';
 	import type { OverviewViewModel } from './types.js';
 
@@ -12,17 +15,18 @@
 </script>
 
 {#snippet delta()}
-	{#if vm.portfolioPeriodPercent}
+	{#if vm.delta}
 		<vigil.HeroDelta
-			text={vm.portfolioPeriodPercent}
-			sentiment={sentiment(vm.portfolioPeriodPositive)}
+			text={`${vm.delta.text} ${vm.delta.basis}`}
+			sentiment={sentiment(vm.delta.positive)}
 		/>
-	{:else if vm.ytdPercent}
-		<vigil.HeroDelta text={vm.ytdPercent} sentiment={sentiment(vm.ytdPositive)} />
 	{/if}
 {/snippet}
 
-<vigil.Hero label="Holdings value" value={vm.totalWealth} {delta}>
+<vigil.Hero label={t('Holdings value')} value={vm.totalWealth} {delta}>
+	{#if vm.asOfCaption}
+		<p class="text-caption text-muted-foreground">{vm.asOfCaption}</p>
+	{/if}
 	{#if liquidity || vm.spendingThisMonth}
 		<vigil.MetricStrip>
 			{#if liquidity}

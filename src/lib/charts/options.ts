@@ -16,7 +16,7 @@ import {
 	colorUp,
 	goEchartsDefaultColors
 } from './palette.js';
-import type { ChartSpec, OptionObject } from './types.js';
+import type { ChartSpec, MoneySeries, OptionObject } from './types.js';
 
 /**
  * Go's normalizeChartID: go-echarts embedded the id in JS identifiers, so
@@ -37,22 +37,30 @@ function spec(id: string, width: string, height: string, option: OptionObject): 
 	return { id, width, height, option: option };
 }
 
+/** Tags a spec with the currency its tooltip and y axis print in. */
+function withMoney(chart: ChartSpec | null, m: MoneySeries | undefined): ChartSpec | null {
+	if (!chart || !m) return chart;
+	return { ...chart, currency: m.currency ?? null, locale: m.locale };
+}
+
 /** Monthly spending trend. */
 export function spendingLine(
 	chartID: string,
 	labels: readonly string[],
-	values: readonly number[]
+	values: readonly number[],
+	money?: MoneySeries
 ): ChartSpec | null {
-	return trendLine(chartID, labels, values, 'Spending', colorCyan, 0.22);
+	return withMoney(trendLine(chartID, labels, values, 'Spending', colorCyan, 0.22), money);
 }
 
 /** Portfolio wealth trend. */
 export function wealthLine(
 	chartID: string,
 	labels: readonly string[],
-	values: readonly number[]
+	values: readonly number[],
+	money?: MoneySeries
 ): ChartSpec | null {
-	return trendLine(chartID, labels, values, 'Wealth', colorTint, 0.25);
+	return withMoney(trendLine(chartID, labels, values, 'Wealth', colorTint, 0.25), money);
 }
 
 /** A single-asset close-price line (crypto coin detail). */

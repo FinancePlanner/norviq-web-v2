@@ -1,11 +1,13 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import type { PillarSlice } from '#lib/charts/index.js';
-import { formatCurrency, formatFloat } from '#lib/format.js';
+import { formatFloat } from '#lib/format.js';
+import type { T } from '#lib/i18n/index.js';
+import { money, type AppLocale } from '#lib/money.js';
 import { Path } from '#lib/nav.js';
 import * as timerange from '#lib/timerange.js';
 import { fetchJSON, getJSON } from '../fetch.server.js';
-import { clampPercent, goFormat, isoDate, parseTime, relativeTimeSince } from '../shared.js';
+import { clampPercent, isoDate, parseTime, relativeTimeSince } from '../shared.js';
 import { resolvePillar, resolvePillars } from '../pillars.js';
 import { mapActivities, mapRecentSpend } from '../activity/mappers.js';
 import {
@@ -24,9 +26,9 @@ import type {
 	LedgerFilterVM,
 	LedgerVM,
 	OverviewViewModel,
-	RangeOptionVM,
-	SeriesData
+	RangeOptionVM
 } from './types.js';
+import { buildOverviewFigures, perfRangeForKey } from './overview-vm.js';
 
 // Port of norviq-web internal/handlers/command_center_data.go and the
 // overview half of dashboard_data.go (LoadOverviewViewModel).
@@ -56,86 +58,14 @@ export function greetingForTime(now: Date, timeZone = 'UTC'): string {
 	return 'Good night';
 }
 
-type Change = S['PortfolioChange'];
-
-/** portfolio_change.go changeSuffix. */
-function changeSuffix(change: Change | undefined | null): string {
-	if (!change) return '';
-	switch (change.basis) {
-		case 'previousTradingDay':
-			return 'vs previous close';
-		case 'week':
-			return 'vs last week';
-		case 'month':
-			return 'vs last month';
-		case 'ytd':
-			return 'year to date';
-		case 'inception':
-			return 'since you started';
-		default: {
-			const d = parseTime(change.fromDate);
-			return 'since ' + (d ? goFormat(d, '2 Jan 2006') : change.fromDate);
-		}
-	}
-}
-
-/** portfolio_change.go formatChange. */
-function formatChange(
-	change: Change | undefined | null
-): { metric: string; suffix: string; positive: boolean } | null {
-	if (!change) return null;
-	const positive = change.percent >= 0;
-	return {
-		metric: `${positive ? '+' : ''}${formatFloat(change.percent * 100, 1)}%`,
-		suffix: changeSuffix(change),
-		positive
-	};
-}
-
-function formatChangeLabel(
-	change: Change | undefined | null
-): { label: string; positive: boolean } | null {
-	const c = formatChange(change);
-	if (!c) return null;
-	return { label: c.suffix ? `${c.metric} ${c.suffix}` : c.metric, positive: c.positive };
-}
-
-function primaryChange(changes: S['PortfolioChanges'] | undefined): Change | null {
-	if (!changes) return null;
-	return changes.day ?? changes.week ?? changes.month ?? changes.sinceInception ?? null;
-}
-
-function performancePointSeries(points: S['PerformancePoint'][]): SeriesData {
-	const dates = points.map((p) => parseTime(p.date) ?? new Date(0));
-	const years = dates.map((d) => d.getUTCFullYear());
-	const layout = Math.max(...years) > Math.min(...years) ? "Jan 2, '06" : 'Jan 2';
-	return { labels: dates.map((d) => goFormat(d, layout)), values: points.map((p) => p.value) };
-}
-
-function monthOverMonthChange(values: number[]): { pct: number; positive: boolean } | null {
-	if (values.length < 2) return null;
-	const prev = values[values.length - 2];
-	const last = values[values.length - 1];
-	if (prev <= 0) return null;
-	const pct = (last - prev) / prev;
-	return { pct, positive: pct >= 0 };
-}
-
-function spendingSeries(summaries: S['BudgetMonthSummaryResponse'][] | undefined): SeriesData {
-	if (!summaries?.length) return { labels: [], values: [] };
-	const sorted = [...summaries].sort(
-		(a, b) => (parseTime(a.monthStart)?.getTime() ?? 0) - (parseTime(b.monthStart)?.getTime() ?? 0)
-	);
-	const window = sorted.slice(Math.max(0, sorted.length - 12));
-	return {
-		labels: window.map((r) => goFormat(parseTime(r.monthStart) ?? new Date(0), 'Jan')),
-		values: window.map((r) => Math.max(0, r.actual))
-	};
-}
-
 function mapHealthMetrics(
 	insights: S['DashboardInsightsResponse'] | null,
-	reports: S['ReportsOverviewResponse'] | null
+	reports: S['ReportsOverviewResponse'] | null,
+	fmt: { currency: string | null; locale: AppLocale; t: T } = {
+		currency: null,
+		locale: 'en',
+		t: (s) => s
+	}
 ): HealthMetricsVM {
 	const vm: HealthMetricsVM = {
 		savingsRate: '-',
@@ -159,7 +89,7 @@ function mapHealthMetrics(
 	const summary = reports?.latestMonthSummary;
 	if (summary) {
 		const remaining = Math.max(0, summary.planned - summary.actual);
-		vm.budgetRemaining = formatCurrency(remaining) + ' left';
+		vm.budgetRemaining = fmt.t('%@ left', money(remaining, fmt.currency, fmt.locale));
 		if (summary.planned > 0)
 			vm.budgetRemainingPct = clampPercent((remaining / summary.planned) * 100);
 		vm.spendingOnTrack = summary.actual <= summary.planned;
@@ -174,20 +104,25 @@ function mapHealthMetrics(
 export async function loadOverviewViewModel(
 	event: RequestEvent,
 	username: string,
-	now = new Date()
+	now = new Date(),
+	rng: timerange.Key = timerange.Default
 ): Promise<OverviewViewModel> {
+	const { locale, t } = event.locals;
 	const vm: OverviewViewModel = {
 		greeting: greetingForTime(now),
 		username,
+		currency: null,
 		totalWealth: '',
-		ytdPercent: '',
-		ytdPositive: false,
+		delta: null,
+		asOfCaption: null,
 		portfolioPeriodPercent: '',
 		portfolioPeriodSuffix: '',
 		portfolioPeriodPositive: false,
 		wealthChart: null,
+		wealthChartNote: null,
 		spendingThisMonth: '',
 		spendingPeriodPercent: '',
+		spendingPeriodSuffix: '',
 		spendingPeriodPositive: false,
 		spendingChart: null,
 		activities: [],
@@ -203,7 +138,10 @@ export async function loadOverviewViewModel(
 	const [dash, insights, performance, activities, reports, expenses, goals] = await Promise.all([
 		getJSON<S['DashboardResponse']>(event, '/v1/dashboard'),
 		getJSON<S['DashboardInsightsResponse']>(event, '/v1/dashboard/insights'),
-		getJSON<S['PortfolioPerformanceResponse']>(event, '/v1/portfolio/performance'),
+		// The series for the Pulse range: the change and the chart are measured on it.
+		getJSON<S['PortfolioPerformanceResponse']>(event, '/v1/portfolio/performance', {
+			range: perfRangeForKey(rng)
+		}),
 		getJSON<Activity[]>(event, '/v1/activities', { limit: overviewActivityLimit }),
 		getJSON<S['ReportsOverviewResponse']>(event, '/v1/reports/overview'),
 		getJSON<Expense[]>(event, '/v1/expenses'),
@@ -217,55 +155,27 @@ export async function loadOverviewViewModel(
 	if (expenses.failed) vm.loadErrors.expenses = true;
 	if (goals.failed) vm.goalsError = true;
 
-	let totalValue = dash.data?.portfolio?.totalMarketValue ?? 0;
-	if (totalValue <= 0 && reports.data)
-		totalValue = reports.data.portfolioStatistics?.totalMarketValue ?? 0;
-	vm.totalWealth = formatCurrency(totalValue);
-
-	const perf = performance.data;
-	if (perf) {
-		if (perf.changes) {
-			const ytd = formatChangeLabel(perf.changes.ytd);
-			if (ytd) {
-				vm.ytdPercent = ytd.label;
-				vm.ytdPositive = ytd.positive;
-			}
-			const change = primaryChange(perf.changes);
-			if (change) {
-				const label = formatChangeLabel(change)!;
-				vm.portfolioPeriodPercent = label.label;
-				vm.portfolioPeriodSuffix = changeSuffix(change);
-				vm.portfolioPeriodPositive = label.positive;
-			}
-		}
-		if (perf.points?.length) {
-			const series = performancePointSeries(perf.points);
-			if (series.values.length > 0) vm.wealthChart = series;
-		}
-	}
+	const figures = buildOverviewFigures({
+		dash: dash.data,
+		performance: performance.data,
+		reports: reports.data,
+		rng,
+		locale,
+		now,
+		t
+	});
+	Object.assign(vm, figures);
+	const fmt = { currency: figures.currency, locale, t };
 
 	vm.activities = mapActivities(activities.data ?? [], now);
 	vm.recentSpend = mapRecentSpend(expenses.data ?? []);
 	if (insights.data) {
 		vm.financialHealth = mapFinancialHealth(insights.data.financialHealth);
-		vm.insightCards = mapInsightCards(insights.data);
+		vm.insightCards = mapInsightCards(insights.data, fmt);
 	}
-	vm.healthMetrics = mapHealthMetrics(insights.data, reports.data);
+	vm.healthMetrics = mapHealthMetrics(insights.data, reports.data, fmt);
 	vm.focusPoints = focusPointsTeaser(mapFocusPoints(goals.data ?? []));
 
-	if (reports.data) {
-		if (reports.data.latestMonthSummary)
-			vm.spendingThisMonth = formatCurrency(reports.data.latestMonthSummary.actual);
-		const series = spendingSeries(reports.data.monthlySummaries);
-		if (series.labels.length > 0) {
-			const change = monthOverMonthChange(series.values);
-			if (change) {
-				vm.spendingPeriodPositive = change.positive;
-				vm.spendingPeriodPercent = `${change.positive ? '+' : ''}${formatFloat(change.pct * 100, 1)}% vs last month`;
-			}
-			vm.spendingChart = series;
-		}
-	}
 	return vm;
 }
 
@@ -579,7 +489,7 @@ export async function loadCommandCenterViewModel(
 			from: isoDate(from),
 			to: isoDate(new Date(to.getTime() - dayMs))
 		}),
-		loadOverviewViewModel(event, username, now),
+		loadOverviewViewModel(event, username, now, rng),
 		getJSON<Activity[]>(event, '/v1/activities', { limit: ledgerActivityLimit }),
 		drainNotificationInbox(event)
 	]);

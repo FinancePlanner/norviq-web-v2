@@ -1157,5 +1157,8 @@
 	"Portfolio value at cost": "Valor do portefólio ao custo",
 	"Not converted. A combined total needs exchange rates (coming).": "Sem conversão. Um total combinado precisa de taxas de câmbio (em breve).",
 	"Not enough history for a trend yet.": "Ainda não há histórico suficiente para uma tendência.",
-	"Chart range": "Intervalo do gráfico"
+	"Chart range": "Intervalo do gráfico",
+	"Holdings value": "Valor das posições",
+	"%@ left": "%@ disponível",
+	"vs last month": "vs mês anterior"
 }

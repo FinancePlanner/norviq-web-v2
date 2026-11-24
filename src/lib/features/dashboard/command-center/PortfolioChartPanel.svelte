@@ -2,11 +2,17 @@
 	// dashboard.PortfolioChartPanel.
 	import EChart from '#lib/charts/EChart.svelte';
 	import { wealthLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import type { OverviewViewModel } from './types.js';
 
 	let { vm }: { vm: OverviewViewModel } = $props();
 	const chart = $derived(
-		vm.wealthChart ? wealthLine('wealth-chart', vm.wealthChart.labels, vm.wealthChart.values) : null
+		vm.wealthChart
+			? wealthLine('wealth-chart', vm.wealthChart.labels, vm.wealthChart.values, {
+					currency: vm.currency,
+					locale: locale()
+				})
+			: null
 	);
 </script>
 
@@ -29,6 +35,8 @@
 			{@render message('Portfolio value is unavailable right now.')}
 		{:else if vm.loadErrors.performance}
 			{@render message('Portfolio chart is unavailable right now.')}
+		{:else if vm.wealthChartNote}
+			{@render message(vm.wealthChartNote)}
 		{:else if !chart}
 			{@render message('Add holdings to build your portfolio chart.')}
 		{:else}

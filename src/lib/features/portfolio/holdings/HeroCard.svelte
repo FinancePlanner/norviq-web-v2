@@ -7,7 +7,7 @@
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { wealthLine } from '#lib/charts/index.js';
-	import { t } from '#lib/i18n/context.svelte.js';
+	import { locale, t } from '#lib/i18n/context.svelte.js';
 	import SentimentRollup from '../SentimentRollup.svelte';
 	import type { HoldingsViewModel } from './types.js';
 
@@ -16,7 +16,12 @@
 	const hero = $derived(vm.hero);
 	// charts.WealthLine("portfolio-chart", labels, values), as the Go loader built it.
 	const chart = $derived(
-		vm.chartLabels.length > 0 ? wealthLine('portfolio-chart', vm.chartLabels, vm.chartValues) : null
+		vm.chartLabels.length > 0
+			? wealthLine('portfolio-chart', vm.chartLabels, vm.chartValues, {
+					currency: vm.hero?.currency,
+					locale: locale()
+				})
+			: null
 	);
 	const sentiment = (d: 'up' | 'down' | 'flat') =>
 		d === 'up' ? 'positive' : d === 'down' ? 'negative' : '';

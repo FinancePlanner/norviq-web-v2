@@ -9,6 +9,7 @@
 		spendPillarBar,
 		type ChartSpec
 	} from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import type { CommandCenterViewModel } from './types.js';
 
 	let { vm }: { vm: CommandCenterViewModel } = $props();
@@ -18,7 +19,8 @@
 			? spendingLine(
 					'spending-chart',
 					vm.overview.spendingChart.labels,
-					vm.overview.spendingChart.values
+					vm.overview.spendingChart.values,
+					{ currency: vm.overview.currency, locale: locale() }
 				)
 			: null
 	);

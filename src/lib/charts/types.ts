@@ -1,4 +1,5 @@
 import type { EChartsOption } from 'echarts';
+import type { AppLocale } from '../money.js';
 
 /** The parameters ECharts passes to a click handler (the parts the Norviq charts read). */
 export interface ChartClickParams {
@@ -26,6 +27,16 @@ export interface ChartSpec {
 	class?: string;
 	option: EChartsOption;
 	onclick?: (params: ChartClickParams) => void;
+	/** ISO 4217 code of a money series; the tooltip and y axis use it. Absent is unknown, never USD. */
+	currency?: string | null;
+	/** App locale for that money. */
+	locale?: AppLocale;
+}
+
+/** The currency and locale a money series is formatted in. */
+export interface MoneySeries {
+	currency?: string | null;
+	locale?: AppLocale;
 }
 
 /** A plain JSON-ish option object, cast to EChartsOption once it is built. */

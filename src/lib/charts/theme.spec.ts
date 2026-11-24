@@ -86,7 +86,7 @@ describe('themedOptionPatch', () => {
 			triggerOn: 'mousemove|click',
 			transitionDuration: 0.12
 		});
-		expect(next.tooltip.formatter).toBe(wealthTooltipFormatter);
+		expect(typeof next.tooltip.formatter).toBe('function');
 		expect(next.xAxis[0].axisLabel.color).toBe('#9da9b8');
 		expect(next.xAxis[0].axisPointer).toEqual({ show: true, snap: true });
 		expect(next.yAxis[0].splitLine.lineStyle).toEqual({ color: '#344258', type: 'dashed' });
@@ -197,9 +197,43 @@ describe('themedOptionPatch', () => {
 		});
 	});
 
-	it('formats the wealth tooltip in whole dollars', () => {
-		expect(wealthTooltipFormatter([{ axisValueLabel: 'Jan 2', data: { value: 105000.4 } }])).toBe(
-			'Jan 2<br/><strong>$105,000</strong>'
+	/** A formatter the patch installed, called the way ECharts calls it. */
+	const call = (f: unknown, arg: unknown): string => {
+		expect(typeof f).toBe('function');
+		return typeof f === 'function' ? String(Reflect.apply(f, undefined, [arg])) : '';
+	};
+	const field = (o: unknown, ...path: (string | number)[]): unknown =>
+		path.reduce<unknown>((v, k) => (v && typeof v === 'object' ? Reflect.get(v, k) : undefined), o);
+
+	it('formats the wealth tooltip in the series currency and locale', () => {
+		const next = themedOptionPatch(
+			wealth,
+			'wealth_chart',
+			env(true, {}, { currency: 'EUR', locale: 'pt-PT' })
 		);
+		const html = call(field(next, 'tooltip', 'formatter'), [
+			{ axisValueLabel: '2 jan', data: { value: 105000.4 } }
+		]);
+		expect(html).toContain('€');
+		expect(html).not.toContain('$');
+		expect(html).toBe('2 jan<br/><strong>105\u00a0000,40\u00a0€</strong>');
+	});
+
+	it('never prints a dollar sign in a tooltip without a currency', () => {
+		const html = wealthTooltipFormatter(
+			[{ axisValueLabel: 'Jan 2', data: { value: 105000.4 } }],
+			env(false)
+		);
+		expect(html).toBe('Jan 2<br/><strong>105,000.40\u00a0\u2014</strong>');
+	});
+
+	it('labels the wealth and spending y axis in compact money when the currency is known', () => {
+		const e = env(false, {}, { currency: 'USD', locale: 'en' });
+		for (const id of ['wealth_chart', 'spending_chart']) {
+			const next = themedOptionPatch(wealth, id, e);
+			expect(call(field(next, 'yAxis', 0, 'axisLabel', 'formatter'), 48432.05)).toBe('$48.43K');
+		}
+		const bare = themedOptionPatch(wealth, 'wealth_chart', env(false));
+		expect(field(bare, 'yAxis', 0, 'axisLabel', 'formatter')).toBeUndefined();
 	});
 });

@@ -9,6 +9,8 @@
 // runs again whenever html.dark flips. EChart.svelte drives it; everything
 // here is pure apart from the default DOM environment, so it is unit tested.
 
+import { compactMoney, money, type AppLocale } from '../money.js';
+
 /** Where the theme reads appearance from. domThemeEnv() is the browser one. */
 export interface ThemeEnv {
 	dark: boolean;
@@ -16,6 +18,10 @@ export interface ThemeEnv {
 	cssVar: (name: string, fallback: string) => string;
 	reducedMotion: boolean;
 	coarsePointer: boolean;
+	/** ISO 4217 code of a money series (wealth, spending); absent means unknown, never USD. */
+	currency?: string | null;
+	/** App locale for money in tooltips and axes. Defaults to 'en'. */
+	locale?: AppLocale;
 }
 
 export function domThemeEnv(): ThemeEnv {
@@ -397,18 +403,20 @@ export function buildTooltipOption(
 	return tooltip;
 }
 
-function formatUSD(value: unknown): string {
+function formatMoney(value: unknown, env: Pick<ThemeEnv, 'currency' | 'locale'>): string {
 	const n = Number(value);
 	if (!Number.isFinite(n)) return typeof value === 'string' ? value : '';
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-		maximumFractionDigits: 0
-	}).format(n);
+	return money(n, env.currency, env.locale ?? 'en');
 }
 
-/** Tooltip for wealth/spending lines: "<date><br/><strong>$12,345</strong>". */
-export function wealthTooltipFormatter(params: unknown): string {
+/**
+ * Tooltip for wealth/spending lines: "<date><br/><strong>€12,345.00</strong>",
+ * in the series' currency and the app locale (DS 2.0 money contract).
+ */
+export function wealthTooltipFormatter(
+	params: unknown,
+	env: Pick<ThemeEnv, 'currency' | 'locale'> = {}
+): string {
 	const items = Array.isArray(params) ? params : [params];
 	const first = items[0] as Obj | undefined;
 	if (!first) return '';
@@ -416,8 +424,29 @@ export function wealthTooltipFormatter(params: unknown): string {
 	const date = typeof label === 'string' ? label : '';
 	const data = first.data as Obj | number | undefined;
 	const value = (data && typeof data === 'object' ? data.value : undefined) ?? first.value ?? data;
-	return `${date}<br/><strong>${formatUSD(value)}</strong>`;
+	return `${date}<br/><strong>${formatMoney(value, env)}</strong>`;
 }
+
+/** Compact money on a value axis ("$48.43K"), only when the series' currency is known. */
+function withMoneyAxis(axes: unknown, env: ThemeEnv): unknown {
+	const currency = env.currency;
+	if (!currency || !axes) return axes;
+	const locale = env.locale ?? 'en';
+	return list(axes).map((raw) => {
+		const axis = obj(raw);
+		return {
+			...axis,
+			axisLabel: {
+				...obj(axis.axisLabel),
+				formatter: (v: number) => compactMoney(v, currency, locale)
+			}
+		};
+	});
+}
+
+/** Calendar charts have no cartesian axes and the pillar bar hides both. */
+const skipAxesFor = (kind: ChartKind) =>
+	kind === 'spark' || kind === 'density' || kind === 'pillars';
 
 /**
  * What dashboard-charts.js refreshCharts() setOption'd onto one chart:
@@ -427,14 +456,14 @@ export function themedOptionPatch(current: Obj, chartID: string, env: ThemeEnv):
 	const palette = getChartPalette(env);
 	const triggerOn = env.coarsePointer ? 'click' : 'mousemove|click';
 	const kind = chartKind(chartID, current.series);
-	const formatter = kind === 'wealth' || kind === 'spending' ? wealthTooltipFormatter : undefined;
-	// Calendar charts have no cartesian axes and the pillar bar hides both.
-	const skipAxes = kind === 'spark' || kind === 'density' || kind === 'pillars';
+	const isMoney = kind === 'wealth' || kind === 'spending';
+	const formatter = isMoney ? (p: unknown) => wealthTooltipFormatter(p, env) : undefined;
+	const yAxis = skipAxesFor(kind) ? current.yAxis : patchAxisList(current.yAxis, palette);
 	const next: Obj = {
 		backgroundColor: 'transparent',
 		tooltip: buildTooltipOption(current, palette, triggerOn, env, formatter),
-		xAxis: skipAxes ? current.xAxis : patchAxisList(current.xAxis, palette),
-		yAxis: skipAxes ? current.yAxis : patchAxisList(current.yAxis, palette),
+		xAxis: skipAxesFor(kind) ? current.xAxis : patchAxisList(current.xAxis, palette),
+		yAxis: isMoney ? withMoneyAxis(yAxis, env) : yAxis,
 		animationDuration: env.reducedMotion ? 0 : 320,
 		animationEasing: 'cubicOut',
 		series: patchSeriesList(current.series, palette, chartID, kind, env)
