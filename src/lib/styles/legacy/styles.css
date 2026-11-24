@@ -160,6 +160,9 @@
   --font-mono:
     'JetBrains Mono', 'SF Mono', SFMono-Regular, ui-monospace, Menlo, Monaco,
     Consolas, monospace;
+  /* font.display in design/tokens.json (a test keeps them equal): page titles
+     on Document pages, the Overview greeting and the brief. Never numbers. */
+  --font-display: 'Brygada 1918', Georgia, serif;
 }
 
 html {

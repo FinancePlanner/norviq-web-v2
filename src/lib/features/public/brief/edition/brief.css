@@ -10,23 +10,9 @@
  * and section labels. Rule over card still holds: blocks are separated by
  * hairlines, not boxed.
  *
- * Brygada 1918 (The Brygada 1918 Project Authors, github.com/kosmynkab/
- * Brygada-1918: a revival of a 1918 Polish typeface; SIL Open Font License
- * 1.1; fontsource 5.3.0, latin subset, wght 400-700) is display and
- * editorial type only,
- * chosen by the owner on 2026-11-24 over the generic editorial serifs.
- * Figures stay in Geist with tabular-nums. */
-
-@font-face {
-	font-family: 'Brygada 1918';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 400 700;
-	src: url('/static/fonts/brygada-1918-latin-wght-normal.woff2') format('woff2-variations');
-	unicode-range:
-		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
+ * The serif is the app's display face, Brygada 1918 (--font-display; its
+ * @font-face is in src/lib/styles/fonts.css and the layouts preload it). It is
+ * display and editorial type only; figures stay in Geist with tabular-nums. */
 
 .mi {
 	--mi-ink: var(--foreground);
@@ -43,7 +29,7 @@
 	--mi-chart-3: var(--color-info);
 	--mi-grid: var(--chart-grid);
 	--mi-axis: var(--chart-axis);
-	--mi-serif: 'Brygada 1918', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+	--mi-serif: var(--font-display);
 	--mi-gutter: clamp(1rem, 4vw, 2.5rem);
 
 	color: var(--mi-ink);

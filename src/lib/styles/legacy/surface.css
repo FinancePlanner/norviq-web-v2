@@ -1153,6 +1153,17 @@ html .overview-modern-page .overview-title {
 	max-width: 54rem;
 }
 
+/* The display face (Brygada 1918, DS 2.0 § 5.2, owner verdict Q2): the page
+ * title of a Document page and the Overview greeting, nothing else. Classes,
+ * not h1: a Document page may set a figure in an h1, and numbers never take
+ * the serif. Wraps, never truncates (long pt-PT titles). */
+.app-page-content.vigil-document-page .vigil-page-title,
+.command-center-page .cc-greeting {
+	font-family: var(--font-display);
+	font-weight: 600;
+	text-wrap: balance;
+}
+
 /* KPI strip: type on the page, no rule under it. Columns pack by content. */
 .vigil-metric-strip {
 	display: grid;

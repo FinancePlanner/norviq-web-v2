@@ -8,6 +8,18 @@
 	let { data, children }: LayoutProps = $props();
 </script>
 
+<!-- The display face (Brygada 1918) sets the Overview greeting and every
+     Document page title above the fold; once fetched it is cached for the app. -->
+<svelte:head>
+	<link
+		rel="preload"
+		href="/static/fonts/brygada-1918-latin-wght-normal.woff2"
+		as="font"
+		type="font/woff2"
+		crossorigin="anonymous"
+	/>
+</svelte:head>
+
 <AppShell
 	username={data.username}
 	email={data.email}

@@ -26,7 +26,7 @@
 	class="app-page-content vigil-deck-page overview-page overview-modern-page command-center-page"
 >
 	<header class="cc-header">
-		<h1 class="text-title1 font-semibold tracking-tight text-balance">
+		<h1 class="cc-greeting text-title1 font-semibold tracking-tight text-balance">
 			{commandGreeting(vm.overview)}
 		</h1>
 		<div class="overview-hero-search flex flex-col gap-3">

@@ -2,13 +2,16 @@
 // scripts/tokens/build.mjs. These tests prove the generator changed no colour
 // (every generated OKLCH sits within an OKLab distance of 0.005 of the literal
 // theme.css held before, see __fixtures__/theme-before.json), that the committed
-// output is fresh, and that the non-colour values in CSS equal the tokens.
+// output is fresh, that the non-colour values in CSS equal the tokens, and that
+// Brygada 1918 (font.display) is the global display face for page titles only.
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { render } from 'svelte/server';
 import { afterAll, describe, expect, it } from 'vitest';
+import DocumentPage from '../components/norviq/vigil/DocumentPage.svelte';
 import { hexToOklch, oklchToOklab } from '../../../scripts/tokens/oklch.mjs';
 import { DARK, LIGHT } from '../charts/palette.generated.js';
 import { PAGE_BG } from '../theme-color.generated.js';
@@ -285,5 +288,73 @@ describe('non-colour values in CSS equal the tokens', () => {
 			(families as string[]).map((f) => (/[\s\d]/.test(f) ? `'${f}'` : f)).join(', ');
 		expect(themeBlock('--font-sans')).toBe(stack(value('font.sans')));
 		expect(themeBlock('--font-mono')).toBe(stack(value('font.mono')));
+	});
+});
+
+describe('Brygada 1918, the display face (font.display)', () => {
+	const BRYGADA = '/static/fonts/brygada-1918-latin-wght-normal.woff2';
+	const fontFaces = (css: string) => css.match(/@font-face\s*\{[^}]*\}/g) ?? [];
+	const styles = read('src/lib/styles/legacy/styles.css');
+	const surface = read('src/lib/styles/legacy/surface.css');
+	const display = value('font.display') as string[];
+
+	it('is declared once, globally, in fonts.css', () => {
+		const brygada = fontFaces(read('src/lib/styles/fonts.css')).filter((f) =>
+			f.includes("font-family: 'Brygada 1918'")
+		);
+		expect(brygada).toHaveLength(1);
+		expect(brygada[0]).toContain(`src: url('${BRYGADA}')`);
+		expect(brygada[0]).toContain('font-weight: 400 700');
+		expect(brygada[0]).toContain('font-display: swap');
+	});
+
+	it('is --font-display, the token stack, falling back to a serif', () => {
+		const stack = /^\s*--font-display:\s*([^;]+);/m.exec(styles)?.[1].trim() ?? '';
+		const families = stack.split(',').map((f) => f.trim().replace(/^'|'$/g, ''));
+		expect(families).toEqual(display);
+		expect(families[0]).toBe('Brygada 1918');
+		expect(families.at(-1)).toBe('serif');
+	});
+
+	it('leaves the brief no font of its own: it aliases the global face', () => {
+		const brief = read('src/lib/features/public/brief/edition/brief.css');
+		expect(fontFaces(brief)).toEqual([]);
+		expect(brief).toMatch(/--mi-serif:\s*var\(--font-display\);/);
+		expect(read('src/lib/features/public/brief/BriefPage.svelte')).not.toContain(BRYGADA);
+	});
+
+	it('is preloaded by the layouts that show it above the fold', () => {
+		expect(read('src/routes/(app)/+layout.svelte')).toContain(BRYGADA);
+		expect(read('src/routes/(public)/+layout.svelte')).toContain(BRYGADA);
+	});
+
+	// The selector list that sets the display face. Element selectors (a bare h1)
+	// are not allowed: a Document page may use an h1 for a figure
+	// (portfolio/one-page), and numbers never take the serif.
+	const rule = /([^{}]+)\{[^}]*font-family:\s*var\(--font-display\)[^}]*\}/.exec(surface);
+	const selectors = (rule?.[1] ?? '')
+		.replace(/\/\*[\s\S]*?\*\//g, '')
+		.split(',')
+		.map((s) => s.trim());
+
+	it('sets Document-grammar page titles and the Overview greeting, semibold and balanced', () => {
+		expect(selectors).toEqual([
+			'.app-page-content.vigil-document-page .vigil-page-title',
+			'.command-center-page .cc-greeting'
+		]);
+		expect(rule?.[0]).toContain('font-weight: 600');
+		expect(rule?.[0]).toContain('text-wrap: balance');
+	});
+
+	it('reaches the title of a server-rendered DocumentPage', () => {
+		const { body } = render(DocumentPage, { props: { title: 'Settings' } });
+		expect(body).toMatch(/class="app-page-content vigil-document-page[^"]*"/);
+		expect(body).toMatch(/<h1 class="vigil-page-title[^"]*">Settings<\/h1>/);
+	});
+
+	it('reaches the Overview greeting', () => {
+		expect(read('src/routes/(app)/dashboard/+page.svelte')).toMatch(
+			/command-center-page[\s\S]*<h1 class="cc-greeting /
+		);
 	});
 });
