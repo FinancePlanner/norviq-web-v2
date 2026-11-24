@@ -69,6 +69,8 @@ export interface OverviewFigures {
 	wealthChartNote: string | null;
 	spendingThisMonth: string;
 	spendingChart: SeriesData | null;
+	/** Shown instead of the monthly spend chart when the range covers a single month. */
+	spendingChartNote: string | null;
 	spendingPeriodPercent: string;
 	spendingPeriodSuffix: string;
 	spendingPeriodPositive: boolean;
@@ -117,6 +119,7 @@ export function buildOverviewFigures(input: OverviewFiguresInput): OverviewFigur
 		wealthChartNote: null,
 		spendingThisMonth: '',
 		spendingChart: null,
+		spendingChartNote: null,
 		spendingPeriodPercent: '',
 		spendingPeriodSuffix: '',
 		spendingPeriodPositive: false
@@ -168,7 +171,10 @@ export function buildOverviewFigures(input: OverviewFiguresInput): OverviewFigur
 				f.spendingPeriodSuffix = t('vs last month');
 				f.spendingPeriodPercent = `${signedPercent(change, locale)} ${f.spendingPeriodSuffix}`;
 			}
-			f.spendingChart = series;
+			// One month is one point, and a line needs two.
+			if (series.labels.length >= 2) f.spendingChart = series;
+			else
+				f.spendingChartNote = t('This range covers one month. Choose a longer range for a trend.');
 		}
 	}
 	return f;

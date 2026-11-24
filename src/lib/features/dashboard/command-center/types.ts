@@ -44,6 +44,8 @@ export interface OverviewViewModel {
 	spendingPeriodPositive: boolean;
 	/** Go SpendingChartHTML. */
 	spendingChart: SeriesData | null;
+	/** Shown instead of the monthly spend chart when the range covers a single month. */
+	spendingChartNote: string | null;
 	activities: ActivityItemVM[];
 	recentSpend: RecentSpendItemVM[];
 	financialHealth: FinancialHealthVM;

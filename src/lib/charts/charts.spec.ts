@@ -422,3 +422,21 @@ describe('Go chart tests', () => {
 		expect(svg).toContain('fin-growth-sparkline-zero');
 	});
 });
+
+describe('money series (DS 2.0)', () => {
+	it('tags a wealth or spending spec with its currency and locale', () => {
+		const w = wealthLine('wealth-chart', ['Jan 2', 'Jan 9'], [1, 2], {
+			currency: 'EUR',
+			locale: 'pt-PT'
+		});
+		expect(w?.currency).toBe('EUR');
+		expect(w?.locale).toBe('pt-PT');
+		const s = spendingLine('spending-chart', ['Jan', 'Feb'], [1, 2], { currency: null });
+		expect(s?.currency).toBeNull();
+	});
+
+	it('leaves an untagged spec exactly as the Go builder made it', () => {
+		const w = wealthLine('wealth-chart', ['Jan 2', 'Jan 9'], [1, 2]);
+		expect(w).not.toHaveProperty('currency');
+	});
+});

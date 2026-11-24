@@ -125,6 +125,7 @@ export async function loadOverviewViewModel(
 		spendingPeriodSuffix: '',
 		spendingPeriodPositive: false,
 		spendingChart: null,
+		spendingChartNote: null,
 		activities: [],
 		recentSpend: [],
 		financialHealth: mapFinancialHealth(null),

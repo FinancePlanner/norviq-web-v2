@@ -50,7 +50,11 @@
 {/snippet}
 
 <div class="cc-pulse-grid">
-	{@render tile('Monthly spend', spending, 'Spending trend needs a few months of expenses.')}
+	{@render tile(
+		'Monthly spend',
+		spending,
+		vm.overview.spendingChartNote ?? 'Spending trend needs a few months of expenses.'
+	)}
 	{@render tile(
 		'Spend by pillar · ' + vm.rangeLabel,
 		pillars,

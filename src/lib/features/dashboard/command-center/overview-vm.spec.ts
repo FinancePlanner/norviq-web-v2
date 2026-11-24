@@ -155,7 +155,12 @@ describe('buildOverviewFigures', () => {
 		expect(thirty.spendingChart?.labels).toEqual(['Oct', 'Nov']);
 		const year = buildOverviewFigures(input({ rng: '12mo' }));
 		expect(year.spendingChart?.labels).toEqual(['Jun', 'Sep', 'Oct', 'Nov']);
+		// One month is one point: no line to draw, so the tile says why.
 		const today = buildOverviewFigures(input({ rng: 'today' }));
-		expect(today.spendingChart?.labels).toEqual(['Nov']);
+		expect(today.spendingChart).toBeNull();
+		expect(today.spendingChartNote).toBe(
+			'This range covers one month. Choose a longer range for a trend.'
+		);
+		expect(thirty.spendingChartNote).toBeNull();
 	});
 });

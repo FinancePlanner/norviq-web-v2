@@ -47,13 +47,13 @@
 		<p class="text-caption text-muted-foreground">{hero.asOfCaption}</p>
 	{/if}
 	<SentimentRollup vm={vm.sentiment} />
-	<div class="portfolio-hero-chart mt-2 min-h-[160px] md:min-h-[180px]">
-		{#if chart}
+	{#if chart}
+		<div class="portfolio-hero-chart mt-2 min-h-[160px] md:min-h-[180px]">
 			<EChart {...chart} />
-		{:else if hero?.historyNote}
-			<p class="text-subhead text-muted-foreground">{hero.historyNote}</p>
-		{/if}
-	</div>
+		</div>
+	{:else if hero?.historyNote}
+		<p class="mt-2 text-subhead text-muted-foreground">{hero.historyNote}</p>
+	{/if}
 	<nav class="segmented-control" aria-label={t('Chart range')}>
 		{#each hero?.rangeLinks ?? [] as link (link.range)}
 			<a
