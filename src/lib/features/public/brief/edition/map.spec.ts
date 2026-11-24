@@ -275,6 +275,49 @@ describe('editionPageVM with an edition', () => {
 	});
 });
 
+describe('headline mover selection', () => {
+	it('names the largest mover in the direction of the session', () => {
+		const up = brief({
+			groups: [
+				{
+					id: 'us_close',
+					title: 'Wall Street closed higher',
+					tone: 'up',
+					rows: [
+						{
+							symbol: '^NDX',
+							flag: '',
+							name: 'Nasdaq 100',
+							level: '1',
+							change: '1.60%',
+							direction: 'down'
+						},
+						{
+							symbol: '^GSPC',
+							flag: '',
+							name: 'S&P 500',
+							level: '1',
+							change: '0.60%',
+							direction: 'up'
+						},
+						{
+							symbol: '^DJI',
+							flag: '',
+							name: 'Dow Jones',
+							level: '1',
+							change: '1.50%',
+							direction: 'up'
+						}
+					]
+				}
+			]
+		});
+		expect(editionPageVM(up, null, 'en', t).headline).toBe(
+			'Wall Street closes higher as the Dow Jones gains 1.50%'
+		);
+	});
+});
+
 describe('editionPageVM for a legacy brief (no edition)', () => {
 	const vm = editionPageVM(brief(), null, 'en', t);
 
@@ -368,6 +411,12 @@ describe('headlineFor', () => {
 		expect(
 			headlineFor({ groupId: 'us_close', tone: 'flat', name: 'Dow Jones', pct: 0.1 }, 'en')
 		).toBe('Wall Street ends mixed; Dow Jones +0.10%');
+	});
+
+	it('never names a mover going against the session', () => {
+		expect(
+			headlineFor({ groupId: 'us_close', tone: 'up', name: 'Nasdaq 100', pct: -1.6 }, 'en')
+		).toBe('Wall Street closes higher; Nasdaq 100 ' + MINUS + '1.60%');
 	});
 
 	it('never makes a future the index it tracks', () => {

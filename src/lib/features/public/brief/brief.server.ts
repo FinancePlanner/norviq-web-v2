@@ -139,15 +139,28 @@ async function fetchBrief(event: RequestEvent, key: Key): Promise<Entry> {
 export function validEdition(raw: unknown): EditionDTO | null {
 	if (!raw || typeof raw !== 'object') return null;
 	const e: Partial<EditionDTO> = raw;
-	if (
-		typeof e.id !== 'string' ||
-		!e.id ||
-		!Array.isArray(e.instruments) ||
-		!Array.isArray(e.series)
-	)
-		return null;
+	// Only the shape this page was written for; anything else renders as a
+	// legacy brief rather than failing the page.
+	if (e.schemaVersion !== 2 || typeof e.id !== 'string' || !e.id) return null;
+	if (!Array.isArray(e.instruments) || !Array.isArray(e.series)) return null;
+	const finite = (n: unknown) => typeof n === 'number' && Number.isFinite(n);
+	const instruments = e.instruments.filter(
+		(i) =>
+			typeof i?.symbol === 'string' &&
+			finite(i.last) &&
+			finite(i.previousClose) &&
+			finite(i.change) &&
+			finite(i.changePct) &&
+			finite(i.precision)
+	);
+	const series = e.series.filter(
+		(s) =>
+			typeof s?.symbol === 'string' &&
+			Array.isArray(s.points) &&
+			s.points.every((p) => Array.isArray(p) && finite(p[0]) && finite(p[1]))
+	);
 	return {
-		schemaVersion: e.schemaVersion ?? 0,
+		schemaVersion: e.schemaVersion,
 		id: e.id,
 		kind: e.kind ?? '',
 		revision: e.revision ?? 0,
@@ -155,8 +168,8 @@ export function validEdition(raw: unknown): EditionDTO | null {
 		publishedAt: e.publishedAt ?? '',
 		marketDataAsOf: e.marketDataAsOf ?? null,
 		timezone: e.timezone ?? '',
-		instruments: e.instruments,
-		series: e.series,
+		instruments,
+		series,
 		quality: e.quality ?? { degraded: false, model: '', missing: [] }
 	};
 }

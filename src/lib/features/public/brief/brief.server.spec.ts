@@ -100,6 +100,7 @@ describe('brief page VM', () => {
 
 	it('takes dateModified from the edition', () => {
 		const edition = validEdition({
+			schemaVersion: 2,
 			id: 'MI-2026-11-20-C',
 			revision: 2,
 			publishedAt: '2026-11-20T23:05:00Z',
@@ -114,8 +115,26 @@ describe('brief page VM', () => {
 });
 
 describe('validEdition', () => {
+	it('drops malformed instruments and series instead of failing the page', () => {
+		const e = validEdition({
+			schemaVersion: 2,
+			id: 'MI-1',
+			instruments: [
+				{ symbol: '^NDX', last: 1, previousClose: 1, change: 0, changePct: 0, precision: 2 },
+				{ symbol: '^GSPC', last: 'NaN', previousClose: 1, change: 0, changePct: 0, precision: 2 },
+				null
+			],
+			series: [
+				{ symbol: '^NDX', points: [[1, 2]] },
+				{ symbol: '^GSPC', points: [[1, null]] }
+			]
+		});
+		expect(e?.instruments.map((i) => i.symbol)).toEqual(['^NDX']);
+		expect(e?.series.map((s) => s.symbol)).toEqual(['^NDX']);
+	});
+
 	it('accepts the backend shape and fills a missing quality block', () => {
-		const e = validEdition({ id: 'MI-1', instruments: [], series: [] });
+		const e = validEdition({ schemaVersion: 2, id: 'MI-1', instruments: [], series: [] });
 		expect(e?.quality).toEqual({ degraded: false, model: '', missing: [] });
 	});
 

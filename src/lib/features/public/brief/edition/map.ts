@@ -143,8 +143,9 @@ export function headlineFor(h: HeadlineInput, lang: string): string {
 	const [subject, verb, higher, lower, mixed] =
 		(pt ? ptw : en)[h.groupId] ?? (pt ? ptw : en).us_close;
 	const tone = h.tone === 'up' ? higher : h.tone === 'down' ? lower : '';
-	// Futures name an index they are not: never "the Nasdaq 100 falls".
-	if (!tone || mover === 'flat' || h.groupId === 'us_futures') {
+	// Futures name an index they are not: never "the Nasdaq 100 falls". A
+	// mover against the session's tone never gets the "as … falls" form.
+	if (!tone || mover !== h.tone || h.groupId === 'us_futures') {
 		return `${subject} ${tone ? verb + ' ' + tone : mixed}; ${h.name} ${signed}`;
 	}
 	if (pt)
@@ -229,6 +230,9 @@ function intradayChart(
 	for (const s of e.series) {
 		const inst = bySymbol.get(s.symbol);
 		if (!inst || !(inst.previousClose > 0) || s.points.length < 2) continue;
+		// At 08:15 Lisbon Europe has traded for minutes: charting it beside a
+		// night of futures would be a sliver. The Open charts the futures.
+		if (kind === 'open' && inst.assetClass !== 'future') continue;
 		input.push({
 			symbol: s.symbol,
 			name: str.names[s.symbol] ?? inst.name,
@@ -385,15 +389,24 @@ export function editionPageVM(
 	let headline = '';
 	const lead = ordered[0];
 	if (lead) {
-		let best: { name: string; pct: number } | null = null;
+		const tone = direction(lead.tone);
+		const movers: { name: string; pct: number }[] = [];
 		for (const row of lead.rows) {
 			const inst = instruments.get(row.symbol);
 			const pct = inst ? inst.changePct : legacyPct(row.change, direction(row.direction));
-			if (pct === null) continue;
-			if (!best || Math.abs(pct) > Math.abs(best.pct)) best = { name: row.name, pct };
+			if (pct !== null) movers.push({ name: row.name, pct });
 		}
-		if (best)
-			headline = headlineFor({ groupId: lead.id, tone: direction(lead.tone), ...best }, lang);
+		// The mover named must move the way the session did: in a higher close
+		// the largest gainer, never a falling index ("closes higher as the
+		// Nasdaq falls"). With no such row, or a mixed session, the largest
+		// absolute move goes in the neutral form.
+		const agreeing = movers.filter((m) => directionOf(m.pct) === tone);
+		const pool = tone !== 'flat' && agreeing.length ? agreeing : movers;
+		const best = pool.reduce<{ name: string; pct: number } | null>(
+			(b, m) => (!b || Math.abs(m.pct) > Math.abs(b.pct) ? m : b),
+			null
+		);
+		if (best) headline = headlineFor({ groupId: lead.id, tone, ...best }, lang);
 	}
 
 	const items = [...brief.notes, ...brief.stories];
@@ -408,7 +421,8 @@ export function editionPageVM(
 		revision: e?.revision ?? 0,
 		dateLong: formatLongDate(brief.tradingDateISO, lang),
 		headline: headline || (kind === 'close' ? str.theClose : str.theOpen),
-		dek: brief.greeting,
+		// The greeting is a dek only when it is a sentence, not a salutation ("Good morning,").
+		dek: /[.!?]$/.test(brief.greeting) && brief.greeting.length >= 40 ? brief.greeting : '',
 		publishedTime: brief.generatedAtISO ? formatTime(brief.generatedAtISO, LISBON, lang) : '',
 		dataAsOfTime: e?.marketDataAsOf ? formatTime(e.marketDataAsOf, LISBON, lang) : '',
 		degraded: brief.degraded,

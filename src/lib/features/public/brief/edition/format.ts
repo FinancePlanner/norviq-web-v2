@@ -26,11 +26,35 @@ export function directionOf(value: number, decimals = 2): Direction {
 	return 'flat';
 }
 
+// Intl formatters are costly to build and a page formats a few hundred
+// values; the Worker's CPU budget is small, so build each one once per isolate.
+const numberFormats = new Map<string, Intl.NumberFormat>();
+const dateFormats = new Map<string, Intl.DateTimeFormat>();
+
+function numberFormat(lang: string, decimals: number): Intl.NumberFormat {
+	const key = lang + '|' + decimals;
+	let f = numberFormats.get(key);
+	if (!f) {
+		f = new Intl.NumberFormat(numberLocale(lang), {
+			minimumFractionDigits: decimals,
+			maximumFractionDigits: decimals
+		});
+		numberFormats.set(key, f);
+	}
+	return f;
+}
+
+function dateFormat(key: string, make: () => Intl.DateTimeFormat): Intl.DateTimeFormat {
+	let f = dateFormats.get(key);
+	if (!f) {
+		f = make();
+		dateFormats.set(key, f);
+	}
+	return f;
+}
+
 export function formatNumber(value: number, lang: string, decimals: number): string {
-	const s = new Intl.NumberFormat(numberLocale(lang), {
-		minimumFractionDigits: decimals,
-		maximumFractionDigits: decimals
-	}).format(Math.abs(value));
+	const s = numberFormat(lang, decimals).format(Math.abs(value));
 	return directionOf(value, decimals) === 'down' ? MINUS + s : s;
 }
 
@@ -66,24 +90,32 @@ export function formatYield(value: number, lang: string, precision = 3): string 
 export function formatLongDate(iso: string, lang: string): string {
 	const [y, m, d] = iso.split('-').map(Number);
 	if (!y || !m || !d) return iso;
-	return new Intl.DateTimeFormat(dateLocale(lang), {
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-		timeZone: 'UTC'
-	}).format(new Date(Date.UTC(y, m - 1, d)));
+	return dateFormat(
+		'long|' + lang,
+		() =>
+			new Intl.DateTimeFormat(dateLocale(lang), {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric',
+				timeZone: 'UTC'
+			})
+	).format(new Date(Date.UTC(y, m - 1, d)));
 }
 
 /** "22:33" in a time zone. */
 export function formatTime(iso: string, timeZone: string, lang: string): string {
 	const t = new Date(iso);
 	if (Number.isNaN(t.getTime())) return '';
-	return new Intl.DateTimeFormat(dateLocale(lang), {
-		hour: '2-digit',
-		minute: '2-digit',
-		hourCycle: 'h23',
-		timeZone
-	}).format(t);
+	return dateFormat(
+		'time|' + lang + '|' + timeZone,
+		() =>
+			new Intl.DateTimeFormat(dateLocale(lang), {
+				hour: '2-digit',
+				minute: '2-digit',
+				hourCycle: 'h23',
+				timeZone
+			})
+	).format(t);
 }
 
 /** Spoken direction word for labels. */

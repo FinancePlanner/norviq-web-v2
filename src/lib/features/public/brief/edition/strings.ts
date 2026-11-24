@@ -111,7 +111,7 @@ const en: EditionStrings = {
 		'Index levels and moves are computed by Norviq from Yahoo Finance quotes at publication time. Quotes may be delayed.',
 	howWritten: 'How this edition is written',
 	howWrittenBody:
-		'An AI model writes the text from those numbers and from recent news. A sentence that uses news names its source; any number in a sentence without a source was checked against the market data, and sentences that failed the check were removed.',
+		'An AI model writes the text from those numbers and from recent news. A sentence that uses news names its source. Levels, prices and percentages in a sentence without a source were checked against the figures the model was given (market data, headlines and earnings), and sentences that failed the check were removed. The check does not prove a sentence true, only that its figures were in the data.',
 	degradedBody:
 		'Web sources were unavailable for this edition, so it was written from in-house data only.',
 	notAvailable: 'Not available in this edition',
@@ -187,7 +187,7 @@ const pt: EditionStrings = {
 		'Os níveis e as variações dos índices são calculados pelo Norviq a partir das cotações da Yahoo Finance no momento da publicação. As cotações podem ter atraso.',
 	howWritten: 'Como esta edição é escrita',
 	howWrittenBody:
-		'Um modelo de IA escreve o texto a partir desses números e de notícias recentes. Uma frase que usa notícias indica a fonte; qualquer número numa frase sem fonte foi verificado com os dados de mercado, e as frases que falharam a verificação foram removidas.',
+		'Um modelo de IA escreve o texto a partir desses números e de notícias recentes. Uma frase que usa notícias indica a fonte. Níveis, preços e percentagens numa frase sem fonte foram verificados com os números dados ao modelo (dados de mercado, títulos de notícias e resultados), e as frases que falharam a verificação foram removidas. A verificação não prova que a frase é verdadeira, apenas que os seus números estavam nos dados.',
 	degradedBody:
 		'As fontes web não estavam disponíveis para esta edição, por isso foi escrita apenas com dados internos.',
 	notAvailable: 'Indisponível nesta edição',
