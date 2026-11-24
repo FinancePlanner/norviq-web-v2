@@ -1161,5 +1161,11 @@
 	"Holdings value": "Valor das posições",
 	"%@ left": "%@ disponível",
 	"vs last month": "vs mês anterior",
-	"No spending logged this month.": "Ainda não há despesas registadas este mês."
+	"No spending logged this month.": "Ainda não há despesas registadas este mês.",
+	"your monthly budget plan": "o seu plano de orçamento mensal",
+	"your recent spending": "os seus gastos recentes",
+	"your manual entries": "os seus valores manuais",
+	"Suggested from %@: income %@, spending %@, net flow %@.": "Sugerido a partir de %@: rendimento %@, despesas %@, fluxo líquido %@.",
+	"No forecast yet": "Ainda não há previsões",
+	"Save a forecast to see where your net worth could be.": "Guarde uma previsão para ver onde o seu património pode chegar."
 }

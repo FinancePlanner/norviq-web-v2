@@ -1,9 +1,31 @@
 // Client-safe helpers from norviq-web internal/pages/automation/page.templ.
 import { formatFloat } from '#lib/format.js';
-import type { ForecastVM } from './types.js';
+import type { T } from '#lib/i18n/index.js';
+import { money as formatMoney, type AppLocale } from '#lib/money.js';
+import type { ForecastVM, NetWorthForecastDefaults } from './types.js';
 
-/** money: fmt.Sprintf("%s %.2f", currency, value) */
-export const money = (value: number, currency: string) => `${currency} ${formatFloat(value, 2)}`;
+/**
+ * A forecast amount in its currency and the app locale ("€2,000.00",
+ * "2000,00 €"), through the DS 2.0 money contract. The Go web printed
+ * "EUR 2000.00": code first, no separators.
+ */
+export const money = (value: number, currency: string | null | undefined, locale: AppLocale) =>
+	formatMoney(value, currency, locale);
+
+/** Where the suggested income and spending came from, in words (never the API value). */
+export function cashFlowSourceLabel(
+	source: NetWorthForecastDefaults['cashFlowSource'],
+	t: T
+): string {
+	switch (source) {
+		case 'planned_budget':
+			return t('your monthly budget plan');
+		case 'trailing_actuals':
+			return t('your recent spending');
+		default:
+			return t('your manual entries');
+	}
+}
 
 /** decimal: "%.2f", or "" for nil. */
 export const decimal = (value: number | null | undefined) =>

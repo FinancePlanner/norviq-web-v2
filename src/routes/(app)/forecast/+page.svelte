@@ -3,12 +3,20 @@
 	// internal/pages/automation/page.templ. Plain form posts, as in Go:
 	// POST /forecast is this page's default action; /forecast/{id},
 	// /forecast/{id}/run and /forecast/{id}/delete are +server.ts handlers.
-	import { CheckboxField, Field, SelectField, SubmitButton } from '#lib/components/norviq/index.js';
+	import {
+		CheckboxField,
+		EmptyState,
+		Field,
+		SelectField,
+		SubmitButton
+	} from '#lib/components/norviq/index.js';
 	import type { Option } from '#lib/components/norviq/types.js';
 	import * as table from '#lib/components/norviq/tui/table/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import { formatFloat } from '#lib/format.js';
+	import { locale, t } from '#lib/i18n/context.svelte.js';
 	import {
+		cashFlowSourceLabel,
 		forecastAction,
 		forecastSubmitLabel,
 		forecastValue,
@@ -35,6 +43,8 @@
 
 	const run = $derived(vm.run);
 	const currency = $derived(run?.assumptions.baseCurrency ?? '');
+	/** A forecast amount in its currency and the page locale. */
+	const fmt = (value: number, code: string) => money(value, code, locale());
 
 	function confirmDelete(event: SubmitEvent) {
 		if (!confirm('Delete this forecast and its runs?')) event.preventDefault();
@@ -60,14 +70,15 @@
 			<div>
 				<h2 class="text-lg font-semibold">Forecast assumptions</h2>
 				{#if vm.defaults}
+					{@const d = vm.defaults}
 					<p class="mt-1 text-sm text-muted-foreground">
-						Suggested from {vm.defaults.cashFlowSource}: income {money(
-							vm.defaults.monthlyIncome,
-							vm.defaults.baseCurrency
-						)}, spending {money(vm.defaults.monthlySpending, vm.defaults.baseCurrency)}, net flow {money(
-							vm.defaults.monthlyNetFlow,
-							vm.defaults.baseCurrency
-						)}.
+						{t(
+							'Suggested from %@: income %@, spending %@, net flow %@.',
+							cashFlowSourceLabel(d.cashFlowSource, t),
+							fmt(d.monthlyIncome, d.baseCurrency),
+							fmt(d.monthlySpending, d.baseCurrency),
+							fmt(d.monthlyNetFlow, d.baseCurrency)
+						)}
 					</p>
 				{/if}
 			</div>
@@ -212,13 +223,20 @@
 					</form>
 				</div>
 			</article>
+		{:else}
+			<div class="md:col-span-2">
+				<EmptyState
+					title={t('No forecast yet')}
+					description={t('Save a forecast to see where your net worth could be.')}
+				/>
+			</div>
 		{/each}
 	</section>
 	{#if run}
 		<section class="rounded-lg border p-5">
 			<h2 class="text-lg font-semibold">Latest projection</h2>
 			<p class="text-sm text-muted-foreground">
-				Starting value {money(run.startingValue, currency)}. Income and spending remain separate
+				Starting value {fmt(run.startingValue, currency)}. Income and spending remain separate
 				throughout the simulation.
 			</p>
 			{#if run.targetProbability != null}
@@ -230,7 +248,9 @@
 				<table.Table class="w-full text-sm">
 					<thead
 						><tr class="text-left"
-							><th>Month</th><th>Income</th><th>Spending</th><th>P10</th><th>P50</th><th>P90</th
+							><th>Month</th><th class="text-right">Income</th><th class="text-right">Spending</th
+							><th class="text-right">P10</th><th class="text-right">P50</th><th class="text-right"
+								>P90</th
 							></tr
 						></thead
 					>
@@ -238,12 +258,12 @@
 						{#each run.timeline as point, index (index)}
 							{#if index === 0 || index === run.timeline.length - 1 || point.month % 12 === 0}
 								<tr class="border-t">
-									<td class="py-2">{point.month}</td>
-									<td>{money(point.monthlyIncome, currency)}</td>
-									<td>{money(point.monthlySpending, currency)}</td>
+									<td class="py-2 tabular-nums">{point.month}</td>
+									<td class="text-right tabular-nums">{fmt(point.monthlyIncome, currency)}</td>
+									<td class="text-right tabular-nums">{fmt(point.monthlySpending, currency)}</td>
 									{#each point.bands as band, bandIndex (bandIndex)}
 										{#if band.percentile === 10 || band.percentile === 50 || band.percentile === 90}
-											<td>{money(band.value, currency)}</td>
+											<td class="text-right tabular-nums">{fmt(band.value, currency)}</td>
 										{/if}
 									{/each}
 								</tr>
