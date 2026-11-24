@@ -23,7 +23,9 @@
 		"types:check": "wrangler types --check --env-file /dev/null",
 		"smoke:browser": "node scripts/smoke-browser.mjs",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"tokens": "bun scripts/tokens/build.mjs",
+		"tokens:check": "bun scripts/tokens/build.mjs --check"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "latest",

@@ -98,7 +98,8 @@ describe('themedOptionPatch', () => {
 		expect(typeof next.tooltip.formatter).toBe('function');
 		expect(next.xAxis[0].axisLabel.color).toBe('#9da9b8');
 		expect(next.xAxis[0].axisPointer).toEqual({ show: true, snap: true });
-		expect(next.yAxis[0].splitLine.lineStyle).toEqual({ color: '#344258', type: 'dashed' });
+		// The fallback is the token: Steel Slate at 70%, as theme.css draws it.
+		expect(next.yAxis[0].splitLine.lineStyle).toEqual({ color: '#344258b3', type: 'dashed' });
 		expect(next.series[0].lineStyle.color).toBe('#e9e9e5');
 		expect(next.series[0].areaStyle).toEqual({ opacity: 0.18, color: '#e9e9e5' });
 		expect(next.series[0].showSymbol).toBe(false);

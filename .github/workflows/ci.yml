@@ -30,6 +30,9 @@ jobs:
       # change. norviq-ios CI compares its copies against this repo's main.
       - run: ./scripts/check-vig-motion-drift.sh
       - run: ./scripts/check-three-imports.sh
+      # Colours are generated from design/tokens.json (DS 2.0 § 5.1): the committed
+      # theme.tokens.css, palette.generated.ts and app.html metas must be fresh.
+      - run: bun run tokens:check
 
   typecheck:
     runs-on: ubuntu-latest
