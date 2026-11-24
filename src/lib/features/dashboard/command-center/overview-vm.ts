@@ -19,6 +19,7 @@ import {
 	civilDateLabel,
 	isStale,
 	performancePointSeries,
+	changeBasis,
 	rangeBasis,
 	rangeChange,
 	type PerfRange
@@ -159,11 +160,11 @@ export function buildOverviewFigures(input: OverviewFiguresInput): OverviewFigur
 			const basis =
 				rng === timerange.YTD
 					? rangeBasis('ALL', change.fromDate, t, locale)
-					: rangeBasis(perfRangeForKey(rng), change.fromDate, t, locale);
+					: changeBasis(perfRangeForKey(rng), change.fromDate, now, t, locale);
 			f.delta = {
 				text: signedPercent(change.fraction, locale),
 				basis,
-				positive: change.fraction >= 0
+				positive: change.fraction > 0
 			};
 			f.portfolioPeriodPercent = `${f.delta.text} ${basis}`;
 			f.portfolioPeriodSuffix = basis;

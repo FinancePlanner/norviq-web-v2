@@ -16,9 +16,11 @@ import { goFormat, parseTime } from '#lib/features/dashboard/shared.js';
 import { resolvePillar } from '#lib/features/dashboard/pillars.js';
 import { mapFinancialHealth, mapInsightCards } from '#lib/features/dashboard/insights/mappers.js';
 import {
-	formatChangeLabel,
+	changeBasis,
+	civilDateLabel,
+	isStale,
 	performancePointSeries,
-	primaryChange
+	rangeChange
 } from '#lib/features/portfolio/holdings/change.js';
 import type {
 	AllocationCardVM,
@@ -146,16 +148,48 @@ const vsLastMonth = (fraction: number, fmt: ReportsFmt) =>
 // ---------------------------------------------------------------------------
 // Card mappers
 
-function mapNetWorth(
+/**
+ * The change shown on a Reports card, measured over the fetched series (as
+ * Overview does), labelled with its honest basis, and hidden when the series
+ * is stale. The backend's `changes` could call a fortnight-old series' span
+ * "vs previous close" (spec § 2.0 A2).
+ */
+function seriesChange(
+	performance: Performance,
+	fmt: ReportsFmt,
+	now: Date
+): { label: string; positive: boolean; asOfCaption: string | null } {
+	const none = { label: '', positive: false, asOfCaption: null };
+	const points = performance.points ?? [];
+	if (points.length === 0) return none;
+	const last = points.reduce((a, b) => (b.date > a.date ? b : a));
+	if (isStale(last.date, now))
+		return {
+			...none,
+			asOfCaption: fmt.t('Prices as of %@', civilDateLabel(last.date, fmt.locale))
+		};
+	const change = rangeChange(points);
+	if (!change) return none;
+	const basis = changeBasis(performance.range ?? '1M', change.fromDate, now, fmt.t, fmt.locale);
+	return {
+		label: `${signedPercent(change.fraction, fmt.locale)} ${basis}`,
+		positive: change.fraction > 0,
+		asOfCaption: null
+	};
+}
+
+export function mapNetWorth(
 	overview: Overview | null,
 	performance: Performance | null,
-	fmt: ReportsFmt
+	fmt: ReportsFmt,
+	now = new Date()
 ): NetWorthCardVM {
 	const vm: NetWorthCardVM = {
 		available: false,
 		totalValue: '',
 		changeLabel: '',
 		changePositive: false,
+		asOfCaption: null,
 		chart: null
 	};
 	if (overview && overview.portfolioStatistics.totalMarketValue > 0) {
@@ -167,11 +201,10 @@ function mapNetWorth(
 		const series = performancePointSeries(performance.points);
 		if (vm.totalValue === '' && series.values.length > 0)
 			vm.totalValue = money(series.values[series.values.length - 1], fmt.currency, fmt.locale);
-		const change = formatChangeLabel(primaryChange(performance.changes));
-		if (change.ok) {
-			vm.changeLabel = change.label;
-			vm.changePositive = change.positive;
-		}
+		const change = seriesChange(performance, fmt, now);
+		vm.changeLabel = change.label;
+		vm.changePositive = change.positive;
+		vm.asOfCaption = change.asOfCaption;
 		vm.chart = series;
 	}
 	return vm;
@@ -226,29 +259,30 @@ function mapInsights(
 	};
 }
 
-function mapPerformance(performance: Performance | null): PerformanceCardVM {
+export function mapPerformance(
+	performance: Performance | null,
+	fmt: ReportsFmt,
+	now = new Date()
+): PerformanceCardVM {
 	if (!performance || !performance.points?.length) {
 		return {
 			available: false,
 			error: 'Performance data unavailable.',
 			changeLabel: '',
 			changePositive: false,
+			asOfCaption: null,
 			chart: null
 		};
 	}
-	const vm: PerformanceCardVM = {
+	const change = seriesChange(performance, fmt, now);
+	return {
 		available: true,
 		error: '',
-		changeLabel: '',
-		changePositive: false,
+		changeLabel: change.label,
+		changePositive: change.positive,
+		asOfCaption: change.asOfCaption,
 		chart: performancePointSeries(performance.points)
 	};
-	const change = formatChangeLabel(primaryChange(performance.changes));
-	if (change.ok) {
-		vm.changeLabel = change.label;
-		vm.changePositive = change.positive;
-	}
-	return vm;
 }
 
 function mapAllocation(overview: Overview | null, fmt: ReportsFmt): AllocationCardVM {
@@ -438,7 +472,7 @@ export async function loadReportsViewModel(
 		netWorth: mapNetWorth(o, p, fmt),
 		quickStats: mapQuickStats(o, statistics.data, fmt),
 		insights: mapInsights(insights.data, fmt),
-		performance: mapPerformance(p),
+		performance: mapPerformance(p, fmt),
 		allocation: mapAllocation(o, fmt),
 		spending: mapSpending(o, fmt),
 		budgetTracking: mapBudgetTracking(o, fmt),

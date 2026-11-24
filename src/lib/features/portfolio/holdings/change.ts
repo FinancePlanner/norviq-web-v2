@@ -1,14 +1,11 @@
 import type { components } from '#lib/api/schema.js';
-import { formatFloat } from '#lib/format.js';
 import type { T } from '#lib/i18n/index.js';
 import { intlLocale, type AppLocale } from '#lib/money.js';
 
-// handlers/portfolio_change.go — rendering for the portfolio changes the
-// backend computes. A change the backend could not compute is absent, and
-// absent is not zero: no chip at all rather than a "0.0%".
+// Portfolio series helpers. The backend's own `changes` are no longer shown:
+// a change is measured over the series on screen (DS 2.0 P1, below), so it
+// can't be labelled "vs previous close" while describing a fortnight.
 
-type PortfolioChange = components['schemas']['PortfolioChange'];
-type PortfolioChanges = components['schemas']['PortfolioChanges'];
 type PerformancePoint = components['schemas']['PerformancePoint'];
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -19,60 +16,6 @@ function civil(raw: string): { y: number; m: number; d: number } {
 	if (m) return { y: +m[1], m: +m[2], d: +m[3] };
 	const t = new Date(raw);
 	return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() };
-}
-
-export function changeSuffix(change: PortfolioChange | null | undefined): string {
-	if (!change) return '';
-	switch (change.basis) {
-		case 'previousTradingDay':
-			return 'vs previous close';
-		case 'week':
-			return 'vs last week';
-		case 'month':
-			return 'vs last month';
-		case 'ytd':
-			return 'year to date';
-		case 'inception':
-			return 'since you started';
-		default: {
-			const c = civil(change.fromDate);
-			return `since ${c.d} ${MONTHS[c.m - 1]} ${c.y}`;
-		}
-	}
-}
-
-export function formatChange(change: PortfolioChange | null | undefined): {
-	metric: string;
-	suffix: string;
-	positive: boolean;
-	ok: boolean;
-} {
-	if (!change) return { metric: '', suffix: '', positive: false, ok: false };
-	const positive = change.percent >= 0;
-	const sign = positive ? '+' : '';
-	return {
-		metric: `${sign}${formatFloat(change.percent * 100, 1)}%`,
-		suffix: changeSuffix(change),
-		positive,
-		ok: true
-	};
-}
-
-export function formatChangeLabel(change: PortfolioChange | null | undefined): {
-	label: string;
-	positive: boolean;
-	ok: boolean;
-} {
-	const { metric, suffix, positive, ok } = formatChange(change);
-	if (!ok) return { label: '', positive: false, ok: false };
-	return { label: suffix ? `${metric} ${suffix}` : metric, positive, ok: true };
-}
-
-export function primaryChange(
-	changes: PortfolioChanges | null | undefined
-): PortfolioChange | null {
-	if (!changes) return null;
-	return changes.day ?? changes.week ?? changes.month ?? changes.sinceInception ?? null;
 }
 
 /** Labels "Jan 2", or "Jan 2, '06" when the series spans years. */
@@ -168,4 +111,44 @@ export function rangeBasis(
 		default:
 			return t('since %@', civilDateLabel(fromDate, locale));
 	}
+}
+
+/** How far back each range nominally reaches, as calendar parts. */
+const RANGE_SPAN: Record<
+	Exclude<PerfRange, 'ALL'>,
+	{ years: number; months: number; days: number }
+> = {
+	'1W': { years: 0, months: 0, days: 7 },
+	'1M': { years: 0, months: 1, days: 0 },
+	'3M': { years: 0, months: 3, days: 0 },
+	'1Y': { years: 1, months: 0, days: 0 }
+};
+
+/** Slack before a late first point stops counting as the range's start (weekends, holidays). */
+const BASIS_SLACK_DAYS = 3;
+
+/**
+ * The honest basis of a range change. A series whose first point is more than
+ * 3 days after the range's nominal start does not measure "1 year" (10 days of
+ * history with 1Y selected), so it is dated instead: "since 14 Nov 2026".
+ */
+export function changeBasis(
+	range: PerfRange,
+	fromDate: string,
+	now: Date,
+	t: T,
+	locale: AppLocale = 'en'
+): string {
+	if (range === 'ALL') return rangeBasis('ALL', fromDate, t, locale);
+	const span = RANGE_SPAN[range];
+	const nominal = Date.UTC(
+		now.getUTCFullYear() - span.years,
+		now.getUTCMonth() - span.months,
+		now.getUTCDate() - span.days
+	);
+	const c = civil(fromDate);
+	const from = Date.UTC(c.y, c.m - 1, c.d);
+	return (from - nominal) / DAY_MS > BASIS_SLACK_DAYS
+		? rangeBasis('ALL', fromDate, t, locale)
+		: rangeBasis(range, fromDate, t, locale);
 }

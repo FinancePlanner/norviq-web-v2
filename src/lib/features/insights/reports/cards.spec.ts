@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import type { components } from '#lib/api/schema.js';
 import { translator } from '#lib/i18n/index.js';
-import { mapCashFlow, mapQuickStats, mapSpending, type ReportsFmt } from './load.server.js';
+import {
+	mapCashFlow,
+	mapNetWorth,
+	mapPerformance,
+	mapQuickStats,
+	mapSpending,
+	type ReportsFmt
+} from './load.server.js';
 
 type S = components['schemas'];
 const NBSP = ' ';
@@ -72,5 +79,50 @@ describe('Reports cards (DS 2.0: one screen, one format)', () => {
 		const stats = mapQuickStats(overview, null, fmt).stats;
 		expect(stats.find((s) => s.label === 'Market value')?.value).toBe(`48${NBSP}432,05${NBSP}US$`);
 		expect(stats.find((s) => s.label === 'Realized P/L')?.value).toBe(`−120,00${NBSP}US$`);
+	});
+});
+
+describe('Reports change (measured on the series, never "vs previous close")', () => {
+	const now = new Date('2026-11-24T12:00:00Z');
+	const en: ReportsFmt = { ...fmt, locale: 'en', t: translator('en') };
+	const perf = (points: { date: string; value: number }[]): S['PortfolioPerformanceResponse'] => ({
+		baseCurrency: 'USD',
+		range: '1M',
+		points,
+		changes: {
+			day: {
+				percent: 0.134,
+				absolute: 1,
+				fromDate: '2026-11-10',
+				toDate: '2026-11-11',
+				basis: 'previousTradingDay'
+			}
+		}
+	});
+	const fresh = [
+		{ date: '2026-10-25', value: 40000 },
+		{ date: '2026-11-10', value: 44000 },
+		{ date: '2026-11-23', value: 46874.85 }
+	];
+	const stale = [
+		{ date: '2026-11-05', value: 810.19 },
+		{ date: '2026-11-08', value: 870.5 },
+		{ date: '2026-11-11', value: 919.06 }
+	];
+
+	it('labels a fresh change with its range', () => {
+		const nw = mapNetWorth(overview, perf(fresh), en, now);
+		expect(nw.changeLabel).toBe('+17.2% 1 month');
+		expect(nw.changePositive).toBe(true);
+		expect(mapPerformance(perf(fresh), en, now).changeLabel).toBe('+17.2% 1 month');
+	});
+
+	it('hides a stale change and dates the prices instead', () => {
+		const nw = mapNetWorth(overview, perf(stale), en, now);
+		expect(nw.changeLabel).toBe('');
+		expect(nw.asOfCaption).toBe('Prices as of 11 Nov 2026');
+		const p = mapPerformance(perf(stale), en, now);
+		expect(p.changeLabel).toBe('');
+		expect(p.asOfCaption).toBe('Prices as of 11 Nov 2026');
 	});
 });

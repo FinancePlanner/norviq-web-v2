@@ -20,6 +20,8 @@ export interface NetWorthCardVM {
 	totalValue: string;
 	changeLabel: string;
 	changePositive: boolean;
+	/** "Prices as of 11 Nov 2026" when the series is stale (no change shown then). */
+	asOfCaption: string | null;
 	chart: LineSeries | null;
 }
 
@@ -45,6 +47,8 @@ export interface PerformanceCardVM {
 	error: string;
 	changeLabel: string;
 	changePositive: boolean;
+	/** "Prices as of 11 Nov 2026" when the series is stale (no change shown then). */
+	asOfCaption: string | null;
 	chart: LineSeries | null;
 }
 

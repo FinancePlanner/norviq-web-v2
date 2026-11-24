@@ -11,7 +11,7 @@ import {
 	civilDateLabel,
 	isStale,
 	performancePointSeries,
-	rangeBasis,
+	changeBasis,
 	rangeChange,
 	type PerfRange
 } from './change.js';
@@ -165,7 +165,7 @@ export function buildHoldingsHeroVM(input: HoldingsHeroInput): HoldingsHeroVM {
 	vm.chart = performancePointSeries(points);
 	vm.delta = {
 		text: `${signedMoney(change.absolute, currency, locale)} (${signedPercent(change.fraction, locale)})`,
-		basis: rangeBasis(range, change.fromDate, t, locale),
+		basis: changeBasis(range, change.fromDate, now, t, locale),
 		direction: change.absolute > 0 ? 'up' : change.absolute < 0 ? 'down' : 'flat'
 	};
 	return vm;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { translator } from '#lib/i18n/index.js';
-import { civilDateLabel, isStale, rangeBasis, rangeChange } from './change.js';
+import { changeBasis, civilDateLabel, isStale, rangeBasis, rangeChange } from './change.js';
 
 const en = translator('en');
 const pt = translator('pt-PT');
@@ -85,5 +85,21 @@ describe('civilDateLabel', () => {
 	it('formats d MMM yyyy in the locale, read in UTC', () => {
 		expect(civilDateLabel('2026-11-11', 'en')).toBe('11 Nov 2026');
 		expect(civilDateLabel('2026-11-11', 'pt-PT')).toBe('11 nov. 2026');
+	});
+});
+
+describe('changeBasis', () => {
+	const now = new Date('2026-11-24T12:00:00Z');
+	it('names the range when the history covers it', () => {
+		expect(changeBasis('1Y', '2025-11-25', now, en)).toBe('1 year');
+		expect(changeBasis('1M', '2026-10-27', now, en)).toBe('1 month');
+	});
+	it('dates a change whose history starts well after the range does', () => {
+		// 10 days of history with 1Y selected is not a one-year change.
+		expect(changeBasis('1Y', '2026-11-14', now, en)).toBe('since 14 Nov 2026');
+		expect(changeBasis('1M', '2026-10-29', now, pt, 'pt-PT')).toBe('desde 29 out. 2026');
+	});
+	it('allows 3 days of slack for weekends and holidays', () => {
+		expect(changeBasis('1W', '2026-11-20', now, en)).toBe('1 week');
 	});
 });

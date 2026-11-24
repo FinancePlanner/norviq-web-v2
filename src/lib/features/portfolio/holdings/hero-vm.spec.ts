@@ -183,6 +183,18 @@ describe('buildHoldingsHeroVM', () => {
 		expect(vm.chart?.values).toEqual([80000, 90000, 96000]);
 	});
 
+	it('dates a change whose history is shorter than the range', () => {
+		const tenDays = [
+			{ date: '2026-11-14', value: 100 },
+			{ date: '2026-11-19', value: 105 },
+			{ date: '2026-11-23', value: 110 }
+		];
+		const vm = buildHoldingsHeroVM(
+			input({ range: '1Y', performance: performance('USD', tenDays) })
+		);
+		expect(vm.delta!.basis).toBe('since 14 Nov 2026');
+	});
+
 	it('draws no line and no change from fewer than 3 points', () => {
 		const vm = buildHoldingsHeroVM(
 			input({ performance: performance('USD', freshPoints.slice(1)) })

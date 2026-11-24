@@ -134,6 +134,25 @@ describe('buildOverviewFigures', () => {
 		expect(f.wealthChartNote).toBeNull();
 	});
 
+	it('dates a change whose history is shorter than the range, and calls 0 flat', () => {
+		const f = buildOverviewFigures(
+			input({
+				rng: '12mo',
+				performance: {
+					baseCurrency: 'USD',
+					points: [
+						{ date: '2026-11-14', value: 100 },
+						{ date: '2026-11-19', value: 90 },
+						{ date: '2026-11-23', value: 100 }
+					]
+				}
+			})
+		);
+		expect(f.delta!.basis).toBe('since 14 Nov 2026');
+		expect(f.delta!.positive).toBe(false);
+		expect(f.portfolioPeriodPositive).toBe(false);
+	});
+
 	it('measures YTD from the first point of the year, not as "1 year"', () => {
 		const f = buildOverviewFigures(
 			input({
