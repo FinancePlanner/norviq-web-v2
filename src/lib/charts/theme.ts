@@ -22,6 +22,14 @@ export interface ThemeEnv {
 	currency?: string | null;
 	/** App locale for money in tooltips and axes. Defaults to 'en'. */
 	locale?: AppLocale;
+	/**
+	 * How a single value line is coloured: by its direction over the range
+	 * (gain or loss, the default) or in ink for a series with no good or bad
+	 * direction, such as a savings rate (spec § 5.5 rule 5).
+	 */
+	trend?: 'direction' | 'neutral';
+	/** How the tooltip and y axis print a value: money (default) or percent points. */
+	valueFormat?: 'money' | 'percent';
 }
 
 export function domThemeEnv(): ThemeEnv {
@@ -63,7 +71,7 @@ export function getChartPalette(env: ThemeEnv): ChartPalette {
 		return {
 			axis: v('--chart-axis', '#9da9b8'),
 			grid: v('--chart-grid', '#344258'),
-			line: v('--chart-line', '#d8b477'),
+			line: v('--chart-line', '#e9e9e5'),
 			lineAlt: v('--chart-line-alt', '#9da9b8'),
 			up: v('--chart-up', '#42b894'),
 			down: v('--chart-down', '#e16d75'),
@@ -78,7 +86,7 @@ export function getChartPalette(env: ThemeEnv): ChartPalette {
 	return {
 		axis: v('--chart-axis', '#4a5568'),
 		grid: v('--chart-grid', '#e6e1d7'),
-		line: v('--chart-line', '#80612a'),
+		line: v('--chart-line', '#111b2b'),
 		lineAlt: v('--chart-line-alt', '#4a5568'),
 		up: v('--chart-up', '#1b6e51'),
 		down: v('--chart-down', '#ab3640'),
@@ -244,12 +252,27 @@ export function resolveLineColor(
 	chartID: string,
 	kind: ChartKind
 ): string {
+	// Spending has no good or bad direction: ink, never gold (spec § 5.5 rule 5).
 	if (kind === 'spending' || chartID.includes('spending') || chartID.includes('expenses-year'))
-		return palette.lineAlt;
+		return palette.line;
 	if (isDownColor(existingColor)) return palette.down;
 	if (isUpColor(existingColor)) return palette.up;
 	if (isAltLineColor(existingColor)) return palette.lineAlt;
 	return palette.line;
+}
+
+const pointValue = (d: unknown): number => Number(d && typeof d === 'object' ? obj(d).value : d);
+
+/**
+ * Spec § 5.5 rule 5: a value line is gain-coloured when its last point is at or
+ * above its first, loss-coloured otherwise, and ink when it has no direction to
+ * show (under two points, or a non-directional series). Never gold.
+ */
+export function directionColor(data: unknown, palette: ChartPalette, env: ThemeEnv): string {
+	if (env.trend === 'neutral' || !Array.isArray(data)) return palette.line;
+	const values = data.map(pointValue).filter((n) => Number.isFinite(n));
+	if (values.length < 2) return palette.line;
+	return values[values.length - 1] >= values[0] ? palette.up : palette.down;
 }
 
 export function patchAxisList(axes: unknown, palette: ChartPalette): unknown {
@@ -285,12 +308,17 @@ export function patchSeriesList(
 	env: ThemeEnv
 ): unknown {
 	if (!series) return series;
+	const singleLine = list(series).filter((s) => obj(s).type === 'line').length === 1;
 	return list(series).map((raw) => {
 		const item = obj(raw);
 		const next: Obj = { ...item };
 
 		if (item.type === 'line') {
-			const lineColor = resolveLineColor(obj(item.lineStyle).color, palette, chartID, kind);
+			const existing = obj(item.lineStyle).color;
+			const lineColor =
+				kind === 'wealth' && singleLine && !isUpColor(existing) && !isDownColor(existing)
+					? directionColor(item.data, palette, env)
+					: resolveLineColor(existing, palette, chartID, kind);
 			next.lineStyle = { ...obj(item.lineStyle), color: lineColor };
 			if (item.areaStyle)
 				next.areaStyle = { ...obj(item.areaStyle), color: lineColor, opacity: palette.areaOpacity };
@@ -476,8 +504,14 @@ export function themedOptionPatch(current: Obj, chartID: string, env: ThemeEnv):
 	// Legend text wears the axis ink: a builder's fixed hex cannot clear 4.5:1 on
 	// both the white and the navy surface.
 	if (current.legend) {
+		// A single series is already named by the panel title, and its legend
+		// collided with the x-axis labels (A9), so it is hidden.
+		// Only a line chart: a pie's legend names its slices, not its one series.
+		const series = current.series ? list(current.series) : [];
+		const single = series.length === 1 && obj(series[0]).type === 'line';
 		const ink = (l: unknown) => ({
 			...obj(l),
+			...(single ? { show: false } : {}),
 			textStyle: { ...obj(obj(l).textStyle), color: palette.axis }
 		});
 		next.legend = Array.isArray(current.legend) ? current.legend.map(ink) : ink(current.legend);
