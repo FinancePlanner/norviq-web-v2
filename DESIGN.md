@@ -44,7 +44,7 @@ typography:
     lineHeight: '2.375rem'
     letterSpacing: '-0.025em'
   display-serif:
-    fontFamily: 'Brygada 1918, Georgia, serif'
+    fontFamily: 'Brygada 1918, Iowan Old Style, Georgia, serif'
     fontSize: '2rem'
     fontWeight: 600
     lineHeight: '2.375rem'
@@ -205,7 +205,7 @@ Separate from brand, defined per scope, each ≥4.5:1 as text on the page and on
 
 ## Typography
 
-**Display Font:** Brygada 1918 (with Georgia, serif; `--font-display`, token `font.display`), self-hosted, weights 400–700. Only for the page title on Document pages, the Overview (Today) greeting, and the brief and its exports. Never for numbers, tables, controls or body text.
+**Display Font:** Brygada 1918 (with Iowan Old Style, Georgia, serif; `--font-display`, token `font.display`), self-hosted, weights 400–700. Only for the page title on Document pages, the Overview (Today) greeting, and the brief and its exports. Never for numbers, tables, controls or body text.
 **UI Font:** Geist Sans (with -apple-system, Segoe UI, system-ui), for everything else, including the hero figure
 **Label/Mono Font:** JetBrains Mono, for code, identifiers and API keys only
 

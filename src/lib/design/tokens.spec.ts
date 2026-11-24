@@ -129,7 +129,8 @@ describe('design/tokens.json', () => {
 		for (const group of ['space', 'radius', 'type', 'font', 'motion'])
 			expect(tree[group], group).toBeTypeOf('object');
 		const display = (tree.font.display as Json).$value as string[];
-		expect(display[0]).toBe('Brygada 1918');
-		expect(display.at(-1)).toBe('serif');
+		// Iowan Old Style is Apple's serif, so the swap period on Apple devices
+		// shows a close cut rather than Georgia.
+		expect(display).toEqual(['Brygada 1918', 'Iowan Old Style', 'Georgia', 'serif']);
 	});
 });

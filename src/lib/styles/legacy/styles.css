@@ -162,7 +162,7 @@
     Consolas, monospace;
   /* font.display in design/tokens.json (a test keeps them equal): page titles
      on Document pages, the Overview greeting and the brief. Never numbers. */
-  --font-display: 'Brygada 1918', Georgia, serif;
+  --font-display: 'Brygada 1918', 'Iowan Old Style', Georgia, serif;
 }
 
 html {
