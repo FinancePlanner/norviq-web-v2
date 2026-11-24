@@ -1146,5 +1146,11 @@
 	"Yours": "A sua",
 	"this week": "esta semana",
 	"Read brief": "Ler resumo",
-	"Hide brief": "Ocultar resumo"
+	"Hide brief": "Ocultar resumo",
+	"1 week": "1 semana",
+	"1 month": "1 mês",
+	"3 months": "3 meses",
+	"1 year": "1 ano",
+	"since %@": "desde %@",
+	"Prices as of %@": "Preços de %@"
 }
