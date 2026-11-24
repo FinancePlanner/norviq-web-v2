@@ -16,7 +16,9 @@ import { goFormat, parseTime } from '#lib/features/dashboard/shared.js';
 import { resolvePillar } from '#lib/features/dashboard/pillars.js';
 import { mapFinancialHealth, mapInsightCards } from '#lib/features/dashboard/insights/mappers.js';
 import {
+	basisIsDated,
 	changeBasis,
+	changeSummary,
 	civilDateLabel,
 	isStale,
 	performancePointSeries,
@@ -158,8 +160,8 @@ function seriesChange(
 	performance: Performance,
 	fmt: ReportsFmt,
 	now: Date
-): { label: string; positive: boolean; asOfCaption: string | null } {
-	const none = { label: '', positive: false, asOfCaption: null };
+): { label: string; positive: boolean; asOfCaption: string | null; summary: string | null } {
+	const none = { label: '', positive: false, asOfCaption: null, summary: null };
 	const points = performance.points ?? [];
 	if (points.length === 0) return none;
 	const last = points.reduce((a, b) => (b.date > a.date ? b : a));
@@ -170,11 +172,14 @@ function seriesChange(
 		};
 	const change = rangeChange(points);
 	if (!change) return none;
-	const basis = changeBasis(performance.range ?? '1M', change.fromDate, now, fmt.t, fmt.locale);
+	const range = performance.range ?? '1M';
+	const basis = changeBasis(range, change.fromDate, now, fmt.t, fmt.locale);
+	const dated = basisIsDated(range, change.fromDate, now);
 	return {
 		label: `${signedPercent(change.fraction, fmt.locale)} ${basis}`,
 		positive: change.fraction > 0,
-		asOfCaption: null
+		asOfCaption: null,
+		summary: changeSummary(change.fraction, basis, dated, fmt.t, fmt.locale)
 	};
 }
 
@@ -190,6 +195,7 @@ export function mapNetWorth(
 		changeLabel: '',
 		changePositive: false,
 		asOfCaption: null,
+		chartSummary: null,
 		chart: null
 	};
 	if (overview && overview.portfolioStatistics.totalMarketValue > 0) {
@@ -205,6 +211,7 @@ export function mapNetWorth(
 		vm.changeLabel = change.label;
 		vm.changePositive = change.positive;
 		vm.asOfCaption = change.asOfCaption;
+		vm.chartSummary = change.summary;
 		vm.chart = series;
 	}
 	return vm;
@@ -271,6 +278,7 @@ export function mapPerformance(
 			changeLabel: '',
 			changePositive: false,
 			asOfCaption: null,
+			chartSummary: null,
 			chart: null
 		};
 	}
@@ -281,6 +289,7 @@ export function mapPerformance(
 		changeLabel: change.label,
 		changePositive: change.positive,
 		asOfCaption: change.asOfCaption,
+		chartSummary: change.summary,
 		chart: performancePointSeries(performance.points)
 	};
 }

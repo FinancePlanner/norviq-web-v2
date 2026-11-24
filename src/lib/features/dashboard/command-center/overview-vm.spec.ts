@@ -132,6 +132,7 @@ describe('buildOverviewFigures', () => {
 		expect(f.asOfCaption).toBeNull();
 		expect(f.wealthChart?.values).toEqual([40000, 44000, 46874.85]);
 		expect(f.wealthChartNote).toBeNull();
+		expect(f.wealthChartSummary).toBe('Portfolio up 17.2% over 1 month');
 	});
 
 	it('dates a change whose history is shorter than the range, and calls 0 flat', () => {

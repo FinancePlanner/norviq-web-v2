@@ -129,16 +129,48 @@ describe('themedOptionPatch', () => {
 		});
 		const color = (o: unknown) => field(o, 'series', 0, 'lineStyle', 'color');
 
-		it('paints a rising or flat value line in the gain colour, a falling one in the loss colour', () => {
-			expect(color(themedOptionPatch(line([100, 90, 120]), 'wealth_chart', env(false)))).toBe(
+		const dir = (dark: boolean) => env(dark, {}, { trend: 'direction' });
+
+		it('paints a rising or flat value line marked directional in gain, a falling one in loss', () => {
+			expect(color(themedOptionPatch(line([100, 90, 120]), 'wealth_chart', dir(false)))).toBe(
 				'#1b6e51'
 			);
-			expect(color(themedOptionPatch(line([100, 100]), 'portfolio_chart', env(true)))).toBe(
+			expect(color(themedOptionPatch(line([100, 100]), 'portfolio_chart', dir(true)))).toBe(
 				'#42b894'
 			);
-			expect(color(themedOptionPatch(line([120, 130, 100]), 'wealth_chart', env(false)))).toBe(
+			expect(color(themedOptionPatch(line([120, 130, 100]), 'wealth_chart', dir(false)))).toBe(
 				'#ab3640'
 			);
+		});
+
+		it('keeps an unmarked value line in ink: direction colour is opt-in', () => {
+			expect(color(themedOptionPatch(line([100, 120]), 'stock_price_chart', env(false)))).toBe(
+				'#111b2b'
+			);
+		});
+
+		it('leaks no gold anywhere in the patched option (A13)', () => {
+			const gold = {
+				...wealth,
+				color: ['#D8B477'],
+				series: [
+					{
+						type: 'line',
+						data: [{ value: 1 }, { value: 2 }],
+						lineStyle: { color: '#D8B477' },
+						itemStyle: { color: '#D8B477' },
+						areaStyle: { color: '#D8B477', opacity: 0.25 },
+						emphasis: { focus: 'series', itemStyle: { color: '#D8B477' } }
+					}
+				]
+			};
+			for (const e of [env(false), dir(true)]) {
+				const next = themedOptionPatch(gold, 'wealth_chart', e);
+				expect(JSON.stringify(next).toLowerCase()).not.toContain('#d8b477');
+				expect(field(next, 'series', 0, 'itemStyle', 'color')).toBe(color(next));
+				expect(field(next, 'series', 0, 'emphasis', 'itemStyle', 'color')).toBe(color(next));
+				expect(field(next, 'color', 0)).toBe(color(next));
+			}
 		});
 
 		it('never leaves a value line gold', () => {

@@ -43,6 +43,7 @@ function withMoney(chart: ChartSpec | null, m: MoneySeries | undefined): ChartSp
 	const tagged: ChartSpec = { ...chart, currency: m.currency ?? null, locale: m.locale };
 	if (m.trend) tagged.trend = m.trend;
 	if (m.valueFormat) tagged.valueFormat = m.valueFormat;
+	if (m.summary) tagged.summary = m.summary;
 	return tagged;
 }
 

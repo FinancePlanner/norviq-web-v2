@@ -114,6 +114,7 @@ describe('Reports change (measured on the series, never "vs previous close")', (
 		const nw = mapNetWorth(overview, perf(fresh), en, now);
 		expect(nw.changeLabel).toBe('+17.2% 1 month');
 		expect(nw.changePositive).toBe(true);
+		expect(nw.chartSummary).toBe('Portfolio up 17.2% over 1 month');
 		expect(mapPerformance(perf(fresh), en, now).changeLabel).toBe('+17.2% 1 month');
 	});
 

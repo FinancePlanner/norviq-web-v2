@@ -19,7 +19,9 @@ import {
 	civilDateLabel,
 	isStale,
 	performancePointSeries,
+	basisIsDated,
 	changeBasis,
+	changeSummary,
 	rangeBasis,
 	rangeChange,
 	type PerfRange
@@ -77,6 +79,8 @@ export interface OverviewFigures {
 	wealthChart: SeriesData | null;
 	/** Shown instead of the wealth chart when its history is stale or too short. */
 	wealthChartNote: string | null;
+	/** The wealth chart's accessible name: "Portfolio up 3.2% over 1 month". */
+	wealthChartSummary: string | null;
 	spendingThisMonth: string;
 	spendingChart: SeriesData | null;
 	/** Shown instead of the monthly spend chart when the range covers a single month. */
@@ -129,6 +133,7 @@ export function buildOverviewFigures(input: OverviewFiguresInput): OverviewFigur
 		asOfCaption: null,
 		wealthChart: null,
 		wealthChartNote: null,
+		wealthChartSummary: null,
 		spendingThisMonth: '',
 		spendingChart: null,
 		spendingChartNote: null,
@@ -157,10 +162,12 @@ export function buildOverviewFigures(input: OverviewFiguresInput): OverviewFigur
 			f.wealthChartNote = t('Not enough history for a trend yet.');
 		} else {
 			// YTD is a filtered 1Y series, so it is dated rather than called "1 year".
-			const basis =
-				rng === timerange.YTD
-					? rangeBasis('ALL', change.fromDate, t, locale)
-					: changeBasis(perfRangeForKey(rng), change.fromDate, now, t, locale);
+			const dated =
+				rng === timerange.YTD || basisIsDated(perfRangeForKey(rng), change.fromDate, now);
+			const basis = dated
+				? rangeBasis('ALL', change.fromDate, t, locale)
+				: changeBasis(perfRangeForKey(rng), change.fromDate, now, t, locale);
+			f.wealthChartSummary = changeSummary(change.fraction, basis, dated, t, locale);
 			f.delta = {
 				text: signedPercent(change.fraction, locale),
 				basis,

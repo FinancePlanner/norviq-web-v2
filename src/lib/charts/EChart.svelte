@@ -40,6 +40,8 @@
 		trend?: 'direction' | 'neutral';
 		/** 'percent' prints values as percent points instead of money. */
 		valueFormat?: 'money' | 'percent';
+		/** A text summary; the canvas is then announced as an image with this name. */
+		summary?: string | null;
 	}
 
 	let {
@@ -53,7 +55,8 @@
 		currency,
 		locale,
 		trend,
-		valueFormat
+		valueFormat,
+		summary
 	}: Props = $props();
 
 	let node: HTMLDivElement;
@@ -137,5 +140,13 @@
      max-widths) that the Go web's CSS did not have; the class stays for the
      legacy `.overview-* .container` rules. -->
 <div class="container" style="max-width:none">
-	<div bind:this={node} class={['item', klass]} {id} style:width style:height></div>
+	<div
+		bind:this={node}
+		class={['item', klass]}
+		{id}
+		style:width
+		style:height
+		role={summary ? 'img' : undefined}
+		aria-label={summary || undefined}
+	></div>
 </div>

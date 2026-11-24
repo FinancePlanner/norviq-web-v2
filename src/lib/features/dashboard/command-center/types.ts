@@ -40,6 +40,8 @@ export interface OverviewViewModel {
 	wealthChart: SeriesData | null;
 	/** Shown instead of the wealth chart when its history is stale or too short. */
 	wealthChartNote: string | null;
+	/** The wealth chart's accessible name: "Portfolio up 3.2% over 1 month". */
+	wealthChartSummary: string | null;
 	spendingThisMonth: string;
 	spendingPeriodPercent: string;
 	spendingPeriodSuffix: string;

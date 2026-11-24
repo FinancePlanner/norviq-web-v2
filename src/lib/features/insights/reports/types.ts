@@ -22,6 +22,8 @@ export interface NetWorthCardVM {
 	changePositive: boolean;
 	/** "Prices as of 11 Nov 2026" when the series is stale (no change shown then). */
 	asOfCaption: string | null;
+	/** The chart's accessible name: "Portfolio up 3.2% over 1 month". */
+	chartSummary: string | null;
 	chart: LineSeries | null;
 }
 
@@ -49,6 +51,8 @@ export interface PerformanceCardVM {
 	changePositive: boolean;
 	/** "Prices as of 11 Nov 2026" when the series is stale (no change shown then). */
 	asOfCaption: string | null;
+	/** The chart's accessible name: "Portfolio up 3.2% over 1 month". */
+	chartSummary: string | null;
 	chart: LineSeries | null;
 }
 

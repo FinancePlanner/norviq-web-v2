@@ -23,9 +23,9 @@ export interface ThemeEnv {
 	/** App locale for money in tooltips and axes. Defaults to 'en'. */
 	locale?: AppLocale;
 	/**
-	 * How a single value line is coloured: by its direction over the range
-	 * (gain or loss, the default) or in ink for a series with no good or bad
-	 * direction, such as a savings rate (spec § 5.5 rule 5).
+	 * How a single value line is coloured: 'direction' (gain or loss over the
+	 * range) only for a portfolio or net-worth value; anything else is ink
+	 * (spec § 5.5 rule 5, DESIGN.md: green and red mean P/L direction only).
 	 */
 	trend?: 'direction' | 'neutral';
 	/** How the tooltip and y axis print a value: money (default) or percent points. */
@@ -269,7 +269,9 @@ const pointValue = (d: unknown): number => Number(d && typeof d === 'object' ? o
  * show (under two points, or a non-directional series). Never gold.
  */
 export function directionColor(data: unknown, palette: ChartPalette, env: ThemeEnv): string {
-	if (env.trend === 'neutral' || !Array.isArray(data)) return palette.line;
+	// Opt-in: only a series marked directional (a portfolio or net-worth value)
+	// may be green or red; a price, a projection or a rate stays ink.
+	if (env.trend !== 'direction' || !Array.isArray(data)) return palette.line;
 	const values = data.map(pointValue).filter((n) => Number.isFinite(n));
 	if (values.length < 2) return palette.line;
 	return values[values.length - 1] >= values[0] ? palette.up : palette.down;
@@ -320,21 +322,30 @@ export function patchSeriesList(
 					? directionColor(item.data, palette, env)
 					: resolveLineColor(existing, palette, chartID, kind);
 			next.lineStyle = { ...obj(item.lineStyle), color: lineColor };
+			// The point markers and hover state wear the line's colour too, so a
+			// builder's gold default can't show through anywhere (A13).
+			next.itemStyle = { ...obj(item.itemStyle), color: lineColor };
 			if (item.areaStyle)
 				next.areaStyle = { ...obj(item.areaStyle), color: lineColor, opacity: palette.areaOpacity };
+			const emphasis = obj(item.emphasis);
 			if (kind === 'wealth' || kind === 'spending') {
-				const emphasis = obj(item.emphasis);
 				next.emphasis = {
 					...emphasis,
 					focus: 'series',
 					scale: true,
 					itemStyle: {
 						...obj(emphasis.itemStyle),
+						color: lineColor,
 						borderColor: palette.emphasisBorder,
 						borderWidth: 2
 					}
 				};
 				next.showSymbol = false;
+			} else if (item.emphasis) {
+				next.emphasis = {
+					...emphasis,
+					itemStyle: { ...obj(emphasis.itemStyle), color: lineColor }
+				};
 			}
 		}
 
@@ -497,6 +508,15 @@ export function themedOptionPatch(current: Obj, chartID: string, env: ThemeEnv):
 		animationEasing: 'cubicOut',
 		series: patchSeriesList(current.series, palette, chartID, kind, env)
 	};
+	// The option's palette is what ECharts falls back to (legend swatch,
+	// tooltip marker): for a trend line it is the lines' own colours, never a
+	// builder's gold default.
+	if (kind === 'wealth' || kind === 'spending') {
+		const lineColors = list(next.series)
+			.map((s) => obj(obj(s).lineStyle).color)
+			.filter((c): c is string => typeof c === 'string');
+		if (lineColors.length > 0) next.color = lineColors;
+	}
 	// Only send these when the chart has them: an explicit undefined drops the component.
 	const visualMap = patchVisualMap(current, env);
 	if (visualMap) next.visualMap = visualMap;

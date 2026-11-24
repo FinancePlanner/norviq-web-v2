@@ -10,7 +10,9 @@
 		vm.wealthChart
 			? wealthLine('wealth-chart', vm.wealthChart.labels, vm.wealthChart.values, {
 					currency: vm.currency,
-					locale: locale()
+					locale: locale(),
+					trend: 'direction',
+					summary: vm.wealthChartSummary
 				})
 			: null
 	);

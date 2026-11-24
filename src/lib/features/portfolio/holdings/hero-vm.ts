@@ -11,7 +11,9 @@ import {
 	civilDateLabel,
 	isStale,
 	performancePointSeries,
+	basisIsDated,
 	changeBasis,
+	changeSummary,
 	rangeChange,
 	type PerfRange
 } from './change.js';
@@ -59,6 +61,8 @@ export interface HoldingsHeroVM {
 	/** Shown in place of the chart when the series is too short to draw a trend. */
 	historyNote: string | null;
 	chart: { labels: string[]; values: number[] } | null;
+	/** The chart's accessible name: "Portfolio up 3.2% over 1 month". */
+	chartSummary: string | null;
 	rangeLinks: RangeLinkVM[];
 }
 
@@ -121,6 +125,7 @@ export function buildHoldingsHeroVM(input: HoldingsHeroInput): HoldingsHeroVM {
 		asOfCaption: null,
 		historyNote: null,
 		chart: null,
+		chartSummary: null,
 		rangeLinks: PERF_RANGES.map((r) => ({
 			range: r,
 			href: portfolioRedirectURLForPortfolio(r, portfolioID),
@@ -168,5 +173,12 @@ export function buildHoldingsHeroVM(input: HoldingsHeroInput): HoldingsHeroVM {
 		basis: changeBasis(range, change.fromDate, now, t, locale),
 		direction: change.absolute > 0 ? 'up' : change.absolute < 0 ? 'down' : 'flat'
 	};
+	vm.chartSummary = changeSummary(
+		change.fraction,
+		vm.delta.basis,
+		basisIsDated(range, change.fromDate, now),
+		t,
+		locale
+	);
 	return vm;
 }

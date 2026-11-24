@@ -123,6 +123,7 @@ export async function loadOverviewViewModel(
 		portfolioPeriodPositive: false,
 		wealthChart: null,
 		wealthChartNote: null,
+		wealthChartSummary: null,
 		spendingThisMonth: '',
 		spendingPeriodPercent: '',
 		spendingPeriodSuffix: '',

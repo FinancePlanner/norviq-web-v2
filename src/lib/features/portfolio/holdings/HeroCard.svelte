@@ -19,7 +19,9 @@
 		vm.chartLabels.length > 0
 			? wealthLine('portfolio-chart', vm.chartLabels, vm.chartValues, {
 					currency: vm.hero?.currency,
-					locale: locale()
+					locale: locale(),
+					trend: 'direction',
+					summary: vm.hero?.chartSummary
 				})
 			: null
 	);

@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { translator } from '#lib/i18n/index.js';
-import { changeBasis, civilDateLabel, isStale, rangeBasis, rangeChange } from './change.js';
+import {
+	changeBasis,
+	changeSummary,
+	civilDateLabel,
+	isStale,
+	rangeBasis,
+	rangeChange
+} from './change.js';
 
 const en = translator('en');
 const pt = translator('pt-PT');
@@ -101,5 +108,18 @@ describe('changeBasis', () => {
 	});
 	it('allows 3 days of slack for weekends and holidays', () => {
 		expect(changeBasis('1W', '2026-11-20', now, en)).toBe('1 week');
+	});
+});
+
+describe('changeSummary', () => {
+	it('reads the change out for a screen reader', () => {
+		expect(changeSummary(0.032, '1 month', false, en, 'en')).toBe('Portfolio up 3.2% over 1 month');
+		expect(changeSummary(-0.0291, 'since 14 Nov 2026', true, en, 'en')).toBe(
+			'Portfolio down 2.9% since 14 Nov 2026'
+		);
+		expect(changeSummary(0, '1 week', false, en, 'en')).toBe('Portfolio flat over 1 week');
+		expect(changeSummary(0.032, '1 mês', false, pt, 'pt-PT')).toBe(
+			'Portefólio subiu 3,2% em 1 mês'
+		);
 	});
 });

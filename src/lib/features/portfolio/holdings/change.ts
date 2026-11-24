@@ -1,6 +1,6 @@
 import type { components } from '#lib/api/schema.js';
 import type { T } from '#lib/i18n/index.js';
-import { intlLocale, type AppLocale } from '#lib/money.js';
+import { intlLocale, signedPercent, type AppLocale } from '#lib/money.js';
 
 // Portfolio series helpers. The backend's own `changes` are no longer shown:
 // a change is measured over the series on screen (DS 2.0 P1, below), so it
@@ -139,7 +139,14 @@ export function changeBasis(
 	t: T,
 	locale: AppLocale = 'en'
 ): string {
-	if (range === 'ALL') return rangeBasis('ALL', fromDate, t, locale);
+	return basisIsDated(range, fromDate, now)
+		? rangeBasis('ALL', fromDate, t, locale)
+		: rangeBasis(range, fromDate, t, locale);
+}
+
+/** Whether changeBasis dates the change ("since …") rather than naming the range. */
+export function basisIsDated(range: PerfRange, fromDate: string, now: Date): boolean {
+	if (range === 'ALL') return true;
 	const span = RANGE_SPAN[range];
 	const nominal = Date.UTC(
 		now.getUTCFullYear() - span.years,
@@ -147,8 +154,26 @@ export function changeBasis(
 		now.getUTCDate() - span.days
 	);
 	const c = civil(fromDate);
-	const from = Date.UTC(c.y, c.m - 1, c.d);
-	return (from - nominal) / DAY_MS > BASIS_SLACK_DAYS
-		? rangeBasis('ALL', fromDate, t, locale)
-		: rangeBasis(range, fromDate, t, locale);
+	return (Date.UTC(c.y, c.m - 1, c.d) - nominal) / DAY_MS > BASIS_SLACK_DAYS;
+}
+
+/**
+ * The change in words, for a chart's accessible name: "Portfolio up 3.2% over
+ * 1 month", or "… since 14 Nov 2026" for a dated basis.
+ */
+export function changeSummary(
+	fraction: number,
+	basis: string,
+	dated: boolean,
+	t: T,
+	locale: AppLocale
+): string {
+	const pct = signedPercent(Math.abs(fraction), locale).replace(/^\+/, '');
+	if (fraction > 0)
+		return dated ? t('Portfolio up %@ %@', pct, basis) : t('Portfolio up %@ over %@', pct, basis);
+	if (fraction < 0)
+		return dated
+			? t('Portfolio down %@ %@', pct, basis)
+			: t('Portfolio down %@ over %@', pct, basis);
+	return dated ? t('Portfolio flat %@', basis) : t('Portfolio flat over %@', basis);
 }

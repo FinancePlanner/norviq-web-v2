@@ -1199,5 +1199,11 @@
 	"AI providers": "Fornecedores de IA",
 	"API access": "Acesso à API",
 	"Articles": "Artigos",
-	"This range covers one month. Choose a longer range for a trend.": "Este intervalo cobre um mês. Escolha um intervalo maior para ver a tendência."
+	"This range covers one month. Choose a longer range for a trend.": "Este intervalo cobre um mês. Escolha um intervalo maior para ver a tendência.",
+	"Portfolio up %@ over %@": "Portefólio subiu %@ em %@",
+	"Portfolio down %@ over %@": "Portefólio desceu %@ em %@",
+	"Portfolio flat over %@": "Portefólio estável em %@",
+	"Portfolio up %@ %@": "Portefólio subiu %@ %@",
+	"Portfolio down %@ %@": "Portefólio desceu %@ %@",
+	"Portfolio flat %@": "Portefólio estável %@"
 }

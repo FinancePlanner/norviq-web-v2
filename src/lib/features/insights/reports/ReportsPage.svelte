@@ -41,7 +41,9 @@
 		vm.netWorth.chart
 			? wealthLine('reports-net-worth-chart', vm.netWorth.chart.labels, vm.netWorth.chart.values, {
 					currency: vm.currency,
-					locale: locale()
+					locale: locale(),
+					trend: 'direction',
+					summary: vm.netWorth.chartSummary
 				})
 			: null
 	);
@@ -51,7 +53,12 @@
 					'reports-performance-chart',
 					vm.performance.chart.labels,
 					vm.performance.chart.values,
-					{ currency: vm.currency, locale: locale() }
+					{
+						currency: vm.currency,
+						locale: locale(),
+						trend: 'direction',
+						summary: vm.performance.chartSummary
+					}
 				)
 			: null
 	);

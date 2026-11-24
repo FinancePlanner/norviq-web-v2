@@ -35,6 +35,8 @@ export interface ChartSpec {
 	trend?: 'direction' | 'neutral';
 	/** 'percent' prints the series as percent points instead of money. */
 	valueFormat?: 'money' | 'percent';
+	/** A text summary for assistive tech ("Portfolio up 3.2% over 1 month"). */
+	summary?: string | null;
 }
 
 /** How a value series is printed and coloured (tooltip, y axis, line colour). */
@@ -43,6 +45,7 @@ export interface MoneySeries {
 	locale?: AppLocale;
 	trend?: 'direction' | 'neutral';
 	valueFormat?: 'money' | 'percent';
+	summary?: string | null;
 }
 
 /** A plain JSON-ish option object, cast to EChartsOption once it is built. */

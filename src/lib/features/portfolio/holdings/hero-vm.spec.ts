@@ -179,6 +179,7 @@ describe('buildHoldingsHeroVM', () => {
 		expect(vm.delta!.basis).not.toContain('previous close');
 		expect(vm.delta!.direction).toBe('up');
 		expect(vm.delta!.text).toBe('+$16,000.00 (+20.0%)');
+		expect(vm.chartSummary).toBe('Portfolio up 20.0% over 1 year');
 		expect(vm.asOfCaption).toBeNull();
 		expect(vm.chart?.values).toEqual([80000, 90000, 96000]);
 	});
@@ -193,6 +194,7 @@ describe('buildHoldingsHeroVM', () => {
 			input({ range: '1Y', performance: performance('USD', tenDays) })
 		);
 		expect(vm.delta!.basis).toBe('since 14 Nov 2026');
+		expect(vm.chartSummary).toBe('Portfolio up 10.0% since 14 Nov 2026');
 	});
 
 	it('draws no line and no change from fewer than 3 points', () => {
