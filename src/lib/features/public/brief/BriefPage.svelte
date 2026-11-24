@@ -1,27 +1,38 @@
 <script lang="ts">
-	// public.MarketBriefMeta + public.MarketBriefPage (internal/pages/public/market_brief.templ).
-	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	// The editorial brief: Norviq Market Intelligence, The Open or The Close.
+	// Server-rendered; charts are SVG paths computed in edition/map.ts, so the
+	// page needs no charting code in the browser.
 	import PrimaryButton from '#lib/components/norviq/PrimaryButton.svelte';
 	import ShareBar from '#lib/components/norviq/ShareBar.svelte';
-	import MarketBriefContent from '#lib/features/dashboard/market-brief/MarketBriefContent.svelte';
 	import { translator } from '#lib/i18n/index.js';
-	import BriefNav from './BriefNav.svelte';
+	import CrossAsset from './edition/CrossAsset.svelte';
+	import IntradayChart from './edition/IntradayChart.svelte';
+	import Masthead from './edition/Masthead.svelte';
+	import Methodology from './edition/Methodology.svelte';
+	import Scorecards from './edition/Scorecards.svelte';
+	import Stories from './edition/Stories.svelte';
+	import StoryMeta from './edition/StoryMeta.svelte';
+	import './edition/brief.css';
 	import type { BriefPageVM } from './brief.server.js';
 
 	let { vm }: { vm: BriefPageVM } = $props();
 	const t = $derived(translator(vm.lang));
-	const subtitle = $derived(
-		vm.brief.tradingDate +
-			(vm.brief.generatedAt
-				? ' · ' + t('Updated at') + ' ' + vm.brief.generatedAt + ' ' + t('(Lisbon time)')
-				: '')
-	);
+	const L = $derived(vm.labels);
+	const ed = $derived(vm.edition);
+	const close = $derived(ed.kind === 'close');
 </script>
 
 <svelte:head>
 	<title>{vm.documentTitle}</title>
 	<meta name="description" content={vm.description} />
 	<meta name="robots" content="index,follow,max-image-preview:large" />
+	<link
+		rel="preload"
+		href="/static/fonts/brygada-1918-latin-wght-normal.woff2"
+		as="font"
+		type="font/woff2"
+		crossorigin="anonymous"
+	/>
 	<link rel="canonical" href={vm.canonicalURL} />
 	<link rel="alternate" hreflang="en" href={vm.englishURL} />
 	<link rel="alternate" hreflang="pt-PT" href={vm.portugueseURL} />
@@ -40,7 +51,9 @@
 	<meta property="og:image:alt" content={vm.title} />
 	{#if vm.publishedISO}
 		<meta property="article:published_time" content={vm.publishedISO} />
+		<meta property="article:modified_time" content={vm.modifiedISO || vm.publishedISO} />
 	{/if}
+	<meta property="article:section" content="Market Intelligence" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@NorviqPlanner" />
 	<meta name="twitter:title" content={vm.documentTitle} />
@@ -52,57 +65,122 @@
 	{/if}
 </svelte:head>
 
-<main id="main-content" class="mx-auto w-full max-w-3xl px-6 py-10" data-market-brief-page>
-	<BriefNav lang={vm.lang} signedIn={vm.signedIn} />
+<main id="main-content" class="mi" data-market-brief-page data-edition={ed.editionId}>
+	<Masthead
+		labels={L}
+		editionName={ed.editionName}
+		dateLong={ed.dateLong}
+		dateISO={vm.brief.tradingDateISO}
+		previousURL={vm.previousURL}
+		latestURL={vm.latestURL}
+		otherLanguageURL={vm.otherLanguageURL}
+		otherLanguageCode={vm.otherLanguageCode}
+		otherLanguageLabel={vm.otherLanguageLabel}
+		signedIn={vm.signedIn}
+	/>
 	<article aria-labelledby="market-brief-heading">
-		<header>
-			<p class="text-sm font-semibold tracking-widest text-muted-foreground">{t('Market brief')}</p>
-			<h1 id="market-brief-heading" class="mt-1 text-3xl font-semibold tracking-tight">
-				{vm.heading}
-			</h1>
-			<p class="mt-2 text-sm text-muted-foreground">
-				<time datetime={vm.brief.tradingDateISO}>{subtitle}</time>
-				{#if vm.otherLanguageURL}
-					<span aria-hidden="true">·</span>
-					<a
-						href={vm.otherLanguageURL}
-						hreflang={vm.otherLanguageCode}
-						lang={vm.otherLanguageCode}
-						class="underline underline-offset-4"
-						data-sveltekit-reload>{vm.otherLanguageLabel}</a
-					>
+		<header class="mi-hero">
+			<p class="mi-label mi-label--gold">{ed.editionName} · {ed.dateLong}</p>
+			<h1 id="market-brief-heading">{ed.headline}</h1>
+			{#if ed.dek}
+				<p class="mi-dek">{ed.dek}</p>
+			{/if}
+			<dl class="mi-meta">
+				{#if ed.publishedTime}
+					<div>
+						<dt>{L.published}</dt>
+						<dd>
+							<time datetime={vm.publishedISO}>{ed.publishedTime}</time>
+							{L.lisbonTime}
+						</dd>
+					</div>
 				{/if}
-			</p>
+				{#if ed.dataAsOfTime}
+					<div>
+						<dt>{L.marketDataAsOf}</dt>
+						<dd>{ed.dataAsOfTime} {L.lisbonTime}</dd>
+					</div>
+				{/if}
+				<div>
+					<dt>{L.edition}</dt>
+					<dd>
+						{ed.editionId}{#if ed.revision}&nbsp;· r{ed.revision}{/if}
+					</dd>
+				</div>
+				{#if ed.degraded}
+					<div><span class="mi-badge">{L.limitedSources}</span></div>
+				{/if}
+			</dl>
 		</header>
-		<div class="mt-6">
-			<vigil.Panel class="market-brief-card">
-				<MarketBriefContent vm={vm.brief} />
-			</vigil.Panel>
-		</div>
-		{#if vm.previousURL || vm.latestURL}
-			<nav
-				class="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm"
-				aria-label={t('More market briefs')}
-			>
-				{#if vm.previousURL}
-					<a href={vm.previousURL} rel="prev" class="underline underline-offset-4"
-						>← {t('Previous brief')}</a
-					>
-				{:else}
-					<span></span>
-				{/if}
-				{#if vm.latestURL}
-					<a href={vm.latestURL} class="underline underline-offset-4">{t('Latest brief')} →</a>
-				{/if}
-			</nav>
+
+		{#if ed.groups.length}
+			<Scorecards
+				title={L.marketsAtAGlance}
+				groups={ed.groups}
+				note={ed.hasEdition ? L.glanceNote : ''}
+			/>
 		{/if}
+
+		<div class="mi-body">
+			<div class="mi-main">
+				{#if ed.chart}
+					<IntradayChart
+						title={L.marketPerformance}
+						chart={ed.chart}
+						tableLabel={L.showChartData}
+					/>
+				{/if}
+				<Stories
+					lead={ed.lead}
+					developments={ed.developments}
+					leadTitle={L.leadStory}
+					developmentsTitle={close ? L.developmentsClose : L.developmentsOpen}
+					sourceLabel={L.source}
+				/>
+				{#if ed.earnings.length}
+					<section aria-labelledby="mi-watch-title">
+						<h2 id="mi-watch-title" class="mi-section-title">{L.whatToWatch}</h2>
+						<h3 class="mi-label">{L.earningsToday}</h3>
+						<ul class="mi-stories" role="list">
+							{#each ed.earnings as story (story.rank)}
+								<li>
+									<span class="mi-rank" aria-hidden="true">·</span>
+									<div>
+										<p>{story.text}</p>
+										<StoryMeta {story} sourceLabel={L.source} />
+									</div>
+								</li>
+							{/each}
+						</ul>
+					</section>
+				{/if}
+			</div>
+			<aside class="mi-rail" aria-label={L.context}>
+				{#if ed.crossAsset.length}
+					<CrossAsset
+						title={L.acrossAssetClasses}
+						sections={ed.crossAsset}
+						columns={{ name: L.instrument, level: L.level, change: L.change }}
+					/>
+				{/if}
+				<Methodology
+					labels={L}
+					editionId={ed.editionId}
+					revision={ed.revision}
+					publishedTime={ed.publishedTime}
+					dataAsOfTime={ed.dataAsOfTime}
+					hasEdition={ed.hasEdition}
+					degraded={ed.degraded}
+					sources={ed.sources}
+					missing={ed.missing}
+				/>
+			</aside>
+		</div>
 	</article>
-	<section id="share" class="mt-10 scroll-mt-6" aria-labelledby="market-brief-share-heading">
-		<h2 id="market-brief-share-heading" class="text-sm font-semibold text-muted-foreground">
-			{t('Share this brief')}
-		</h2>
+
+	<section id="share" class="mi-share scroll-mt-6" aria-labelledby="market-brief-share-heading">
+		<h2 id="market-brief-share-heading" class="mi-section-title">{L.shareThisEdition}</h2>
 		<ShareBar
-			class="mt-3"
 			links={vm.share}
 			cardImageURL={vm.cardImageURL}
 			cardFileName={vm.cardFileName}
@@ -126,21 +204,22 @@
 		/>
 	</section>
 	{#if !vm.signedIn}
-		<section class="mt-10 rounded-[var(--radius)] border bg-card-bg p-6" data-market-brief-cta>
-			<h2 class="text-xl font-semibold">{t('Follow the markets with Norviq')}</h2>
-			<p class="mt-2 text-muted-foreground">
-				{t(
-					'The brief is on your Norviq dashboard every weekday morning and evening, next to your portfolio.'
-				)}
-			</p>
-			<PrimaryButton href="/signup" class="mt-4 w-auto px-6"
-				>{t('Create free account')}</PrimaryButton
-			>
+		<section class="mi-cta" data-market-brief-cta>
+			<div>
+				<h2>{L.ctaTitle}</h2>
+				<p>
+					{L.ctaBody}
+				</p>
+			</div>
+			<PrimaryButton href="/signup" class="w-auto px-6">{L.ctaButton}</PrimaryButton>
 		</section>
 	{/if}
-	<footer class="mt-12 border-t border-border pt-6 text-xs text-muted-foreground">
-		<a href="/terms" class="underline">{t('Terms')}</a>
-		<span aria-hidden="true">·</span>
-		<a href="/privacy" class="underline">{t('Privacy')}</a>
+	<footer class="mi-footer">
+		<span>Norviq · {L.marketIntelligence} · {ed.editionId}</span>
+		<span>
+			<a href="/terms">{L.terms}</a>
+			<span aria-hidden="true">·</span>
+			<a href="/privacy">{L.privacy}</a>
+		</span>
 	</footer>
 </main>

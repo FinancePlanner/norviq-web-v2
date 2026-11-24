@@ -7,6 +7,7 @@ import {
 	PAGE_CACHE_CONTROL,
 	briefPath,
 	findBrief,
+	findEdition,
 	langQuery,
 	pageVM,
 	parsePermalink,
@@ -26,9 +27,9 @@ export const load: PageServerLoad = async (event) => {
 	};
 	if (!key) notFound();
 	const signedIn = !!event.locals.session.accessToken;
-	let brief;
+	let found;
 	try {
-		brief = await findBrief(event, { lang, slot: key!.slot, date: key!.date });
+		found = await findEdition(event, { lang, slot: key!.slot, date: key!.date });
 	} catch (err) {
 		if (err instanceof BriefNotFound) notFound();
 		if (err instanceof BriefUnavailable) {
@@ -37,7 +38,7 @@ export const load: PageServerLoad = async (event) => {
 		}
 		throw err;
 	}
-	const vm = pageVM(lang, brief, signedIn);
+	const vm = pageVM(lang, found.brief, signedIn, found.edition);
 	// Latest is linked only when this is not it. A failed lookup of the latest
 	// just leaves the link off.
 	try {
