@@ -28,7 +28,7 @@
 	<meta name="robots" content="index,follow,max-image-preview:large" />
 	<link
 		rel="preload"
-		href="/static/fonts/source-serif-4-latin-opsz-normal.woff2"
+		href="/static/fonts/brygada-1918-latin-wght-normal.woff2"
 		as="font"
 		type="font/woff2"
 		crossorigin="anonymous"

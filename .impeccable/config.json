@@ -1,0 +1,14 @@
+{
+	"detector": {
+		"ignoreRules": [],
+		"ignoreFiles": [],
+		"ignoreValues": [
+			{
+				"rule": "design-system-font",
+				"value": "brygada 1918",
+				"createdAt": "2026-11-24T15:39:49.589Z",
+				"reason": "User confirmed 2026-11-24: Brygada 1918 display serif for /brief only (Market Intelligence plan); DS 2.0 session to record in DESIGN.md"
+			}
+		]
+	}
+}
