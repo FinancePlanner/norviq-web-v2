@@ -251,6 +251,21 @@ describe('editionPageVM with an edition', () => {
 		});
 	});
 
+	it('never shows a yield without basis points moving by its relative change', () => {
+		for (const lang of ['en', 'pt-PT']) {
+			const e = edition();
+			const tnx = e.instruments.find((i) => i.symbol === '^TNX')!;
+			tnx.changeBps = null;
+			const rates = editionPageVM(brief(), e, lang, editionStrings(lang)).crossAsset.find(
+				(s) => s.rows[0]?.symbol === '^TNX'
+			)!;
+			expect(rates.rows[0].change).toBe('');
+			expect(rates.rows[0].direction).toBe('flat');
+			expect(rates.rows[0].label).not.toMatch(/unchanged|sem alteração/);
+			expect(JSON.stringify(rates)).not.toMatch(/2[.,]75/);
+		}
+	});
+
 	it('charts every series as percent from the previous close, with a data table', () => {
 		const chart = vm.chart!;
 		expect(chart.series.map((s) => s.name)).toEqual(['Nasdaq 100', 'S&P 500']);

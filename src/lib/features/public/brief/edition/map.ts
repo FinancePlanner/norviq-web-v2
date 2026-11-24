@@ -317,6 +317,12 @@ function crossAsset(
 			level = formatYield(inst.last, lang, inst.precision);
 			change = formatBps(inst.changeBps, lang);
 			d = directionOf(inst.changeBps, 1);
+		} else if (inst.assetClass === 'rate') {
+			// A yield's changePct is relative ("fell 2.77%" for about −14 bp):
+			// without its basis points, show the level and no move at all.
+			level = formatYield(inst.last, lang, inst.precision);
+			change = '';
+			d = 'flat';
 		} else {
 			level =
 				inst.unit === 'usd_bbl'
@@ -332,7 +338,8 @@ function crossAsset(
 			level,
 			change,
 			direction: d,
-			label: instrumentLabel(name, level, change, d, lang)
+			// No move known: say the level only, never "unchanged".
+			label: change ? instrumentLabel(name, level, change, d, lang) : `${name}, ${level}`
 		});
 	}
 	return sections.filter((s) => s.rows.length > 0).map(({ title, rows }) => ({ title, rows }));
