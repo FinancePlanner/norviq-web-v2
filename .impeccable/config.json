@@ -11,21 +11,10 @@
 			},
 			{
 				"rule": "design-system-font",
-				"value": "([^",
-				"createdAt": "2026-11-24T20:44:53.846Z",
-				"reason": "agent triage: regex capture group in src/lib/design/design-md.spec.ts parsing DESIGN.md front matter, not a font"
-			},
-			{
-				"rule": "design-system-font",
-				"value": "Brygada 1918'\")",
-				"createdAt": "2026-11-24T20:55:12.000Z",
-				"reason": "agent triage: string literal in src/lib/design/tokens-css.spec.ts asserting the global @font-face, not a font use"
-			},
-			{
-				"rule": "design-system-font",
-				"value": "\\S*Var\\(--Font-Display\\)[^",
-				"createdAt": "2026-11-24T20:55:12.000Z",
-				"reason": "agent triage: regex in src/lib/design/tokens-css.spec.ts matching the --font-display rule, not a font use"
+				"value": "*",
+				"files": ["src/lib/design/*.spec.ts"],
+				"createdAt": "2026-11-24T21:19:02.276Z",
+				"reason": "agent triage (review of feat/ds2-tokens-fonts): the design token tests quote font names and parse font-family rules in strings and regexes; they render no UI. Replaces three regex-fragment value ignores."
 			}
 		]
 	}
