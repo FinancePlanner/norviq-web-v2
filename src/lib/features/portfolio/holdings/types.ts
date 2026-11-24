@@ -5,6 +5,7 @@
 import type { SentimentBadgeVM } from '#lib/components/norviq/sentiment.js';
 import type { PilotFollowingVM } from '#lib/components/norviq/pilot-following.js';
 import type { SentimentRollupVM } from '../sentiment.js';
+import type { HoldingsHeroVM } from './hero-vm.js';
 
 export interface PortfolioOptionVM {
 	id: string;
@@ -88,6 +89,8 @@ export interface HoldingsViewModel {
 	trendLabel: string;
 	chartLabels: string[];
 	chartValues: number[];
+	/** DS 2.0 hero: currency-correct figure, range-based change, honest states. */
+	hero: HoldingsHeroVM | null;
 	selectedTimeRange: string;
 	timeRanges: string[];
 	/** Holdings at market prices, cash excluded. */

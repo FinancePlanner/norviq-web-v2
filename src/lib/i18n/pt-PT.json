@@ -1152,5 +1152,10 @@
 	"3 months": "3 meses",
 	"1 year": "1 ano",
 	"since %@": "desde %@",
-	"Prices as of %@": "Preços de %@"
+	"Prices as of %@": "Preços de %@",
+	"Portfolio value": "Valor do portefólio",
+	"Portfolio value at cost": "Valor do portefólio ao custo",
+	"Not converted. A combined total needs exchange rates (coming).": "Sem conversão. Um total combinado precisa de taxas de câmbio (em breve).",
+	"Not enough history for a trend yet.": "Ainda não há histórico suficiente para uma tendência.",
+	"Chart range": "Intervalo do gráfico"
 }

@@ -27,7 +27,9 @@ import {
 	type SymbolSentiment
 } from '../market.server.js';
 import { buildSentimentRollup } from '../sentiment.js';
-import { formatChangeLabel, performancePointSeries, primaryChange } from './change.js';
+import type { PerfRange } from './change.js';
+import { buildHoldingsHeroVM, PERF_RANGES, portfolioRedirectURLForPortfolio } from './hero-vm.js';
+import { money } from '#lib/money.js';
 import type {
 	AddPositionFormVM,
 	AssetFilterVM,
@@ -48,10 +50,13 @@ type Schemas = components['schemas'];
 type ScenarioTargetResponse = Schemas['ScenarioTargetResponse'];
 
 /** No "1D": history is recorded once a day. */
-export const PORTFOLIO_TIME_RANGES = ['1W', '1M', '3M', '1Y', 'ALL'];
+export const PORTFOLIO_TIME_RANGES: string[] = PERF_RANGES;
 
-export function normalizePortfolioTimeRange(r: string | null | undefined): string {
-	return PORTFOLIO_TIME_RANGES.includes(r ?? '') ? (r as string) : '1M';
+const isPerfRange = (r: string | null | undefined): r is PerfRange =>
+	PORTFOLIO_TIME_RANGES.includes(r ?? '');
+
+export function normalizePortfolioTimeRange(r: string | null | undefined): PerfRange {
+	return isPerfRange(r) ? r : '1M';
 }
 
 export function portfolioAssetFilters(): AssetFilterVM[] {
@@ -228,6 +233,7 @@ export async function loadHoldingsViewModel(
 		trendLabel: 'No portfolio trend yet',
 		chartLabels: [],
 		chartValues: [],
+		hero: null,
 		selectedTimeRange,
 		timeRanges: PORTFOLIO_TIME_RANGES,
 		holdingsValue: '',
@@ -295,24 +301,42 @@ export async function loadHoldingsViewModel(
 	const totalValue = atMarket ? summary.totalValue : costBasis + cashBalance;
 	const holdingsValue = totalValue - cashBalance;
 	const positionCount = stocks.length;
+	const { locale, t } = event.locals;
 
-	vm.heroLabel = atMarket ? 'Portfolio value' : 'Portfolio value at cost';
-	vm.totalValue = formatCurrency(totalValue);
+	// DS 2.0 P1: the figure in the data's currency, the change measured over the
+	// range on screen, and honest stale / short / mixed-currency states.
+	const hero = buildHoldingsHeroVM({
+		performance,
+		summary,
+		costBasis,
+		range: selectedTimeRange,
+		portfolioID,
+		locale,
+		now: new Date(),
+		t
+	});
+	vm.hero = hero;
+	vm.heroLabel = hero.heroLabel;
+	vm.totalValue = hero.totalValue || (hero.subtotals ?? []).join(' + ');
 	vm.heroSubtitle = `${positionCount} positions`;
-	vm.holdingsValue = formatCurrency(holdingsValue);
-	vm.costBasis = formatCurrency(atMarket ? summary.totalCost : costBasis);
-	vm.cashBalance = formatCurrency(cashBalance);
-	vm.addPosition.currentPortfolioValue = totalValue;
-
-	if (performance) {
-		if (performance.points?.length) {
-			const { labels, values } = performancePointSeries(performance.points);
-			vm.chartLabels = labels;
-			vm.chartValues = values;
-		}
-		const change = formatChangeLabel(primaryChange(performance.changes));
-		if (change.ok) vm.trendLabel = change.label;
+	if (hero.subtotals) {
+		// A mixed-currency sum means nothing; cash is held in the base currency.
+		vm.holdingsValue = '—';
+		vm.costBasis = '—';
+		vm.cashBalance = money(cashBalance, summary?.baseCurrency, locale);
+	} else {
+		vm.holdingsValue = money(holdingsValue, hero.currency, locale);
+		vm.costBasis = money(atMarket ? summary.totalCost : costBasis, hero.currency, locale);
+		vm.cashBalance = money(cashBalance, hero.currency, locale);
 	}
+	vm.addPosition.currentPortfolioValue = totalValue;
+	if (hero.chart) {
+		vm.chartLabels = hero.chart.labels;
+		vm.chartValues = hero.chart.values;
+	}
+	vm.trendLabel = hero.delta
+		? `${hero.delta.text} ${hero.delta.basis}`
+		: (hero.asOfCaption ?? hero.historyNote ?? t('No portfolio trend yet'));
 
 	stocks = sortStocksBySymbol(stocks);
 	const symbols = stocks.map((s) => s.symbol);
@@ -550,15 +574,7 @@ export function portfolioRedirectURL(timeRange: string): string {
 		: '/portfolio';
 }
 
-/** portfolioRedirectURLForPortfolio (url.Values.Encode sorts keys). */
-export function portfolioRedirectURLForPortfolio(timeRange: string, portfolioID: string): string {
-	const values = new URLSearchParams();
-	if (portfolioID !== '') values.set('portfolio', portfolioID);
-	if (timeRange !== '' && timeRange !== '1M') values.set('range', timeRange);
-	values.sort();
-	const qs = values.toString();
-	return qs ? '/portfolio?' + qs : '/portfolio';
-}
+export { portfolioRedirectURLForPortfolio };
 
 /** loadPositionForm: GET /v1/stocks/id/{id}. Throws a status for the caller to answer. */
 export async function loadPositionForm(
