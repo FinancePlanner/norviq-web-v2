@@ -8,6 +8,12 @@
 				"value": "brygada 1918",
 				"createdAt": "2026-11-24T15:39:49.589Z",
 				"reason": "User confirmed 2026-11-24: Brygada 1918 display serif for /brief only (Market Intelligence plan); DS 2.0 session to record in DESIGN.md"
+			},
+			{
+				"rule": "design-system-font",
+				"value": "([^",
+				"createdAt": "2026-11-24T20:44:53.846Z",
+				"reason": "agent triage: regex capture group in src/lib/design/design-md.spec.ts parsing DESIGN.md front matter, not a font"
 			}
 		]
 	}
