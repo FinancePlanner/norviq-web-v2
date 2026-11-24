@@ -29,7 +29,7 @@
 	--mi-chart-3: var(--color-info);
 	--mi-grid: var(--chart-grid);
 	--mi-axis: var(--chart-axis);
-	--mi-serif: var(--font-display);
+	--mi-serif: var(--font-display, 'Brygada 1918', 'Iowan Old Style', Georgia, serif);
 	--mi-gutter: clamp(1rem, 4vw, 2.5rem);
 
 	color: var(--mi-ink);

@@ -320,7 +320,10 @@ describe('Brygada 1918, the display face (font.display)', () => {
 	it('leaves the brief no font of its own: it aliases the global face', () => {
 		const brief = read('src/lib/features/public/brief/edition/brief.css');
 		expect(fontFaces(brief)).toEqual([]);
-		expect(brief).toMatch(/--mi-serif:\s*var\(--font-display\);/);
+		// The fallback is the token stack, so the brief keeps a serif even if
+		// --font-display were ever dropped from the build.
+		const fallback = /--mi-serif:\s*var\(--font-display,\s*([^)]+)\);/.exec(brief)?.[1] ?? '';
+		expect(fallback.split(',').map((f) => f.trim().replace(/^'|'$/g, ''))).toEqual(display);
 		expect(read('src/lib/features/public/brief/BriefPage.svelte')).not.toContain(BRYGADA);
 	});
 
