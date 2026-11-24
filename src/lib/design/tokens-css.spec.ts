@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { render } from 'svelte/server';
 import { afterAll, describe, expect, it } from 'vitest';
 import DocumentPage from '../components/norviq/vigil/DocumentPage.svelte';
+import { DISPLAY_FACE_HREF } from './display-face.js';
 import { hexToOklch, oklchToOklab } from '../../../scripts/tokens/oklch.mjs';
 import { DARK, LIGHT } from '../charts/palette.generated.js';
 import { PAGE_BG } from '../theme-color.generated.js';
@@ -323,9 +324,8 @@ describe('Brygada 1918, the display face (font.display)', () => {
 		expect(read('src/lib/features/public/brief/BriefPage.svelte')).not.toContain(BRYGADA);
 	});
 
-	it('is preloaded by the layouts that show it above the fold', () => {
-		expect(read('src/routes/(app)/+layout.svelte')).toContain(BRYGADA);
-		expect(read('src/routes/(public)/+layout.svelte')).toContain(BRYGADA);
+	it('is preloaded by the server hook, on the routes that show it (display-face.spec.ts)', () => {
+		expect(DISPLAY_FACE_HREF).toBe(BRYGADA);
 	});
 
 	// The selector list that sets the display face. Element selectors (a bare h1)

@@ -2,6 +2,7 @@ import type { Handle, HandleServerError } from '@sveltejs/kit/hooks';
 import { LANG_COOKIE, resolveRequestLanguage, translator } from '#lib/i18n/index.ts';
 import { Session } from '#lib/server/session.js';
 import { config } from '#lib/server/env.js';
+import { usesDisplayFace, withDisplayFacePreload } from '#lib/design/display-face.js';
 import { apiJSON } from '#lib/server/api.js';
 import { resume, postAuthRedirect } from '#lib/server/onboarding.js';
 import { redirect } from '@sveltejs/kit';
@@ -97,10 +98,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 		redirect(303, await postAuthRedirect(event));
 	}
 
+	// Brygada 1918 (the display face) is preloaded only where it is above the fold.
+	const displayFace = usesDisplayFace(event.route.id);
 	const response = await resolve(event, {
 		// locals.locale, not the request's: a page whose language comes from its
 		// URL (/brief/{date}/{slot}?lang=pt-PT) sets it in its load.
-		transformPageChunk: ({ html }) => html.replace('%lang%', event.locals.locale)
+		transformPageChunk: ({ html }) => {
+			const page = html.replace('%lang%', event.locals.locale);
+			return displayFace ? withDisplayFacePreload(page) : page;
+		}
 	});
 	response.headers.set('X-Content-Type-Options', 'nosniff');
 	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
