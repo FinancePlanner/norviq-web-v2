@@ -189,7 +189,8 @@ export function mapMarketBrief(resp: BriefResponse | null, lang: string): Market
 			kind: item.kind,
 			text,
 			tickers: tickers(item.tickers),
-			sourceHost: sourceHost(item.sourceUrl)
+			sourceHost: sourceHost(item.sourceUrl),
+			sourceURL: sourceHost(item.sourceUrl) ? (item.sourceUrl ?? '').trim() : ''
 		};
 		if (mapped.kind === KindHighlight || mapped.kind === KindEarnings) vm.notes.push(mapped);
 		else if (mapped.kind === KindStory) vm.stories.push(mapped);

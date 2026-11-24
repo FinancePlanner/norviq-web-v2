@@ -33,8 +33,11 @@ import {
 	marketBriefTitleKey,
 	type MarketBriefVM
 } from '#lib/features/dashboard/market-brief/types.js';
+import { editionPageVM, type EditionPageVM } from './edition/map.js';
+import { editionStrings, type EditionStrings } from './edition/strings.js';
+import type { EditionDTO } from './edition/types.js';
 
-type BriefResponse = components['schemas']['MarketBriefResponse'];
+type BriefResponse = components['schemas']['MarketBriefResponse'] & { edition?: EditionDTO | null };
 
 const CACHE_TTL = 5 * 60_000;
 const FAILURE_TTL = 60_000;
@@ -58,6 +61,8 @@ export interface Key {
 
 interface Entry {
 	vm: MarketBriefVM | null;
+	/** The brief's structured market data; null for briefs written before editions. */
+	edition: EditionDTO | null;
 	failed: boolean;
 	expires: number;
 }
@@ -98,28 +103,62 @@ export function parsePermalink(
 }
 
 async function fetchBrief(event: RequestEvent, key: Key): Promise<Entry> {
-	if (!config().publicAPIToken) return { vm: null, failed: false, expires: Date.now() + CACHE_TTL };
+	if (!config().publicAPIToken)
+		return { vm: null, edition: null, failed: false, expires: Date.now() + CACHE_TTL };
 	try {
 		const res = await apiFetch(event, 'GET', '/v1/market/brief', null, {
 			auth: 'public',
-			query: { lang: key.lang, slot: key.slot || undefined, date: key.date || undefined },
+			query: {
+				lang: key.lang,
+				slot: key.slot || undefined,
+				date: key.date || undefined,
+				include: 'edition'
+			},
 			signal: AbortSignal.timeout(FETCH_TIMEOUT)
 		});
 		if (res.status === 200) {
+			const body = await res.json<BriefResponse>();
 			return {
-				vm: mapMarketBrief(await res.json<BriefResponse>(), key.lang),
+				vm: mapMarketBrief(body, key.lang),
+				edition: validEdition(body.edition),
 				failed: false,
 				expires: Date.now() + CACHE_TTL
 			};
 		}
 		await res.body?.cancel().catch(() => {});
 		if (res.status === 404 && key.slot)
-			return { vm: null, failed: false, expires: Date.now() + CACHE_TTL };
+			return { vm: null, edition: null, failed: false, expires: Date.now() + CACHE_TTL };
 		console.warn('load market brief', key, `market brief returned status ${res.status}`);
 	} catch (err) {
 		console.warn('load market brief', key, err);
 	}
-	return { vm: null, failed: true, expires: Date.now() + FAILURE_TTL };
+	return { vm: null, edition: null, failed: true, expires: Date.now() + FAILURE_TTL };
+}
+
+/** An edition the page can trust the shape of; anything else renders as a legacy brief. */
+export function validEdition(raw: unknown): EditionDTO | null {
+	if (!raw || typeof raw !== 'object') return null;
+	const e: Partial<EditionDTO> = raw;
+	if (
+		typeof e.id !== 'string' ||
+		!e.id ||
+		!Array.isArray(e.instruments) ||
+		!Array.isArray(e.series)
+	)
+		return null;
+	return {
+		schemaVersion: e.schemaVersion ?? 0,
+		id: e.id,
+		kind: e.kind ?? '',
+		revision: e.revision ?? 0,
+		status: e.status ?? '',
+		publishedAt: e.publishedAt ?? '',
+		marketDataAsOf: e.marketDataAsOf ?? null,
+		timezone: e.timezone ?? '',
+		instruments: e.instruments,
+		series: e.series,
+		quality: e.quality ?? { degraded: false, model: '', missing: [] }
+	};
 }
 
 function store(k: string, entry: Entry) {
@@ -149,6 +188,14 @@ async function lookup(event: RequestEvent, key: Key): Promise<Entry> {
 
 /** find: the brief at key, or throws BriefNotFound / BriefUnavailable. */
 export async function findBrief(event: RequestEvent, key: Key): Promise<MarketBriefVM> {
+	return (await findEdition(event, key)).brief;
+}
+
+/** findEdition: the brief and its edition (null for older briefs). */
+export async function findEdition(
+	event: RequestEvent,
+	key: Key
+): Promise<{ brief: MarketBriefVM; edition: EditionDTO | null }> {
 	const entry = await lookup(event, key);
 	if (entry.failed) throw new BriefUnavailable('market brief backend unavailable');
 	const vm = entry.vm;
@@ -156,7 +203,7 @@ export async function findBrief(event: RequestEvent, key: Key): Promise<MarketBr
 	// Never serve one brief under another's URL.
 	if (key.slot && (vm.slot !== key.slot || vm.tradingDateISO !== key.date))
 		throw new BriefNotFound('market brief not found');
-	return vm;
+	return { brief: vm, edition: entry.edition };
 }
 
 export function briefTitle(lang: Locale, vm: MarketBriefVM): string {
@@ -243,6 +290,9 @@ export function shareProps(vm: MarketBriefVM, lang: string, surface: string): st
 export interface BriefPageVM {
 	lang: Locale;
 	brief: MarketBriefVM;
+	edition: EditionPageVM;
+	/** The page's own strings, already in its language. */
+	labels: EditionStrings;
 	heading: string;
 	title: string;
 	documentTitle: string;
@@ -251,6 +301,7 @@ export interface BriefPageVM {
 	englishURL: string;
 	portugueseURL: string;
 	ogImageURL: string;
+	modifiedISO: string;
 	ogLocale: string;
 	ogLocaleAlternate: string;
 	publishedISO: string;
@@ -269,26 +320,36 @@ export interface BriefPageVM {
 }
 
 /** pageVM: every URL built and every string translated, in the URL's language. */
-export function pageVM(lang: Locale, brief: MarketBriefVM, signedIn: boolean): BriefPageVM {
+export function pageVM(
+	lang: Locale,
+	brief: MarketBriefVM,
+	signedIn: boolean,
+	edition: EditionDTO | null = null
+): BriefPageVM {
 	const t = translator(lang);
 	const base = config().publicBaseURL;
 	const path = briefPath(brief.tradingDateISO, brief.slot);
 	const englishURL = absolute(base, path);
 	const portugueseURL = absolute(base, path + langQuery(LANGUAGE_PTPT));
 	const canonical = lang === LANGUAGE_PTPT ? portugueseURL : englishURL;
-	const title = briefTitle(lang, brief);
+	const labels = editionStrings(lang);
+	const ed = editionPageVM(brief, edition, lang, labels);
+	const title = ed.editionName + ' — ' + brief.tradingDate;
 	const pt = lang === LANGUAGE_PTPT;
 	const vm: BriefPageVM = {
 		lang,
 		brief,
-		heading: t(marketBriefTitleKey(brief.slot)),
+		edition: ed,
+		labels,
+		heading: ed.headline,
 		title,
-		documentTitle: title + ' | Norviq',
+		documentTitle: ed.headline + ' — ' + title + ' | Norviq',
 		description: briefDescription(brief, title),
 		canonicalURL: canonical,
 		englishURL,
 		portugueseURL,
 		ogImageURL: absolute(base, path + '/og.png' + langQuery(lang)),
+		modifiedISO: edition?.publishedAt ?? brief.generatedAtISO,
 		ogLocale: pt ? 'pt_PT' : 'en_US',
 		ogLocaleAlternate: pt ? 'en_US' : 'pt_PT',
 		publishedISO: brief.generatedAtISO,
@@ -324,18 +385,25 @@ function jsonLD(vm: BriefPageVM, base: string, lang: string): string {
 	const data: Record<string, unknown> = {
 		'@context': 'https://schema.org',
 		'@type': 'NewsArticle',
-		headline: vm.title,
+		headline: vm.heading,
+		alternativeHeadline: vm.title,
 		description: vm.description,
 		url: vm.canonicalURL,
 		mainEntityOfPage: vm.canonicalURL,
 		image: [vm.ogImageURL],
 		inLanguage: lang,
 		author: norviq,
-		publisher: norviq
+		publisher: norviq,
+		isPartOf: {
+			'@type': 'Periodical',
+			name: 'Norviq Market Intelligence',
+			url: absolute(base, '/brief')
+		},
+		identifier: vm.edition.editionId
 	};
 	if (vm.publishedISO) {
 		data.datePublished = vm.publishedISO;
-		data.dateModified = vm.publishedISO;
+		data.dateModified = vm.modifiedISO || vm.publishedISO;
 	}
 	// Go marshals maps with sorted keys, nested ones too.
 	const sortDeep = (v: unknown): unknown =>

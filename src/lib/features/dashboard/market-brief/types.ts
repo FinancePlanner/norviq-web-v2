@@ -34,6 +34,8 @@ export interface MarketBriefItemVM {
 	text: string;
 	tickers: string[];
 	sourceHost: string;
+	/** The cited https URL; empty when the item is built from market data alone. */
+	sourceURL?: string;
 }
 
 export interface MarketBriefVM {
