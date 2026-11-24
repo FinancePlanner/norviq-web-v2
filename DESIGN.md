@@ -229,7 +229,7 @@ Separate from brand, defined per scope, each ≥4.5:1 as text on the page and on
 
 **The Brief Masthead Exception.** Uppercase tracked labels are allowed only in the brief's masthead, its section headers and its exports (owner-approved 2026-11-24). Nowhere else in the product.
 
-**The Serif Never Counts Rule.** Brygada 1918 never sets a figure. A page title that sits in an `h1` gets the serif through its title class (`.vigil-page-title`, `.cc-greeting`), never through an `h1` selector, because some pages put a figure in an `h1`.
+**The Serif Never Counts Rule.** Brygada 1918 never sets a figure. A page title that sits in an `h1` gets the serif through its title class (`.vigil-page-title`, `.cc-greeting`), never through an `h1` selector, because some pages put a figure in an `h1`. Tailwind's `font-display` utility (from `--font-display`) follows the same rule: titles and the greeting only, never a figure.
 
 ## Layout
 

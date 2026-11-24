@@ -349,6 +349,11 @@ describe('Brygada 1918, the display face (font.display)', () => {
 		expect(rule?.[0]).toContain('text-wrap: balance');
 	});
 
+	it('leaves Tailwind the only .font-display (the legacy one shrank text to 0.68rem)', () => {
+		expect(surface).not.toMatch(/\.font-display\b/);
+		expect(styles).not.toMatch(/\.font-display\b/);
+	});
+
 	it('reaches the title of a server-rendered DocumentPage', () => {
 		const { body } = render(DocumentPage, { props: { title: 'Settings' } });
 		expect(body).toMatch(/class="app-page-content vigil-document-page[^"]*"/);

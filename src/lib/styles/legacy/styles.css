@@ -202,8 +202,6 @@ output,
   font-variant-numeric: tabular-nums;
 }
 
-/* .font-display is the only survivor of the old .type-* utility family; the
- * other thirteen selectors had zero uses in any template. */
 .skip-link {
   position: fixed;
   left: 1rem;
