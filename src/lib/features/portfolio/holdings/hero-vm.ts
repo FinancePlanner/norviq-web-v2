@@ -6,6 +6,7 @@
 import type { components } from '#lib/api/schema.js';
 import type { T } from '#lib/i18n/index.js';
 import { money, signedMoney, signedPercent, type AppLocale } from '#lib/money.js';
+import type { AccountCurrency } from '../account-currency.js';
 import {
 	civilDateLabel,
 	isStale,
@@ -51,6 +52,8 @@ export interface HoldingsHeroVM {
 	mixedCaption: string | null;
 	/** The currency every single-currency figure on the page uses; null when unknown or mixed. */
 	currency: string | null;
+	/** The portfolio's (or account's) base currency, even when the holdings are mixed. */
+	baseCurrency: string | null;
 	delta: HeroDeltaVM | null;
 	asOfCaption: string | null;
 	/** Shown in place of the chart when the series is too short to draw a trend. */
@@ -59,11 +62,27 @@ export interface HoldingsHeroVM {
 	rangeLinks: RangeLinkVM[];
 }
 
+/** One holding's market value in its own (quote) currency; null when the quote names none. */
+export interface HoldingValue {
+	currency: string | null;
+	value: number;
+}
+
 export interface HoldingsHeroInput {
 	performance: Schemas['PortfolioPerformanceResponse'] | null;
 	summary: Schemas['PortfolioSummaryResponse'] | null;
 	/** What the holdings cost; the figure when the summary (market value) is missing. */
 	costBasis: number;
+	/**
+	 * Each holding's market value in its quote currency. The summary's allocation
+	 * stamps every row with the base currency (API bug B3), so the quotes decide
+	 * whether a portfolio holds more than one currency.
+	 */
+	holdings: HoldingValue[];
+	/** The currency the account's portfolios share (GET /v1/portfolios), for an unscoped page. */
+	accountCurrency: AccountCurrency;
+	/** Whether the API calls were scoped to one portfolio; defaults to a non-empty portfolioID. */
+	scoped?: boolean;
 	range: PerfRange;
 	portfolioID: string;
 	locale: AppLocale;
@@ -73,14 +92,19 @@ export interface HoldingsHeroInput {
 
 const code = (c: string | null | undefined) => (c ?? '').trim().toUpperCase();
 
-/** Sums the allocation per currency, in first-seen order. Cash is an allocation row. */
-function subtotalsByCurrency(allocation: Schemas['AllocationItem'][]): Map<string, number> {
-	const out = new Map<string, number>();
-	for (const a of allocation) {
-		const c = code(a.currency);
-		if (c === '') continue;
-		out.set(c, (out.get(c) ?? 0) + a.value);
-	}
+/**
+ * Sums market value per currency, in first-seen order: each holding in its own
+ * quote currency (null: the base), and cash in the base currency.
+ */
+function subtotalsByCurrency(
+	holdings: HoldingValue[],
+	base: string | null,
+	cash: number
+): Map<string | null, number> {
+	const out = new Map<string | null, number>();
+	const add = (c: string | null, v: number) => out.set(c, (out.get(c) ?? 0) + v);
+	for (const h of holdings) add(code(h.currency) || base, h.value);
+	if (cash !== 0) add(base, cash);
 	return out;
 }
 
@@ -92,6 +116,7 @@ export function buildHoldingsHeroVM(input: HoldingsHeroInput): HoldingsHeroVM {
 		subtotals: null,
 		mixedCaption: null,
 		currency: null,
+		baseCurrency: null,
 		delta: null,
 		asOfCaption: null,
 		historyNote: null,
@@ -103,8 +128,17 @@ export function buildHoldingsHeroVM(input: HoldingsHeroInput): HoldingsHeroVM {
 		}))
 	};
 
-	const byCurrency = subtotalsByCurrency(summary?.allocation ?? []);
-	if (byCurrency.size > 1) {
+	// Scoped to one portfolio, its own baseCurrency is data. Unscoped, the API
+	// answers a default "USD", so the account's portfolios decide.
+	const scoped = input.scoped ?? portfolioID !== '';
+	const base = scoped
+		? code(summary?.baseCurrency) || code(performance?.baseCurrency) || null
+		: input.accountCurrency.currency;
+	vm.baseCurrency = base;
+	const cash = summary?.cashBalance ?? 0;
+	const byCurrency = subtotalsByCurrency(input.holdings, base, cash);
+	const mixed = (!scoped && input.accountCurrency.mixed) || byCurrency.size > 1;
+	if (mixed) {
 		// § 9.1 item 2: never one total that silently adds currencies, and no
 		// chart or change computed from such a total.
 		vm.subtotals = [...byCurrency].map(([c, v]) => money(v, c, locale));
@@ -112,13 +146,8 @@ export function buildHoldingsHeroVM(input: HoldingsHeroInput): HoldingsHeroVM {
 		return vm;
 	}
 
-	const currency =
-		code(summary?.baseCurrency) ||
-		[...byCurrency.keys()][0] ||
-		code(performance?.baseCurrency) ||
-		null;
+	const currency = base;
 	vm.currency = currency;
-	const cash = summary?.cashBalance ?? 0;
 	vm.totalValue = money(summary ? summary.totalValue : input.costBasis + cash, currency, locale);
 
 	const points = performance?.points ?? [];

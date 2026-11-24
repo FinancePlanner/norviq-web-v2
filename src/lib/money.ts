@@ -98,12 +98,15 @@ export function compactMoney(
 	return format(value, currency, locale, 'auto', true);
 }
 
-/** A fraction as a signed percent with one decimal: 0.0321 → "+3.2%", 0 → "0.0%". */
-export function signedPercent(fraction: number, locale: AppLocale): string {
+/**
+ * A fraction as a signed percent: 0.0321 → "+3.2%", 0 → "0.0%". One decimal by
+ * default, two in tables (spec § 5.4).
+ */
+export function signedPercent(fraction: number, locale: AppLocale, digits = 1): string {
 	const f = formatter(locale, {
 		style: 'percent',
-		minimumFractionDigits: 1,
-		maximumFractionDigits: 1,
+		minimumFractionDigits: digits,
+		maximumFractionDigits: digits,
 		signDisplay: 'exceptZero'
 	});
 	return normalise(f.format(fraction));

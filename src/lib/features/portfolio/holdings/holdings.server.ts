@@ -1,13 +1,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { apiFetch, apiJSON } from '#lib/server/api.js';
-import {
-	formatCurrency,
-	formatFloat,
-	formatPercentValue,
-	formatSignedCurrency,
-	formatSignedPercent
-} from '#lib/format.js';
+import { formatFloat } from '#lib/format.js';
 import {
 	fetchPnlBySymbol,
 	fetchQuoteBatch,
@@ -28,8 +22,14 @@ import {
 } from '../market.server.js';
 import { buildSentimentRollup } from '../sentiment.js';
 import type { PerfRange } from './change.js';
-import { buildHoldingsHeroVM, PERF_RANGES, portfolioRedirectURLForPortfolio } from './hero-vm.js';
-import { money } from '#lib/money.js';
+import {
+	buildHoldingsHeroVM,
+	PERF_RANGES,
+	portfolioRedirectURLForPortfolio,
+	type HoldingValue
+} from './hero-vm.js';
+import { loadAccountCurrency } from '../account-currency.server.js';
+import { money, percentPoints, signedMoney, signedPercent, type AppLocale } from '#lib/money.js';
 import type {
 	AddPositionFormVM,
 	AssetFilterVM,
@@ -104,9 +104,17 @@ export function mapPositionRow(
 	pnl: Map<string, PnlBySymbol> | null,
 	sparklines: Map<string, number[]> | null,
 	sentiments: Map<string, SymbolSentiment> | null,
-	index: number
+	index: number,
+	fmt: { currency: string | null; locale: AppLocale }
 ): PositionRowVM {
 	const symbol = stock.symbol.trim().toUpperCase();
+	const q = quotes.get(symbol);
+	// DS 2.0: each row in its holding's own quote currency, else the portfolio's,
+	// and in the app locale like the hero above it.
+	const currency = (q?.currency ?? '').trim().toUpperCase() || fmt.currency;
+	const cash = (v: number) => money(v, currency, fmt.locale);
+	const signedCash = (v: number) => signedMoney(v, currency, fmt.locale);
+	const pct = (points: number) => signedPercent(points / 100, fmt.locale, 2);
 	let subtitle = 'Holding';
 	let notes = '';
 	if (stock.notes && stock.notes.trim() !== '') {
@@ -124,11 +132,11 @@ export function mapPositionRow(
 		buyPriceRaw: formatFloat(stock.buyPrice, 2),
 		buyDate: dateOnly(stock.buyDate),
 		notes,
-		costBasis: formatCurrency(stock.shares * stock.buyPrice),
+		costBasis: cash(stock.shares * stock.buyPrice),
 		category: stock.category,
 		detailURL: '/portfolio/' + symbol.toLowerCase(),
 		chgPct: '-',
-		marketValue: formatCurrency(stock.shares * stock.buyPrice),
+		marketValue: cash(stock.shares * stock.buyPrice),
 		lastPrice: '-',
 		netChg: '-',
 		changePositive: false,
@@ -147,41 +155,37 @@ export function mapPositionRow(
 		targetAlertDirection: ''
 	};
 
-	const q = quotes.get(symbol);
 	if (q) {
-		row.marketValue = formatCurrency(stock.shares * q.c);
-		row.lastPrice = formatCurrency(q.c);
-		if (q.d !== undefined && q.d !== null) {
-			row.netChg = `${q.d < 0 ? '' : '+'}${formatFloat(q.d, 2)}`;
-		}
+		row.marketValue = cash(stock.shares * q.c);
+		row.lastPrice = cash(q.c);
+		if (q.d !== undefined && q.d !== null) row.netChg = signedCash(q.d);
 		if (q.dp !== undefined && q.dp !== null) {
 			row.changePositive = q.dp >= 0;
-			row.chgPct = `${row.changePositive ? '+' : ''}${formatFloat(q.dp, 2)}%`;
+			row.chgPct = pct(q.dp);
 		}
 	}
 
 	// Server-computed P&L wins over quote-derived values when available.
 	const p = pnl?.get(symbol);
 	if (p) {
-		if (p.costBasis != null) row.costBasis = formatCurrency(p.costBasis);
-		if (p.currentPrice != null) row.lastPrice = formatCurrency(p.currentPrice);
-		if (p.marketValue != null) row.marketValue = formatCurrency(p.marketValue);
+		if (p.costBasis != null) row.costBasis = cash(p.costBasis);
+		if (p.currentPrice != null) row.lastPrice = cash(p.currentPrice);
+		if (p.marketValue != null) row.marketValue = cash(p.marketValue);
 		if (p.dayChange != null) {
-			row.todayGL = formatSignedCurrency(p.dayChange);
+			row.todayGL = signedCash(p.dayChange);
 			row.changePositive = p.dayChange >= 0;
 		}
-		if (p.dayChangePercent != null) row.chgPct = formatSignedPercent(p.dayChangePercent);
+		if (p.dayChangePercent != null) row.chgPct = pct(p.dayChangePercent);
 		// Without a live quote the backend falls back to cost basis, which
 		// makes unrealized P&L a meaningless 0 — keep the placeholder then.
 		if (p.currentPrice != null) {
-			row.totalGL = formatSignedCurrency(p.unrealizedPnl);
+			row.totalGL = signedCash(p.unrealizedPnl);
 			row.totalPositive = p.unrealizedPnl >= 0;
 			row.rawGain = p.unrealizedPnl;
-			if (p.unrealizedPnlPercent != null)
-				row.totalGLPct = formatSignedPercent(p.unrealizedPnlPercent);
+			if (p.unrealizedPnlPercent != null) row.totalGLPct = pct(p.unrealizedPnlPercent);
 		}
 		if (p.weightPercent != null) {
-			row.weightPct = formatPercentValue(p.weightPercent);
+			row.weightPct = percentPoints(p.weightPercent, fmt.locale);
 			row.rawWeight = p.weightPercent;
 		}
 	}
@@ -194,7 +198,7 @@ export function mapPositionRow(
 
 	const alert = targets?.get(symbol);
 	if (alert) {
-		row.targetAlertPrice = formatCurrency(alert.targetPrice);
+		row.targetAlertPrice = cash(alert.targetPrice);
 		row.targetAlertID = uuidString(alert.id);
 		row.targetAlertDirection = targetAlertDirection(alert.scenario);
 	}
@@ -214,6 +218,21 @@ function emptyAddPosition(range: string): AddPositionFormVM {
 		error: '',
 		currentPortfolioValue: 0
 	};
+}
+
+/** One holding's market value in its quote currency (null when the quote names none). */
+function holdingValue(
+	stock: StockListItem,
+	quotes: Map<string, QuoteResponse>,
+	pnl: Map<string, PnlBySymbol> | null
+): HoldingValue {
+	const symbol = stock.symbol.trim().toUpperCase();
+	const q = quotes.get(symbol);
+	const value =
+		q && q.c > 0
+			? stock.shares * q.c
+			: (pnl?.get(symbol)?.marketValue ?? stock.shares * stock.buyPrice);
+	return { currency: (q?.currency ?? '').trim().toUpperCase() || null, value };
 }
 
 /** LoadHoldingsViewModelForPortfolio */
@@ -261,7 +280,7 @@ export async function loadHoldingsViewModel(
 	// Wave 1 (8824553): everything that needs only the portfolio. The sentiment
 	// roll-up is computed server-side from the portfolio, not from the symbols,
 	// so it starts here instead of waiting for the holdings.
-	const [stocksRes, summary, performance, pnl, targetsRes, rollup] = await Promise.all([
+	const [stocksRes, summary, performance, pnl, targetsRes, rollup, account] = await Promise.all([
 		apiJSON<StockListItem[]>(event, 'GET', '/v1/stocks', undefined, { query: q }).catch(
 			fail('stocks')
 		),
@@ -279,7 +298,9 @@ export async function loadHoldingsViewModel(
 		).catch(fail('performance')),
 		fetchPnlBySymbol(event, listID),
 		apiJSON<ScenarioTargetResponse[]>(event, 'GET', '/v1/targets').catch(fail('targets')),
-		loadPortfolioSentimentRollup(event, portfolioID)
+		loadPortfolioSentimentRollup(event, portfolioID),
+		// Unscoped calls answer a default "USD"; the portfolios carry the real one.
+		loadAccountCurrency(event)
 	]);
 
 	let stocks = stocksRes ?? [];
@@ -302,41 +323,8 @@ export async function loadHoldingsViewModel(
 	const holdingsValue = totalValue - cashBalance;
 	const positionCount = stocks.length;
 	const { locale, t } = event.locals;
-
-	// DS 2.0 P1: the figure in the data's currency, the change measured over the
-	// range on screen, and honest stale / short / mixed-currency states.
-	const hero = buildHoldingsHeroVM({
-		performance,
-		summary,
-		costBasis,
-		range: selectedTimeRange,
-		portfolioID,
-		locale,
-		now: new Date(),
-		t
-	});
-	vm.hero = hero;
-	vm.heroLabel = hero.heroLabel;
-	vm.totalValue = hero.totalValue || (hero.subtotals ?? []).join(' + ');
 	vm.heroSubtitle = `${positionCount} positions`;
-	if (hero.subtotals) {
-		// A mixed-currency sum means nothing; cash is held in the base currency.
-		vm.holdingsValue = '—';
-		vm.costBasis = '—';
-		vm.cashBalance = money(cashBalance, summary?.baseCurrency, locale);
-	} else {
-		vm.holdingsValue = money(holdingsValue, hero.currency, locale);
-		vm.costBasis = money(atMarket ? summary.totalCost : costBasis, hero.currency, locale);
-		vm.cashBalance = money(cashBalance, hero.currency, locale);
-	}
 	vm.addPosition.currentPortfolioValue = totalValue;
-	if (hero.chart) {
-		vm.chartLabels = hero.chart.labels;
-		vm.chartValues = hero.chart.values;
-	}
-	vm.trendLabel = hero.delta
-		? `${hero.delta.text} ${hero.delta.basis}`
-		: (hero.asOfCaption ?? hero.historyNote ?? t('No portfolio trend yet'));
 
 	stocks = sortStocksBySymbol(stocks);
 	const symbols = stocks.map((s) => s.symbol);
@@ -348,8 +336,48 @@ export async function loadHoldingsViewModel(
 	]);
 	vm.sentiment = rollup;
 	const quoteMap = quoteBySymbol(quotes);
+
+	// DS 2.0 P1: the figure in the data's currency, the change measured over the
+	// range on screen, and honest stale / short / mixed-currency states. The
+	// quotes say which currency each holding is in (API B3: the summary's
+	// allocation rows all carry the base currency).
+	const hero = buildHoldingsHeroVM({
+		performance,
+		summary,
+		costBasis,
+		holdings: stocks.map((s) => holdingValue(s, quoteMap, pnl)),
+		accountCurrency: account,
+		scoped: listID != null,
+		range: selectedTimeRange,
+		portfolioID,
+		locale,
+		now: new Date(),
+		t
+	});
+	vm.hero = hero;
+	vm.heroLabel = hero.heroLabel;
+	vm.totalValue = hero.totalValue || (hero.subtotals ?? []).join(' + ');
+	if (hero.subtotals) {
+		// A mixed-currency sum means nothing; cash is held in the base currency.
+		vm.holdingsValue = '—';
+		vm.costBasis = '—';
+		vm.cashBalance = money(cashBalance, hero.baseCurrency, locale);
+	} else {
+		vm.holdingsValue = money(holdingsValue, hero.currency, locale);
+		vm.costBasis = money(atMarket ? summary.totalCost : costBasis, hero.currency, locale);
+		vm.cashBalance = money(cashBalance, hero.currency, locale);
+	}
+	if (hero.chart) {
+		vm.chartLabels = hero.chart.labels;
+		vm.chartValues = hero.chart.values;
+	}
+	vm.trendLabel = hero.delta
+		? `${hero.delta.text} ${hero.delta.basis}`
+		: (hero.asOfCaption ?? hero.historyNote ?? t('No portfolio trend yet'));
+
+	const rowFmt = { currency: hero.baseCurrency, locale };
 	vm.positions = stocks.map((s, i) =>
-		mapPositionRow(s, targetsBySymbol, quoteMap, pnl, sparklines, sentiments, i)
+		mapPositionRow(s, targetsBySymbol, quoteMap, pnl, sparklines, sentiments, i, rowFmt)
 	);
 	vm.addPosition.range = vm.selectedTimeRange;
 	return vm;
@@ -366,12 +394,15 @@ export async function loadHoldingsQuoteRows(event: RequestEvent): Promise<Positi
 	}
 	stocks = sortStocksBySymbol(stocks);
 	const symbols = stockSymbols(stocks);
-	const [quotes, pnl] = await Promise.all([
+	const [quotes, pnl, account] = await Promise.all([
 		fetchQuoteBatch(event, symbols),
-		fetchPnlBySymbol(event, null)
+		fetchPnlBySymbol(event, null),
+		loadAccountCurrency(event)
 	]);
 	const quoteMap = quoteBySymbol(quotes);
-	return stocks.map((s, i) => mapPositionRow(s, null, quoteMap, pnl, null, null, i));
+	// Same format as the page render: quote currency, else the account's.
+	const fmt = { currency: account.currency, locale: event.locals.locale };
+	return stocks.map((s, i) => mapPositionRow(s, null, quoteMap, pnl, null, null, i, fmt));
 }
 
 /** GET /v1/portfolios (hand-written api.PortfolioPage). null on failure. */

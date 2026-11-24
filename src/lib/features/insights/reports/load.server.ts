@@ -5,13 +5,10 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { allocationColor } from '#lib/charts/index.js';
-import {
-	formatCurrency,
-	formatFloat,
-	formatPercentValue,
-	formatSignedCurrency
-} from '#lib/format.js';
+import { formatCurrency, formatFloat, formatPercentValue } from '#lib/format.js';
 import { normalizeReportTab } from '#lib/nav.js';
+import type { T as Translate } from '#lib/i18n/index.js';
+import { money, percentPoints, signedMoney, signedPercent, type AppLocale } from '#lib/money.js';
 import { getJSON } from '#lib/features/dashboard/fetch.server.js';
 import { loadBudgetCurrency } from '#lib/features/dashboard/budget-currency.server.js';
 import { loadAccountCurrency } from '#lib/features/portfolio/account-currency.server.js';
@@ -88,15 +85,17 @@ function pillarProgressState(pct: number): string {
 const ALLOCATION_CHART_TOP_N = 8;
 
 /** portfolio_subpages_data.go formatOverweight. */
-function formatOverweight(delta: number): string {
+function formatOverweight(delta: number, fmt?: ReportsFmt): string {
 	if (Math.abs(delta) < 0.05) return 'Equal weight';
+	if (fmt) return `${signedPercent(delta / 100, fmt.locale)} vs equal`;
 	const sign = delta < 0 ? '' : '+';
 	return `${sign}${formatFloat(delta, 1)}% vs equal`;
 }
 
 /** portfolio_subpages_data.go mapSectorAllocations (rows + the pie input). */
 function mapSectorAllocations(
-	items: S['SectorAllocationDTO'][] | undefined
+	items: S['SectorAllocationDTO'][] | undefined,
+	fmt?: ReportsFmt
 ): [AllocationRowVM[], PieSeries | null] {
 	if (!items?.length) return [[], null];
 	const sorted = [...items].sort((a, b) => b.weightPercent - a.weightPercent);
@@ -110,9 +109,11 @@ function mapSectorAllocations(
 	}
 	const rows = sorted.map((row, i) => ({
 		label: row.sector,
-		value: formatCurrency(row.value),
-		percent: formatPercentValue(row.weightPercent),
-		overweight: formatOverweight(row.weightPercent - equalWeight),
+		value: fmt ? money(row.value, fmt.currency, fmt.locale) : formatCurrency(row.value),
+		percent: fmt
+			? percentPoints(row.weightPercent, fmt.locale)
+			: formatPercentValue(row.weightPercent),
+		overweight: formatOverweight(row.weightPercent - equalWeight, fmt),
 		color: allocationColor(i)
 	}));
 	return [rows, labels.length ? { labels, weights } : null];
@@ -120,18 +121,36 @@ function mapSectorAllocations(
 
 /** reports_data.go mapSectorAllocationsForReports. Also used by the deep dive. */
 export function mapSectorAllocationsForReports(
-	items: S['SectorAllocationDTO'][] | undefined
+	items: S['SectorAllocationDTO'][] | undefined,
+	fmt?: ReportsFmt
 ): [AllocationRowVM[], PieSeries | null] {
-	return mapSectorAllocations(items);
+	return mapSectorAllocations(items, fmt);
 }
 
-const signedPct = (pct: number, unit: string) =>
-	`${pct >= 0 ? '+' : ''}${formatFloat(pct * 100, 1)}${unit}`;
+/**
+ * How Reports prints money (DS 2.0 money contract): portfolio figures in the
+ * account currency, spend and cash flow in the month's budget currency, both
+ * in the app locale. null currencies print " —", never "$".
+ */
+export interface ReportsFmt {
+	currency: string | null;
+	spendCurrency: string | null;
+	locale: AppLocale;
+	t: Translate;
+}
+
+/** "+3.2% vs last month" in the locale. */
+const vsLastMonth = (fraction: number, fmt: ReportsFmt) =>
+	`${signedPercent(fraction, fmt.locale)} ${fmt.t('vs last month')}`;
 
 // ---------------------------------------------------------------------------
 // Card mappers
 
-function mapNetWorth(overview: Overview | null, performance: Performance | null): NetWorthCardVM {
+function mapNetWorth(
+	overview: Overview | null,
+	performance: Performance | null,
+	fmt: ReportsFmt
+): NetWorthCardVM {
 	const vm: NetWorthCardVM = {
 		available: false,
 		totalValue: '',
@@ -141,13 +160,13 @@ function mapNetWorth(overview: Overview | null, performance: Performance | null)
 	};
 	if (overview && overview.portfolioStatistics.totalMarketValue > 0) {
 		vm.available = true;
-		vm.totalValue = formatCurrency(overview.portfolioStatistics.totalMarketValue);
+		vm.totalValue = money(overview.portfolioStatistics.totalMarketValue, fmt.currency, fmt.locale);
 	}
 	if (performance && performance.points?.length > 0) {
 		vm.available = true;
 		const series = performancePointSeries(performance.points);
 		if (vm.totalValue === '' && series.values.length > 0)
-			vm.totalValue = formatCurrency(series.values[series.values.length - 1]);
+			vm.totalValue = money(series.values[series.values.length - 1], fmt.currency, fmt.locale);
 		const change = formatChangeLabel(primaryChange(performance.changes));
 		if (change.ok) {
 			vm.changeLabel = change.label;
@@ -158,20 +177,23 @@ function mapNetWorth(overview: Overview | null, performance: Performance | null)
 	return vm;
 }
 
-function mapQuickStats(
+export function mapQuickStats(
 	overview: Overview | null,
-	statistics: S['StatisticsDTO'] | null
+	statistics: S['StatisticsDTO'] | null,
+	fmt: ReportsFmt
 ): QuickStatsCardVM {
+	const cash = (v: number) => money(v, fmt.currency, fmt.locale);
+	const signed = (v: number) => signedMoney(v, fmt.currency, fmt.locale);
 	const stats: StatVM[] = [];
 	if (overview) {
 		const p = overview.portfolioStatistics;
 		if (p.totalPositions > 0 || p.totalMarketValue > 0) {
 			stats.push(
 				{ label: 'Positions', value: String(p.totalPositions) },
-				{ label: 'Market value', value: formatCurrency(p.totalMarketValue) },
-				{ label: 'Cost basis', value: formatCurrency(p.totalCostBasis) },
-				{ label: 'Unrealized P/L', value: formatSignedCurrency(p.totalUnrealizedPnl) },
-				{ label: 'Realized P/L', value: formatSignedCurrency(p.totalRealizedPnl) }
+				{ label: 'Market value', value: cash(p.totalMarketValue) },
+				{ label: 'Cost basis', value: cash(p.totalCostBasis) },
+				{ label: 'Unrealized P/L', value: signed(p.totalUnrealizedPnl) },
+				{ label: 'Realized P/L', value: signed(p.totalRealizedPnl) }
 			);
 		}
 	}
@@ -182,10 +204,9 @@ function mapQuickStats(
 			stats.push({ label: 'Research ideas', value: `${statistics.looklist.activeIdeas} active` });
 		const change = statistics.market.benchmarkChange1D;
 		if (change !== null && change !== undefined && statistics.market.benchmarkSymbol) {
-			const sign = change < 0 ? '' : '+';
 			stats.push({
 				label: statistics.market.benchmarkSymbol + ' (1D)',
-				value: `${sign}${formatFloat(change, 2)}%`
+				value: signedPercent(change / 100, fmt.locale, 2)
 			});
 		}
 	}
@@ -193,12 +214,15 @@ function mapQuickStats(
 	return { available: true, error: '', stats };
 }
 
-function mapInsights(insights: S['DashboardInsightsResponse'] | null): InsightsCardVM {
+function mapInsights(
+	insights: S['DashboardInsightsResponse'] | null,
+	fmt: ReportsFmt
+): InsightsCardVM {
 	if (!insights) return { available: false, financialHealth: null, insightCards: [] };
 	return {
 		available: true,
 		financialHealth: mapFinancialHealth(insights.financialHealth),
-		insightCards: mapInsightCards(insights)
+		insightCards: mapInsightCards(insights, fmt)
 	};
 }
 
@@ -227,17 +251,18 @@ function mapPerformance(performance: Performance | null): PerformanceCardVM {
 	return vm;
 }
 
-function mapAllocation(overview: Overview | null): AllocationCardVM {
+function mapAllocation(overview: Overview | null, fmt: ReportsFmt): AllocationCardVM {
 	const empty: AllocationCardVM = { available: false, chart: null, rows: [] };
 	if (!overview) return empty;
 	const [rows, chart] = mapSectorAllocationsForReports(
-		overview.portfolioStatistics.sectorAllocations
+		overview.portfolioStatistics.sectorAllocations,
+		fmt
 	);
 	if (rows.length === 0 && !chart) return empty;
 	return { available: true, chart, rows };
 }
 
-function mapSpending(overview: Overview | null): SpendingCardVM {
+export function mapSpending(overview: Overview | null, fmt: ReportsFmt): SpendingCardVM {
 	const vm: SpendingCardVM = {
 		available: false,
 		latestMonth: '',
@@ -250,27 +275,28 @@ function mapSpending(overview: Overview | null): SpendingCardVM {
 	if (series.labels.length === 0) return vm;
 	vm.available = true;
 	if (overview.latestMonthSummary)
-		vm.latestMonth = formatCurrency(overview.latestMonthSummary.actual);
+		vm.latestMonth = money(overview.latestMonthSummary.actual, fmt.spendCurrency, fmt.locale);
 	const change = monthOverMonthChange(series.values);
 	if (change) {
 		vm.changePositive = change.positive;
-		vm.changeLabel = signedPct(change.pct, '% vs last month');
+		vm.changeLabel = vsLastMonth(change.pct, fmt);
 	}
 	vm.chart = series;
 	return vm;
 }
 
-function mapBudgetTracking(overview: Overview | null): BudgetTrackingCardVM {
+function mapBudgetTracking(overview: Overview | null, fmt: ReportsFmt): BudgetTrackingCardVM {
 	if (!overview || !overview.latestPillarSummaries?.length) return { available: false, rows: [] };
+	const cash = (v: number) => money(v, fmt.spendCurrency, fmt.locale);
 	const rows = overview.latestPillarSummaries.map((row): BudgetPillarRowVM => {
 		const def = resolvePillar(row.pillar);
 		const vmRow: BudgetPillarRowVM = {
 			label: def.label,
 			icon: def.icon,
 			colorVar: def.colorVar,
-			target: formatCurrency(row.targetAmount),
-			planned: formatCurrency(row.plannedAmount),
-			actual: formatCurrency(row.actualAmount),
+			target: cash(row.targetAmount),
+			planned: cash(row.plannedAmount),
+			actual: cash(row.actualAmount),
 			percent: 0,
 			state: '',
 			hasTarget: false
@@ -287,7 +313,7 @@ function mapBudgetTracking(overview: Overview | null): BudgetTrackingCardVM {
 	return { available: rows.length > 0, rows };
 }
 
-function mapSavingsRate(overview: Overview | null): SavingsRateCardVM {
+function mapSavingsRate(overview: Overview | null, fmt: ReportsFmt): SavingsRateCardVM {
 	const vm: SavingsRateCardVM = {
 		available: false,
 		latestRate: '',
@@ -301,17 +327,18 @@ function mapSavingsRate(overview: Overview | null): SavingsRateCardVM {
 	const values = window.map((r) => Math.max(0, r.savingsRate));
 	if (labels.length === 0) return vm;
 	vm.available = true;
-	vm.latestRate = formatFloat(values[values.length - 1], 0) + '%';
+	vm.latestRate = percentPoints(values[values.length - 1], fmt.locale);
 	const change = monthOverMonthChange(values);
 	if (change) {
 		vm.changePositive = change.positive;
-		vm.changeLabel = signedPct(change.pct, ' pts vs last month');
+		vm.changeLabel = vsLastMonth(change.pct, fmt);
 	}
 	vm.chart = { labels, values };
 	return vm;
 }
 
-function mapHouseholdSplit(overview: Overview | null): HouseholdSplitCardVM {
+function mapHouseholdSplit(overview: Overview | null, fmt: ReportsFmt): HouseholdSplitCardVM {
+	const cash = (v: number) => money(v, fmt.spendCurrency, fmt.locale);
 	const empty: HouseholdSplitCardVM = {
 		available: false,
 		hasPartner: false,
@@ -328,15 +355,15 @@ function mapHouseholdSplit(overview: Overview | null): HouseholdSplitCardVM {
 	return {
 		available: true,
 		hasPartner: summary.partnerActual > 0 || summary.partnerPlanned > 0,
-		myActual: formatCurrency(summary.myActual),
-		partnerActual: formatCurrency(summary.partnerActual),
-		myPlanned: formatCurrency(summary.myPlanned),
-		partnerPlanned: formatCurrency(summary.partnerPlanned),
+		myActual: cash(summary.myActual),
+		partnerActual: cash(summary.partnerActual),
+		myPlanned: cash(summary.myPlanned),
+		partnerPlanned: cash(summary.partnerPlanned),
 		mySharePct: totalActual > 0 ? (summary.myActual / totalActual) * 100 : 0
 	};
 }
 
-function mapCashFlow(overview: Overview | null): CashFlowCardVM {
+export function mapCashFlow(overview: Overview | null, fmt: ReportsFmt): CashFlowCardVM {
 	const vm: CashFlowCardVM = {
 		available: false,
 		latestNet: '',
@@ -352,13 +379,13 @@ function mapCashFlow(overview: Overview | null): CashFlowCardVM {
 	const values = window.map((r) => r.net);
 	const latest = window[window.length - 1];
 	vm.available = true;
-	vm.latestNet = formatSignedCurrency(latest.net);
-	vm.latestIncome = formatCurrency(latest.income);
-	vm.latestExpenses = formatCurrency(latest.expenses);
+	vm.latestNet = signedMoney(latest.net, fmt.spendCurrency, fmt.locale);
+	vm.latestIncome = money(latest.income, fmt.spendCurrency, fmt.locale);
+	vm.latestExpenses = money(latest.expenses, fmt.spendCurrency, fmt.locale);
 	const change = monthOverMonthChange(values);
 	if (change) {
 		vm.changePositive = change.positive;
-		vm.changeLabel = signedPct(change.pct, '% vs last month');
+		vm.changeLabel = vsLastMonth(change.pct, fmt);
 	}
 	vm.chart = { labels, values };
 	return vm;
@@ -393,25 +420,31 @@ export async function loadReportsViewModel(
 	const o = overview.data;
 	const p = performance.data;
 	const currency = account.currency;
-	const vm: ReportsPageVM = {
+	const fmt: ReportsFmt = {
 		currency,
 		spendCurrency: budgetCurrency || currency,
+		locale: event.locals.locale,
+		t: event.locals.t
+	};
+	const vm: ReportsPageVM = {
+		currency,
+		spendCurrency: fmt.spendCurrency,
 		tab: normalizeReportTab(tab),
 		activePath,
 		isPro,
 		reportsAvailable: true,
 		hasLoadError: false,
 		errorMessage: '',
-		netWorth: mapNetWorth(o, p),
-		quickStats: mapQuickStats(o, statistics.data),
-		insights: mapInsights(insights.data),
+		netWorth: mapNetWorth(o, p, fmt),
+		quickStats: mapQuickStats(o, statistics.data, fmt),
+		insights: mapInsights(insights.data, fmt),
 		performance: mapPerformance(p),
-		allocation: mapAllocation(o),
-		spending: mapSpending(o),
-		budgetTracking: mapBudgetTracking(o),
-		savingsRate: mapSavingsRate(o),
-		householdSplit: mapHouseholdSplit(o),
-		cashFlow: mapCashFlow(o)
+		allocation: mapAllocation(o, fmt),
+		spending: mapSpending(o, fmt),
+		budgetTracking: mapBudgetTracking(o, fmt),
+		savingsRate: mapSavingsRate(o, fmt),
+		householdSplit: mapHouseholdSplit(o, fmt),
+		cashFlow: mapCashFlow(o, fmt)
 	};
 	if (!o && !insights.data && !p && !statistics.data) {
 		vm.hasLoadError = true;

@@ -47,6 +47,8 @@ function input(over: Partial<HoldingsHeroInput> = {}): HoldingsHeroInput {
 			{ symbol: 'CASH', value: 2116, currency: 'USD' }
 		]),
 		costBasis: 40000,
+		holdings: [],
+		accountCurrency: { currency: 'USD', mixed: false },
 		range: '1M',
 		portfolioID: '',
 		locale: 'en',
@@ -62,6 +64,7 @@ describe('buildHoldingsHeroVM', () => {
 			input({
 				performance: performance('EUR'),
 				summary: null,
+				portfolioID: 'p1',
 				costBasis: 48432.05 - 2116,
 				locale: 'pt-PT',
 				t: translator('pt-PT')
@@ -78,6 +81,7 @@ describe('buildHoldingsHeroVM', () => {
 			input({
 				summary: summary('EUR', [{ symbol: 'ASML', value: 48432.05, currency: 'EUR' }]),
 				performance: performance('EUR'),
+				portfolioID: 'p1',
 				locale: 'pt-PT',
 				t: translator('pt-PT')
 			})
@@ -86,7 +90,14 @@ describe('buildHoldingsHeroVM', () => {
 	});
 
 	it('never prints a dollar sign when no currency is known', () => {
-		const vm = buildHoldingsHeroVM(input({ performance: null, summary: null, costBasis: 1234 }));
+		const vm = buildHoldingsHeroVM(
+			input({
+				performance: null,
+				summary: null,
+				costBasis: 1234,
+				accountCurrency: { currency: null, mixed: false }
+			})
+		);
 		expect(vm.totalValue).toBe('1,234.00 —');
 		expect(vm.currency).toBeNull();
 	});
@@ -99,14 +110,18 @@ describe('buildHoldingsHeroVM', () => {
 		expect(vm.chart).toBeNull();
 	});
 
-	it('shows per-currency subtotals and no single total for a mixed portfolio', () => {
+	it('subtotals by each holding’s quote currency (allocation rows all carry the base, API B3)', () => {
 		const vm = buildHoldingsHeroVM(
 			input({
+				portfolioID: 'p1',
 				summary: summary('USD', [
-					{ symbol: 'ASML', value: 61210.4, currency: 'EUR' },
-					{ symbol: 'VST', value: 35514.22, currency: 'USD' },
-					{ symbol: 'CASH', value: 2116, currency: 'USD' }
-				])
+					{ symbol: 'ASML', value: 61210.4, currency: 'USD' },
+					{ symbol: 'VST', value: 35514.22, currency: 'USD' }
+				]),
+				holdings: [
+					{ currency: 'EUR', value: 61210.4 },
+					{ currency: 'USD', value: 35514.22 }
+				]
 			})
 		);
 		expect(vm.totalValue).toBe('');
@@ -114,6 +129,40 @@ describe('buildHoldingsHeroVM', () => {
 		expect(vm.mixedCaption).not.toBeNull();
 		expect(vm.delta).toBeNull();
 		expect(vm.chart).toBeNull();
+	});
+
+	it('keeps one total when every holding is in the base currency', () => {
+		const vm = buildHoldingsHeroVM(
+			input({
+				portfolioID: 'p1',
+				holdings: [
+					{ currency: 'USD', value: 46316.05 },
+					{ currency: null, value: 1 }
+				]
+			})
+		);
+		expect(vm.subtotals).toBeNull();
+		expect(vm.totalValue).toBe('$48,432.05');
+	});
+
+	it('never trusts the unscoped summary currency (a backend "USD" default)', () => {
+		const vm = buildHoldingsHeroVM(
+			input({ portfolioID: '', accountCurrency: { currency: 'EUR', mixed: false } })
+		);
+		expect(vm.currency).toBe('EUR');
+		expect(vm.totalValue).toBe('€48,432.05');
+	});
+
+	it('subtotals when the account’s portfolios differ in currency', () => {
+		const vm = buildHoldingsHeroVM(
+			input({
+				portfolioID: '',
+				accountCurrency: { currency: null, mixed: true },
+				holdings: [{ currency: 'USD', value: 46316.05 }]
+			})
+		);
+		expect(vm.totalValue).toBe('');
+		expect(vm.subtotals).toEqual(['$46,316.05', '2,116.00\u00a0\u2014']);
 	});
 
 	it('keeps the selected portfolio on every range link', () => {
