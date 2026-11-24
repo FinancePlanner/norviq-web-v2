@@ -12,7 +12,8 @@
 	const chart = $derived(
 		vm.monthlyChart
 			? spendingLine('dividends-monthly-chart', vm.monthlyChart.labels, vm.monthlyChart.values, {
-					// The dividends payload carries no currency: " —", never "$".
+					// The payload carries no currency: the account's, as the totals use.
+					currency: vm.currency,
 					locale: locale(),
 					trend: 'neutral'
 				})

@@ -4,10 +4,17 @@
 	import { CardHeader, ChartPlaceholder } from '#lib/components/norviq/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { spendingLine } from '#lib/charts/index.js';
+	import { locale } from '#lib/i18n/context.svelte.js';
 	import { formatFloat } from '#lib/format.js';
 
 	let { data } = $props();
-	const chart = $derived(spendingLine('expenses-year-chart', data.labels, data.values));
+	// The tooltip prints the same currency as the totals beside it.
+	const chart = $derived(
+		spendingLine('expenses-year-chart', data.labels, data.values, {
+			currency: data.currency,
+			locale: locale()
+		})
+	);
 </script>
 
 <svelte:head>
