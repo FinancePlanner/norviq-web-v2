@@ -1,7 +1,9 @@
 // The money figures of Overview and Pulse (DS 2.0 P1, spec § 2.0 A1, A2, A9,
 // A18 and § 9.1 item 8). Pure, so it is unit tested; load.server.ts feeds it.
 //
-// - One currency for the page: the account's performance baseCurrency. The
+// - One currency for the page: the account's (the baseCurrency its portfolios
+//   share, from /v1/portfolios). The unscoped performance baseCurrency is a
+//   backend default, not data, so it is never used. The
 //   expenses API carries no currency, so spend is shown in this month's
 //   budget currency when there is a budget, and in the account's otherwise.
 // - The portfolio change is measured over the series fetched for the Pulse
@@ -43,6 +45,8 @@ export interface OverviewFiguresInput {
 	dash: S['DashboardResponse'] | null;
 	/** This month's budget snapshot currencyCode; null without a budget. */
 	budgetCurrency: string | null;
+	/** The currency the account's portfolios share; null when they differ or are unknown. */
+	accountCurrency: string | null;
 	performance: Pick<S['PortfolioPerformanceResponse'], 'baseCurrency' | 'points'> | null;
 	reports: S['ReportsOverviewResponse'] | null;
 	rng: timerange.Key;
@@ -111,7 +115,7 @@ function monthOverMonthChange(values: number[]): number | null {
 
 export function buildOverviewFigures(input: OverviewFiguresInput): OverviewFigures {
 	const { dash, performance, reports, rng, locale, now, t } = input;
-	const currency = (performance?.baseCurrency ?? '').trim().toUpperCase() || null;
+	const currency = (input.accountCurrency ?? '').trim().toUpperCase() || null;
 	const spendCurrency = (input.budgetCurrency ?? '').trim().toUpperCase() || currency;
 	const f: OverviewFigures = {
 		currency,

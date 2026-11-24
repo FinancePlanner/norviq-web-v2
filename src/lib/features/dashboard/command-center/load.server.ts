@@ -30,6 +30,7 @@ import type {
 } from './types.js';
 import { buildOverviewFigures, perfRangeForKey } from './overview-vm.js';
 import { loadBudgetCurrency } from '../budget-currency.server.js';
+import { loadAccountCurrency } from '../../portfolio/account-currency.server.js';
 
 // Port of norviq-web internal/handlers/command_center_data.go and the
 // overview half of dashboard_data.go (LoadOverviewViewModel).
@@ -138,21 +139,32 @@ export async function loadOverviewViewModel(
 		loadErrors: {}
 	};
 
-	const [dash, insights, performance, activities, reports, expenses, goals, budgetCurrency] =
-		await Promise.all([
-			getJSON<S['DashboardResponse']>(event, '/v1/dashboard'),
-			getJSON<S['DashboardInsightsResponse']>(event, '/v1/dashboard/insights'),
-			// The series for the Pulse range: the change and the chart are measured on it.
-			getJSON<S['PortfolioPerformanceResponse']>(event, '/v1/portfolio/performance', {
-				range: perfRangeForKey(rng)
-			}),
-			getJSON<Activity[]>(event, '/v1/activities', { limit: overviewActivityLimit }),
-			getJSON<S['ReportsOverviewResponse']>(event, '/v1/reports/overview'),
-			getJSON<Expense[]>(event, '/v1/expenses'),
-			getJSON<S['GoalResponse'][]>(event, '/v1/goals'),
-			// Spend is planned in the month's budget currency; expenses carry none.
-			loadBudgetCurrency(event, now)
-		]);
+	const [
+		dash,
+		insights,
+		performance,
+		activities,
+		reports,
+		expenses,
+		goals,
+		budgetCurrency,
+		account
+	] = await Promise.all([
+		getJSON<S['DashboardResponse']>(event, '/v1/dashboard'),
+		getJSON<S['DashboardInsightsResponse']>(event, '/v1/dashboard/insights'),
+		// The series for the Pulse range: the change and the chart are measured on it.
+		getJSON<S['PortfolioPerformanceResponse']>(event, '/v1/portfolio/performance', {
+			range: perfRangeForKey(rng)
+		}),
+		getJSON<Activity[]>(event, '/v1/activities', { limit: overviewActivityLimit }),
+		getJSON<S['ReportsOverviewResponse']>(event, '/v1/reports/overview'),
+		getJSON<Expense[]>(event, '/v1/expenses'),
+		getJSON<S['GoalResponse'][]>(event, '/v1/goals'),
+		// Spend is planned in the month's budget currency; expenses carry none.
+		loadBudgetCurrency(event, now),
+		// Unscoped calls answer a default "USD"; the portfolios carry the real one.
+		loadAccountCurrency(event)
+	]);
 	if (dash.failed) vm.loadErrors.dashboard = true;
 	if (insights.failed) vm.loadErrors.insights = true;
 	if (performance.failed) vm.loadErrors.performance = true;
@@ -164,6 +176,7 @@ export async function loadOverviewViewModel(
 	const figures = buildOverviewFigures({
 		dash: dash.data,
 		budgetCurrency,
+		accountCurrency: account.currency,
 		performance: performance.data,
 		reports: reports.data,
 		rng,
@@ -304,11 +317,11 @@ export async function loadLedgerViewModel(
 	now = new Date()
 ): Promise<LedgerVM> {
 	const vm = emptyLedger(rng, domain);
-	const [res, summary, budgetCurrency] = await Promise.all([
+	const [res, account, budgetCurrency] = await Promise.all([
 		getJSON<Activity[]>(event, '/v1/activities', { limit: ledgerActivityLimit }),
-		// Activity carries no currency: holdings use the account's base currency,
-		// expenses the month's budget currency.
-		getJSON<S['PortfolioSummaryResponse']>(event, '/v1/portfolio/summary'),
+		// Activity carries no currency: holdings use the account's currency (the
+		// one its portfolios share), expenses the month's budget currency.
+		loadAccountCurrency(event),
 		loadBudgetCurrency(event, now)
 	]);
 	if (res.failed) {
@@ -317,7 +330,7 @@ export async function loadLedgerViewModel(
 	}
 	if (!res.data) return vm;
 	const fmt = {
-		currency: summary.data?.baseCurrency?.trim() || null,
+		currency: account.currency,
 		spendCurrency: budgetCurrency,
 		locale: event.locals.locale
 	};

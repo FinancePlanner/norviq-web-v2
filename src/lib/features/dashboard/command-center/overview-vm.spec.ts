@@ -68,6 +68,7 @@ function input(over: Partial<OverviewFiguresInput> = {}): OverviewFiguresInput {
 	return {
 		dash: null,
 		budgetCurrency: null,
+		accountCurrency: 'USD',
 		performance: { baseCurrency: 'USD', points: stalePoints },
 		reports: reports(46874.85),
 		rng: '30d',
@@ -100,11 +101,24 @@ describe('buildOverviewFigures', () => {
 	});
 
 	it('uses the performance base currency, never a default dollar', () => {
-		const f = buildOverviewFigures(input({ performance: { baseCurrency: 'EUR', points: [] } }));
+		const f = buildOverviewFigures(
+			input({ accountCurrency: 'EUR', performance: { baseCurrency: 'EUR', points: [] } })
+		);
 		expect(f.totalWealth).toBe('€46,874.85');
 		expect(f.currency).toBe('EUR');
-		const none = buildOverviewFigures(input({ performance: null }));
+		const none = buildOverviewFigures(input({ accountCurrency: null, performance: null }));
 		expect(none.totalWealth).not.toContain('$');
+	});
+
+	it('never trusts the unscoped performance currency (a backend "USD" default)', () => {
+		const f = buildOverviewFigures(
+			input({ accountCurrency: 'EUR', performance: { baseCurrency: 'USD', points: [] } })
+		);
+		expect(f.currency).toBe('EUR');
+		expect(f.totalWealth).toBe('€46,874.85');
+		const mixed = buildOverviewFigures(input({ accountCurrency: null }));
+		expect(mixed.currency).toBeNull();
+		expect(mixed.totalWealth).toBe('46,874.85\u00a0\u2014');
 	});
 
 	it('measures a fresh change over the range on screen and labels it', () => {
@@ -143,6 +157,7 @@ describe('buildOverviewFigures', () => {
 	it('formats spend in the account currency and the locale', () => {
 		const f = buildOverviewFigures(
 			input({
+				accountCurrency: 'EUR',
 				performance: { baseCurrency: 'EUR', points: [] },
 				locale: 'pt-PT',
 				t: translator('pt-PT')

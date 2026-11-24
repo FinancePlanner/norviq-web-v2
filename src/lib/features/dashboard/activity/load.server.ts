@@ -3,9 +3,9 @@
 // flags its own panel.
 
 import type { RequestEvent } from '@sveltejs/kit';
-import type { components } from '#lib/api/schema.js';
 import { getJSON } from '../fetch.server.js';
 import { loadBudgetCurrency } from '../budget-currency.server.js';
+import { loadAccountCurrency } from '../../portfolio/account-currency.server.js';
 import { mapFinancialHealth, type DashboardInsights } from '../insights/mappers.js';
 import type { ActivityPageViewModel } from '../types.js';
 import {
@@ -16,8 +16,6 @@ import {
 	type Expense,
 	type UserActivity
 } from './mappers.js';
-
-type PortfolioSummary = components['schemas']['PortfolioSummaryResponse'];
 
 /** activityPageLimitFromRequest: missing/invalid → 20, clamped to [20, 100]. */
 export function activityPageLimit(raw: string | null): number {
@@ -35,12 +33,13 @@ export async function loadActivityPage(
 ): Promise<ActivityPageViewModel> {
 	limit = Math.min(Math.max(limit, activityPageDefaultLimit), activityPageMaxLimit);
 
-	const [activities, expenses, insights, summary, budgetCurrency] = await Promise.all([
+	const [activities, expenses, insights, account, budgetCurrency] = await Promise.all([
 		getJSON<UserActivity[]>(event, '/v1/activities', { limit }),
 		getJSON<Expense[]>(event, '/v1/expenses'),
 		getJSON<DashboardInsights>(event, '/v1/dashboard/insights'),
-		// Activity carries no currency: amounts use the account's base currency.
-		getJSON<PortfolioSummary>(event, '/v1/portfolio/summary'),
+		// Activity carries no currency: holdings use the account's currency. The
+		// unscoped summary answers a default "USD", so the portfolios decide it.
+		loadAccountCurrency(event),
 		// Expenses use the month's budget currency when there is a budget.
 		loadBudgetCurrency(event)
 	]);
@@ -55,7 +54,7 @@ export async function loadActivityPage(
 
 	const items = activities.data ?? [];
 	const fmt = {
-		currency: summary.data?.baseCurrency?.trim() || null,
+		currency: account.currency,
 		spendCurrency: budgetCurrency,
 		locale: event.locals.locale,
 		now: new Date()
