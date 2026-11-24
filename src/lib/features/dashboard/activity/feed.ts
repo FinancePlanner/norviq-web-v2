@@ -12,6 +12,7 @@ export const activityFeedQueryKey = ['dashboard', 'activity-feed'] as const;
 /** `currency` is the account's, as the server render used, so a poll never changes the format. */
 export async function fetchActivityFeed(fmt: {
 	currency: string | null;
+	spendCurrency: string | null;
 	locale: AppLocale;
 }): Promise<ActivityItemVM[]> {
 	const res = await fetch(`/api/v1/activities?limit=${overviewActivityLimit}`, {

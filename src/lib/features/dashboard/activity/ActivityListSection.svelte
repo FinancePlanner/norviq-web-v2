@@ -23,6 +23,7 @@
 		try {
 			list = await fetchActivityList(nextActivityLimit(list.activityLimit), {
 				currency: list.currency,
+				spendCurrency: list.spendCurrency,
 				locale: locale()
 			});
 		} finally {

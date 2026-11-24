@@ -20,7 +20,7 @@
 					'spending-chart',
 					vm.overview.spendingChart.labels,
 					vm.overview.spendingChart.values,
-					{ currency: vm.overview.currency, locale: locale() }
+					{ currency: vm.overview.spendCurrency, locale: locale() }
 				)
 			: null
 	);

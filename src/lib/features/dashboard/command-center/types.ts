@@ -26,6 +26,8 @@ export interface OverviewViewModel {
 	username: string;
 	/** The page's currency (performance baseCurrency); null when unknown, never USD by default. */
 	currency: string | null;
+	/** Spend figures' currency: this month's budget currency, else `currency`. */
+	spendCurrency: string | null;
 	totalWealth: string;
 	/** The portfolio change over the fetched range; null when stale or too short. */
 	delta: OverviewDeltaVM | null;

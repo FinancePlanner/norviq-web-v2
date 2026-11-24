@@ -20,6 +20,8 @@ export interface ActivityListState {
 	hasMoreActivities: boolean;
 	/** The account currency the rows are printed in; null when unknown. */
 	currency: string | null;
+	/** The budget currency expense rows are printed in; null falls back to `currency`. */
+	spendCurrency: string | null;
 }
 
 /** activityLoadMoreURL's limit: +20, capped at 100. */
@@ -28,7 +30,7 @@ export const nextActivityLimit = (current: number) =>
 
 export async function fetchActivityList(
 	limit: number,
-	fmt: { currency: string | null; locale: AppLocale }
+	fmt: { currency: string | null; spendCurrency: string | null; locale: AppLocale }
 ): Promise<ActivityListState> {
 	let items: UserActivity[] = [];
 	try {
@@ -43,6 +45,7 @@ export async function fetchActivityList(
 		activities: mapActivities(items, { ...fmt, now: new Date() }),
 		activityLimit: limit,
 		hasMoreActivities: items.length >= limit && limit < activityPageMaxLimit,
-		currency: fmt.currency
+		currency: fmt.currency,
+		spendCurrency: fmt.spendCurrency
 	};
 }

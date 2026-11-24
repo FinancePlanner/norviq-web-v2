@@ -5,6 +5,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { components } from '#lib/api/schema.js';
 import { getJSON } from '../fetch.server.js';
+import { loadBudgetCurrency } from '../budget-currency.server.js';
 import { mapFinancialHealth, type DashboardInsights } from '../insights/mappers.js';
 import type { ActivityPageViewModel } from '../types.js';
 import {
@@ -34,12 +35,14 @@ export async function loadActivityPage(
 ): Promise<ActivityPageViewModel> {
 	limit = Math.min(Math.max(limit, activityPageDefaultLimit), activityPageMaxLimit);
 
-	const [activities, expenses, insights, summary] = await Promise.all([
+	const [activities, expenses, insights, summary, budgetCurrency] = await Promise.all([
 		getJSON<UserActivity[]>(event, '/v1/activities', { limit }),
 		getJSON<Expense[]>(event, '/v1/expenses'),
 		getJSON<DashboardInsights>(event, '/v1/dashboard/insights'),
 		// Activity carries no currency: amounts use the account's base currency.
-		getJSON<PortfolioSummary>(event, '/v1/portfolio/summary')
+		getJSON<PortfolioSummary>(event, '/v1/portfolio/summary'),
+		// Expenses use the month's budget currency when there is a budget.
+		loadBudgetCurrency(event)
 	]);
 
 	// Go: `err != nil || resp.JSON200 == nil` → the panel's error flag.
@@ -53,6 +56,7 @@ export async function loadActivityPage(
 	const items = activities.data ?? [];
 	const fmt = {
 		currency: summary.data?.baseCurrency?.trim() || null,
+		spendCurrency: budgetCurrency,
 		locale: event.locals.locale,
 		now: new Date()
 	};
@@ -60,6 +64,7 @@ export async function loadActivityPage(
 		activities: mapActivities(items, fmt),
 		recentSpend: mapRecentSpend(expenses.data ?? [], fmt),
 		currency: fmt.currency,
+		spendCurrency: fmt.spendCurrency,
 		financialHealth: mapFinancialHealth(insights.data?.financialHealth ?? null),
 		activitiesError,
 		recentSpendError,

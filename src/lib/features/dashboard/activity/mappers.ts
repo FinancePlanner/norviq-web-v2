@@ -28,13 +28,18 @@ export const recentSpendLimit = 3;
 /** How amounts are printed: the account's currency (null when unknown, never USD) and the app locale. */
 export interface MoneyOpts {
 	currency: string | null;
+	/** Expenses' currency: this month's budget currency. Falls back to `currency`. */
+	spendCurrency?: string | null;
 	locale: AppLocale;
 	now: Date;
 }
 
+const isExpense = (type: UserActivity['type']) =>
+	type === 'expense_recorded' || type === 'expense_updated';
+
 /** The signed amount of an event: expenses are outflows; holding events keep their own sign. */
 function eventAmount(type: UserActivity['type'], amount: number): number {
-	return type === 'expense_recorded' || type === 'expense_updated' ? -Math.abs(amount) : amount;
+	return isExpense(type) ? -Math.abs(amount) : amount;
 }
 
 export function mapActivities(
@@ -42,6 +47,7 @@ export function mapActivities(
 	opts: MoneyOpts
 ): ActivityItemVM[] {
 	const { currency, locale, now } = opts;
+	const spendCurrency = opts.spendCurrency || currency;
 	const out: ActivityItemVM[] = [];
 	for (const a of items ?? []) {
 		const created = parseTime(a.createdAt);
@@ -65,7 +71,7 @@ export function mapActivities(
 			const signed = eventAmount(a.type, a.amount);
 			item.hasAmount = true;
 			item.amountPositive = signed > 0;
-			item.amount = money(signed, currency, locale);
+			item.amount = money(signed, isExpense(a.type) ? spendCurrency : currency, locale);
 		}
 		out.push(item);
 	}
@@ -134,7 +140,8 @@ export function mapRecentSpend(
 	opts: MoneyOpts
 ): RecentSpendItemVM[] {
 	if (!expenses || expenses.length === 0) return [];
-	const { currency, locale, now } = opts;
+	const { locale, now } = opts;
+	const currency = opts.spendCurrency || opts.currency;
 	const time = (e: Expense) => parseTime(e.occurredOn)?.getTime() ?? Number.NEGATIVE_INFINITY;
 	const monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
 	const nextMonth = Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1);

@@ -93,6 +93,8 @@ export interface ActivityPageViewModel {
 	hasMoreActivities: boolean;
 	/** The account currency (portfolio summary baseCurrency); null when unknown. */
 	currency: string | null;
+	/** The month's budget currency, for expense rows; null without a budget. */
+	spendCurrency: string | null;
 }
 
 export interface InsightsPageViewModel {

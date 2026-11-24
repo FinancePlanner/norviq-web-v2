@@ -67,6 +67,7 @@ function reports(totalMarketValue: number): S['ReportsOverviewResponse'] {
 function input(over: Partial<OverviewFiguresInput> = {}): OverviewFiguresInput {
 	return {
 		dash: null,
+		budgetCurrency: null,
 		performance: { baseCurrency: 'USD', points: stalePoints },
 		reports: reports(46874.85),
 		rng: '30d',
@@ -148,6 +149,19 @@ describe('buildOverviewFigures', () => {
 			})
 		);
 		expect(f.spendingThisMonth).toBe('84,12 €');
+	});
+
+	it('prints spend in the budget currency when the month has a budget', () => {
+		const f = buildOverviewFigures(input({ budgetCurrency: 'EUR' }));
+		expect(f.spendCurrency).toBe('EUR');
+		expect(f.spendingThisMonth).toBe('€84.12');
+		expect(f.totalWealth).toBe('$46,874.85');
+	});
+
+	it('falls back to the account currency for spend without a budget', () => {
+		const f = buildOverviewFigures(input({ budgetCurrency: null }));
+		expect(f.spendCurrency).toBe('USD');
+		expect(f.spendingThisMonth).toBe('$84.12');
 	});
 
 	it('limits the monthly spend tile to the months in the Pulse range', () => {

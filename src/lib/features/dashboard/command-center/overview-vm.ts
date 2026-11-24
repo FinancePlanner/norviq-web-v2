@@ -2,7 +2,8 @@
 // A18 and § 9.1 item 8). Pure, so it is unit tested; load.server.ts feeds it.
 //
 // - One currency for the page: the account's performance baseCurrency. The
-//   expenses API carries no currency, so spend is shown in it too.
+//   expenses API carries no currency, so spend is shown in this month's
+//   budget currency when there is a budget, and in the account's otherwise.
 // - The portfolio change is measured over the series fetched for the Pulse
 //   range (first point to last), labelled with that range, and hidden when the
 //   series is stale or too short.
@@ -40,6 +41,8 @@ export function perfRangeForKey(k: timerange.Key): PerfRange {
 
 export interface OverviewFiguresInput {
 	dash: S['DashboardResponse'] | null;
+	/** This month's budget snapshot currencyCode; null without a budget. */
+	budgetCurrency: string | null;
 	performance: Pick<S['PortfolioPerformanceResponse'], 'baseCurrency' | 'points'> | null;
 	reports: S['ReportsOverviewResponse'] | null;
 	rng: timerange.Key;
@@ -55,8 +58,10 @@ export interface OverviewDeltaVM {
 }
 
 export interface OverviewFigures {
-	/** The page's currency; null when unknown (figures then print " —", never "$"). */
+	/** The portfolio figures' currency; null when unknown (figures then print " —", never "$"). */
 	currency: string | null;
+	/** The spend figures' currency: the budget's, else the account's. */
+	spendCurrency: string | null;
 	totalWealth: string;
 	delta: OverviewDeltaVM | null;
 	/** "+3.2% 1 month": the delta and its basis, for the attention card. */
@@ -107,8 +112,10 @@ function monthOverMonthChange(values: number[]): number | null {
 export function buildOverviewFigures(input: OverviewFiguresInput): OverviewFigures {
 	const { dash, performance, reports, rng, locale, now, t } = input;
 	const currency = (performance?.baseCurrency ?? '').trim().toUpperCase() || null;
+	const spendCurrency = (input.budgetCurrency ?? '').trim().toUpperCase() || currency;
 	const f: OverviewFigures = {
 		currency,
+		spendCurrency,
 		totalWealth: '',
 		delta: null,
 		portfolioPeriodPercent: '',
@@ -162,7 +169,7 @@ export function buildOverviewFigures(input: OverviewFiguresInput): OverviewFigur
 
 	if (reports) {
 		if (reports.latestMonthSummary)
-			f.spendingThisMonth = money(reports.latestMonthSummary.actual, currency, locale);
+			f.spendingThisMonth = money(reports.latestMonthSummary.actual, spendCurrency, locale);
 		const series = spendingSeries(reports.monthlySummaries, rng, now);
 		if (series.labels.length > 0) {
 			const change = monthOverMonthChange(series.values);

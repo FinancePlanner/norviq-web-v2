@@ -14,17 +14,20 @@
 	let {
 		activities,
 		error = false,
-		currency = null
+		currency = null,
+		spendCurrency = null
 	}: {
 		activities: ActivityItemVM[] | null | undefined;
 		error?: boolean;
 		/** The account currency the server rendered the rows in; the poll keeps it. */
 		currency?: string | null;
+		/** The budget currency expense rows use; null falls back to `currency`. */
+		spendCurrency?: string | null;
 	} = $props();
 
 	const feed = createQuery(() => ({
 		queryKey: activityFeedQueryKey,
-		queryFn: () => fetchActivityFeed({ currency, locale: locale() }),
+		queryFn: () => fetchActivityFeed({ currency, spendCurrency, locale: locale() }),
 		initialData: activities ?? [],
 		initialDataUpdatedAt: Date.now(),
 		refetchInterval: 60_000,

@@ -58,6 +58,15 @@ describe('mapActivities', () => {
 		expect(item.amount).toBe(`${MINUS}€84.12`);
 	});
 
+	it('prints expenses in the budget currency and holdings in the account currency', () => {
+		const items = mapActivities(
+			[activity('expense_recorded', 84.12, false), activity('stock_added', 10)],
+			{ ...usd, spendCurrency: 'EUR' }
+		);
+		expect(items[0].amount).toBe(`${MINUS}€84.12`);
+		expect(items[1].amount).toBe('$10.00');
+	});
+
 	it('never prints a dollar sign without a currency', () => {
 		const [item] = mapActivities([activity('stock_added', 4236.07)], { ...usd, currency: null });
 		expect(item.amount.endsWith(' —')).toBe(true);
