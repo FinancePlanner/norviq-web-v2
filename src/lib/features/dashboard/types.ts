@@ -11,6 +11,8 @@ export interface ActivityItemVM {
 	amount: string;
 	hasAmount: boolean;
 	amountPositive: boolean;
+	/** Row colour. Feed events (buys, edits, expenses) are neutral; P/L tones are for realised gains. */
+	tone: 'positive' | 'negative' | 'neutral';
 	badgeLabel: string;
 	iconKind: string;
 	iconTone: string;
@@ -89,6 +91,8 @@ export interface ActivityPageViewModel {
 	financialHealthErr: boolean;
 	activityLimit: number;
 	hasMoreActivities: boolean;
+	/** The account currency (portfolio summary baseCurrency); null when unknown. */
+	currency: string | null;
 }
 
 export interface InsightsPageViewModel {

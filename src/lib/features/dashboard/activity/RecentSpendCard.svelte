@@ -27,6 +27,6 @@
 			{/each}
 		</InsetList>
 	{:else}
-		<p class="text-subhead text-muted-foreground">{t('No recent expenses')}</p>
+		<p class="text-subhead text-muted-foreground">{t('No spending logged this month.')}</p>
 	{/if}
 </Panel>

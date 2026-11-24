@@ -167,8 +167,9 @@ export async function loadOverviewViewModel(
 	Object.assign(vm, figures);
 	const fmt = { currency: figures.currency, locale, t };
 
-	vm.activities = mapActivities(activities.data ?? [], now);
-	vm.recentSpend = mapRecentSpend(expenses.data ?? []);
+	// Activity and expenses carry no currency: they use the account's.
+	vm.activities = mapActivities(activities.data ?? [], { ...fmt, now });
+	vm.recentSpend = mapRecentSpend(expenses.data ?? [], { ...fmt, now });
 	if (insights.data) {
 		vm.financialHealth = mapFinancialHealth(insights.data.financialHealth);
 		vm.insightCards = mapInsightCards(insights.data, fmt);
@@ -254,12 +255,17 @@ function buildLedgerFilters(rng: timerange.Key, active: string): LedgerFilterVM[
 
 const createdAt = (a: Activity) => parseTime(a.createdAt) ?? new Date(0);
 
-function buildLedger(activities: Activity[], rng: timerange.Key, now: Date): LedgerDayVM[] {
+function buildLedger(
+	activities: Activity[],
+	rng: timerange.Key,
+	now: Date,
+	fmt: { currency: string | null; locale: AppLocale }
+): LedgerDayVM[] {
 	const { from, to } = timerange.window(rng, now);
 	const inWindow = timerange.bucket(activities, createdAt, from, to);
 	if (inWindow.length === 0) return [];
 	return timerange.groupByDayRelativeTo(inWindow, createdAt, now).map((g) => {
-		const items = mapActivities(g.items, now).map((item, i) => ({
+		const items = mapActivities(g.items, { ...fmt, now }).map((item, i) => ({
 			...item,
 			href: activityHref(g.items[i].type, g.items[i].title),
 			domain: activityDomain(g.items[i].type)
@@ -288,13 +294,21 @@ export async function loadLedgerViewModel(
 	now = new Date()
 ): Promise<LedgerVM> {
 	const vm = emptyLedger(rng, domain);
-	const res = await getJSON<Activity[]>(event, '/v1/activities', { limit: ledgerActivityLimit });
+	const [res, summary] = await Promise.all([
+		getJSON<Activity[]>(event, '/v1/activities', { limit: ledgerActivityLimit }),
+		// Activity carries no currency: amounts use the account's base currency.
+		getJSON<S['PortfolioSummaryResponse']>(event, '/v1/portfolio/summary')
+	]);
 	if (res.failed) {
 		vm.loadError = true;
 		return vm;
 	}
 	if (!res.data) return vm;
-	vm.ledger = buildLedger(filterActivitiesByDomain(res.data, vm.domain), rng, now);
+	const fmt = {
+		currency: summary.data?.baseCurrency?.trim() || null,
+		locale: event.locals.locale
+	};
+	vm.ledger = buildLedger(filterActivitiesByDomain(res.data, vm.domain), rng, now, fmt);
 	return vm;
 }
 
@@ -501,7 +515,10 @@ export async function loadCommandCenterViewModel(
 
 	const ledger = emptyLedger(rng, domain);
 	ledger.loadError = !!loadErrors.ledger;
-	ledger.ledger = buildLedger(filterActivitiesByDomain(activities.data ?? [], domain), rng, now);
+	ledger.ledger = buildLedger(filterActivitiesByDomain(activities.data ?? [], domain), rng, now, {
+		currency: overview.currency,
+		locale: event.locals.locale
+	});
 
 	const slices = buildPillarSlices(expenses.data ?? []);
 

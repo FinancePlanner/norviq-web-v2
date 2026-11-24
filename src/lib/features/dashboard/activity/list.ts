@@ -5,6 +5,7 @@
 // the same-origin proxy. A failed fetch renders the empty state, as Go's
 // ActivityListSection did (it never checked ActivitiesError).
 
+import type { AppLocale } from '#lib/money.js';
 import type { ActivityItemVM } from '../types.js';
 import {
 	activityPageMaxLimit,
@@ -17,13 +18,18 @@ export interface ActivityListState {
 	activities: ActivityItemVM[];
 	activityLimit: number;
 	hasMoreActivities: boolean;
+	/** The account currency the rows are printed in; null when unknown. */
+	currency: string | null;
 }
 
 /** activityLoadMoreURL's limit: +20, capped at 100. */
 export const nextActivityLimit = (current: number) =>
 	Math.min(current + activityPageStep, activityPageMaxLimit);
 
-export async function fetchActivityList(limit: number): Promise<ActivityListState> {
+export async function fetchActivityList(
+	limit: number,
+	fmt: { currency: string | null; locale: AppLocale }
+): Promise<ActivityListState> {
 	let items: UserActivity[] = [];
 	try {
 		const res = await fetch(`/api/v1/activities?limit=${limit}`, {
@@ -34,8 +40,9 @@ export async function fetchActivityList(limit: number): Promise<ActivityListStat
 		console.warn('activity list fetch failed', err);
 	}
 	return {
-		activities: mapActivities(items),
+		activities: mapActivities(items, { ...fmt, now: new Date() }),
 		activityLimit: limit,
-		hasMoreActivities: items.length >= limit && limit < activityPageMaxLimit
+		hasMoreActivities: items.length >= limit && limit < activityPageMaxLimit,
+		currency: fmt.currency
 	};
 }

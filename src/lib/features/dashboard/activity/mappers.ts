@@ -1,11 +1,16 @@
 // Activity + recent-spend view-model builders. Ports of norviq-web
 // internal/handlers/dashboard_data.go: mapActivities, activityBadge,
-// activityIconKind, tickerFromActivityTitle, activityIconTone, mapRecentSpend,
+// activityIconKind, tickerFromActivityTitle, mapRecentSpend,
 // pillarBadge, initials. Pure: safe to call on the server and in the browser
 // (the 60s activity poll maps /api/v1/activities with the same code).
+//
+// DS 2.0 P1 (spec § 2.0 A7, A11): amounts are in the account currency and the
+// app locale, and every event in this feed is neutral. A buy is not a gain and
+// an edit is not a loss: green and red are kept for realised P/L, which this
+// feed does not carry. The sign comes from what the event means.
 
 import type { components } from '#lib/api/schema.js';
-import { formatCurrency } from '#lib/format.js';
+import { money, type AppLocale } from '#lib/money.js';
 import { resolvePillar } from '../pillars.js';
 import { goFormat, parseTime, relativeTimeSince } from '../shared.js';
 import type { ActivityItemVM, RecentSpendItemVM } from '../types.js';
@@ -20,10 +25,23 @@ export const activityPageMaxLimit = 100;
 export const activityPageStep = 20;
 export const recentSpendLimit = 3;
 
+/** How amounts are printed: the account's currency (null when unknown, never USD) and the app locale. */
+export interface MoneyOpts {
+	currency: string | null;
+	locale: AppLocale;
+	now: Date;
+}
+
+/** The signed amount of an event: expenses are outflows; holding events keep their own sign. */
+function eventAmount(type: UserActivity['type'], amount: number): number {
+	return type === 'expense_recorded' || type === 'expense_updated' ? -Math.abs(amount) : amount;
+}
+
 export function mapActivities(
 	items: UserActivity[] | null | undefined,
-	now: Date = new Date()
+	opts: MoneyOpts
 ): ActivityItemVM[] {
+	const { currency, locale, now } = opts;
 	const out: ActivityItemVM[] = [];
 	for (const a of items ?? []) {
 		const created = parseTime(a.createdAt);
@@ -35,17 +53,19 @@ export function mapActivities(
 			amount: '',
 			hasAmount: false,
 			amountPositive: !!a.isGrowth,
+			tone: 'neutral',
 			badgeLabel: activityBadge(a.symbol ?? '', a.type, a.title ?? ''),
 			iconKind: activityIconKind(a.symbol ?? '', a.type),
-			iconTone: activityIconTone(!!a.isGrowth),
+			iconTone: 'neutral',
 			// Go's mapActivities never sets Href/Domain (only the ledger does).
 			href: '',
 			domain: ''
 		};
 		if (a.amount != null && a.amount !== 0) {
+			const signed = eventAmount(a.type, a.amount);
 			item.hasAmount = true;
-			const abs = formatCurrency(Math.abs(a.amount));
-			item.amount = (a.isGrowth ? '+' : '-') + abs;
+			item.amountPositive = signed > 0;
+			item.amount = money(signed, currency, locale);
 		}
 		out.push(item);
 	}
@@ -104,15 +124,21 @@ export function tickerFromActivityTitle(title: string): string {
 	return candidate;
 }
 
-export function activityIconTone(isGrowth: boolean): string {
-	return isGrowth ? 'success' : 'danger';
-}
-
-/** The three newest expenses, by occurredOn (Go's in-place swap sort, kept for tie order). */
-export function mapRecentSpend(expenses: Expense[] | null | undefined): RecentSpendItemVM[] {
+/**
+ * The three newest expenses of the current month (UTC), by occurredOn (Go's
+ * in-place swap sort, kept for tie order). An older expense is not "recent
+ * spend" this month, so it is left out rather than shown as current.
+ */
+export function mapRecentSpend(
+	expenses: Expense[] | null | undefined,
+	opts: MoneyOpts
+): RecentSpendItemVM[] {
 	if (!expenses || expenses.length === 0) return [];
+	const { currency, locale, now } = opts;
 	const time = (e: Expense) => parseTime(e.occurredOn)?.getTime() ?? Number.NEGATIVE_INFINITY;
-	const sorted = [...expenses];
+	const monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
+	const nextMonth = Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1);
+	const sorted = expenses.filter((e) => time(e) >= monthStart && time(e) < nextMonth);
 	for (let i = 0; i < sorted.length; i++) {
 		for (let j = i + 1; j < sorted.length; j++) {
 			if (time(sorted[j]) > time(sorted[i])) [sorted[i], sorted[j]] = [sorted[j], sorted[i]];
@@ -122,7 +148,7 @@ export function mapRecentSpend(expenses: Expense[] | null | undefined): RecentSp
 		const occurred = parseTime(e.occurredOn);
 		return {
 			title: e.title,
-			amount: '-' + formatCurrency(e.amount),
+			amount: money(-Math.abs(e.amount), currency, locale),
 			date: occurred ? goFormat(occurred, 'Jan 2') : '',
 			pillar: e.pillar,
 			pillarBadge: pillarBadge(e.pillar)

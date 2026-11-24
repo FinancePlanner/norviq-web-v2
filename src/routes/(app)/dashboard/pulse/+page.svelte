@@ -52,7 +52,11 @@
 				{#if showOverviewSetup(overview)}
 					<OverviewSetupPanel />
 				{/if}
-				<ActivityPanel activities={overview.activities} error={!!overview.loadErrors.activities} />
+				<ActivityPanel
+					activities={overview.activities}
+					error={!!overview.loadErrors.activities}
+					currency={overview.currency}
+				/>
 				{#if overview.focusPoints.length > 0 || overview.goalsError}
 					<FocusPointsTeaser points={overview.focusPoints} goalsError={overview.goalsError} />
 				{/if}

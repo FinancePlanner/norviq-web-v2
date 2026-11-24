@@ -10,9 +10,9 @@
 
 	let { item, compact = false }: { item: ActivityItemVM; compact?: boolean } = $props();
 
-	// activityTone: success/danger → the row's positive/negative sentiment.
+	// The row's P/L sentiment. Buys, edits and expenses are neutral (DS 2.0 A7).
 	const tone: Sentiment = $derived(
-		item.iconTone === 'success' ? 'positive' : item.iconTone === 'danger' ? 'negative' : ''
+		item.tone === 'positive' ? 'positive' : item.tone === 'negative' ? 'negative' : ''
 	);
 	const time = $derived(compact ? item.relativeTime : item.timestamp);
 </script>

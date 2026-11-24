@@ -1160,5 +1160,6 @@
 	"Chart range": "Intervalo do gráfico",
 	"Holdings value": "Valor das posições",
 	"%@ left": "%@ disponível",
-	"vs last month": "vs mês anterior"
+	"vs last month": "vs mês anterior",
+	"No spending logged this month.": "Ainda não há despesas registadas este mês."
 }
