@@ -155,7 +155,7 @@
 		"/(public)/articles/[slugcode]": 93024,
 		"/(public)/articles/ticker/[symbol]": 76673,
 		"/(public)/brief": 73816,
-		"/(public)/brief/[date]/[slot]": 116962,
+		"/(public)/brief/[date]/[slot]": 117730,
 		"/(public)/digest/unsubscribe": 89834,
 		"/(public)/facebook-data-deletion": 75854,
 		"/(public)/g/[code]": 89152,

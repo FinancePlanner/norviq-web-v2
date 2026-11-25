@@ -354,7 +354,6 @@ export interface BriefPageVM {
 	exportsURL: string;
 	/** Unversioned export URLs, for when the manifest is unavailable. */
 	exportFallback: Record<ExportFormat, string>;
-	cardFileName: string;
 	signedIn: boolean;
 }
 
@@ -429,7 +428,6 @@ export function pageVM(
 			story: fallback('story'),
 			pdf: fallback('pdf')
 		},
-		cardFileName: 'norviq-brief-' + brief.tradingDateISO + '-' + brief.slot + '.png',
 		signedIn
 	};
 	vm.jsonLD = jsonLD(vm, base, lang);
