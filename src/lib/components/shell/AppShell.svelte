@@ -11,9 +11,12 @@
 		Settings
 	} from '@lucide/svelte';
 	import NorviqLogo from '#lib/components/brand/NorviqLogo.svelte';
+	import { Feature } from '#lib/billing.js';
+	import { quickQAllowedOn } from '#lib/features/dashboard/assistant/quick.js';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { achievementsOn, type SocialConfig } from '#lib/nav.js';
 	import { navContextFrom } from '#lib/nav/context.js';
+	import { DOMAIN_META } from '#lib/nav/destinations.js';
 	import {
 		activeDestination,
 		activeDomain,
@@ -22,6 +25,7 @@
 		visibleDestinations,
 		type SidebarDomainVM
 	} from '#lib/nav/visible.js';
+	import DesktopTopBar from './DesktopTopBar.svelte';
 	import SectionSubNav from './SectionSubNav.svelte';
 	import NavBadge from './NavBadge.svelte';
 	import { domainIcon, sidebarIcon } from './nav-icons.js';
@@ -32,8 +36,9 @@
 
 	// Port of shell.templ AppShell, regrouped into the six DS 2.0 P3 domains:
 	// mobile top bar, collapsible sidebar (domains, then search, Settings and the
-	// account in the foot), main column (trial banner + mobile section sub-nav +
-	// page), mobile bottom bar (Today, Money, Wealth, Plan, More).
+	// account in the foot), main column (desktop top bar, then trial banner +
+	// mobile section sub-nav + page), mobile bottom bar (Today, Money, Wealth,
+	// Plan, More).
 
 	interface Props {
 		username: string;
@@ -71,6 +76,25 @@
 			domain === 'intelligence' ||
 			domain === 'community' ||
 			domain === 'account'
+	);
+	// The desktop top bar names the domain: Account pages go by the /more
+	// section's name, /more by its own, and anything outside the six by none.
+	const domainLabel = $derived(
+		currentPath === '/more'
+			? t('More')
+			: domain === 'account'
+				? t('Account')
+				: domain
+					? t(DOMAIN_META[domain].label)
+					: null
+	);
+	// Ask Q opens the Quick Q card wherever (app)/+layout.svelte mounts it.
+	const qMode = $derived<'card' | 'link'>(
+		page.data.features?.[Feature.AIInsights] &&
+			!page.data.guidedStep &&
+			quickQAllowedOn(page.url.pathname)
+			? 'card'
+			: 'link'
 	);
 
 	const linkBase =
@@ -281,35 +305,39 @@
 				</div>
 			</aside>
 
-			<main id="main-content" class="app-main" {@attach pageMotion()}>
-				{#if trialExpired}
-					<div
-						class="trial-ended-banner trial-banner glass-card mb-6 flex flex-wrap items-center gap-3 p-4"
-						role="status"
-					>
-						<span class="pro-badge">{t('Trial ended')}</span>
-						<div class="min-w-0 flex-1">
-							<p class="text-sm font-semibold">{t('Your trial has ended')}</p>
-							<p class="mt-0.5 text-sm text-muted-foreground">
-								{t('Subscribe to unlock all features.')}
-							</p>
-						</div>
-						<a
-							href="/settings/subscription"
-							class="btn-primary w-full shrink-0 px-5 py-2 text-sm sm:w-auto">{t('Subscribe')}</a
+			<!-- The top bar stays outside <main>: main scrolls and animates. -->
+			<div class="app-column">
+				<DesktopTopBar {domainLabel} {qMode} />
+				<main id="main-content" class="app-main" {@attach pageMotion()}>
+					{#if trialExpired}
+						<div
+							class="trial-ended-banner trial-banner glass-card mb-6 flex flex-wrap items-center gap-3 p-4"
+							role="status"
 						>
-					</div>
-				{/if}
-				{#if subLinks.length > 0}
-					<div class="mobile-section-subnav lg:hidden">
-						<SectionSubNav links={subLinks} {activePath} />
-					</div>
-				{/if}
-				{@render children()}
-				{#if achievementsOn(social)}
-					<UnlockToast />
-				{/if}
-			</main>
+							<span class="pro-badge">{t('Trial ended')}</span>
+							<div class="min-w-0 flex-1">
+								<p class="text-sm font-semibold">{t('Your trial has ended')}</p>
+								<p class="mt-0.5 text-sm text-muted-foreground">
+									{t('Subscribe to unlock all features.')}
+								</p>
+							</div>
+							<a
+								href="/settings/subscription"
+								class="btn-primary w-full shrink-0 px-5 py-2 text-sm sm:w-auto">{t('Subscribe')}</a
+							>
+						</div>
+					{/if}
+					{#if subLinks.length > 0}
+						<div class="mobile-section-subnav lg:hidden">
+							<SectionSubNav links={subLinks} {activePath} />
+						</div>
+					{/if}
+					{@render children()}
+					{#if achievementsOn(social)}
+						<UnlockToast />
+					{/if}
+				</main>
+			</div>
 		</div>
 
 		<nav class="app-bottom-tabs" aria-label="Primary navigation">

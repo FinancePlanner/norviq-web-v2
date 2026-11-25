@@ -337,7 +337,7 @@ The canonical set from spec § 6.1. A page uses the canonical component; a row m
 | Skeleton / ErrorRetry / StaleData | `SkeletonBlock`, `vigil.ErrorRetry`, `vigil.AsOf`               | canonical                                                                             |
 | Buttons                           | `PrimaryButton`, `SecondaryButton`, `GhostButton`, `IconButton` | canonical; `NativeButton` and `SecondarySubmitButton` are legacy (P4/P5)              |
 | Toast                             | `UnlockToast` on the `.achievement-toast` layer                 | placement canonical; `ToastBanner` (inline) and the sonner wrapper are legacy (P4/P5) |
-| Floating action zone              | `QuickAssistant` on `--float-offset`                            | phone placement canonical; the desktop entry point is not yet (P3)                    |
+| Floating action zone              | `QuickAssistant` on `--float-offset`                            | canonical; at 1024px and up Q is the "Ask Q" button in `DesktopTopBar`                |
 
 ### Money, change and staleness
 
@@ -364,14 +364,14 @@ Every data view handles each of these, or says why it cannot occur:
 
 ### Floating layer
 
-Toasts own the top of the viewport and the Q button owns the bottom-right corner, so the two never overlap.
+Below 1024px, toasts own the top of the viewport and the Q button owns the bottom-right corner, so the two never overlap. At 1024px and up there is no floating Q: "Ask Q" sits in the desktop top bar (`DesktopTopBar.svelte`) and opens the Q card top-right, just below that bar.
 
-| Viewport      | Rule                                                                                                                                                   |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Below 1024px  | Toasts sit at the top, just below the top bar (`--app-topbar-height`, plus the notch inset). Q is bottom-right, above the tab bar by `--float-offset`. |
-| 1024px and up | No top bar. Toasts sit top-right, 1.5rem from each edge. Q stays bottom-right until P3 moves it to the sidebar and ⌘K.                                 |
+| Viewport      | Rule                                                                                                                                                                                                              |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Below 1024px  | Toasts sit at the top, just below the top bar (`--app-topbar-height`, plus the notch inset). Q is bottom-right, above the tab bar by `--float-offset`.                                                            |
+| 1024px and up | The desktop top bar (`--app-desktop-topbar-height`) holds Q. Toasts sit top-right, 0.75rem below that bar and 1.5rem from the right edge. The Q card opens top-right, 0.5rem below the bar. No floating Q button. |
 
-`--float-offset` (0.5rem) and `--app-topbar-height` are defined in `src/lib/styles/legacy/theme.css`; a new floating control uses them and does not invent its own offsets.
+`--float-offset` (0.5rem), `--app-topbar-height` and `--app-desktop-topbar-height` (4.25rem) are defined in `src/lib/styles/legacy/theme.css`; a new floating control uses them and does not invent its own offsets.
 
 ### Motion
 

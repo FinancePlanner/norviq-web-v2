@@ -1,6 +1,6 @@
 <script lang="ts">
-	// Quick Q: a star button on every signed-in page opens a card over the page,
-	// for one question and one answer. It has its own conversation, which also
+	// Quick Q: a star button on every signed-in page (the top bar's "Ask Q" at
+	// 1024px and up) opens a card over the page, for one question and one answer. It has its own conversation, which also
 	// appears in full Q's history. Mounted once, in the (app) layout, so a turn
 	// survives closing the card and its answer waits for the next opening.
 	import { onDestroy } from 'svelte';
@@ -22,6 +22,7 @@
 		storeConversation,
 		storedConversation
 	} from '../quick.js';
+	import { quickOpen } from '../quick-open.svelte.js';
 	import { streamAssistantTurn } from '../stream.js';
 	import type { ConversationViewModel, MessageRow } from '../types.js';
 	import Message from './Message.svelte';
@@ -62,6 +63,15 @@
 	$effect(() => {
 		void page.url.pathname;
 		dialog?.close();
+	});
+
+	// The desktop top bar's "Ask Q" asks by bumping the counter. A request made
+	// before this mount (another page, a guided step) must not open the card.
+	let seenRequest = quickOpen.requested;
+	$effect(() => {
+		if (quickOpen.requested === seenRequest) return;
+		seenRequest = quickOpen.requested;
+		open();
 	});
 
 	function resetCard() {
@@ -458,13 +468,13 @@
 	.quick-q-form :global(textarea) {
 		width: 100%;
 	}
+	/* Q is the desktop top bar's "Ask Q": the card hangs below it, top-right. */
 	@media (min-width: 1024px) {
 		.quick-q-button {
-			right: 1.5rem;
-			bottom: 1.5rem;
+			display: none;
 		}
 		.quick-q-card {
-			margin: auto 1.5rem 1.5rem auto;
+			margin: calc(var(--app-desktop-topbar-height) + 0.5rem) 1.5rem auto auto;
 		}
 	}
 </style>

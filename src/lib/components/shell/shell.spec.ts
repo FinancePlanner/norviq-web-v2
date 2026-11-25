@@ -22,6 +22,7 @@ vi.mock('@tanstack/svelte-query', () => ({
 	}
 }));
 
+import { Feature } from '#lib/billing.js';
 import ptPT from '#lib/i18n/pt-PT.json';
 import { socialOff, type SocialConfig } from '#lib/nav.js';
 import { DESTINATIONS, DOMAIN_ORDER } from '#lib/nav/destinations.js';
@@ -93,6 +94,7 @@ const between = (html: string, start: string, end: string) => {
 };
 const sidebarNav = (html: string) => between(html, 'aria-label="Main navigation"', '</nav>');
 const sidebarFoot = (html: string) => between(html, 'app-sidebar-foot', '</aside>');
+const topBarOf = (html: string) => between(html, 'class="app-desktop-topbar', '</header>');
 const bottomBarOf = (html: string) => between(html, 'class="app-bottom-tabs"', '</nav>');
 const hrefs = (html: string) => [...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
 const linkTo = (html: string, path: string) =>
@@ -180,6 +182,71 @@ describe('AppShell sidebar (DS 2.0 P3)', () => {
 			'/markets/earnings'
 		]);
 		expect(shellAt('/dashboard')).not.toContain('mobile-section-subnav');
+	});
+});
+
+describe('AppShell desktop top bar', () => {
+	const domainOf = (html: string) =>
+		/<span[^>]*class="app-desktop-topbar-domain[^"]*"[^>]*>([^<]*)<\/span>/.exec(
+			topBarOf(html)
+		)?.[1] ?? null;
+
+	it.each([
+		['/dashboard', 'Today'],
+		['/today', 'Today'],
+		['/portfolio/allocation', 'Wealth'],
+		['/goals/3', 'Planning'],
+		['/markets/congress', 'Intelligence'],
+		['/settings/integrations', 'Account'],
+		['/achievements', 'Account'],
+		['/more', 'More']
+	])('on %s names the domain %s', (path, label) => {
+		expect(domainOf(shellAt(path, allSocial, true))).toBe(label);
+	});
+
+	it('shows no domain on a page outside the six', () => {
+		expect(domainOf(shellAt('/ai-consent'))).toBeNull();
+		expect(topBarOf(shellAt('/ai-consent'))).toContain('Search holdings, pages, actions');
+	});
+
+	it('sits outside the animated main column', () => {
+		const html = shellAt('/dashboard');
+		expect(html.indexOf('app-desktop-topbar')).toBeGreaterThan(-1);
+		expect(html.indexOf('app-desktop-topbar')).toBeLessThan(html.indexOf('id="main-content"'));
+	});
+
+	// The same condition that mounts QuickAssistant in (app)/+layout.svelte.
+	const askQ = (path: string, data: Record<string, unknown>) => {
+		state.page.url = new URL('https://norviq.test' + path);
+		state.page.data = { ...layoutData(socialOff, false), ...data };
+		const html = render(AppShell, {
+			props: {
+				username: 'ana',
+				email: '',
+				sidebar: [],
+				social: socialOff,
+				trialExpired: false,
+				children: body
+			}
+		}).body;
+		const bar = topBarOf(html);
+		if (/<button[^>]*>(?:(?!<\/button>)[\s\S])*Ask Q/.test(bar)) return 'card';
+		if (/<a[^>]*href="\/assistant"[^>]*>(?:(?!<\/a>)[\s\S])*Ask Q/.test(bar)) return 'link';
+		return 'none';
+	};
+	const ai = { features: { [Feature.AIInsights]: true } };
+
+	it('opens the Q card where QuickAssistant is mounted', () => {
+		expect(askQ('/dashboard', ai)).toBe('card');
+	});
+
+	it.each([
+		['without AI insights', '/dashboard', {}],
+		['during a guided step', '/dashboard', { ...ai, guidedStep: { step: 1 } }],
+		['on full Q', '/assistant', ai],
+		['in group chat', '/groups/7', ai]
+	])('links to full Q %s', (_, path, data) => {
+		expect(askQ(path, data)).toBe('link');
 	});
 });
 
@@ -404,7 +471,8 @@ describe('pt-PT', () => {
 			'Brokers and imports',
 			'More',
 			'Account',
-			'Plan'
+			'Plan',
+			'Search holdings, pages, actions'
 		];
 		expect(strings.filter((s) => !catalog.has(s))).toEqual([]);
 	});
