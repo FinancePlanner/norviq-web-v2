@@ -22,18 +22,27 @@
 <script lang="ts">
 	// The brief's Export Studio: the Go-rendered social image, story, PDF report
 	// and link preview, each to preview, download or share. Loaded on demand by
-	// ExportTrigger, so bits-ui stays out of the brief route's static graph.
+	// ExportTrigger, so none of it is in the brief route's static graph.
+	//
+	// Bundle shape (size-budget.mjs): Rolldown chunks a module by the set of
+	// entries that reach it, this lazy chunk included. So the studio imports only
+	// what is already a whole shared chunk (tui/dialog, the tui Icon registry,
+	// the norviq buttons) or what nothing eager uses. A module it shares with
+	// only part of an eager chunk is split into a chunk of its own that every
+	// route then loads: a direct `@lucide/svelte/icons/file-text` import split
+	// the icon out of the registry's chunk (+~340 B gz on every route), and
+	// bits-ui's dialog and tabs pulled the bits-ui internals the expenses
+	// page's dropdown menu inlines into a shared chunk (+~1.4 KB gz there).
 	// Previews and the share sheet use the manifest's versioned URLs, and fall
 	// back to the unversioned one when that fails (superseded revision, or no
 	// manifest). Downloads and Open always use the unversioned URL: a link the
 	// browser follows on its own has no fallback, and the backend 404s a
 	// superseded revision.
 	import XIcon from '@lucide/svelte/icons/x';
-	import FileTextIcon from '@lucide/svelte/icons/file-text';
 	import PrimaryButton from '#lib/components/norviq/PrimaryButton.svelte';
 	import SecondaryButton from '#lib/components/norviq/SecondaryButton.svelte';
-	import * as Dialog from '#lib/components/ui/dialog/index.js';
-	import * as Tabs from '#lib/components/ui/tabs/index.js';
+	import Icon from '#lib/components/norviq/tui/Icon.svelte';
+	import * as dialog from '#lib/components/norviq/tui/dialog/index.js';
 	import { exportFileName, fetchExport, formatURL, trackExport } from './studio.js';
 	import type { WebExportManifest } from './types.js';
 
@@ -56,7 +65,14 @@
 		og: [1200, 630]
 	};
 
+	const uid = $props.id();
 	let tab = $state<Tab>('social');
+	const tabs: [Tab, string][] = $derived([
+		['social', text.exportSocial],
+		['story', text.exportStory],
+		['pdf', text.exportPdf],
+		['link', text.exportLink]
+	]);
 	let manifest = $state<WebExportManifest | null>(null);
 	/** The manifest request has settled (either way), so previews may load. */
 	let settled = $state(false);
@@ -185,6 +201,30 @@
 		}
 	}
 
+	// WAI-ARIA tabs with automatic activation: arrows (wrapping), Home and End
+	// move focus and select.
+	function onTabKey(event: KeyboardEvent, i: number) {
+		const n = tabs.length;
+		const keys: Record<string, number> = {
+			ArrowRight: (i + 1) % n,
+			ArrowLeft: (i - 1 + n) % n,
+			Home: 0,
+			End: n - 1
+		};
+		const next = keys[event.key];
+		if (next === undefined) return;
+		event.preventDefault();
+		tab = tabs[next][0];
+		document.getElementById(`${uid}-tab-${tab}`)?.focus();
+	}
+
+	const panel = (id: Tab) => ({
+		id: `${uid}-panel-${id}`,
+		role: 'tabpanel',
+		'aria-labelledby': `${uid}-tab-${id}`,
+		hidden: tab !== id
+	});
+
 	const action = 'h-auto min-h-11 px-4';
 </script>
 
@@ -231,85 +271,106 @@
 	</div>
 {/snippet}
 
-<Dialog.Root bind:open>
-	<Dialog.Content
-		bind:ref={content}
-		showCloseButton={false}
+<dialog.Dialog bind:open>
+	<dialog.Content
+		hideCloseButton
+		aria-labelledby="{uid}-title"
 		class="studio max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto p-0 sm:max-w-lg"
 	>
-		<div class="studio-head">
-			<Dialog.Title class="studio-title">{text.exportTitle}</Dialog.Title>
-			<Dialog.Close class="studio-close" aria-label={text.exportClose}>
-				<XIcon aria-hidden="true" />
-			</Dialog.Close>
-		</div>
-		<Tabs.Root bind:value={tab} class="studio-body">
-			<Tabs.List
-				class="grid w-full grid-cols-2 gap-1 group-data-horizontal/tabs:h-auto sm:grid-cols-4"
-			>
-				{#each [['social', text.exportSocial], ['story', text.exportStory], ['pdf', text.exportPdf], ['link', text.exportLink]] as [value, label] (value)}
-					<Tabs.Trigger {value} class="h-auto min-h-11 px-2 whitespace-normal">
-						{label}
-					</Tabs.Trigger>
-				{/each}
-			</Tabs.List>
-			<!-- Only the active panel renders, so only its preview loads. -->
-			<Tabs.Content value="social" class="studio-panel">
-				{#if tab === 'social'}{@render imageTab('social', text.exportSocialAlt)}{/if}
-			</Tabs.Content>
-			<Tabs.Content value="story" class="studio-panel">
-				{#if tab === 'story'}{@render imageTab('story', text.exportStoryAlt)}{/if}
-			</Tabs.Content>
-			<Tabs.Content value="pdf" class="studio-panel">
-				<div class="studio-file">
-					<FileTextIcon aria-hidden="true" class="size-6 shrink-0" />
-					<div>
-						<p class="studio-file__name">{text.exportPdf}</p>
-						{#if pages > 0}
-							<p class="studio-note">
-								{pages === 1 ? text.exportOnePage : text.exportPages.replace('%d', String(pages))}
-							</p>
+		<div bind:this={content}>
+			<div class="studio-head">
+				<dialog.Title id="{uid}-title" class="studio-title">{text.exportTitle}</dialog.Title>
+				<button
+					type="button"
+					class="studio-close"
+					aria-label={text.exportClose}
+					onclick={() => (open = false)}
+				>
+					<XIcon aria-hidden="true" />
+				</button>
+			</div>
+			<div class="studio-body">
+				<div
+					role="tablist"
+					class="grid w-full grid-cols-2 gap-1 rounded-lg bg-muted p-[3px] text-muted-foreground sm:grid-cols-4"
+				>
+					{#each tabs as [value, label], i (value)}
+						<button
+							type="button"
+							role="tab"
+							id="{uid}-tab-{value}"
+							aria-controls="{uid}-panel-{value}"
+							aria-selected={tab === value}
+							tabindex={tab === value ? 0 : -1}
+							class="studio-tab"
+							onclick={() => (tab = value)}
+							onkeydown={(event) => onTabKey(event, i)}
+						>
+							{label}
+						</button>
+					{/each}
+				</div>
+				<!-- Only the active panel's preview renders, so only it loads. -->
+				<div {...panel('social')} class="studio-panel">
+					{#if tab === 'social'}{@render imageTab('social', text.exportSocialAlt)}{/if}
+				</div>
+				<div {...panel('story')} class="studio-panel">
+					{#if tab === 'story'}{@render imageTab('story', text.exportStoryAlt)}{/if}
+				</div>
+				<div {...panel('pdf')} class="studio-panel">
+					<div class="studio-file">
+						<Icon name="file-text" aria-hidden="true" class="size-6 shrink-0" />
+						<div>
+							<p class="studio-file__name">{text.exportPdf}</p>
+							{#if pages > 0}
+								<p class="studio-note">
+									{pages === 1 ? text.exportOnePage : text.exportPages.replace('%d', String(pages))}
+								</p>
+							{/if}
+						</div>
+					</div>
+					<div class="studio-actions">
+						<PrimaryButton
+							href={fallback.pdf}
+							download={exportFileName(fallback.pdf)}
+							class={action}
+							onclick={() => trackExport(eventProps, 'pdf', 'download')}
+						>
+							{text.exportDownload}
+						</PrimaryButton>
+						<SecondaryButton
+							href={fallback.pdf}
+							target="_blank"
+							rel="noopener"
+							class={action}
+							onclick={() => trackExport(eventProps, 'pdf', 'open')}
+						>
+							{text.exportOpenPdf}
+						</SecondaryButton>
+					</div>
+				</div>
+				<div {...panel('link')} class="studio-panel">
+					{#if tab === 'link'}{@render preview('og', text.exportLinkAlt)}{/if}
+					<div class="studio-actions">
+						<PrimaryButton class={action} onclick={copyLink}>
+							{copied ? text.exportCopied : text.exportCopyLink}
+						</PrimaryButton>
+						{#if canShareLink}
+							<SecondaryButton class={action} onclick={shareLink}>
+								{text.exportShare}
+							</SecondaryButton>
 						{/if}
 					</div>
 				</div>
-				<div class="studio-actions">
-					<PrimaryButton
-						href={fallback.pdf}
-						download={exportFileName(fallback.pdf)}
-						class={action}
-						onclick={() => trackExport(eventProps, 'pdf', 'download')}
-					>
-						{text.exportDownload}
-					</PrimaryButton>
-					<SecondaryButton
-						href={fallback.pdf}
-						target="_blank"
-						rel="noopener"
-						class={action}
-						onclick={() => trackExport(eventProps, 'pdf', 'open')}
-					>
-						{text.exportOpenPdf}
-					</SecondaryButton>
-				</div>
-			</Tabs.Content>
-			<Tabs.Content value="link" class="studio-panel">
-				{#if tab === 'link'}{@render preview('og', text.exportLinkAlt)}{/if}
-				<div class="studio-actions">
-					<PrimaryButton class={action} onclick={copyLink}>
-						{copied ? text.exportCopied : text.exportCopyLink}
-					</PrimaryButton>
-					{#if canShareLink}
-						<SecondaryButton class={action} onclick={shareLink}>{text.exportShare}</SecondaryButton>
-					{/if}
-				</div>
-			</Tabs.Content>
-		</Tabs.Root>
-	</Dialog.Content>
-</Dialog.Root>
+			</div>
+		</div>
+	</dialog.Content>
+</dialog.Dialog>
 
 <style>
-	/* The dialog is portalled to <body>, outside .mi, so it reads the global
-	 * theme tokens that brief.css's --mi-* aliases point at. */
+	/* A native modal <dialog> (tui/dialog) in the top layer. It reads the global
+	 * theme tokens that brief.css's --mi-* aliases point at, so it looks the same
+	 * wherever it is mounted. */
 	:global(.studio) {
 		color: var(--foreground);
 	}
@@ -327,7 +388,7 @@
 		font-weight: 600;
 		line-height: 1.3;
 	}
-	:global(.studio-close) {
+	.studio-close {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -337,20 +398,66 @@
 		border-radius: 0.75rem;
 		color: var(--muted-foreground);
 	}
-	:global(.studio-close:hover) {
+	.studio-close:hover {
 		color: var(--foreground);
 	}
-	:global(.studio-close:focus-visible) {
+	.studio-close:focus-visible,
+	.studio-tab:focus-visible {
 		outline: 2px solid var(--color-focus, var(--ring));
 		outline-offset: 2px;
 	}
-	:global(.studio-body) {
+	.studio-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 		padding: 1rem 1.25rem 1.25rem;
 	}
-	:global(.studio-panel) {
+	/* The segmented control the shadcn tabs drew: muted track, active tab raised. */
+	.studio-tab {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.75rem;
+		padding: 0.125rem 0.5rem;
+		border: 1px solid transparent;
+		border-radius: 0.375rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: color-mix(in oklab, var(--foreground) 60%, transparent);
+		transition:
+			color 150ms,
+			background-color 150ms,
+			box-shadow 150ms;
+	}
+	.studio-tab:hover,
+	.studio-tab[aria-selected='true'] {
+		color: var(--foreground);
+	}
+	.studio-tab[aria-selected='true'] {
+		background: var(--background);
+		box-shadow:
+			0 1px 3px 0 rgb(0 0 0 / 0.1),
+			0 1px 2px -1px rgb(0 0 0 / 0.1);
+	}
+	:global(.dark) .studio-tab {
+		color: var(--muted-foreground);
+	}
+	:global(.dark) .studio-tab:hover,
+	:global(.dark) .studio-tab[aria-selected='true'] {
+		color: var(--foreground);
+	}
+	:global(.dark) .studio-tab[aria-selected='true'] {
+		border-color: var(--input);
+		background: color-mix(in oklab, var(--input) 30%, transparent);
+	}
+	.studio-panel {
 		display: grid;
 		gap: 1rem;
 		padding-top: 0.5rem;
+		font-size: 0.875rem;
+	}
+	.studio-panel[hidden] {
+		display: none;
 	}
 	/* The format's ratio sets the frame: as wide as fits, at most min(52dvh, 26rem)
 	 * tall. The hairline is an outline, so it does not change the frame's size. */

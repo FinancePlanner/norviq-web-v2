@@ -301,6 +301,37 @@ describe('ExportStudio', () => {
 		]);
 	});
 
+	it('moves between tabs with the arrow, Home and End keys', async () => {
+		stubFetch();
+		render(ExportStudio, { ...studio, open: true });
+
+		const tab = (name: string) => page.getByRole('tab', { name });
+		await expect.element(tab(pt.exportSocial)).toHaveAttribute('aria-selected', 'true');
+		expect(page.getByRole('tabpanel').elements()).toHaveLength(1);
+		tab(pt.exportSocial).element().focus();
+
+		const steps: [string, string][] = [
+			['{ArrowRight}', pt.exportStory],
+			['{End}', pt.exportLink],
+			['{ArrowRight}', pt.exportSocial],
+			['{ArrowLeft}', pt.exportLink],
+			['{Home}', pt.exportSocial]
+		];
+		for (const [key, name] of steps) {
+			await userEvent.keyboard(key);
+			await expect.element(tab(name)).toHaveFocus();
+			await expect.element(tab(name)).toHaveAttribute('aria-selected', 'true');
+			await expect.element(page.getByRole('tabpanel', { name })).toBeVisible();
+		}
+		// Only the selected tab is in the tab order.
+		expect(
+			page
+				.getByRole('tab')
+				.elements()
+				.map((el) => el.tabIndex)
+		).toEqual([0, -1, -1, -1]);
+	});
+
 	it('closes on Escape and returns focus to the trigger', async () => {
 		stubFetch();
 		render(ExportTrigger, { href: fallback.social, label: pt.exportOpen, studio });

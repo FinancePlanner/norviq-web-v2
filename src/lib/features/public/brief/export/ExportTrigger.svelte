@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Opens the Export Studio. A plain link to the social image, so it works
-	// without JS; with JS a plain click loads the studio chunk (bits-ui dialog +
-	// tabs) on demand and opens it. Only a type is imported from the studio, so
+	// without JS; with JS a plain click loads the studio chunk on demand and
+	// opens it. Only a type is imported from the studio, so
 	// none of it is in the brief route's static graph. Styled as a ShareBar
 	// button, at the 44 px target size. rel=nofollow keeps crawlers from
 	// triggering cold renders of the social image.

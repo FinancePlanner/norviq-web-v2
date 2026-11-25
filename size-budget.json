@@ -1,6 +1,6 @@
 {
 	"tolerance": 256,
-	"lazyTotalGzip": 1517702,
+	"lazyTotalGzip": 1497320,
 	"routes": {
 		"/__dev/charts": 87535,
 		"/__dev/kit": 187509,
