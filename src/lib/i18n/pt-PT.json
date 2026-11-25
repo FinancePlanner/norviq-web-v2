@@ -732,7 +732,7 @@
 	"Recommended savings": "Economias recomendadas",
 	"Record Spend": "Gastos registados",
 	"Record expense": "Despesa registada",
-	"Record spend": "Gasto recorde",
+	"Record spend": "Registar despesa",
 	"Recorded Spend": "Gastos registados",
 	"Recorded spend": "Gasto registado",
 	"Recurring": "Recorrente",
@@ -1299,5 +1299,12 @@
 	"Badges and milestones you have earned.": "Distintivos e marcos que conquistou.",
 	"All in %s →": "Tudo em %s →",
 	"Search and commands": "Pesquisa e comandos",
-	"Search holdings, pages, actions": "Pesquisar posições, páginas, comandos"
+	"Search holdings, pages, actions": "Pesquisar posições, páginas, comandos",
+	"Add holding": "Adicionar posição",
+	"Go to": "Ir para",
+	"Actions": "Ações",
+	"Holdings and symbols": "Posições e símbolos",
+	"Searching…": "A pesquisar…",
+	"Symbol search is unavailable right now.": "A pesquisa de símbolos não está disponível neste momento.",
+	"No results for “%s”": "Sem resultados para “%s”"
 }

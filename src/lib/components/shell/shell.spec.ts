@@ -105,6 +105,7 @@ const headings = (html: string) =>
 beforeEach(() => {
 	polled.length = 0;
 	palette.open = false;
+	palette.everOpened = false;
 });
 
 describe('AppShell sidebar (DS 2.0 P3)', () => {
@@ -164,7 +165,20 @@ describe('AppShell sidebar (DS 2.0 P3)', () => {
 	it('Search and commands opens the palette state', () => {
 		expect(palette.open).toBe(false);
 		openPalette();
-		expect(palette.open).toBe(true);
+		expect(palette).toEqual({ open: true, everOpened: true });
+	});
+
+	// The palette is a lazy chunk: nothing of it renders on the server, and the
+	// phone top bar opens it from a search button beside Settings.
+	it('renders no palette on the server and a search button in the phone top bar', () => {
+		const html = shellAt('/dashboard');
+		expect(html).not.toContain('<dialog');
+		expect(html).not.toContain('role="combobox"');
+		const phoneBar = between(html, 'class="app-topbar ', '</header>');
+		expect(phoneBar).toMatch(/<button[^>]*aria-label="Search and commands"/);
+		expect(phoneBar.indexOf('aria-label="Search and commands"')).toBeLessThan(
+			phoneBar.indexOf('href="/settings"')
+		);
 	});
 
 	it('subscribes to the Groups unread badge once', () => {

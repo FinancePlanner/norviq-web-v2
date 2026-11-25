@@ -30,7 +30,7 @@
 	import NavBadge from './NavBadge.svelte';
 	import { domainIcon, sidebarIcon } from './nav-icons.js';
 	import { shell } from './shell-state.svelte.js';
-	import { openPalette } from './palette-state.svelte.js';
+	import { openPalette, palette } from './palette-state.svelte.js';
 	import { pageMotion } from '#lib/motion.js';
 	import UnlockToast from '#lib/features/achievements/UnlockToast.svelte';
 
@@ -105,8 +105,16 @@
 		'app-sidebar-group-label flex h-9 w-full items-center gap-1 rounded-md px-2 text-footnote font-semibold text-sidebar-foreground/70 transition-[margin,opacity] duration-200 ease-linear hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none sidebar-collapsed:pointer-events-none sidebar-collapsed:-mt-9 sidebar-collapsed:opacity-0';
 
 	function onKeydown(e: KeyboardEvent) {
+		if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
+		const key = e.key.toLowerCase();
+		// Cmd/Ctrl+K opens the palette from anywhere, a text field included.
+		if (key === 'k') {
+			e.preventDefault();
+			openPalette();
+			return;
+		}
 		// Cmd/Ctrl+B toggles the rail, never while typing in a field.
-		if (!(e.metaKey || e.ctrlKey) || e.altKey || e.key.toLowerCase() !== 'b') return;
+		if (key !== 'b') return;
 		const el = document.activeElement as HTMLElement | null;
 		if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
 		e.preventDefault();
@@ -131,6 +139,14 @@
 						{#if email}<p class="text-muted-foreground">{email}</p>{/if}
 					</div>
 				{/if}
+				<button
+					type="button"
+					class="app-icon-btn lg:hidden"
+					aria-label={t('Search and commands')}
+					onclick={openPalette}
+				>
+					<Search class="h-5 w-5" />
+				</button>
 				<a
 					href="/settings"
 					class={settingsActive
@@ -339,6 +355,13 @@
 				</main>
 			</div>
 		</div>
+
+		<!-- Loaded on the first opening, so the shell chunk does not carry it. -->
+		{#if palette.everOpened}
+			{#await import('./command-palette/CommandPalette.svelte') then m}
+				<m.default />
+			{/await}
+		{/if}
 
 		<nav class="app-bottom-tabs" aria-label="Primary navigation">
 			{#each bottomBar(t) as tab (tab.key)}
