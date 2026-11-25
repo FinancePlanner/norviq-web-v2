@@ -1,6 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { serveBriefImage } from '#lib/features/public/brief/image.server.js';
-import { OG } from '#lib/features/public/sharecard/sharecard.server.js';
+import { serveExport } from '#lib/features/public/brief/exports.server.js';
 
-// GET /brief/{date}/{slot}/og.png — Go MarketBriefHandler.OGImage.
-export const GET: RequestHandler = (event) => serveBriefImage(event, 'og', OG);
+// GET /brief/{date}/{slot}/og.png: the Go-rendered export, proxied and edge-cached.
+export const GET: RequestHandler = (event) => serveExport(event, 'og.png');
