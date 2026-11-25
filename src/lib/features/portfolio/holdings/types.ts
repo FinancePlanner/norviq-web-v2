@@ -92,7 +92,7 @@ export interface HoldingsViewModel {
 	/** DS 2.0 hero: currency-correct figure, range-based change, honest states. */
 	hero: HoldingsHeroVM | null;
 	selectedTimeRange: string;
-	timeRanges: string[];
+	timeRanges: readonly string[];
 	/** Holdings at market prices, cash excluded. */
 	holdingsValue: string;
 	/** What the holdings cost to buy. */

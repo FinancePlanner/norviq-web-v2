@@ -1205,5 +1205,6 @@
 	"Portfolio flat over %@": "Portefólio estável em %@",
 	"Portfolio up %@ %@": "Portefólio subiu %@ %@",
 	"Portfolio down %@ %@": "Portefólio desceu %@ %@",
-	"Portfolio flat %@": "Portefólio estável %@"
+	"Portfolio flat %@": "Portefólio estável %@",
+	"Timeframe": "Período"
 }

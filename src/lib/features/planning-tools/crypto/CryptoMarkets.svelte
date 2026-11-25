@@ -4,15 +4,18 @@
 	// into #crypto-markets; that handler made one backend call
 	// (GET /v1/crypto/markets?timeframe&limit=100) and formatted it. Here a
 	// TanStack query fetches the same endpoint through the /api proxy and the
-	// view model is built in the browser. The toggles navigate to their
-	// hx-push-url, which changes the props and so the query.
+	// view model is built in the browser. The Timeframe range links (?tf=) and
+	// the bubble-size toggles navigate to their hx-push-url, which changes the
+	// props and so the query.
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { createQuery } from '@tanstack/svelte-query';
 	import EChart from '#lib/charts/EChart.svelte';
 	import GrowthSparkline from '#lib/charts/GrowthSparkline.svelte';
 	import { cryptoBubbles, marketHeatmapWithOptions } from '#lib/charts/index.js';
 	import { EmptyState, SkeletonBlock } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import { t } from '#lib/i18n/context.svelte.js';
 	import { buildCryptoMarketsVM, cryptoMarketsPath, unavailableMarketsVM } from './markets.js';
 	import type {
 		AthRowVM,
@@ -170,8 +173,16 @@
 			<SkeletonBlock heightClass="h-96 rounded-lg" />
 		</div>
 	{:else}
-		<div class="flex flex-wrap items-center justify-between gap-3">
-			{@render toggleGroup('Timeframe', vm.timeframes)}
+		<!-- data-sveltekit-reset="false": a range link keeps the scroll position and
+		     focus, as goto(…, { reset: false }) did for the old toggle buttons. -->
+		<div class="flex flex-wrap items-center justify-between gap-3" data-sveltekit-reset="false">
+			<vigil.RangeControl
+				ranges={vm.timeframeRanges}
+				active={vm.timeframeRange}
+				param="tf"
+				url={page.url}
+				label={t('Timeframe')}
+			/>
 			{#if vm.view === 'bubbles' && vm.sizeOptions.length > 0}
 				{@render toggleGroup('Bubble size', vm.sizeOptions)}
 			{/if}

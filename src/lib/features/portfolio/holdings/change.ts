@@ -1,6 +1,7 @@
 import type { components } from '#lib/api/schema.js';
 import type { T } from '#lib/i18n/index.js';
 import { intlLocale, signedPercent, type AppLocale } from '#lib/money.js';
+import type { RangeKey } from '#lib/ranges.js';
 
 // Portfolio series helpers. The backend's own `changes` are no longer shown:
 // a change is measured over the series on screen (DS 2.0 P1, below), so it
@@ -41,7 +42,7 @@ export function performancePointSeries(points: PerformancePoint[] | null | undef
 // to a range chart is measured from that chart's own first and last point and
 // labelled with the range, never "vs previous close".
 
-export type PerfRange = '1W' | '1M' | '3M' | '1Y' | 'ALL';
+export type PerfRange = Extract<RangeKey, '1W' | '1M' | '3M' | '1Y' | 'ALL'>;
 
 export interface RangeChange {
 	absolute: number;

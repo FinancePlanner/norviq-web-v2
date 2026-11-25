@@ -24,3 +24,4 @@ export { default as SettingsShell, backLinkText } from './SettingsShell.svelte';
 export { default as AuthShell } from './AuthShell.svelte';
 export { default as AuthBrandColumn } from './AuthBrandColumn.svelte';
 export { default as AuthFormColumn } from './AuthFormColumn.svelte';
+export { default as RangeControl } from './RangeControl.svelte';

@@ -4,11 +4,13 @@
 	// DS 2.0 P1: the figure is in the data's currency, the change carries the
 	// range it was measured over, and stale, short or mixed-currency history
 	// says so instead of drawing a trend.
+	import { page } from '$app/state';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { wealthLine } from '#lib/charts/index.js';
 	import { locale, t } from '#lib/i18n/context.svelte.js';
 	import SentimentRollup from '../SentimentRollup.svelte';
+	import { PERF_RANGES } from './hero-vm.js';
 	import type { HoldingsViewModel } from './types.js';
 
 	let { vm }: { vm: HoldingsViewModel } = $props();
@@ -56,13 +58,12 @@
 	{:else if hero?.historyNote}
 		<p class="mt-2 text-subhead text-muted-foreground">{hero.historyNote}</p>
 	{/if}
-	<nav class="segmented-control" aria-label={t('Chart range')}>
-		{#each hero?.rangeLinks ?? [] as link (link.range)}
-			<a
-				href={link.href}
-				class={link.current ? 'segmented-link segmented-link-active' : 'segmented-link'}
-				aria-current={link.current ? 'page' : undefined}>{link.range}</a
-			>
-		{/each}
-	</nav>
+	{#if hero}
+		<vigil.RangeControl
+			ranges={PERF_RANGES}
+			active={hero.range}
+			url={page.url}
+			label={t('Chart range')}
+		/>
+	{/if}
 </vigil.Hero>

@@ -70,6 +70,8 @@
 		withSpinner
 	} from '#lib/components/norviq/index.js';
 	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
+	import { PORTFOLIO_RANGES, parseRange, type RangeKey } from '#lib/ranges.js';
 	import { animateValue, flashOnChange, pageMotion, reveal, staggerOnMount } from '#lib/motion.js';
 
 	let email = $state('');
@@ -83,6 +85,13 @@
 	let price = $state(1234.56);
 	let searchQ = $state('');
 	let heroEl = $state<HTMLParagraphElement | null>(null);
+
+	// DS 2.0 RangeControl: the links really navigate, so the active range is read back from the URL.
+	const ASSET_RANGES: readonly RangeKey[] = ['1W', '1M', '3M', 'YTD', '1Y', 'ALL'];
+	const portfolioRange = $derived(
+		parseRange(page.url.searchParams.get('range'), PORTFOLIO_RANGES, '1M')
+	);
+	const assetRange = $derived(parseRange(page.url.searchParams.get('tf'), ASSET_RANGES, '1Y'));
 
 	const options = [
 		{ value: 'house', label: 'Home' },
@@ -263,6 +272,35 @@
 		>
 			<p>Body</p>
 		</vigil.SettingsShell>
+	</section>
+
+	<!-- DS 2.0 · RangeControl (both themes: use the Appearance toggle at the top;
+	     dark tokens live on html.dark, so a nested .dark wrapper would not re-theme it) -->
+	<section class="space-y-4">
+		<h2 class="text-lg font-semibold">DS 2.0 · RangeControl</h2>
+		<p class="text-sm text-muted-foreground">
+			vigil.RangeControl: links that keep every other query param. Segments are 44px tall below
+			640px.
+		</p>
+		<div class="space-y-2">
+			<p class="text-caption text-muted-foreground">PORTFOLIO_RANGES · ?range=</p>
+			<vigil.RangeControl
+				ranges={PORTFOLIO_RANGES}
+				active={portfolioRange}
+				url={page.url}
+				label="Chart range"
+			/>
+		</div>
+		<div class="space-y-2">
+			<p class="text-caption text-muted-foreground">Asset (crypto coin) · ?tf=</p>
+			<vigil.RangeControl
+				ranges={ASSET_RANGES}
+				active={assetRange}
+				param="tf"
+				url={page.url}
+				label="Timeframe"
+			/>
+		</div>
 	</section>
 
 	<!-- templUI -->
