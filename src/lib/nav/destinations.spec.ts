@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import ptPT from '../i18n/pt-PT.json';
 import { Feature } from '../billing.js';
 import { socialOff, type SocialConfig } from '../nav.js';
+import { DESCRIPTIONS } from './descriptions.js';
 import { DESTINATIONS, DOMAIN_META, DOMAIN_ORDER, type Destination } from './destinations.js';
 import { OLD_NAV_PATHS } from './old-nav-paths.js';
 import {
@@ -280,15 +281,18 @@ describe('destination model (DS 2.0 P3)', () => {
 		expect(routes.filter((re) => re.test('/nowhere'))).toEqual([]);
 	});
 
+	it('every destination has one description, and every description a destination', () => {
+		const ids = DESTINATIONS.map((d) => d.id);
+		expect(ids.filter((key) => !DESCRIPTIONS[key]?.trim())).toEqual([]);
+		expect(Object.keys(DESCRIPTIONS).filter((key) => !ids.includes(key))).toEqual([]);
+	});
+
 	it('every declared label, description and domain string has a pt-PT entry', () => {
 		// Read straight from the data, so a string no builder sends through t
 		// (an Account description, a gated child) is still checked.
 		const strings = [
-			...DESTINATIONS.flatMap((d) => [
-				d.label,
-				d.description,
-				...(d.children ?? []).map((c) => c.label)
-			]),
+			...DESTINATIONS.flatMap((d) => [d.label, ...(d.children ?? []).map((c) => c.label)]),
+			...Object.values(DESCRIPTIONS),
 			...DOMAIN_ORDER.flatMap((key) => [DOMAIN_META[key].label, DOMAIN_META[key].question]),
 			...domainIndex(id, allOn, 'planning').sections.map((s) => s.title)
 		];

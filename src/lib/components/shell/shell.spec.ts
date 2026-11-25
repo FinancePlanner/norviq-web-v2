@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'svelte/server';
 import { createRawSnippet } from 'svelte';
@@ -10,6 +9,9 @@ const state = vi.hoisted(() => {
 	return { page: { url: new URL('https://norviq.test/dashboard'), data } };
 });
 vi.mock('$app/state', () => state);
+vi.mock('$app/forms', () => ({ enhance: () => ({}) }));
+// requireFeature reads billing; unknown entitlement locks every Pro feature.
+vi.mock('#lib/server/app-context.js', () => ({ loadBillingContext: () => Promise.resolve(null) }));
 
 // NavBadge polls through createQuery; record each subscription instead.
 const polled = vi.hoisted(() => [] as unknown[]);
@@ -29,6 +31,11 @@ import { load as domainLoad } from '../../../routes/(app)/[domain=domain]/+page.
 import DomainPage from '../../../routes/(app)/[domain=domain]/+page.svelte';
 import { load as moreLoad } from '../../../routes/(app)/more/+page.server.js';
 import MorePage from '../../../routes/(app)/more/+page.svelte';
+import { load as yearLoad } from '../../../routes/(app)/expenses/year/+page.server.js';
+import YearPage from '../../../routes/(app)/expenses/year/+page.svelte';
+import IntegrationsPage from '../../../routes/(app)/settings/integrations/+page.svelte';
+import SettingsPage from '../../../routes/(app)/settings/+page.svelte';
+import { emptyIBKRVM, emptyTelegramVM } from '#lib/features/settings-admin/integrations/types.js';
 import AppShell from './AppShell.svelte';
 import { parseGroups } from './shell-state.svelte.js';
 import { openPalette, palette } from './palette-state.svelte.js';
@@ -319,18 +326,71 @@ describe('shell group state', () => {
 });
 
 describe('one name per destination (§4.4)', () => {
-	const read = (route: string) =>
-		readFileSync(new URL(`../../../routes/(app)/${route}/+page.svelte`, import.meta.url), 'utf8');
+	// The pages render with empty view models; only their names are under test.
+	const named = (C: unknown, data: Record<string, unknown>) => {
+		state.page.url = new URL('https://norviq.test/');
+		state.page.data = { locale: 'en' };
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- PageProps carries route types the test does not build
+		return render(C as any, { props: { data, form: null } });
+	};
+	const h1 = (html: string) => /<h1[^>]*>([^<]*)<\/h1>/.exec(html)?.[1];
 
-	it.each([
-		['expenses/year', 'Spending log', 'Year overview'],
-		['settings/integrations', 'Brokers and imports', 'Integrations']
-	])('%s is titled %s', (route, name, old) => {
-		const src = read(route);
-		expect(src).toContain(`<title>{t('${name}')} - Norviq</title>`);
-		expect(src).toContain(`title={t('${name}')}`);
-		expect(src).not.toContain(`<title>${old}`);
-		expect(src).not.toContain(`title="${old}"`);
+	it('/expenses/year is "Spending log" in its header, title and Pro gate', async () => {
+		const page = named(YearPage, {
+			year: 2026,
+			labels: [],
+			values: [],
+			currency: 'EUR',
+			totalSpent: '',
+			totalPlanned: '',
+			yoySpent: '',
+			yoyPlanned: '',
+			months: []
+		});
+		expect(h1(page.body)).toBe('Spending log');
+		expect(page.head).toContain('<title>Spending log - Norviq</title>');
+		await expect(
+			Promise.resolve(yearLoad({} as Parameters<typeof yearLoad>[0]))
+		).rejects.toMatchObject({ status: 402, body: { proGate: 'Spending log' } });
+	});
+
+	it('/settings/integrations is "Brokers and imports" in its header and title', () => {
+		const page = named(IntegrationsPage, {
+			vm: {
+				brokers: [],
+				ibkr: emptyIBKRVM(),
+				mcp: {
+					isPro: false,
+					hasTokens: false,
+					tokenCount: 0,
+					liveCount: 0,
+					lastActivity: '',
+					agenticLabel: '',
+					scopes: [],
+					agents: [],
+					loadError: false,
+					needsPro: false,
+					empty: true
+				},
+				telegram: emptyTelegramVM(),
+				appStoreURL: '',
+				hasLoadError: false,
+				errorMessage: '',
+				successMessage: ''
+			}
+		});
+		expect(h1(page.body)).toBe('Brokers and imports');
+		expect(page.head).toContain('<title>Brokers and imports - Norviq</title>');
+	});
+
+	it('the Settings hub card to /settings/integrations says "Brokers and imports"', () => {
+		const page = named(SettingsPage, {
+			vm: { hasProfile: false, profileError: '' },
+			social: socialOff
+		});
+		const card = between(page.body, 'href="/settings/integrations"', '</a>');
+		expect(card).toContain('Brokers and imports');
+		expect(card).not.toMatch(/>\s*Integrations\s*</);
 	});
 });
 

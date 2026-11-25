@@ -16,6 +16,7 @@ import {
 	type NavLink,
 	type Tr
 } from './destinations.js';
+import { DESCRIPTIONS } from './descriptions.js';
 
 // The one filter (gates) and the view models every navigation surface reads:
 // sidebar, domain index pages, /more, the section sub-nav and the ⌘K palette.
@@ -128,7 +129,10 @@ export function domainIndex(
 	sections: { title: string; items: (NavItemVM & { description: string })[] }[];
 } {
 	const rows = visibleDestinations(ctx).filter((d) => d.domain === key);
-	const row = (d: Destination) => ({ ...itemVM(t, ctx, d), description: t(d.description) });
+	const row = (d: Destination) => ({
+		...itemVM(t, ctx, d),
+		description: t(DESCRIPTIONS[d.id] ?? '')
+	});
 	const sections =
 		key === 'planning'
 			? PLANNING_SECTIONS.map((s) => ({

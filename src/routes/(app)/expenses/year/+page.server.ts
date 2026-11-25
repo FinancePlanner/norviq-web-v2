@@ -14,7 +14,7 @@ type MonthRow = components['schemas']['BudgetMonthSummaryResponse'];
 type YearRow = components['schemas']['BudgetYearSummaryResponse'];
 
 export const load: PageServerLoad = async (event) => {
-	await requireFeature(event, Feature.YearOverview, 'Year overview');
+	await requireFeature(event, Feature.YearOverview, 'Spending log');
 
 	let year = new Date().getFullYear();
 	const raw = (event.url.searchParams.get('year') ?? '').trim();

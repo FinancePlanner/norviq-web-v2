@@ -1,8 +1,9 @@
 import { Feature, type FeatureKey } from '../billing.js';
 
 // The DS 2.0 P3 destination table (docs/superpowers/plans/2026-11-25-ds2-p3-destinations.md,
-// web columns) as data. Labels, descriptions and section titles are English i18n
-// ids; the builders in visible.ts pass them through `t`.
+// web columns) as data. Labels and section titles are English i18n ids; the
+// builders in visible.ts pass them through `t`. The one-line descriptions live in
+// descriptions.ts, so the client shell (which never shows them) does not ship them.
 
 /** Translator: an i18n id in, the localized string out. */
 export type Tr = (s: string) => string;
@@ -34,8 +35,6 @@ export interface Destination extends NavLink {
 	/** Kebab-case, unique. */
 	id: string;
 	domain: DomainKey | 'account';
-	/** One line, English source string (translated by t). */
-	description: string;
 	/** 1..7 sidebar order; absent = index/⌘K only. */
 	pick?: number;
 	/** Exact paths, or 'prefix/*' for everything below prefix. */
@@ -71,24 +70,21 @@ export const DESTINATIONS: readonly Destination[] = [
 		domain: 'today',
 		pick: 1,
 		label: 'Overview',
-		path: '/dashboard',
-		description: 'Where you stand today across money, wealth and plans.'
+		path: '/dashboard'
 	},
 	{
 		id: 'period',
 		domain: 'today',
 		pick: 2,
 		label: 'Period',
-		path: '/dashboard/pulse',
-		description: 'How your money moved over the period you choose.'
+		path: '/dashboard/pulse'
 	},
 	{
 		id: 'activity',
 		domain: 'today',
 		pick: 3,
 		label: 'Activity',
-		path: '/dashboard/activity',
-		description: 'Everything that happened in your accounts, newest first.'
+		path: '/dashboard/activity'
 	},
 	{
 		id: 'ask-q',
@@ -97,16 +93,14 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Ask Q',
 		path: '/assistant',
 		aliases: ['/assistant/*'],
-		featureKey: Feature.AIInsights,
-		description: 'Ask Q about your money, holdings and plans.'
+		featureKey: Feature.AIInsights
 	},
 	{
 		id: 'notifications',
 		domain: 'today',
 		pick: 5,
 		label: 'Notifications',
-		path: '/notifications',
-		description: 'Alerts and updates that need your attention.'
+		path: '/notifications'
 	},
 
 	// Money: "Where does my money go?"
@@ -117,7 +111,6 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Budget',
 		path: '/expenses',
 		aliases: ['/expenses/*'],
-		description: "Plan this month's spending and see what is left.",
 		children: [
 			{ label: 'Budget planner', path: '/expenses' },
 			{ label: 'Spending log', path: '/expenses/year', featureKey: Feature.YearOverview }
@@ -129,32 +122,28 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 2,
 		label: 'Spending log',
 		path: '/expenses/year',
-		featureKey: Feature.YearOverview,
-		description: "Every month of the year's spending, category by category."
+		featureKey: Feature.YearOverview
 	},
 	{
 		id: 'comparisons',
 		domain: 'money',
 		pick: 3,
 		label: 'Comparisons',
-		path: '/reports/trends',
-		description: "How this period's spending compares with earlier ones."
+		path: '/reports/trends'
 	},
 	{
 		id: 'receipts',
 		domain: 'money',
 		pick: 4,
 		label: 'Receipts',
-		path: '/expenses/receipt/import',
-		description: 'Scan receipts and turn them into expenses.'
+		path: '/expenses/receipt/import'
 	},
 	{
 		id: 'spending-reports',
 		domain: 'money',
 		pick: 5,
 		label: 'Spending reports',
-		path: '/reports/spending',
-		description: 'Where your money went, by category and over time.'
+		path: '/reports/spending'
 	},
 
 	// Wealth: "What do I own and how is it doing?"
@@ -166,48 +155,42 @@ export const DESTINATIONS: readonly Destination[] = [
 		path: '/portfolio',
 		// Covers /portfolio/positions/* and /portfolio/[symbol]/*; every other
 		// /portfolio/… destination is a longer exact match and wins.
-		aliases: ['/portfolio/*'],
-		description: "Every holding across your portfolios, with today's change."
+		aliases: ['/portfolio/*']
 	},
 	{
 		id: 'portfolios',
 		domain: 'wealth',
 		pick: 2,
 		label: 'Portfolios',
-		path: '/portfolios',
-		description: 'Create, rename and organise your portfolios.'
+		path: '/portfolios'
 	},
 	{
 		id: 'allocation',
 		domain: 'wealth',
 		pick: 3,
 		label: 'Allocation',
-		path: '/portfolio/allocation',
-		description: 'How your wealth splits across assets, sectors and regions.'
+		path: '/portfolio/allocation'
 	},
 	{
 		id: 'gains-and-dividends',
 		domain: 'wealth',
 		pick: 4,
 		label: 'Gains and dividends',
-		path: '/portfolio/dividends',
-		description: 'Realised gains and the dividends your holdings pay.'
+		path: '/portfolio/dividends'
 	},
 	{
 		id: 'watchlist',
 		domain: 'wealth',
 		pick: 5,
 		label: 'Watchlist',
-		path: '/portfolio/watchlist',
-		description: 'Symbols you follow but do not own yet.'
+		path: '/portfolio/watchlist'
 	},
 	{
 		id: 'earnings',
 		domain: 'wealth',
 		pick: 6,
 		label: 'Earnings',
-		path: '/portfolio/earnings',
-		description: 'Upcoming and recent earnings for what you hold.'
+		path: '/portfolio/earnings'
 	},
 	{
 		id: 'rebalancing',
@@ -216,16 +199,14 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Rebalancing',
 		path: '/portfolio/rebalancing',
 		aliases: ['/portfolio/rebalancing-rules'],
-		featureKey: Feature.RebalancingRules,
-		description: 'Bring your portfolio back to its target mix.'
+		featureKey: Feature.RebalancingRules
 	},
 	{
 		id: 'sector-gains',
 		domain: 'wealth',
 		label: 'Sector gains',
 		path: '/portfolio/sector-gains',
-		featureKey: Feature.Statistics,
-		description: 'Gains and losses broken down by sector.'
+		featureKey: Feature.Statistics
 	},
 	{
 		id: 'crypto',
@@ -233,30 +214,26 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Crypto',
 		path: '/crypto',
 		aliases: ['/crypto/*'],
-		featureKey: Feature.Crypto,
-		description: 'Your crypto holdings and the coins you follow.'
+		featureKey: Feature.Crypto
 	},
 	{
 		id: 'targets',
 		domain: 'wealth',
 		label: 'Targets',
 		path: '/portfolio/targets',
-		featureKey: Feature.TargetAlerts,
-		description: 'Price targets and the alerts they trigger.'
+		featureKey: Feature.TargetAlerts
 	},
 	{
 		id: 'thesis-watch',
 		domain: 'wealth',
 		label: 'Thesis Watch',
-		path: '/portfolio/news',
-		description: 'News that tests the thesis behind each holding.'
+		path: '/portfolio/news'
 	},
 	{
 		id: 'portfolio-report',
 		domain: 'wealth',
 		label: 'Portfolio report',
-		path: '/reports/portfolio',
-		description: "A report on your portfolio's performance and mix."
+		path: '/reports/portfolio'
 	},
 
 	// Planning: "Where am I heading?"
@@ -266,8 +243,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 1,
 		label: 'Goals',
 		path: '/goals',
-		aliases: ['/goals/*'],
-		description: 'Your financial goals and whether you are on track.'
+		aliases: ['/goals/*']
 	},
 	{
 		id: 'net-worth-forecast',
@@ -275,8 +251,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 2,
 		label: 'Net worth forecast',
 		path: '/forecast',
-		featureKey: Feature.NetWorthForecasting,
-		description: 'Where your net worth could be in the years ahead.'
+		featureKey: Feature.NetWorthForecasting
 	},
 	{
 		id: 'retirement',
@@ -284,8 +259,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 3,
 		label: 'Retirement',
 		path: '/planning/retire',
-		aliases: ['/planning/retire/*', '/portfolio/retirement'],
-		description: 'When you could retire and what it takes to get there.'
+		aliases: ['/planning/retire/*', '/portfolio/retirement']
 	},
 	{
 		id: 'scenarios',
@@ -294,8 +268,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Scenarios',
 		path: '/scenarios',
 		aliases: ['/scenarios/*'],
-		featureKey: Feature.ScenarioPlanning,
-		description: 'Test what-if changes against your plan.'
+		featureKey: Feature.ScenarioPlanning
 	},
 	{
 		id: 'simulator',
@@ -303,8 +276,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 5,
 		label: 'Simulator',
 		path: '/simulator',
-		aliases: ['/simulator/*'],
-		description: 'Simulate how a portfolio could grow over time.'
+		aliases: ['/simulator/*']
 	},
 	{
 		id: 'tax-strategy',
@@ -313,31 +285,27 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Tax strategy',
 		path: '/tax',
 		aliases: ['/tax/*'],
-		featureKey: Feature.TaxOptimization,
-		description: 'Ways to lower the tax on your investments this year.'
+		featureKey: Feature.TaxOptimization
 	},
 	{
 		id: 'grow',
 		domain: 'planning',
 		label: 'Grow',
 		path: '/planning/grow',
-		aliases: ['/planning/grow/*'],
-		description: 'How regular saving and investing can grow your wealth.'
+		aliases: ['/planning/grow/*']
 	},
 	{
 		id: 'terminal-sizing',
 		domain: 'planning',
 		label: 'Terminal sizing',
 		path: '/terminal',
-		aliases: ['/terminal/*'],
-		description: 'Size a position from the market cap you expect a company to reach.'
+		aliases: ['/terminal/*']
 	},
 	{
 		id: 'tools',
 		domain: 'planning',
 		label: 'Tools',
-		path: '/tools',
-		description: 'Calculators for everyday money decisions.'
+		path: '/tools'
 	},
 
 	// Intelligence: "What's happening in markets and why?"
@@ -347,8 +315,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 1,
 		label: 'Market brief',
 		path: '/brief',
-		aliases: ['/brief/*'],
-		description: "The day's market story at the open and the close."
+		aliases: ['/brief/*']
 	},
 	{
 		id: 'markets',
@@ -357,7 +324,6 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Markets',
 		path: '/markets',
 		aliases: ['/markets/*'],
-		description: 'Indices, movers and what is driving them.',
 		children: [
 			{ label: 'Overview', path: '/markets' },
 			{ label: 'Retail sentiment', path: '/markets/sentiment' },
@@ -372,7 +338,6 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Economy',
 		path: '/economy',
 		aliases: ['/economy/*'],
-		description: 'Inflation, jobs, housing and central bank policy.',
 		children: [
 			{ label: 'Inflation', path: '/economy' },
 			{ label: 'Your inflation', path: '/economy/personal' },
@@ -388,8 +353,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Research',
 		path: '/research',
 		aliases: ['/research/*'],
-		featureKey: Feature.AdvancedResearch,
-		description: 'In-depth research and memos on the companies you follow.'
+		featureKey: Feature.AdvancedResearch
 	},
 	{
 		id: 'insights',
@@ -397,8 +361,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 5,
 		label: 'Insights',
 		path: '/dashboard/insights',
-		featureKey: Feature.AIInsights,
-		description: 'Patterns Q has spotted in your money and holdings.'
+		featureKey: Feature.AIInsights
 	},
 	{
 		id: 'reports',
@@ -409,7 +372,6 @@ export const DESTINATIONS: readonly Destination[] = [
 		// /reports/advanced, /reports/deep-dive and every /reports/[tab] that is
 		// not its own destination (those are longer exact matches and win).
 		aliases: ['/reports/*'],
-		description: 'Reports on your finances, ready to read or export.',
 		children: [
 			{ label: 'Overview', path: '/reports' },
 			{
@@ -425,16 +387,14 @@ export const DESTINATIONS: readonly Destination[] = [
 		domain: 'intelligence',
 		label: 'Smart screens',
 		path: '/portfolio/screens',
-		featureKey: Feature.SmartScreening,
-		description: 'Filter the market for stocks that meet your criteria.'
+		featureKey: Feature.SmartScreening
 	},
 	{
 		id: 'chart-builder',
 		domain: 'intelligence',
 		label: 'Chart builder',
 		path: '/chart-builder',
-		featureKey: Feature.ValuationCases,
-		description: 'Build and compare charts of any metric.'
+		featureKey: Feature.ValuationCases
 	},
 
 	// Community: "What are others doing?"
@@ -446,7 +406,6 @@ export const DESTINATIONS: readonly Destination[] = [
 		path: '/friends',
 		aliases: ['/friends/*', '/xp'],
 		gate: 'social',
-		description: 'Friends on Norviq, their progress and your invites.',
 		children: [
 			{ label: 'Friends', path: '/friends' },
 			{ label: 'Leaderboard', path: '/friends/leaderboard', gate: 'leaderboards' },
@@ -465,7 +424,6 @@ export const DESTINATIONS: readonly Destination[] = [
 		gate: 'groups',
 		// Keeps the unread count on the sidebar pick, as the old Groups group had.
 		badgeURL: '/groups/unread-badge',
-		description: 'Private groups to talk money with people you choose.',
 		children: [
 			{ label: 'Your groups', path: '/groups', badgeURL: '/groups/unread-badge' },
 			{ label: 'Discover', path: '/groups/discover', gate: 'groupsPublic' },
@@ -480,7 +438,6 @@ export const DESTINATIONS: readonly Destination[] = [
 		path: '/boards',
 		// The community admin page belonged to Community in the old nav too.
 		aliases: ['/boards/*', '/admin/community'],
-		description: 'Public discussion boards on markets and money.',
 		children: [
 			{ label: 'All boards', path: '/boards' },
 			{ label: 'Articles', path: '/articles', gate: 'articles' }
@@ -493,8 +450,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		label: 'Articles',
 		path: '/articles',
 		aliases: ['/articles/*'],
-		gate: 'articles',
-		description: 'Articles written by the Norviq community.'
+		gate: 'articles'
 	},
 
 	// Account: not a domain. Sidebar foot on web.
@@ -505,7 +461,6 @@ export const DESTINATIONS: readonly Destination[] = [
 		path: '/settings',
 		// Settings sub-pages outside the 14 children (blocked users, privacy, …).
 		aliases: ['/settings/*'],
-		description: 'Your profile, appearance, subscription and privacy.',
 		children: [
 			{ label: 'Profile', path: '/settings' },
 			{ label: 'Appearance', path: '/settings/appearance' },
@@ -528,15 +483,13 @@ export const DESTINATIONS: readonly Destination[] = [
 		id: 'brokers-and-imports',
 		domain: 'account',
 		label: 'Brokers and imports',
-		path: '/settings/integrations',
-		description: 'Connect your brokers and import your holdings.'
+		path: '/settings/integrations'
 	},
 	{
 		id: 'achievements',
 		domain: 'account',
 		label: 'Achievements',
 		path: '/achievements',
-		gate: 'achievements',
-		description: 'Badges and milestones you have earned.'
+		gate: 'achievements'
 	}
 ];
