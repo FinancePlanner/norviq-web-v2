@@ -1,7 +1,9 @@
 <script lang="ts">
 	// dashboard.MarketBriefContent: the brief itself, below its title. Shared by
 	// the card (MarketBriefCard) and the brief's public page (/brief/{date}/{slot}).
-	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import InsetList from '#lib/components/norviq/vigil/InsetList.svelte';
+	import RowTrailing from '#lib/components/norviq/vigil/RowTrailing.svelte';
+	import ListRow from '#lib/components/norviq/vigil/ListRow.svelte';
 	import Badge from '#lib/components/norviq/tui/Badge.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import {
@@ -50,28 +52,28 @@
 			>
 			<span class="sr-only">({t(directionKey(group.tone))})</span>
 		</h3>
-		<vigil.InsetList class="market-brief-quotes">
+		<InsetList class="market-brief-quotes">
 			{#each group.rows as row, i (i)}
 				{#snippet flag()}<span class="text-subhead">{row.flag}</span>{/snippet}
 				{#snippet trailing()}
-					<vigil.RowTrailing
+					<RowTrailing
 						value={row.level}
 						caption={directionMarker(row.direction) + ' ' + row.change}
 					/>
 					<span class="sr-only">{t(directionKey(row.direction))}</span>
 				{/snippet}
-				<vigil.ListRow icon={flag} title={row.name} subtitle={row.symbol} {trailing} />
+				<ListRow icon={flag} title={row.name} subtitle={row.symbol} {trailing} />
 			{/each}
-		</vigil.InsetList>
+		</InsetList>
 	</section>
 {/each}
 {#if vm.notes.length > 0}
 	<section class="mt-4" aria-label={t('Highlights')}>
-		<vigil.InsetList class="market-brief-notes">
+		<InsetList class="market-brief-notes">
 			{#each vm.notes as note, i (i)}
 				{@render item(itemMarker(note.kind), note)}
 			{/each}
-		</vigil.InsetList>
+		</InsetList>
 	</section>
 {/if}
 {#if vm.stories.length > 0}

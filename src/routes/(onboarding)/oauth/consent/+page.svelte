@@ -1,7 +1,9 @@
 <script lang="ts">
 	// oauth.ConsentPage. Deny / Authorize are plain form posts: the response is
 	// a redirect to the MCP client's (possibly custom-scheme) redirect URI.
-	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import AuthShell from '#lib/components/norviq/vigil/AuthShell.svelte';
+	import AuthBrandColumn from '#lib/components/norviq/vigil/AuthBrandColumn.svelte';
+	import AuthFormColumn from '#lib/components/norviq/vigil/AuthFormColumn.svelte';
 	import AuthBrandPanel from '#lib/components/norviq/AuthBrandPanel.svelte';
 	import BrandLogo from '#lib/components/norviq/BrandLogo.svelte';
 	import FormErrorBanner from '#lib/components/norviq/FormErrorBanner.svelte';
@@ -18,11 +20,11 @@
 </svelte:head>
 
 <div class="app-page-content oauth-consent auth-vigil mx-auto max-w-md">
-	<vigil.AuthShell class="min-h-0">
-		<vigil.AuthBrandColumn>
+	<AuthShell class="min-h-0">
+		<AuthBrandColumn>
 			<AuthBrandPanel />
-		</vigil.AuthBrandColumn>
-		<vigil.AuthFormColumn>
+		</AuthBrandColumn>
+		<AuthFormColumn>
 			<div class="auth-form-card glass-card space-y-5">
 				<header class="auth-modern-header flex flex-col items-center text-center">
 					<BrandLogo variant="icon" />
@@ -56,6 +58,6 @@
 					</form>
 				</div>
 			</div>
-		</vigil.AuthFormColumn>
-	</vigil.AuthShell>
+		</AuthFormColumn>
+	</AuthShell>
 </div>
