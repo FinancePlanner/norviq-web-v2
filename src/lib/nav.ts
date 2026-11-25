@@ -1,4 +1,5 @@
 import { Feature, type FeatureLocked } from './billing.js';
+import type { Tr } from './nav/destinations.js';
 
 // Port of norviq-web internal/nav/nav.go. Labels are i18n ids; callers pass
 // `t` so the tree comes back localized.
@@ -83,7 +84,7 @@ export const achievementsOn = (c: SocialConfig) => c.enabled && !!c.achievements
 /** Checks achievements too, so a stale config can never show a feed without them. */
 export const activityFeedOn = (c: SocialConfig) => achievementsOn(c) && !!c.activityFeed;
 
-type Tr = (s: string) => string;
+export type { Tr };
 
 function applyFeatureLocks(items: NavItem[], locked: FeatureLocked): NavItem[] {
 	if (!locked) return items;
