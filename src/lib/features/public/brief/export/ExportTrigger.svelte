@@ -3,7 +3,8 @@
 	// without JS; with JS a plain click loads the studio chunk (bits-ui dialog +
 	// tabs) on demand and opens it. Only a type is imported from the studio, so
 	// none of it is in the brief route's static graph. Styled as a ShareBar
-	// button, at the 44 px target size.
+	// button, at the 44 px target size. rel=nofollow keeps crawlers from
+	// triggering cold renders of the social image.
 	import type { Component } from 'svelte';
 	import type { StudioProps } from './ExportStudio.svelte';
 
@@ -32,6 +33,7 @@
 
 <a
 	{href}
+	rel="nofollow"
 	class="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border px-3 py-1.5 text-sm"
 	data-export-trigger
 	{onclick}

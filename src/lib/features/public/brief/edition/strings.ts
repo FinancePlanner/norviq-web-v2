@@ -17,6 +17,8 @@ export interface ExportStrings {
 	exportOpenPdf: string;
 	/** "%d" is replaced by the page count. */
 	exportPages: string;
+	/** The page count when it is 1. */
+	exportOnePage: string;
 	exportCopyLink: string;
 	exportCopied: string;
 	exportUnavailable: string;
@@ -156,6 +158,7 @@ const en: EditionStrings = {
 	exportShare: 'Share',
 	exportOpenPdf: 'Open PDF',
 	exportPages: '%d pages',
+	exportOnePage: '1 page',
 	exportCopyLink: 'Copy link',
 	exportCopied: 'Copied',
 	exportUnavailable: 'This export is unavailable right now. Try again shortly.',
@@ -251,6 +254,7 @@ const pt: EditionStrings = {
 	exportShare: 'Partilhar',
 	exportOpenPdf: 'Abrir PDF',
 	exportPages: '%d páginas',
+	exportOnePage: '1 página',
 	exportCopyLink: 'Copiar ligação',
 	exportCopied: 'Copiado',
 	exportUnavailable:

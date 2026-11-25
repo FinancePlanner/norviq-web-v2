@@ -174,6 +174,23 @@ describe('serveExport', () => {
 		]);
 	});
 
+	it('caps rev and v at 9999', async () => {
+		mockFetch.mockImplementation(() => Promise.resolve(upstream()));
+		const a = setup('og.png', '?rev=10000&v=1');
+		await run(a);
+		expect(mockFetch.mock.calls[0][4]?.query).not.toHaveProperty('rev');
+		expect(mockFetch.mock.calls[0][4]?.query).not.toHaveProperty('v');
+		expect([...a.store.keys()]).toEqual([
+			'https://www.norviq.org/brief/2026-11-20/evening/og.png?lang=en'
+		]);
+		const b = setup('og.png', '?rev=9999&v=1');
+		await run(b);
+		expect(mockFetch.mock.calls[1][4]?.query).toMatchObject({ rev: 9999, v: 1 });
+		expect([...b.store.keys()]).toEqual([
+			'https://www.norviq.org/brief/2026-11-20/evening/og.png?lang=en&rev=9999&v=1'
+		]);
+	});
+
 	it('normalises the cache key', async () => {
 		mockFetch.mockImplementation(() => Promise.resolve(upstream()));
 		const a = setup('og.png', '?rev=abc&x=1&utm_source=x');
@@ -231,6 +248,19 @@ describe('serveExport', () => {
 			expect(res.headers.get('Cache-Control')).toBe('no-store');
 			expect(s.put).not.toHaveBeenCalled();
 		}
+	});
+
+	it('warns on every non-200 upstream status except 404', async () => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		for (const status of [404, 400, 503]) {
+			mockFetch.mockResolvedValue(upstream({}, status));
+			await run(setup('story.png', ''));
+		}
+		expect(warn.mock.calls).toEqual([
+			['brief export', 'story.png', 400],
+			['brief export', 'story.png', 503]
+		]);
+		warn.mockRestore();
 	});
 
 	it('uses the public token for a signed-in viewer', async () => {
@@ -361,6 +391,7 @@ describe('serveManifest', () => {
 	});
 
 	it('maps exports.json errors like the files', async () => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 		const path = '/brief/2026-11-20/evening/exports.json';
 		mockFetch.mockResolvedValue(manifestResponse('no', 404));
 		let res = await serveManifest(setup('og.png', '', { path }).event);
@@ -376,5 +407,10 @@ describe('serveManifest', () => {
 		await Promise.all(s.waits);
 		expect(res.status).toBe(503);
 		expect(s.put).not.toHaveBeenCalled();
+		expect(warn.mock.calls).toEqual([
+			['brief export', 'exports.json', 503],
+			['brief export', 'exports.json', 200]
+		]);
+		warn.mockRestore();
 	});
 });

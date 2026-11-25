@@ -152,6 +152,9 @@ describe('ExportStudio', () => {
 
 		await expect.element(page.getByText(pt.exportUnavailable)).toBeVisible();
 		expect(seen).toEqual([fallback.social + VERSION, fallback.social]);
+		// No empty preview frame above the note.
+		const frame = page.getByAltText(pt.exportSocialAlt).element().parentElement;
+		expect(frame?.getBoundingClientRect().height).toBe(0);
 	});
 
 	it('keeps a manifest preview that loads', async () => {
@@ -247,6 +250,17 @@ describe('ExportStudio', () => {
 		await expect.element(open).toHaveAttribute('rel', 'noopener');
 	});
 
+	it('says 1 página for a one-page PDF', async () => {
+		stubFetch(200, {
+			...manifest,
+			formats: manifest.formats.map((f) => (f.id === 'pdf' ? { ...f, pages: 1 } : f))
+		});
+		render(ExportStudio, { ...studio, open: true });
+
+		await page.getByRole('tab', { name: pt.exportPdf }).click();
+		await expect.element(page.getByText('1 página', { exact: true })).toBeVisible();
+	});
+
 	it('renders without a manifest', async () => {
 		stubFetch(503);
 		const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue();
@@ -293,6 +307,8 @@ describe('ExportStudio', () => {
 
 		const trigger = page.getByRole('link', { name: pt.exportOpen });
 		await expect.element(trigger).toHaveAttribute('href', fallback.social);
+		// Crawlers must not follow it into a cold render.
+		await expect.element(trigger).toHaveAttribute('rel', 'nofollow');
 		await trigger.click();
 		const dialog = page.getByRole('dialog', { name: pt.exportTitle });
 		await expect.element(dialog).toBeVisible();
@@ -303,18 +319,58 @@ describe('ExportStudio', () => {
 	});
 
 	it('fits a 320 px screen', async () => {
-		stubFetch();
+		// Previews the test browser can load, at the formats' aspect ratios.
+		const png = (w: number, h: number) => {
+			const canvas = document.createElement('canvas');
+			canvas.width = w;
+			canvas.height = h;
+			return canvas.toDataURL('image/png');
+		};
+		const urls: Partial<Record<ExportFormat, string>> = {
+			og: png(120, 63),
+			social: png(108, 135),
+			story: png(108, 192)
+		};
+		stubFetch(200, {
+			...manifest,
+			formats: manifest.formats.map((f) => ({ ...f, url: urls[f.id] ?? f.url }))
+		});
 		await page.viewport(320, 640);
 		render(ExportStudio, { ...studio, open: true });
 
 		const dialog = page.getByRole('dialog', { name: pt.exportTitle });
 		await expect.element(dialog).toBeVisible();
-		for (const name of [pt.exportSocial, pt.exportPdf]) {
-			await page.getByRole('tab', { name }).click();
+		const fitsScreen = () => {
 			const el = dialog.element();
 			expect(el.scrollWidth).toBeLessThanOrEqual(el.clientWidth);
 			expect(el.getBoundingClientRect().right).toBeLessThanOrEqual(320);
+		};
+		/** Frame height and the height of the image drawn in it (object-fit: contain), once loaded. */
+		const heights = (alt: string): [number, number] => {
+			const el = page.getByAltText(alt).query();
+			if (!(el instanceof HTMLImageElement) || !el.naturalWidth) return [0, -1];
+			const scale = Math.min(el.clientWidth / el.naturalWidth, el.clientHeight / el.naturalHeight);
+			const frame = el.parentElement?.getBoundingClientRect().height ?? 0;
+			return [frame, el.naturalHeight * scale];
+		};
+		const previews: [string, string][] = [
+			[pt.exportSocial, pt.exportSocialAlt],
+			[pt.exportStory, pt.exportStoryAlt],
+			[pt.exportLink, pt.exportLinkAlt]
+		];
+		for (const [name, alt] of previews) {
+			await page.getByRole('tab', { name }).click();
+			// The frame is exactly as tall as the image drawn in it.
+			await expect
+				.poll(() => {
+					const [frame, drawn] = heights(alt);
+					return frame > 0 && Math.abs(frame - drawn) <= 1;
+				})
+				.toBe(true);
+			fitsScreen();
 		}
+		await page.getByRole('tab', { name: pt.exportPdf }).click();
+		fitsScreen();
 		for (const tab of page.getByRole('tab').elements()) {
 			expect(tab.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
 		}

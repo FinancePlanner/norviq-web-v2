@@ -191,7 +191,8 @@
 {#snippet preview(id: Image, alt: string)}
 	{@const url = urlFor(id)}
 	{@const [width, height] = sizeOf(id)}
-	<div class="studio-preview" style:aspect-ratio="{width} / {height}">
+	<!-- Hidden once both URLs failed, so no empty frame sits above the note. -->
+	<div class="studio-preview" style:--w={width} style:--h={height} hidden={settled && !url}>
 		{#if settled}
 			<img
 				src={url || fallback[id]}
@@ -265,7 +266,9 @@
 					<div>
 						<p class="studio-file__name">{text.exportPdf}</p>
 						{#if pages > 0}
-							<p class="studio-note">{text.exportPages.replace('%d', String(pages))}</p>
+							<p class="studio-note">
+								{pages === 1 ? text.exportOnePage : text.exportPages.replace('%d', String(pages))}
+							</p>
 						{/if}
 					</div>
 				</div>
@@ -349,15 +352,18 @@
 		gap: 1rem;
 		padding-top: 0.5rem;
 	}
+	/* The format's ratio sets the frame: as wide as fits, at most min(52dvh, 26rem)
+	 * tall. The hairline is an outline, so it does not change the frame's size. */
 	.studio-preview {
-		display: flex;
-		justify-content: center;
-		height: min(52dvh, 26rem);
-		max-width: 100%;
+		width: min(100%, calc(min(52dvh, 26rem) * var(--w) / var(--h)));
+		aspect-ratio: var(--w) / var(--h);
 		margin-inline: auto;
-		border: 1px solid var(--border);
+		outline: 1px solid var(--border);
 		border-radius: 0.5rem;
 		overflow: hidden;
+	}
+	.studio-preview[hidden] {
+		display: none;
 	}
 	.studio-preview img {
 		display: block;

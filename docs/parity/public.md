@@ -38,7 +38,7 @@ Share images were compared visually with Go's output.
 - [x] GET /market-brief → `(public)/market-brief/+server.ts` (JSON `{vm}` for `MarketBriefShell`, same contract as `/dashboard/market-brief`)
 - [x] GET /brief → `(public)/brief/+page.server.ts` (302 to the latest, in `?lang`; 404 page / 503)
 - [x] GET /brief/{date}/{slot} → `(public)/brief/[date]/[slot]/` + `features/public/brief/` (language from `?lang`, sets `locals.locale` so `<html lang>` and `t()` follow it; 404 page in `(public)/brief/+error.svelte`)
-- [x] GET /brief/{date}/{slot}/og.png, /card.png → `(public)/brief/[date]/[slot]/{og,card}.png/+server.ts`
+- [x] GET /brief/{date}/{slot}/og.png, /card.png, /social.png, /story.png, /report.pdf and /exports.json → `(public)/brief/[date]/[slot]/{og,card,social,story}.png`, `report.pdf`, `exports.json` (`+server.ts` each, via `features/public/brief/exports.server.ts`): proxied from the Go backend (`/v1/market/brief/export`, `/v1/market/brief/exports`) and edge-cached; nothing is rendered in the Worker
 
 ### Weekly digest (added with norviq-web ec05890)
 
@@ -72,7 +72,7 @@ Share images were compared visually with Go's output.
 
 - **Landing JSON-LD (Go bug, fixed in v2):** Go's `landing.templ` puts `@templ.Raw(StructuredData(vm))` inside `<script>`, so Go serves that literal text as JSON-LD. v2 serves the intended graph from `structuredData()` (approved 2026-10-29). See DEVIATIONS.md.
 - **Rendered-page caches** (Go `publicPageCache`) are not ported; data lookups are cached per isolate (brief, stock, invites, images) and the same `Cache-Control` lets the CDN share the HTML. Pages viewed with a session send `private, no-store` / `private` instead of Go's shared header, because every v2 page carries the root layout's user data.
-- **Share images:** `features/public/sharecard/` ports `internal/sharecard` with a small TrueType reader, rasteriser and PNG encoder (CompressionStream) and the Go fonts (BSD, ~300 KB in the server bundle). Layout/text fitting match Go; pixels differ only in anti-aliasing and compression. CPU per image is a few tens of ms on a cache miss.
+- **Share images:** brief images and the PDF are rendered by the Go backend and only proxied and edge-cached here (see Market brief above). Article images still use `features/public/sharecard/`, which ports `internal/sharecard` with a small TrueType reader, rasteriser and PNG encoder (CompressionStream) and the Go fonts (BSD, ~300 KB in the server bundle). Layout/text fitting match Go; pixels differ only in anti-aliasing and compression. CPU per image is a few tens of ms on a cache miss.
 - **Brief 503** is the SvelteKit error page with Go's message (Go wrote plain text).
 - **POST /g/{code}/join when banned** redirects to `/boards` (shows the banned page) instead of rendering it inline.
 

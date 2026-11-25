@@ -33,10 +33,13 @@ export type ExportFile = keyof typeof EXPORT_FILES;
 const UPSTREAM_TIMEOUT = 25_000;
 const PASS_HEADERS = ['Content-Type', 'Cache-Control', 'ETag', 'Content-Disposition'];
 
+/** Larger rev/v values are treated as invalid: dropped from the key and the upstream query. */
+const MAX_VERSION = 9999;
+
 function positiveInt(raw: string | null): number | null {
 	if (raw === null || !/^\d+$/.test(raw)) return null;
 	const n = Number(raw);
-	return Number.isSafeInteger(n) && n > 0 ? n : null;
+	return n > 0 && n <= MAX_VERSION ? n : null;
 }
 
 /** The normalised cache key, and the rev/v pair when both are valid. */
@@ -144,6 +147,7 @@ export async function serveExport(event: RequestEvent, file: ExportFile): Promis
 			return upstreamError('network');
 		}
 		if (upstream.status !== 200) {
+			if (upstream.status !== 404) console.warn('brief export', file, upstream.status);
 			await upstream.body?.cancel().catch(() => {});
 			return upstreamError(upstream.status);
 		}
@@ -214,16 +218,20 @@ export async function serveManifest(event: RequestEvent): Promise<Response> {
 			return upstreamError('network');
 		}
 		if (upstream.status !== 200) {
+			if (upstream.status !== 404) console.warn('brief export', 'exports.json', upstream.status);
 			await upstream.body?.cancel().catch(() => {});
 			return upstreamError(upstream.status);
 		}
 		let manifest: WebExportManifest | null = null;
 		try {
 			manifest = webManifest(await upstream.json(), permalink.date, permalink.slot, lang);
-		} catch (err) {
-			console.warn('brief exports.json body', err);
+		} catch {
+			/* not JSON: rejected below like any malformed body */
 		}
-		if (!manifest) return upstreamError('network');
+		if (!manifest) {
+			console.warn('brief export', 'exports.json', upstream.status);
+			return upstreamError('network');
+		}
 		return new Response(JSON.stringify(manifest), {
 			headers: {
 				'Content-Type': 'application/json; charset=utf-8',
