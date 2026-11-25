@@ -3,17 +3,15 @@
 // corner at 1024px and up. The Quick Assistant (Q) button keeps the bottom-right
 // corner, so a toast and Q can never land on the same spot. Q's lift above the
 // tab bar is the --float-offset token, which P3 reuses for the Q entry point.
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+//
+// The sources are ?raw imports rather than fs reads, so they sit in the module graph and
+// `vitest --changed` re-runs this file when any of them changes.
 import { describe, expect, it } from 'vitest';
 
-const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
-const read = (path: string) => readFileSync(join(ROOT, path), 'utf8');
+import SHELL from '../styles/legacy/css/shell.css?raw';
+import THEME from '../styles/legacy/theme.css?raw';
+import QUICK from '../features/dashboard/assistant/components/QuickAssistant.svelte?raw';
 
-const SHELL = 'src/lib/styles/legacy/css/shell.css';
-const THEME = 'src/lib/styles/legacy/theme.css';
-const QUICK = 'src/lib/features/dashboard/assistant/components/QuickAssistant.svelte';
 const DESKTOP = '@media (min-width: 1024px)';
 
 const stripComments = (text: string) => text.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -56,7 +54,7 @@ const valueOf = (body: string, property: string) =>
 	new RegExp('(?:^|[;{\\s])' + property + '\\s*:\\s*([^;]+);').exec(body)?.[1].trim();
 
 describe('floating layer: unlock toast', () => {
-	const { base, desktop } = rulesFor(read(SHELL), '.achievement-toast');
+	const { base, desktop } = rulesFor(SHELL, '.achievement-toast');
 
 	it('has one base rule and one desktop rule', () => {
 		expect(base).toHaveLength(1);
@@ -90,7 +88,7 @@ describe('floating layer: unlock toast', () => {
 });
 
 describe('floating layer: Quick Assistant button', () => {
-	const style = /<style>([\s\S]*?)<\/style>/.exec(read(QUICK))?.[1] ?? '';
+	const style = /<style>([\s\S]*?)<\/style>/.exec(QUICK)?.[1] ?? '';
 	const { base, desktop } = rulesFor(style, '.quick-q-button');
 
 	it('lifts above the tab bar by --float-offset on phones', () => {
@@ -109,7 +107,7 @@ describe('floating layer: Quick Assistant button', () => {
 });
 
 describe('floating layer: tokens', () => {
-	const theme = stripComments(read(THEME));
+	const theme = stripComments(THEME);
 	const root = blockAt(theme, theme.indexOf(':root'));
 
 	it('defines --float-offset in :root', () => {

@@ -2,22 +2,22 @@
 // themselves. A cycle such as `--motion-fast: var(--motion-fast, 140ms)` is
 // invalid at computed-value time, so every `var(--motion-fast)` without a
 // fallback silently resolves to nothing and transitions are lost.
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+//
+// The sources arrive through import.meta.glob(..., ?raw) rather than fs, so they sit in the
+// module graph and `vitest --changed` re-runs this file on a CSS-only or .svelte-only change.
 import { describe, expect, it } from 'vitest';
 
-const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
-const SRC = join(ROOT, 'src');
 const STYLES = 'src/lib/styles/legacy/styles.css';
 
-function cssFiles(dir: string): string[] {
-	return readdirSync(dir).flatMap((entry) => {
-		const full = join(dir, entry);
-		if (statSync(full).isDirectory()) return cssFiles(full);
-		return entry.endsWith('.css') ? [full] : [];
-	});
-}
+// Keys are root-relative ('/src/…'); strip the slash to get repo paths.
+const raw = (sources: Record<string, string>) =>
+	Object.entries(sources).map(([key, text]) => ({ path: key.replace(/^\//, ''), text }));
+const cssSources = raw(
+	import.meta.glob<string>('/src/**/*.css', { query: '?raw', import: 'default', eager: true })
+);
+const svelteSources = raw(
+	import.meta.glob<string>('/src/**/*.svelte', { query: '?raw', import: 'default', eager: true })
+);
 
 // Tailwind maps utilities onto runtime vars inside `@theme` / `@theme inline`
 // blocks, where `--color-x: var(--color-x)` is emitted in `@layer theme`.
@@ -68,10 +68,7 @@ function reducedMotionRules(text: string): { selector: string; body: string }[] 
 	return rules;
 }
 
-const files = cssFiles(SRC).map((full) => ({
-	path: relative(ROOT, full),
-	text: stripThemeBlocks(readFileSync(full, 'utf8'))
-}));
+const files = cssSources.map(({ path, text }) => ({ path, text: stripThemeBlocks(text) }));
 
 describe('custom properties in production CSS', () => {
 	it('finds css files to check', () => {
@@ -104,16 +101,9 @@ describe('custom properties in production CSS', () => {
 
 describe('buttons', () => {
 	it('no class="btn" without a rule', () => {
-		const offenders: string[] = [];
-		const walk = (dir: string) => {
-			for (const entry of readdirSync(dir)) {
-				const full = join(dir, entry);
-				if (statSync(full).isDirectory()) walk(full);
-				else if (entry.endsWith('.svelte') && readFileSync(full, 'utf8').includes('class="btn"'))
-					offenders.push(relative(ROOT, full));
-			}
-		};
-		walk(SRC);
+		const offenders = svelteSources
+			.filter(({ text }) => text.includes('class="btn"'))
+			.map(({ path }) => path);
 		expect(offenders, 'class="btn" has no CSS rule; use GhostButton/SecondaryButton').toEqual([]);
 	});
 });
