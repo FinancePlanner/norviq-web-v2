@@ -42,6 +42,32 @@ function stripThemeBlocks(text: string): string {
 	}
 }
 
+/** The text between the `{` at `open` and its matching `}`. */
+function braceBody(text: string, open: number): string {
+	let depth = 0;
+	for (let i = open; i < text.length; i++) {
+		if (text[i] === '{') depth++;
+		else if (text[i] === '}' && --depth === 0) return text.slice(open + 1, i);
+	}
+	throw new Error('unbalanced braces');
+}
+
+/** Every `selector { body }` rule directly inside a `@media (prefers-reduced-motion: reduce)` block. */
+function reducedMotionRules(text: string): { selector: string; body: string }[] {
+	const rules: { selector: string; body: string }[] = [];
+	for (const m of text.matchAll(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{/g)) {
+		const inner = braceBody(text, m.index + m[0].length - 1);
+		for (let i = 0; i < inner.length;) {
+			const open = inner.indexOf('{', i);
+			if (open === -1) break;
+			const body = braceBody(inner, open);
+			rules.push({ selector: inner.slice(i, open).trim(), body });
+			i = open + body.length + 2;
+		}
+	}
+	return rules;
+}
+
 const files = cssFiles(SRC).map((full) => ({
 	path: relative(ROOT, full),
 	text: stripThemeBlocks(readFileSync(full, 'utf8'))
@@ -66,11 +92,13 @@ describe('custom properties in production CSS', () => {
 
 	it('keeps the global reduced-motion kill switch', () => {
 		const text = files.find((f) => f.path === STYLES)?.text ?? '';
-		const start = text.indexOf('@media (prefers-reduced-motion: reduce)');
-		expect(start, `${STYLES} has no @media (prefers-reduced-motion: reduce)`).toBeGreaterThan(-1);
-		// The block runs until the next top-level rule after its opening brace.
-		const block = text.slice(start, text.indexOf('/* Reusable enter primitives', start));
-		expect(block).toMatch(/\*\s*,[\s\S]*?\{[\s\S]*?(transition-duration|animation-duration)\s*:/);
+		const rules = reducedMotionRules(text);
+		const kill = rules.find((r) => /^\*\s*,\s*\*::before\s*,\s*\*::after$/.test(r.selector));
+		expect(
+			kill,
+			`${STYLES} has no @media (prefers-reduced-motion: reduce) rule for "*, *::before, *::after"`
+		).toBeDefined();
+		expect(kill?.body).toMatch(/(transition-duration|animation-duration)\s*:/);
 	});
 });
 
