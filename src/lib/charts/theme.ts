@@ -10,7 +10,7 @@
 // here is pure apart from the default DOM environment, so it is unit tested.
 
 import { compactMoney, money, percentPoints, type AppLocale } from '../money.js';
-import { DARK, LIGHT } from './palette.generated.js';
+import { ACCENT_ACTION, DARK, FLAT, LIGHT, PILLAR } from './palette.generated.js';
 
 /** Where the theme reads appearance from. domThemeEnv() is the browser one. */
 export interface ThemeEnv {
@@ -139,31 +139,30 @@ const list = (v: unknown): unknown[] => (Array.isArray(v) ? v : [v]);
  */
 export function pillarColor(series: unknown, env: ThemeEnv): string {
 	const item = series && typeof series === 'object' ? (series as Obj) : { name: series };
+	const scope = env.dark ? 'dark' : 'light';
+	const muted = FLAT[scope];
 	if (item.colorVar)
-		return env.cssVar(
-			typeof item.colorVar === 'string' ? item.colorVar : '',
-			env.cssVar('--muted-foreground', '#57626e')
-		);
+		return env.cssVar(typeof item.colorVar === 'string' ? item.colorVar : '', muted);
 	switch ((typeof item.name === 'string' ? item.name : '').toLowerCase()) {
 		case 'fundamentals':
-			return env.cssVar('--color-pillar-fundamentals', '#80612a');
+			return env.cssVar('--color-pillar-fundamentals', PILLAR[scope].fundamentals);
 		case 'future you':
 		case 'futureyou':
-			return env.cssVar('--color-pillar-future-you', '#5856d6');
+			return env.cssVar('--color-pillar-future-you', PILLAR[scope].futureYou);
 		case 'fun':
-			return env.cssVar('--color-pillar-fun', '#4f78a8');
+			return env.cssVar('--color-pillar-fun', PILLAR[scope].fun);
 		default:
-			return env.cssVar('--muted-foreground', '#57626e');
+			return env.cssVar('--muted-foreground', muted);
 	}
 }
 
 /** Density ramp for the activity calendar: one hue (live --color-tint), stepped by alpha. */
 export function activityRamp(env: ThemeEnv): string[] {
 	// --color-tint is OKLCH in theme.css, which parseHex cannot read, so in the
-	// browser this almost always falls through to the per-appearance gold below
-	// (champagne #D8B477 dark, deep gold #80612A light).
-	const rgb =
-		parseHex(env.cssVar('--color-tint', '')) ?? (env.dark ? [216, 180, 119] : [138, 106, 46]);
+	// browser this almost always falls through to color.accent.action
+	// (tokens.json: champagne dark, deep gold light).
+	const rgb = parseHex(env.cssVar('--color-tint', '')) ??
+		parseHex(env.dark ? ACCENT_ACTION.dark : ACCENT_ACTION.light) ?? [0, 0, 0];
 	const [r, g, b] = rgb;
 	return [0.14, 0.38, 0.68, 1].map((a) => `rgba(${r},${g},${b},${a})`);
 }
