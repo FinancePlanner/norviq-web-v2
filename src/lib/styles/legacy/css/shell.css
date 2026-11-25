@@ -105,13 +105,18 @@ html[data-sidebar='collapsed'] .app-sidebar-group-panel {
 }
 
 /* Unlock toast: pinned to the viewport so it never lands below the fold.
-   Mobile sits above the bottom tab bar; desktop takes the bottom-right corner. */
+   Toasts own the top, the Q button (QuickAssistant.svelte, z-index 45) the
+   bottom-right corner, so the two never overlap. Phones: just below the top
+   bar. The bar already absorbs the notch in its own padding-top
+   (max(0.75rem, safe-area-top)), so on a notched phone this gap is up to
+   0.75rem wider than on a flat one; it never overlaps the bar.
+   1024px and up (no top bar): the top-right corner. */
 .achievement-toast {
 	position: fixed;
 	z-index: 50;
+	top: calc(var(--app-topbar-height) + env(safe-area-inset-top) + 0.75rem);
 	left: calc(0.75rem + env(safe-area-inset-left, 0px));
 	right: calc(0.75rem + env(safe-area-inset-right, 0px));
-	bottom: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.75rem);
 	max-width: 28rem;
 	margin-left: auto;
 }
@@ -124,9 +129,9 @@ html[data-sidebar='collapsed'] .app-sidebar-group-panel {
 
 @media (min-width: 1024px) {
 	.achievement-toast {
-		left: auto;
+		top: 1.5rem;
 		right: 1.5rem;
-		bottom: 1.5rem;
+		left: auto;
 	}
 }
 

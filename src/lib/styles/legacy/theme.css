@@ -83,6 +83,14 @@
    * tint; the other pillars and the custom slots are generated. */
 	--color-pillar-fundamentals: var(--color-tint);
 	--app-tabbar-height: 3.0625rem; /* iOS tab bar: 49pt */
+	/* Mobile top bar (AppShell.svelte:84, .app-topbar, lg:hidden) without a
+	 * notch: padding-top 0.75rem (styles.css:1421, max(0.75rem, safe-area-top))
+	 * + 40px logo (shell.css:184, .app-topbar .norviq-logo h-10, the tallest
+	 * child) + padding-bottom 0.625rem (styles.css:1420, py-2.5) + 1px border
+	 * (styles.css:1420 border-b; surface.css:1929) = 63px. */
+	--app-topbar-height: calc(3.875rem + 1px);
+	/* Gap between a floating control (the Q button) and the bar it floats above. */
+	--float-offset: 0.5rem;
 	/* iOS AppTheme.Radius: control 12, card 16, hero 20. --radius is the card. */
 	--radius: 1rem;
 	--radius-control: 0.75rem;
