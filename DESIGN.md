@@ -2,33 +2,33 @@
 name: Norviq
 description: Financial intelligence for people who plan before they act. Champagne gold on obsidian navy, numbers first.
 colors:
-  deep-gold: 'oklch(0.513 0.082 79)'
-  champagne-gold: 'oklch(0.788 0.089 80)'
-  precision-gold: 'oklch(0.857 0.092 80)'
-  warm-page: 'oklch(0.968 0.009 85)'
+  deep-gold: 'oklch(0.513 0.082 79.4)'
+  champagne-gold: 'oklch(0.788 0.089 80.1)'
+  precision-gold: 'oklch(0.857 0.092 80.1)'
+  warm-page: 'oklch(0.968 0.009 84.6)'
   card-white: 'oklch(1 0 0)'
-  warm-raised: 'oklch(0.941 0.012 85)'
-  sidebar-warm: 'oklch(0.947 0.013 87)'
-  warm-hairline: 'oklch(0.896 0.017 85)'
-  warm-control-border: 'oklch(0.616 0.023 82)'
-  midnight-navy: 'oklch(0.221 0.035 260)'
-  slate-secondary: 'oklch(0.447 0.034 261)'
-  obsidian: 'oklch(0.172 0.023 260)'
+  warm-raised: 'oklch(0.941 0.012 84.6)'
+  sidebar-warm: 'oklch(0.947 0.013 86.8)'
+  warm-hairline: 'oklch(0.896 0.017 84.6)'
+  warm-control-border: 'oklch(0.622 0.025 84.6)'
+  midnight-navy: 'oklch(0.221 0.035 259.5)'
+  slate-secondary: 'oklch(0.447 0.034 261.3)'
+  obsidian: 'oklch(0.172 0.023 260.4)'
   armor-blue: 'oklch(0.28 0.047 260)'
-  deep-graphite: 'oklch(0.281 0.026 253)'
-  platinum: 'oklch(0.933 0.005 107)'
+  deep-graphite: 'oklch(0.281 0.026 253.3)'
+  platinum: 'oklch(0.933 0.005 106.5)'
   muted-silver: 'oklch(0.73 0.026 254)'
-  navy-control-border: 'oklch(0.574 0.04 260)'
-  gain-light: 'oklch(0.482 0.091 165)'
-  loss-light: 'oklch(0.507 0.152 20)'
-  warning-light: 'oklch(0.498 0.101 68)'
-  info-light: 'oklch(0.491 0.097 246)'
-  flat-light: 'oklch(0.491 0.024 251)'
-  gain-dark: 'oklch(0.707 0.118 169)'
-  loss-dark: 'oklch(0.674 0.145 17)'
-  warning-dark: 'oklch(0.787 0.113 73)'
-  info-dark: 'oklch(0.706 0.093 243)'
-  flat-dark: 'oklch(0.75 0.019 253)'
+  navy-control-border: 'oklch(0.57 0.042 262)'
+  gain-light: 'oklch(0.482 0.091 164.9)'
+  loss-light: 'oklch(0.507 0.152 19.7)'
+  warning-light: 'oklch(0.498 0.101 67.9)'
+  info-light: 'oklch(0.491 0.097 246.1)'
+  flat-light: 'oklch(0.491 0.024 250.6)'
+  gain-dark: 'oklch(0.707 0.118 169.2)'
+  loss-dark: 'oklch(0.674 0.145 17.5)'
+  warning-dark: 'oklch(0.787 0.113 72.9)'
+  info-dark: 'oklch(0.706 0.093 243.3)'
+  flat-dark: 'oklch(0.75 0.019 253.4)'
 typography:
   display:
     fontFamily: 'Geist Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif'
@@ -41,6 +41,12 @@ typography:
     fontFamily: 'Geist Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif'
     fontSize: '2rem'
     fontWeight: 700
+    lineHeight: '2.375rem'
+    letterSpacing: '-0.025em'
+  display-serif:
+    fontFamily: 'Brygada 1918, Iowan Old Style, Georgia, serif'
+    fontSize: '2rem'
+    fontWeight: 600
     lineHeight: '2.375rem'
     letterSpacing: '-0.025em'
   title:
@@ -148,13 +154,15 @@ The system rejects the trading-app register: no confetti, no glow, no neon, no g
 
 - Dark-first, with a full warm light scope; one OKLCH hue axis per scope (navy 260, warm paper 85).
 - Champagne/deep gold as a rare accent; green and red only for financial direction.
-- Geist Sans throughout, tabular numerals wherever numbers meet.
+- Geist Sans for the interface and every number, tabular wherever numbers meet; Brygada 1918 only for page titles, the greeting and the brief.
 - Flat surfaces, hairline rules, tonal layering; shadows only for overlays.
 - Restrained and exact controls: crisp edges, quiet fills, one gold action per view.
 
 ## Colors
 
 A two-scope palette on a single hue axis each: navy darks, warm-paper lights, with gold as the only brand accent and a separate, strictly semantic set for financial direction.
+
+**Token source.** Every colour is a token in `design/tokens.json` (DTCG; light `$value`, dark `$extensions.norviq.dark`, plus the CSS property and iOS colour set it feeds). `bun run tokens` (`scripts/tokens/build.mjs`) writes `src/lib/styles/legacy/theme.tokens.css`, the chart fallbacks and the theme-color metas from it, and CI fails when they are stale. iOS keeps a byte-identical copy and generates its `Vigil*` colour sets from it; `scripts/check-tokens-drift.sh` catches a copy that drifts. To change a colour, edit `tokens.json`, never `theme.css`. The OKLCH values in this file's front matter are what the generator emits, and a test keeps them equal. Spacing, radius, type and motion live there too and are checked against the CSS.
 
 ### Primary
 
@@ -177,7 +185,7 @@ A two-scope palette on a single hue axis each: navy darks, warm-paper lights, wi
 - **Deep Graphite** (deep-graphite): dark-scope supporting fills.
 - **Platinum** (platinum): dark-scope primary text (12.0:1 on Armor).
 - **Muted Silver** (muted-silver): dark-scope secondary text (6.1:1).
-- **Navy Control Border** (navy-control-border): dark-scope input and control outlines (3.3:1 on Armor). Dark hairlines are alpha (`oklch(0.8 0.04 258 / 12%)`) so one token reads on page, card and sidebar.
+- **Navy Control Border** (navy-control-border): dark-scope input and control outlines (3.3:1 on Armor). Dark hairlines are alpha (`oklch(0.8 0.04 257.9 / 12%)`) so one token reads on page, card and sidebar.
 
 ### Financial semantics
 
@@ -197,16 +205,16 @@ Separate from brand, defined per scope, each ≥4.5:1 as text on the page and on
 
 ## Typography
 
-**Display Font:** Geist Sans (with -apple-system, Segoe UI, system-ui)
-**Body Font:** Geist Sans (same stack)
+**Display Font:** Brygada 1918 (with Iowan Old Style, Georgia, serif; `--font-display`, token `font.display`), self-hosted, weights 400–700. Only for the page title on Document pages, the Overview (Today) greeting, and the brief and its exports. Never for numbers, tables, controls or body text.
+**UI Font:** Geist Sans (with -apple-system, Segoe UI, system-ui), for everything else, including the hero figure
 **Label/Mono Font:** JetBrains Mono, for code, identifiers and API keys only
 
-**Character:** One neutral grotesque in several weights, so hierarchy comes from size and weight rather than a second voice. Numbers set in tabular figures read as columns even outside tables.
+**Character:** One neutral grotesque in several weights carries the interface and every number, so hierarchy comes from size and weight. A single editorial serif, Brygada 1918 (owner's choice, 2026-11-24), gives a reading page its title and nothing more. Numbers set in tabular figures read as columns even outside tables.
 
 ### Hierarchy
 
 - **Display** (600, 2.5rem, 1.05, -0.02em, tabular): the hero figure on a page, such as a portfolio value. One per view.
-- **Headline** (700, 2rem, 2.375rem, -0.025em): the page title (`text-title1`). Balanced wrapping; a document page may scale it with clamp down to about 1.625rem.
+- **Headline** (700, 2rem, 2.375rem, -0.025em): the page title (`text-title1`). Balanced wrapping; a document page may scale it with clamp down to about 1.625rem. On a Document page and for the Overview greeting it is set in Brygada 1918 at 600 (`display-serif`); it wraps and never truncates, so long pt-PT titles take two lines.
 - **Title** (600, 1.0625rem, 1.3): panel and section headings.
 - **Body** (400, 1.0625rem, 1.375rem): card titles and primary row text. Reading prose (narratives, explanations) sits at 1rem with 1.6 line height and a 65ch measure.
 - **Subhead** (400, 0.9375rem, 1.25rem): secondary copy, form fields, subtitles under a page title.
@@ -218,6 +226,10 @@ Separate from brand, defined per scope, each ≥4.5:1 as text on the page and on
 **The Tabular Rule.** Any number that can sit next to another number (prices, P&L, percentages, budgets, dates in a column) uses tabular figures and right alignment in tables. A changing value in a table is never animated.
 
 **The Sentence-Case Rule.** Headings and labels are sentence case and literal. No uppercase tracked eyebrows above sections.
+
+**The Brief Masthead Exception.** Uppercase tracked labels are allowed only in the brief's masthead, its section headers and its exports (owner-approved 2026-11-24). Nowhere else in the product.
+
+**The Serif Never Counts Rule.** Brygada 1918 never sets a figure. A page title that sits in an `h1` gets the serif through its title class (`.vigil-page-title`, `.cc-greeting`), never through an `h1` selector, because some pages put a figure in an `h1`. Tailwind's `font-display` utility (from `--font-display`) follows the same rule: titles and the greeting only, never a figure.
 
 ## Layout
 
@@ -306,6 +318,31 @@ Restrained and exact: one filled gold action per view, everything else quiet.
 
 The digest pattern: a page title, a period line in the reader's locale, an optional narrative at a 65ch measure, a contents row of plain links, then sections separated by hairlines, each with a title and its figures as rows or a table. Arriving at a section from a deep link tints it with the soft gold wash for about two seconds; under reduced motion there is no tint.
 
+## Money and numbers
+
+One formatting contract on every platform (spec § 5.4), implemented on web by `src/lib/money.ts` and proven by the shared golden fixtures (`src/lib/__fixtures__/money.json`, a byte copy of `docs/design-system-fixtures/money.json`, also copied into the iOS and Android tests).
+
+- **Currency comes from the data**: the holding's currency, the portfolio's base currency, or the user's display currency for cross-portfolio totals. Never the device locale, never a default of USD. A missing code renders the number with "—" in place of a currency.
+- **Locale decides only separators**, the decimal mark and the symbol's position (en, pt-PT).
+- **Symbol or code**: the symbol when it is unambiguous for the locale (€, £, $ for USD in en), the code otherwise (US$ in pt-PT, CHF). One formatter decides; call sites never build money strings.
+- **Decimals per currency** (2 for EUR and USD, 0 for JPY). Compact form (`€1.24M`) only in tiles and axes, never in tables.
+- **Sign**: U+2212 minus. A leading + only on deltas, which also carry ▲/▼ plus colour and an accessible label ("down 2.4 percent").
+- **Percent**: the API and formatter take fractions; one decimal by default, two in tables.
+- **Every delta names its basis** ("vs previous close", "30 days", "vs budget"). A figure based on market prices says "as of 16:00 ET" or "delayed 15 min" once per section.
+- **Mixed currencies are never silently summed**: a converted total shows "≈" and its rate and date; without FX provenance the page shows per-currency subtotals.
+
+## Charts
+
+Charts follow spec § 5.5; ECharts on web (slim bundle).
+
+- **Real time axes**: dates as dates, ticks chosen by range, no first/last-only labels.
+- **Money axes and tooltips** use the series' currency through the money contract. The tooltip shows value, date and change from the start of the range.
+- **The range control belongs to the chart** and is part of its query: a chart never shows a range it did not fetch. One vocabulary on every platform, **1D 1W 1M 3M YTD 1Y 5Y ALL**, each chart offering only the subset its data supports.
+- **Line colour follows direction** over the visible range for a portfolio or net-worth value: gain if the end is at or above the start, else loss. Anything without a direction (spending, a price, a projection) is drawn in ink (`--chart-line`). Never gold, never fixed green.
+- **A benchmark or comparison line** is dashed secondary ink with a legend.
+- **States**: a skeleton at the final size while loading; "No history yet. Your first snapshot is taken tonight." when empty; points, not a line, under 3 points; a retry on error. Never synthetic data.
+- **Every chart has a text summary** for assistive tech, e.g. "Portfolio up 3.2 percent over 1 month, from €93,110 to €96,320".
+
 ## Do's and Don'ts
 
 ### Do:
@@ -325,6 +362,7 @@ The digest pattern: a page title, a period line in the reader's locale, an optio
 - **Don't** add glow, neon, mesh gradients, gradient text or decorative circuitry.
 - **Don't** nest cards, or wrap every section in a card by default.
 - **Don't** add shadows to resting surfaces beyond the Panel level.
-- **Don't** put uppercase tracked eyebrows above sections.
+- **Don't** put uppercase tracked eyebrows above sections (outside the Brief Masthead Exception).
+- **Don't** set a number in Brygada 1918, or use the serif for controls, tables or body text.
 - **Don't** animate changing values in tables, or celebrate gains and losses with motion.
 - **Don't** gate content visibility on an animation; content is visible by default and motion only enhances it.

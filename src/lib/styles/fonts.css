@@ -1,5 +1,6 @@
 /* Self-hosted Geist Sans (400-700) + JetBrains Mono 500 (latin subsets).
- * Mono is for code only; one weight is enough. */
+ * Mono is for code only; one weight is enough. Brygada 1918 is the display
+ * face (--font-display): page titles, the Today greeting, the brief. */
 
 @font-face {
 	font-family: 'Geist Sans';
@@ -51,6 +52,21 @@
 	font-weight: 500;
 	font-display: swap;
 	src: url('/static/fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Brygada 1918 (The Brygada 1918 Project Authors, github.com/kosmynkab/Brygada-1918;
+ * SIL Open Font License 1.1; fontsource 5.3.0, latin subset, wght 400-700).
+ * Chosen by the owner on 2026-11-24. Display type only: never numbers, tables,
+ * controls or body text. Figures stay in Geist with tabular-nums. */
+@font-face {
+	font-family: 'Brygada 1918';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 400 700;
+	src: url('/static/fonts/brygada-1918-latin-wght-normal.woff2') format('woff2-variations');
 	unicode-range:
 		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
 		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;

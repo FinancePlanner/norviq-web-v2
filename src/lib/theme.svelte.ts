@@ -5,14 +5,15 @@
 // paint; this module keeps it in sync afterwards. localStorage key and values
 // match iOS AppAppearance.storageKey.
 import { browser } from '$app/env';
+import { PAGE_BG } from './theme-color.generated.js';
 
 export const THEME_STORAGE_KEY = 'app_appearance';
 export type ThemeMode = 'system' | 'light' | 'dark';
 
 const VALID_THEMES = new Set<ThemeMode>(['system', 'light', 'dark']);
 
-/** KEEP IN SYNC with --color-page-bg in legacy theme.css and the theme-color metas in app.html. */
-export const THEME_COLORS = { 'vigil-light': '#f7f4ee', 'vigil-dark': '#0a101a' } as const;
+/** color.surface.page, generated from design/tokens.json like --color-page-bg and app.html's theme-color metas. */
+export const THEME_COLORS = { 'vigil-light': PAGE_BG.light, 'vigil-dark': PAGE_BG.dark } as const;
 
 export function getStoredTheme(): ThemeMode {
 	if (!browser) return 'system';

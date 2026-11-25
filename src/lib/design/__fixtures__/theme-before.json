@@ -1,0 +1,182 @@
+{
+	"--color-page-bg": {
+		"light": "oklch(0.968 0.009 85)",
+		"dark": "oklch(0.172 0.023 260)"
+	},
+	"--color-card-bg": {
+		"light": "oklch(1 0 0)",
+		"dark": "oklch(0.221 0.035 260)"
+	},
+	"--color-elevated-card": {
+		"light": "oklch(0.941 0.012 85)",
+		"dark": "oklch(0.28 0.047 260)"
+	},
+	"--color-top-bar": {
+		"light": "oklch(0.983 0.005 85)",
+		"dark": "oklch(0.196 0.029 260)"
+	},
+	"--sidebar": {
+		"light": "oklch(0.947 0.013 87)",
+		"dark": "oklch(0.196 0.029 260)"
+	},
+	"--color-surface": {
+		"light": "oklch(0.941 0.012 85)",
+		"dark": "oklch(0.281 0.026 253)"
+	},
+	"--color-scrim": {
+		"light": "oklch(0.172 0.023 260 / 45%)",
+		"dark": "oklch(0 0 0 / 72%)"
+	},
+	"--foreground": {
+		"light": "oklch(0.221 0.035 260)",
+		"dark": "oklch(0.933 0.005 107)"
+	},
+	"--muted-foreground": {
+		"light": "oklch(0.447 0.034 261)",
+		"dark": "oklch(0.73 0.026 254)"
+	},
+	"--primary-foreground": {
+		"light": "oklch(1 0 0)",
+		"dark": "oklch(0.172 0.023 260)"
+	},
+	"--color-ink-on-gold": {
+		"light": "oklch(0.221 0.035 260)",
+		"dark": "oklch(0.172 0.023 260)"
+	},
+	"--color-disabled": {
+		"light": "oklch(0.7 0.015 85)",
+		"dark": "oklch(0.52 0.02 258)"
+	},
+	"--color-tint": {
+		"light": "oklch(0.513 0.082 79)",
+		"dark": "oklch(0.788 0.089 80)"
+	},
+	"--color-tint-soft": {
+		"light": "oklch(0.513 0.082 79 / 9%)",
+		"dark": "oklch(0.788 0.089 80 / 10%)"
+	},
+	"--sidebar-accent": {
+		"light": "oklch(0.513 0.082 79 / 10%)",
+		"dark": "oklch(0.788 0.089 80 / 10%)"
+	},
+	"--color-focus": {
+		"light": "oklch(0.513 0.082 79)",
+		"dark": "oklch(0.857 0.092 80)"
+	},
+	"--color-ember": {
+		"light": "oklch(0.608 0.092 79)",
+		"dark": "oklch(0.857 0.092 80)"
+	},
+	"--color-gold": {
+		"light": "oklch(0.788 0.089 80)",
+		"dark": "oklch(0.788 0.089 80)"
+	},
+	"--color-amber": {
+		"light": "oklch(0.787 0.113 73)",
+		"dark": "oklch(0.787 0.113 73)"
+	},
+	"--color-splash-ring": {
+		"light": "oklch(0.788 0.089 80 / 24%)",
+		"dark": "oklch(0.788 0.089 80 / 30%)"
+	},
+	"--color-splash-core": {
+		"light": "oklch(0.788 0.089 80 / 70%)",
+		"dark": "oklch(0.857 0.092 80 / 70%)"
+	},
+	"--hairline": {
+		"light": "oklch(0.3 0.03 85 / 12%)",
+		"dark": "oklch(0.8 0.04 258 / 12%)"
+	},
+	"--border": {
+		"light": "oklch(0.896 0.017 85)",
+		"dark": "oklch(0.8 0.04 258 / 16%)"
+	},
+	"--color-border-control": {
+		"light": "oklch(0.616 0.023 82)",
+		"dark": "oklch(0.574 0.04 260)"
+	},
+	"--color-gain": {
+		"light": "oklch(0.482 0.091 165)",
+		"dark": "oklch(0.707 0.118 169)"
+	},
+	"--color-loss": {
+		"light": "oklch(0.507 0.152 20)",
+		"dark": "oklch(0.674 0.145 17)"
+	},
+	"--color-flat": {
+		"light": "oklch(0.491 0.024 251)",
+		"dark": "oklch(0.75 0.019 253)"
+	},
+	"--color-warning": {
+		"light": "oklch(0.498 0.101 68)",
+		"dark": "oklch(0.787 0.113 73)"
+	},
+	"--color-info": {
+		"light": "oklch(0.491 0.097 246)",
+		"dark": "oklch(0.706 0.093 243)"
+	},
+	"--chart-axis": {
+		"light": "oklch(0.447 0.034 261)",
+		"dark": "oklch(0.73 0.026 254)"
+	},
+	"--chart-grid": {
+		"light": "oklch(0.911 0.014 85)",
+		"dark": "oklch(0.376 0.042 259 / 70%)"
+	},
+	"--chart-line-alt": {
+		"light": "oklch(0.447 0.034 261)",
+		"dark": "oklch(0.73 0.026 254)"
+	},
+	"--chart-tooltip-border": {
+		"light": "oklch(0.896 0.017 85)",
+		"dark": "oklch(0.376 0.042 259)"
+	},
+	"--chart-pointer": {
+		"light": "oklch(0.522 0.025 250)",
+		"dark": "oklch(0.73 0.026 254)"
+	},
+	"--color-pillar-future-you": {
+		"light": "oklch(0.52 0.17 285)",
+		"dark": "oklch(0.72 0.12 285)"
+	},
+	"--color-pillar-fun": {
+		"light": "oklch(0.56 0.08 245)",
+		"dark": "oklch(0.75 0.08 245)"
+	},
+	"--color-pillar-custom-1": {
+		"light": "oklch(0.58 0.11 180)",
+		"dark": "oklch(0.78 0.09 180)"
+	},
+	"--color-pillar-custom-2": {
+		"light": "oklch(0.62 0.12 220)",
+		"dark": "oklch(0.8 0.09 220)"
+	},
+	"--color-pillar-custom-3": {
+		"light": "oklch(0.64 0.1 200)",
+		"dark": "oklch(0.8 0.09 200)"
+	},
+	"--color-pillar-custom-4": {
+		"light": "oklch(0.64 0.15 62)",
+		"dark": "oklch(0.8 0.11 82)"
+	},
+	"--color-pillar-custom-5": {
+		"light": "oklch(0.62 0.18 350)",
+		"dark": "oklch(0.76 0.12 350)"
+	},
+	"--color-pillar-custom-6": {
+		"light": "oklch(0.52 0.09 60)",
+		"dark": "oklch(0.74 0.08 60)"
+	},
+	"--color-pillar-custom-7": {
+		"light": "oklch(0.54 0.15 265)",
+		"dark": "oklch(0.74 0.11 265)"
+	},
+	"--color-category-variable": {
+		"light": "oklch(0.55 0.11 62)",
+		"dark": "oklch(0.77 0.12 70)"
+	},
+	"--color-category-leisure": {
+		"light": "oklch(0.52 0.12 295)",
+		"dark": "oklch(0.72 0.11 295)"
+	}
+}

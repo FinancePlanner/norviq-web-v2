@@ -10,6 +10,7 @@
 // here is pure apart from the default DOM environment, so it is unit tested.
 
 import { compactMoney, money, percentPoints, type AppLocale } from '../money.js';
+import { DARK, LIGHT } from './palette.generated.js';
 
 /** Where the theme reads appearance from. domThemeEnv() is the browser one. */
 export interface ThemeEnv {
@@ -61,41 +62,27 @@ export interface ChartPalette {
 }
 
 /**
- * Precision palettes (docs/precision-identity.md), overridable through theme.css.
- * The fallbacks are the token values, so an unstyled environment still renders
- * on-brand; they only apply when the CSS variable is missing.
+ * Precision palettes, overridable through theme.css. The fallbacks are the
+ * tokens (design/tokens.json via palette.generated.ts), so an unstyled
+ * environment still renders on-brand; they only apply when the CSS variable is
+ * missing.
  */
 export function getChartPalette(env: ThemeEnv): ChartPalette {
 	const v = env.cssVar;
-	if (env.dark) {
-		return {
-			axis: v('--chart-axis', '#9da9b8'),
-			grid: v('--chart-grid', '#344258'),
-			line: v('--chart-line', '#e9e9e5'),
-			lineAlt: v('--chart-line-alt', '#9da9b8'),
-			up: v('--chart-up', '#42b894'),
-			down: v('--chart-down', '#e16d75'),
-			tooltipBg: v('--chart-tooltip-bg', '#1b2940'),
-			tooltipBorder: v('--chart-tooltip-border', '#344258'),
-			tooltipText: v('--chart-tooltip-text', '#e9e9e5'),
-			areaOpacity: Number(v('--chart-area-opacity', '0.18')),
-			pointer: v('--chart-pointer', '#9da9b8'),
-			emphasisBorder: v('--chart-emphasis-border', '#111b2b')
-		};
-	}
+	const f = env.dark ? DARK : LIGHT;
 	return {
-		axis: v('--chart-axis', '#4a5568'),
-		grid: v('--chart-grid', '#e6e1d7'),
-		line: v('--chart-line', '#111b2b'),
-		lineAlt: v('--chart-line-alt', '#4a5568'),
-		up: v('--chart-up', '#1b6e51'),
-		down: v('--chart-down', '#ab3640'),
-		tooltipBg: v('--chart-tooltip-bg', '#ffffff'),
-		tooltipBorder: v('--chart-tooltip-border', '#e2dcd0'),
-		tooltipText: v('--chart-tooltip-text', '#111b2b'),
-		areaOpacity: Number(v('--chart-area-opacity', '0.16')),
-		pointer: v('--chart-pointer', '#57626e'),
-		emphasisBorder: v('--chart-emphasis-border', '#ffffff')
+		axis: v('--chart-axis', f.axis),
+		grid: v('--chart-grid', f.grid),
+		line: v('--chart-line', f.line),
+		lineAlt: v('--chart-line-alt', f.lineAlt),
+		up: v('--chart-up', f.up),
+		down: v('--chart-down', f.down),
+		tooltipBg: v('--chart-tooltip-bg', f.tooltipBg),
+		tooltipBorder: v('--chart-tooltip-border', f.tooltipBorder),
+		tooltipText: v('--chart-tooltip-text', f.tooltipText),
+		areaOpacity: Number(v('--chart-area-opacity', env.dark ? '0.18' : '0.16')),
+		pointer: v('--chart-pointer', f.pointer),
+		emphasisBorder: v('--chart-emphasis-border', f.emphasisBorder)
 	};
 }
 

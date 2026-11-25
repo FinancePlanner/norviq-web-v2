@@ -29,7 +29,13 @@ jobs:
       # 3D Vig motion (BRD-001): the fixtures must be regenerated after a design/vig-motion.json
       # change. norviq-ios CI compares its copies against this repo's main.
       - run: ./scripts/check-vig-motion-drift.sh
+      # design/tokens.json (DS 2.0 § 5.1) vs the norviq-ios copy. CI has no iOS checkout, so
+      # this skips here and only bites locally; the cross-repo guard belongs to norviq-ios CI.
+      - run: ./scripts/check-tokens-drift.sh
       - run: ./scripts/check-three-imports.sh
+      # Colours are generated from design/tokens.json (DS 2.0 § 5.1): the committed
+      # theme.tokens.css, palette.generated.ts and app.html metas must be fresh.
+      - run: bun run tokens:check
 
   typecheck:
     runs-on: ubuntu-latest

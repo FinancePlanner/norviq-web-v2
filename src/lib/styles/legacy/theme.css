@@ -14,8 +14,9 @@
  * COLOR MODEL — OKLCH, one hue axis per scope.
  * Dark neutrals sit on hue 260 (navy), light neutrals on hue 85 (warm paper),
  * so lightness steps stay even and surfaces never drift in temperature. Every
- * value below is the OKLCH of a hex in the brand doc's palette table; the
- * contrast ratios quoted there were measured on those hexes.
+ * generated value is the OKLCH of a hex in design/tokens.json, which follows the
+ * brand doc's palette table; the contrast ratios quoted there were measured on
+ * those hexes.
  *
  * GOLD IS BRAND, NOT MONEY. --color-tint is the accent (active nav, primary
  * action, focus, selection). Gains and losses use --color-gain / --color-loss
@@ -32,10 +33,17 @@
  * anything a user must find — inputs, toggles — uses --color-border-control,
  * which is >= 3:1 on the card in both scopes.
  *
+ * GENERATED VALUES. Every colour literal lives in design/tokens.json and is
+ * written to theme.tokens.css by scripts/tokens/build.mjs (bun run tokens);
+ * CI fails when that file is stale. This file keeps only aliases (var(...)),
+ * non-colour values and the shadows. To change a colour, edit tokens.json.
+ *
  * CHART SURFACES: the categorical palette in src/lib/charts/palette.ts is
  * validated against --color-card-bg in each scope (>= 3:1 per slot). If you
  * change the card background, re-run that check.
  */
+
+@import './theme.tokens.css';
 
 :root {
 	color-scheme: light;
@@ -59,106 +67,54 @@
 	--space-8: 2rem;
 	--card-pad: 1rem;
 	--stack-gap: 1.25rem;
-	/* #80612A, not the #8A6A2E first drafted: gold text sits on gold-tinted
-     fills (active nav, pills), and #8A6A2E measured 4.0:1 there. This clears
-     4.5:1 on every tinted surface axe found, and 5.2:1 on the page. */
-	--color-tint: oklch(0.513 0.082 79); /* deep gold #80612A */
-	--color-tint-soft: oklch(0.513 0.082 79 / 9%);
 	/* Secondary tint is kept as an alias of gain for any stored or third-party
      reference, but nothing in this repo paints with it any more: decoration uses
      the gold tint, and direction names --color-gain itself. */
 	--color-secondary-tint: var(--color-gain);
-	--color-ember: oklch(0.608 0.092 79); /* #A07C3E */
-	--color-bronze: oklch(0.447 0.034 261); /* #4A5568 */
-	--color-page-bg: oklch(0.968 0.009 85); /* chrome-hex: precision-light #f7f4ee */
-	/* Pure white: the categorical chart palette is validated against it. */
-	--color-card-bg: oklch(1 0 0);
-	--color-elevated-card: oklch(0.941 0.012 85); /* #EFEBE3 */
-	--color-surface: oklch(0.941 0.012 85);
-	--color-top-bar: oklch(0.983 0.005 85);
-	/* Financial semantics. Never reuse these for decoration. */
-	--color-gain: oklch(0.482 0.091 165); /* #1B6E51, >=4.5:1 on page and on a 12% chip of itself */
-	--color-loss: oklch(0.507 0.152 20); /* #AB3640, >=4.5:1 on page and on a 12% chip of itself */
-	--color-flat: oklch(0.491 0.024 251); /* #57626E, >=4.5:1 on page and on a 12% chip of itself */
-	--color-info: oklch(0.491 0.097 246); /* #2B6594, >=4.5:1 on page and on a 12% chip of itself */
+	--color-bronze: var(--muted-foreground);
+	/* Financial semantics (generated) under their legacy names. Never reuse
+	 * these for decoration. */
 	--color-danger: var(--color-loss);
 	--color-success: var(--color-gain);
 	--color-signal: var(--color-gain);
-	--color-warning: oklch(0.498 0.101 68); /* #885613, >=4.5:1 on page and on a 12% chip of itself */
-	--color-amber: oklch(0.787 0.113 73);
-	/* Brand gold as a FILL (navy ink on top, 8.8:1) and the focus ring. */
-	--color-gold: oklch(0.788 0.089 80); /* champagne #D8B477 */
-	--color-ink-on-gold: oklch(0.221 0.035 260); /* #111B2B */
-	--color-focus: var(--color-tint);
-	--color-border-control: oklch(0.616 0.023 82); /* #8E8676, 3.6:1 on card */
-	--color-disabled: oklch(0.7 0.015 85);
-	--color-scrim: oklch(0.172 0.023 260 / 45%);
-	--color-splash-ring: oklch(0.788 0.089 80 / 24%);
-	--color-splash-core: oklch(0.788 0.089 80 / 70%);
-	--color-category-variable: oklch(0.55 0.11 62);
-	--color-category-leisure: oklch(0.52 0.12 295);
 
 	/* Budget pillars. Mirrors iOS BudgetPlannerModels.swift so the two clients
    * agree on which colour means which pillar: fundamentals borrows the primary
-   * tint, fun the secondary tint, and Future You gets its own indigo. Custom
-   * pillars hash into the numbered slots below. */
+   * tint; the other pillars and the custom slots are generated. */
 	--color-pillar-fundamentals: var(--color-tint);
-	--color-pillar-future-you: oklch(0.52 0.17 285);
-	/* Not the secondary tint any more: that is the gain green, and a budget
-     pillar must not read as a gain. */
-	--color-pillar-fun: oklch(0.56 0.08 245);
-	--color-pillar-custom-1: oklch(0.58 0.11 180);
-	--color-pillar-custom-2: oklch(0.62 0.12 220);
-	--color-pillar-custom-3: oklch(0.64 0.1 200);
-	--color-pillar-custom-4: oklch(0.64 0.15 62);
-	--color-pillar-custom-5: oklch(0.62 0.18 350);
-	--color-pillar-custom-6: oklch(0.52 0.09 60);
-	--color-pillar-custom-7: oklch(0.54 0.15 265);
-	--hairline: oklch(0.3 0.03 85 / 12%);
 	--app-tabbar-height: 3.0625rem; /* iOS tab bar: 49pt */
 	/* iOS AppTheme.Radius: control 12, card 16, hero 20. --radius is the card. */
 	--radius: 1rem;
 	--radius-control: 0.75rem;
 	--radius-hero: 1.25rem;
 	--background: var(--color-page-bg);
-	--foreground: oklch(0.221 0.035 260); /* #111B2B, 15.7:1 on page */
 	--card: var(--color-card-bg);
-	--card-foreground: oklch(0.221 0.035 260);
+	--card-foreground: var(--foreground);
 	--popover: var(--color-card-bg);
-	--popover-foreground: oklch(0.221 0.035 260);
+	--popover-foreground: var(--foreground);
 	--primary: var(--color-tint);
-	--primary-foreground: oklch(1 0 0); /* white on deep gold, 5.0:1 */
 	--secondary: var(--color-elevated-card);
-	--secondary-foreground: oklch(0.221 0.035 260);
+	--secondary-foreground: var(--foreground);
 	--muted: var(--color-elevated-card);
-	--muted-foreground: oklch(0.447 0.034 261); /* #4A5568, 6.9:1 */
 	--accent: var(--color-tint-soft);
 	--accent-foreground: var(--color-tint);
 	--destructive: var(--color-danger);
-	--border: oklch(0.896 0.017 85); /* #E2DCD0 */
 	--input: var(--color-border-control);
 	--ring: var(--color-focus);
-	--sidebar: oklch(0.947 0.013 87); /* #F1EDE4 */
-	--sidebar-foreground: oklch(0.221 0.035 260);
+	--sidebar-foreground: var(--foreground);
 	--sidebar-primary: var(--color-tint);
-	--sidebar-primary-foreground: oklch(1 0 0);
-	--sidebar-accent: oklch(0.513 0.082 79 / 10%);
-	--sidebar-accent-foreground: oklch(0.221 0.035 260);
-	--sidebar-border: oklch(0.896 0.017 85);
+	--sidebar-primary-foreground: var(--primary-foreground);
+	--sidebar-accent-foreground: var(--foreground);
+	--sidebar-border: var(--border);
 	--sidebar-ring: var(--color-focus);
-	--chart-axis: oklch(0.447 0.034 261);
-	--chart-grid: oklch(0.911 0.014 85); /* #E6E1D7 */
 	/* Value over time is drawn in ink, not gold: gold marks the one action or
 	   insight on a screen and never means money (DESIGN.md). */
 	--chart-line: var(--foreground);
-	--chart-line-alt: oklch(0.447 0.034 261);
 	--chart-up: var(--color-gain);
 	--chart-down: var(--color-loss);
 	--chart-tooltip-bg: var(--color-card-bg);
-	--chart-tooltip-border: var(--border);
 	--chart-tooltip-text: var(--foreground);
 	--chart-area-opacity: 0.16;
-	--chart-pointer: oklch(0.522 0.025 250);
 	--chart-emphasis-border: var(--color-card-bg);
 	--motion-fast: 140ms;
 	--motion-med: 240ms;
@@ -176,66 +132,9 @@
 html.dark {
 	color-scheme: dark;
 
-	--color-tint: oklch(0.788 0.089 80); /* champagne #D8B477, 8.8:1 on card */
-	--color-tint-soft: oklch(0.788 0.089 80 / 10%);
-	--color-ember: oklch(0.857 0.092 80); /* precision gold #F0CA8A */
-	--color-bronze: oklch(0.73 0.026 254); /* muted silver #9DA9B8 */
-	--color-page-bg: oklch(0.172 0.023 260); /* chrome-hex: precision-dark #0a101a */
-	/* Card is Midnight Navy and elevated is Armor Blue (brief roles). Text
-     contrast in the brand doc was measured on Armor, the lighter of the two. */
-	--color-card-bg: oklch(0.221 0.035 260); /* #111B2B */
-	--color-elevated-card: oklch(0.28 0.047 260); /* #1B2940 */
-	--color-surface: oklch(0.281 0.026 253); /* deep graphite #202A36 */
-	--color-top-bar: oklch(0.196 0.029 260);
-	--color-gain: oklch(0.707 0.118 169); /* #42B894, 5.9:1 on Armor */
-	--color-loss: oklch(0.674 0.145 17); /* #E16D75, 4.6:1 on Armor */
-	--color-flat: oklch(0.75 0.019 253); /* #A6AFBA */
-	--color-info: oklch(0.706 0.093 243); /* #6BA7D6 */
-	--color-warning: oklch(0.787 0.113 73); /* #E6AE63 */
-	--color-amber: oklch(0.787 0.113 73);
-	--color-ink-on-gold: oklch(0.172 0.023 260); /* obsidian, 9.7:1 on champagne */
-	--color-focus: oklch(0.857 0.092 80); /* precision gold */
-	--color-border-control: oklch(0.574 0.04 260); /* #6A7891, 3.3:1 on Armor */
-	--color-disabled: oklch(0.52 0.02 258);
-	--color-scrim: oklch(0 0 0 / 72%);
-	--color-splash-ring: oklch(0.788 0.089 80 / 30%);
-	--color-splash-core: oklch(0.857 0.092 80 / 70%);
-	--color-category-variable: oklch(0.77 0.12 70);
-	--color-category-leisure: oklch(0.72 0.11 295);
-
-	/* Only the pillar tokens that do not already follow a tint need a dark value. */
-	--color-pillar-fun: oklch(0.75 0.08 245);
-	--color-pillar-future-you: oklch(0.72 0.12 285);
-	--color-pillar-custom-1: oklch(0.78 0.09 180);
-	--color-pillar-custom-2: oklch(0.8 0.09 220);
-	--color-pillar-custom-3: oklch(0.8 0.09 200);
-	--color-pillar-custom-4: oklch(0.8 0.11 82);
-	--color-pillar-custom-5: oklch(0.76 0.12 350);
-	--color-pillar-custom-6: oklch(0.74 0.08 60);
-	--color-pillar-custom-7: oklch(0.74 0.11 265);
-	/* Steel Slate as an alpha hairline: decorative, so it may sit under 3:1. */
-	--hairline: oklch(0.8 0.04 258 / 12%);
-	--foreground: oklch(0.933 0.005 107); /* platinum #E9E9E5, 12.0:1 on Armor */
-	--card-foreground: oklch(0.933 0.005 107);
-	--popover-foreground: oklch(0.933 0.005 107);
-	--primary-foreground: oklch(0.172 0.023 260); /* obsidian on gold */
-	--secondary-foreground: oklch(0.933 0.005 107);
-	--muted-foreground: oklch(0.73 0.026 254); /* muted silver, 6.1:1 on Armor */
 	--accent: var(--color-elevated-card);
-	--border: oklch(0.8 0.04 258 / 16%);
-	--sidebar: oklch(0.196 0.029 260);
-	--sidebar-foreground: oklch(0.933 0.005 107);
-	--sidebar-primary-foreground: oklch(0.172 0.023 260);
-	--sidebar-accent: oklch(0.788 0.089 80 / 10%);
-	--sidebar-accent-foreground: oklch(0.933 0.005 107);
-	--sidebar-border: oklch(0.8 0.04 258 / 16%);
-	--chart-axis: oklch(0.73 0.026 254);
-	--chart-grid: oklch(0.376 0.042 259 / 70%); /* steel slate */
-	--chart-line-alt: oklch(0.73 0.026 254);
 	--chart-tooltip-bg: var(--color-elevated-card);
-	--chart-tooltip-border: oklch(0.376 0.042 259);
 	--chart-area-opacity: 0.18;
-	--chart-pointer: oklch(0.73 0.026 254);
 	--panel-shadow: 0 1px 2px oklch(0 0 0 / 24%), 0 6px 14px oklch(0 0 0 / 18%);
 	--panel-shadow-md: 0 2px 4px oklch(0 0 0 / 26%), 0 12px 24px oklch(0 0 0 / 22%);
 	--panel-shadow-lg: 0 4px 8px oklch(0 0 0 / 28%), 0 20px 48px oklch(0 0 0 / 30%);

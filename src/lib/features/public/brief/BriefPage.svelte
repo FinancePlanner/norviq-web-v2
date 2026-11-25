@@ -26,13 +26,6 @@
 	<title>{vm.documentTitle}</title>
 	<meta name="description" content={vm.description} />
 	<meta name="robots" content="index,follow,max-image-preview:large" />
-	<link
-		rel="preload"
-		href="/static/fonts/brygada-1918-latin-wght-normal.woff2"
-		as="font"
-		type="font/woff2"
-		crossorigin="anonymous"
-	/>
 	<link rel="canonical" href={vm.canonicalURL} />
 	<link rel="alternate" hreflang="en" href={vm.englishURL} />
 	<link rel="alternate" hreflang="pt-PT" href={vm.portugueseURL} />

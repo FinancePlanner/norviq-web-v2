@@ -43,6 +43,22 @@ number. Canonical identity: `../docs/precision-identity.md`.
    styling for ordinary market moves.
 5. **Works with effects off.** Every screen is legible and correct with motion, blur and images off.
 
+Design System 2.0 (2026-11-24) adds five, one for each tier of its audit:
+
+6. **Every figure declares its unit, period and as-of time.** The currency comes from the data,
+   never from the device locale. A total that mixes currencies says which currency it was converted
+   into, and when.
+7. **A control drives exactly what sits next to it.** A range control re-queries every figure in its
+   section, or it moves to the one figure it does drive. A filter that does nothing is removed.
+8. **One canonical value per concept.** Net worth, invested value and cash are computed once, on the
+   server, and shown identically on every surface. A client never re-derives a total the API
+   already returns.
+9. **Compare by default.** A change always carries its basis: "vs previous close", "vs 30 days ago",
+   "vs budget", "vs last month". A number with no comparison is a fact; a number with one is
+   information.
+10. **Today shows decisions, not features.** The home surface answers three questions: where you
+    stand, what changed, what needs you. Feature promotion lives in its own domain.
+
 ## Accessibility & Inclusion
 
 WCAG 2.2 AA. Body text ≥4.5:1, large text and controls ≥3:1, in both light and dark themes (light is a
