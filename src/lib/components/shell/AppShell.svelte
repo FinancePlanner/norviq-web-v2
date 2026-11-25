@@ -7,40 +7,44 @@
 		Ellipsis,
 		LogOut,
 		PanelLeft,
+		Search,
 		Settings
 	} from '@lucide/svelte';
 	import NorviqLogo from '#lib/components/brand/NorviqLogo.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
+	import { achievementsOn, type SocialConfig } from '#lib/nav.js';
+	import { navContextFrom } from '#lib/nav/context.js';
 	import {
-		activeTab as tabFor,
-		bottomTabs,
-		bottomTabsMore,
-		isActivePath,
-		isMoreTab,
-		type NavItem
-	} from '#lib/nav.js';
-	import type { SocialConfig } from '#lib/nav.js';
+		activeDestination,
+		activeDomain,
+		bottomBar,
+		subNavLinks,
+		visibleDestinations,
+		type SidebarDomainVM
+	} from '#lib/nav/visible.js';
 	import SectionSubNav from './SectionSubNav.svelte';
 	import NavBadge from './NavBadge.svelte';
-	import { sidebarIcon, tabIcon } from './nav-icons.js';
+	import { domainIcon, sidebarIcon } from './nav-icons.js';
 	import { shell } from './shell-state.svelte.js';
+	import { openPalette } from './palette-state.svelte.js';
 	import { pageMotion } from '#lib/motion.js';
-	import { achievementsOn } from '#lib/nav.js';
 	import UnlockToast from '#lib/features/achievements/UnlockToast.svelte';
 
-	// Port of shell.templ AppShell: mobile top bar, collapsible sidebar, main
-	// column (trial banner + mobile section sub-nav + page), mobile bottom tabs.
+	// Port of shell.templ AppShell, regrouped into the six DS 2.0 P3 domains:
+	// mobile top bar, collapsible sidebar (domains, then search, Settings and the
+	// account in the foot), main column (trial banner + mobile section sub-nav +
+	// page), mobile bottom bar (Today, Money, Wealth, Plan, More).
 
 	interface Props {
 		username: string;
 		email: string;
-		sidebarItems: NavItem[];
+		sidebar: SidebarDomainVM[];
 		social: SocialConfig;
 		trialExpired: boolean;
 		children: Snippet;
 	}
 
-	let { username, email, sidebarItems, social, trialExpired, children }: Props = $props();
+	let { username, email, sidebar, social, trialExpired, children }: Props = $props();
 
 	// Go renderShell's activePath: a page may render under another section's nav
 	// (pilots under /markets) by returning `activePath` from its load.
@@ -49,19 +53,34 @@
 			? page.data.activePath
 			: page.url.pathname
 	);
-	const activeTab = $derived(tabFor(activePath));
-	const groupKeys = $derived(sidebarItems.map((g) => g.tab));
-	let moreOpen = $state(false);
+	// The same gates and Pro badges as the server-built sidebar.
+	const navCtx = $derived(navContextFrom(page.data));
+	const destinations = $derived(visibleDestinations(navCtx));
+	const current = $derived(activeDestination(activePath, destinations));
+	const domain = $derived(activeDomain(activePath, destinations));
+	const groupKeys = $derived(sidebar.map((g) => g.key));
+	const subLinks = $derived(subNavLinks(t, navCtx, activePath));
+	// Settings and its sub-pages; Achievements is an account page but not Settings.
+	const settingsActive = $derived(
+		current?.id === 'settings' || current?.id === 'brokers-and-imports'
+	);
+	const currentPath = $derived(activePath.replace(/\/+$/, '') || '/');
+	// More holds the domains off the bar (Intelligence, Community) and Account.
+	const moreActive = $derived(
+		currentPath === '/more' ||
+			domain === 'intelligence' ||
+			domain === 'community' ||
+			domain === 'account'
+	);
 
 	const linkBase =
 		'app-sidebar-link flex h-9 items-center gap-2.5 overflow-hidden rounded-md px-2.5 text-subhead transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none sidebar-collapsed:justify-center sidebar-collapsed:px-0';
+	const linkActive = `${linkBase} app-sidebar-link-active bg-sidebar-accent font-semibold text-sidebar-accent-foreground`;
+	const linkIdle = `${linkBase} text-sidebar-foreground/80`;
 	const groupLabelClass =
 		'app-sidebar-group-label flex h-9 w-full items-center gap-1 rounded-md px-2 text-footnote font-semibold text-sidebar-foreground/70 transition-[margin,opacity] duration-200 ease-linear hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none sidebar-collapsed:pointer-events-none sidebar-collapsed:-mt-9 sidebar-collapsed:opacity-0';
-	const settingsBase =
-		'inline-flex size-8 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground sidebar-collapsed:hidden';
 
 	function onKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') moreOpen = false;
 		// Cmd/Ctrl+B toggles the rail, never while typing in a field.
 		if (!(e.metaKey || e.ctrlKey) || e.altKey || e.key.toLowerCase() !== 'b') return;
 		const el = document.activeElement as HTMLElement | null;
@@ -69,12 +88,6 @@
 		e.preventDefault();
 		shell.toggleSidebar();
 	}
-
-	$effect(() => {
-		// Close the overflow menu after any navigation.
-		void activePath;
-		moreOpen = false;
-	});
 </script>
 
 <svelte:window onkeydown={onKeydown} />
@@ -96,10 +109,10 @@
 				{/if}
 				<a
 					href="/settings"
-					class={activeTab === 'settings'
+					class={settingsActive
 						? 'app-icon-btn app-icon-btn-active lg:hidden'
 						: 'app-icon-btn lg:hidden'}
-					aria-label="Settings"
+					aria-label={t('Settings')}
 				>
 					<Settings class="h-5 w-5" />
 				</a>
@@ -141,35 +154,33 @@
 						class="app-sidebar-nav min-h-0 flex-1 overflow-y-auto p-2"
 						aria-label="Main navigation"
 					>
-						{#each sidebarItems as group (group.tab)}
-							{@const open = shell.isOpen(group.tab, activeTab)}
+						{#each sidebar as group (group.key)}
+							{@const open = shell.isOpen(group.key, domain)}
 							<div
 								class="app-sidebar-group pb-1"
-								data-nav-group={group.tab}
+								data-nav-group={group.key}
 								style:--nav-rows={open ? '1fr' : '0fr'}
 								style:--nav-turn={open ? '0.25turn' : '0turn'}
 							>
 								<button
 									type="button"
 									class={groupLabelClass}
-									aria-controls="nav-group-{group.tab}"
+									aria-controls="nav-group-{group.key}"
 									aria-expanded={open}
-									onclick={() => shell.toggleGroup(group.tab, groupKeys, activeTab)}
+									onclick={() => shell.toggleGroup(group.key, groupKeys, domain)}
 								>
 									<span class="truncate">{group.label}</span>
 									<ChevronRight class="app-sidebar-group-chevron ml-auto h-3.5 w-3.5 shrink-0" />
 								</button>
-								<div class="app-sidebar-group-panel" id="nav-group-{group.tab}">
+								<div class="app-sidebar-group-panel" id="nav-group-{group.key}">
 									<ul class="app-sidebar-links flex flex-col gap-1">
-										{#each group.children ?? [] as item (item.path)}
-											{@const active = isActivePath(activePath, item.path)}
+										{#each group.picks as item (item.path)}
+											{@const active = current?.path === item.path}
 											{@const Icon = sidebarIcon(item.path)}
 											<li>
 												<a
 													href={item.path}
-													class={active
-														? `${linkBase} app-sidebar-link-active bg-sidebar-accent font-semibold text-sidebar-accent-foreground`
-														: `${linkBase} text-sidebar-foreground/80`}
+													class={active ? linkActive : linkIdle}
 													aria-current={active ? 'page' : undefined}
 												>
 													<span class="app-sidebar-link-icon shrink-0" aria-hidden="true"
@@ -188,37 +199,70 @@
 												</a>
 											</li>
 										{/each}
+										<!-- The rail keeps the picks' icons only; the index link has none. -->
+										<li class="sidebar-collapsed:hidden">
+											<a
+												href={group.indexPath}
+												class={currentPath === group.indexPath
+													? `${linkBase} app-sidebar-link-active text-footnote font-semibold`
+													: `${linkBase} text-footnote text-sidebar-foreground/70`}
+												aria-current={currentPath === group.indexPath ? 'page' : undefined}
+												>{t('All in %s →', group.label)}</a
+											>
+										</li>
 									</ul>
 								</div>
 							</div>
 						{/each}
 					</nav>
 					<div
-						class="app-sidebar-account mt-auto flex shrink-0 items-center gap-2 border-t border-sidebar-border p-2 sidebar-collapsed:justify-center"
+						class="app-sidebar-foot flex shrink-0 flex-col gap-1 border-t border-sidebar-border p-2"
 					>
-						<span
-							class="inline-flex size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-sidebar-accent-foreground"
-							aria-hidden="true"
+						<!-- aria-label: the collapsed rail hides the text, leaving only the icon. -->
+						<button
+							type="button"
+							class="{linkIdle} w-full"
+							aria-label={t('Search and commands')}
+							onclick={openPalette}
 						>
-							<CircleUserRound class="h-4 w-4" />
-						</span>
-						<div class="min-w-0 flex-1 sidebar-collapsed:hidden">
-							<p class="truncate text-subhead font-semibold text-sidebar-foreground">
-								{username || 'Account'}
-							</p>
-							{#if email}<span class="block truncate text-caption text-muted-foreground"
-									>{email}</span
-								>{/if}
-						</div>
+							<span class="app-sidebar-link-icon shrink-0" aria-hidden="true"
+								><Search class="h-4 w-4" /></span
+							>
+							<span class="truncate sidebar-collapsed:hidden">{t('Search and commands')}</span>
+							<kbd
+								class="ml-auto font-sans text-caption text-muted-foreground sidebar-collapsed:hidden"
+								>⌘K</kbd
+							>
+						</button>
 						<a
 							href="/settings"
-							class={activeTab === 'settings'
-								? `app-sidebar-settings app-sidebar-settings-active ${settingsBase} bg-sidebar-accent text-sidebar-accent-foreground`
-								: `app-sidebar-settings ${settingsBase} text-sidebar-foreground/70`}
-							aria-label="Settings"
+							class={settingsActive ? linkActive : linkIdle}
+							aria-current={settingsActive ? 'page' : undefined}
+							aria-label={t('Settings')}
 						>
-							<Settings class="h-4 w-4" />
+							<span class="app-sidebar-link-icon shrink-0" aria-hidden="true"
+								><Settings class="h-4 w-4" /></span
+							>
+							<span class="truncate sidebar-collapsed:hidden">{t('Settings')}</span>
 						</a>
+						<div
+							class="app-sidebar-account flex items-center gap-2 pt-1 sidebar-collapsed:justify-center"
+						>
+							<span
+								class="inline-flex size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-sidebar-accent-foreground"
+								aria-hidden="true"
+							>
+								<CircleUserRound class="h-4 w-4" />
+							</span>
+							<div class="min-w-0 flex-1 sidebar-collapsed:hidden">
+								<p class="truncate text-subhead font-semibold text-sidebar-foreground">
+									{username || t('Account')}
+								</p>
+								{#if email}<span class="block truncate text-caption text-muted-foreground"
+										>{email}</span
+									>{/if}
+							</div>
+						</div>
 					</div>
 					<form
 						method="post"
@@ -256,13 +300,11 @@
 						>
 					</div>
 				{/if}
-				{#each sidebarItems as group (group.tab)}
-					{#if group.tab === activeTab && (group.children?.length ?? 0) > 1}
-						<div class="mobile-section-subnav lg:hidden">
-							<SectionSubNav items={group.children ?? []} {activePath} />
-						</div>
-					{/if}
-				{/each}
+				{#if subLinks.length > 0}
+					<div class="mobile-section-subnav lg:hidden">
+						<SectionSubNav links={subLinks} {activePath} />
+					</div>
+				{/if}
 				{@render children()}
 				{#if achievementsOn(social)}
 					<UnlockToast />
@@ -271,44 +313,18 @@
 		</div>
 
 		<nav class="app-bottom-tabs" aria-label="Primary navigation">
-			{#each bottomTabs(t) as tab (tab.tab)}
-				{@const Icon = tabIcon(tab.tab)}
+			{#each bottomBar(t) as tab (tab.key)}
+				{@const active = tab.key === 'more' ? moreActive : domain === tab.key}
+				{@const Icon = tab.key === 'more' ? Ellipsis : domainIcon(tab.key)}
 				<a
 					href={tab.path}
-					class={activeTab === tab.tab ? 'app-bottom-tab app-bottom-tab-active' : 'app-bottom-tab'}
+					class={active ? 'app-bottom-tab app-bottom-tab-active' : 'app-bottom-tab'}
+					aria-current={active ? 'page' : undefined}
 				>
 					<span class="app-bottom-tab-icon" aria-hidden="true"><Icon class="h-6 w-6" /></span>
 					<span>{tab.label}</span>
 				</a>
 			{/each}
-			<button
-				type="button"
-				class={isMoreTab(activeTab) ? 'app-bottom-tab app-bottom-tab-active' : 'app-bottom-tab'}
-				onclick={() => (moreOpen = !moreOpen)}
-				aria-expanded={moreOpen}
-				aria-haspopup="menu"
-				aria-controls="bottom-tabs-more"
-			>
-				<span class="app-bottom-tab-icon" aria-hidden="true"><Ellipsis class="h-6 w-6" /></span>
-				<span>{t('More')}</span>
-			</button>
-			{#if moreOpen}
-				<div id="bottom-tabs-more" class="app-bottom-tabs-more" role="menu">
-					{#each bottomTabsMore(t, social) as tab (tab.tab)}
-						{@const Icon = tabIcon(tab.tab)}
-						<a
-							href={tab.path}
-							class={activeTab === tab.tab
-								? 'app-bottom-more-link app-bottom-more-link-active'
-								: 'app-bottom-more-link'}
-							role="menuitem"
-						>
-							<span class="app-bottom-tab-icon" aria-hidden="true"><Icon class="h-6 w-6" /></span>
-							<span>{tab.label}</span>
-						</a>
-					{/each}
-				</div>
-			{/if}
 		</nav>
 	</div>
 </div>

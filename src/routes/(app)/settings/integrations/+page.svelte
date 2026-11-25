@@ -15,6 +15,7 @@
 		withSpinner
 	} from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import { t } from '#lib/i18n/context.svelte.js';
 	import TelegramCard from '#lib/features/settings-admin/integrations/TelegramCard.svelte';
 	import { settingsMCPAgentState } from '#lib/features/settings-admin/integrations/types.js';
 	import type { PageProps } from './$types';
@@ -42,7 +43,7 @@
 </script>
 
 <svelte:head>
-	<title>Integrations - Norviq</title>
+	<title>{t('Brokers and imports')} - Norviq</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -50,7 +51,7 @@
 	<vigil.SettingsShell
 		backHref="/settings"
 		backLabel="← Settings"
-		title="Integrations"
+		title={t('Brokers and imports')}
 		subtitle="Every connection is scoped and revocable."
 	>
 		{#if vm.successMessage !== ''}

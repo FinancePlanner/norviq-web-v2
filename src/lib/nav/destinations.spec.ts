@@ -158,6 +158,8 @@ describe('destination model (DS 2.0 P3)', () => {
 		['/planning/retire/preview', 'retirement', 'planning'],
 		['/planning/grow/preview', 'grow', 'planning'],
 		['/simulator/save', 'simulator', 'planning'],
+		['/tools', 'tools', 'planning'],
+		['/planning/grow', 'grow', 'planning'],
 		['/admin/community', 'boards', 'community']
 	])('deep path %s resolves to %s in %s', (path, dest, domain) => {
 		expect(activeDestination(path, DESTINATIONS)?.id).toBe(dest);
@@ -180,9 +182,8 @@ describe('destination model (DS 2.0 P3)', () => {
 
 	// Pages with no destination of their own. Keep this list short; each entry says why.
 	const UNROUTED_APP_PAGES: Record<string, string> = {
-		'/[domain=domain]':
-			'the domain index pages; activeDomain matches them by path (Task 2 adds the route)',
-		'/more': 'the mobile More page; the shell marks the More tab itself (Task 2)',
+		'/[domain=domain]': 'the domain index pages; activeDomain matches them by path',
+		'/more': 'the mobile More page; the shell marks the More tab itself',
 		'/__dev/digest': 'developer preview, never linked from navigation',
 		'/ai-consent': 'one-time consent interstitial before Q, outside navigation',
 		'/digest/[id]': 'an emailed digest opened from its link, not a navigation place',
@@ -207,11 +208,9 @@ describe('destination model (DS 2.0 P3)', () => {
 				!(route in UNROUTED_APP_PAGES) && activeDestination(concrete(route), DESTINATIONS) === null
 		);
 		expect(unresolved.sort()).toEqual([]);
-		// The allowlist only names real (or Task 2) pages that really are unresolved.
+		// The allowlist only names real pages that really are unresolved.
 		const stale = Object.keys(UNROUTED_APP_PAGES).filter(
-			(route) =>
-				!['/[domain=domain]', '/more'].includes(route) &&
-				(!pages.includes(route) || activeDestination(concrete(route), DESTINATIONS) !== null)
+			(route) => !pages.includes(route) || activeDestination(concrete(route), DESTINATIONS) !== null
 		);
 		expect(stale).toEqual([]);
 	});
@@ -269,6 +268,16 @@ describe('destination model (DS 2.0 P3)', () => {
 		expect(routes.length).toBeGreaterThan(50);
 		const paths = DESTINATIONS.flatMap(linkPaths).map((p) => p.split('?')[0]);
 		expect(paths.filter((p) => !routes.some((re) => re.test(p)))).toEqual([]);
+	});
+
+	it('each domain index and /more is exactly one page route', () => {
+		const routes = Object.keys(import.meta.glob('/src/routes/**/+page.svelte')).map(routeRegex);
+		const indexPaths = [...DOMAIN_ORDER.map((key) => DOMAIN_META[key].indexPath), '/more'];
+		expect(indexPaths.map((p) => [p, routes.filter((re) => re.test(p)).length])).toEqual(
+			indexPaths.map((p) => [p, 1])
+		);
+		// The domain matcher takes the six keys only, not any one segment.
+		expect(routes.filter((re) => re.test('/nowhere'))).toEqual([]);
 	});
 
 	it('every declared label, description and domain string has a pt-PT entry', () => {
@@ -386,8 +395,12 @@ describe('destination model (DS 2.0 P3)', () => {
 	});
 });
 
+// Param matchers in src/params, as the values they accept.
+const MATCHERS: Record<string, readonly string[]> = { domain: DOMAIN_ORDER };
+
 // routeRegex turns a route file key into a matcher for concrete paths:
-// `(group)` segments drop out, `[param]` matches one segment, `[[param]]` is optional.
+// `(group)` segments drop out, `[param]` matches one segment, `[[param]]` is optional,
+// and `[param=matcher]` matches only what that matcher accepts.
 function routeRegex(file: string): RegExp {
 	const segments = file
 		.replace(/^\/src\/routes/, '')
@@ -397,6 +410,12 @@ function routeRegex(file: string): RegExp {
 	const body = segments
 		.map((s) => {
 			if (/^\[\[.+\]\]$/.test(s)) return '(?:/[^/]+)?';
+			const matcher = /^\[[^=\]]+=([^\]]+)\]$/.exec(s)?.[1];
+			if (matcher) {
+				const values = MATCHERS[matcher];
+				if (!values) throw new Error(`routeRegex: no values for param matcher "${matcher}"`);
+				return `/(?:${values.join('|')})`;
+			}
 			if (/^\[.+\]$/.test(s)) return '/[^/]+';
 			return '/' + s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 		})

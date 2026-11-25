@@ -11,7 +11,7 @@
 <AppShell
 	username={data.username}
 	email={data.email}
-	sidebarItems={data.sidebarItems}
+	sidebar={data.sidebar}
 	social={data.social}
 	trialExpired={data.trialExpired}
 >

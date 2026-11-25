@@ -10,6 +10,7 @@
 export const DISPLAY_FACE_HREF = '/static/fonts/brygada-1918-latin-wght-normal.woff2';
 
 const APP_ROUTES = [
+	'[domain=domain]',
 	'achievements',
 	'boards/[slug]/submit',
 	'boards/activity',
@@ -25,6 +26,7 @@ const APP_ROUTES = [
 	'friends/x/callback',
 	'groups/[groupID]/settings',
 	'groups/new',
+	'more',
 	'pilots/[slug]/follow',
 	'settings',
 	'settings/about',

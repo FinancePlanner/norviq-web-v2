@@ -4,7 +4,7 @@
 	import { CardHeader, ChartPlaceholder } from '#lib/components/norviq/index.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { spendingLine } from '#lib/charts/index.js';
-	import { locale } from '#lib/i18n/context.svelte.js';
+	import { locale, t } from '#lib/i18n/context.svelte.js';
 	import { formatFloat } from '#lib/format.js';
 
 	let { data } = $props();
@@ -18,13 +18,13 @@
 </script>
 
 <svelte:head>
-	<title>Year overview - Norviq</title>
+	<title>{t('Spending log')} - Norviq</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <vigil.CanvasPage
 	pageClass="expenses-year-page expenses-modern-page"
-	title="Year overview"
+	title={t('Spending log')}
 	subtitle={String(data.year)}
 >
 	<vigil.MetricStrip>

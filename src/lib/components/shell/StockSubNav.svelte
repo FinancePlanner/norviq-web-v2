@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { isActivePath, type NavItem } from '#lib/nav.js';
+	import { isActivePath, type StockTab } from '#lib/nav.js';
 
 	// activePath: Go's StockDetail passed "/portfolio/<lower symbol>[/tab]", so
 	// /portfolio/AAPL still marks its tab; defaults to the current path.
-	let { symbol, tabs, activePath }: { symbol: string; tabs: NavItem[]; activePath?: string } =
+	let { symbol, tabs, activePath }: { symbol: string; tabs: StockTab[]; activePath?: string } =
 		$props();
 	const current = $derived(activePath ?? page.url.pathname);
 </script>
