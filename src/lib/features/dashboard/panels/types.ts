@@ -109,7 +109,7 @@ export interface HeadlineVM {
 	timeAgo?: string;
 }
 
-/** Economy pulse: null items = the backend call failed (OverviewPanelError). */
+/** Economy pulse: null items = the backend call failed (vigil.ErrorRetry). */
 export interface EconomyPulseVM {
 	items: HeadlineVM[] | null;
 }

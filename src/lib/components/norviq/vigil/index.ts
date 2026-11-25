@@ -28,3 +28,5 @@ export { default as RangeControl } from './RangeControl.svelte';
 export { default as MoneyText } from './MoneyText.svelte';
 export { default as DeltaText } from './DeltaText.svelte';
 export { default as AsOf } from './AsOf.svelte';
+export { default as Section } from './Section.svelte';
+export { default as ErrorRetry } from './ErrorRetry.svelte';

@@ -13,7 +13,6 @@
 	import NewsTickerShell from '#lib/features/dashboard/panels/NewsTickerShell.svelte';
 	import ActivityPanel from '#lib/features/dashboard/activity/ActivityPanel.svelte';
 	import RecentSpendCard from '#lib/features/dashboard/activity/RecentSpendCard.svelte';
-	import OverviewPanelError from '#lib/features/dashboard/activity/OverviewPanelError.svelte';
 	import FinancialHealthCard from '#lib/features/dashboard/insights/FinancialHealthCard.svelte';
 	import InsightKPIStrip from '#lib/features/dashboard/insights/InsightKPIStrip.svelte';
 	import FocusPointsTeaser from '#lib/features/dashboard/insights/FocusPointsTeaser.svelte';
@@ -64,7 +63,7 @@
 			</div>
 			<aside class="overview-main-side">
 				{#if overview.loadErrors.insights}
-					<OverviewPanelError
+					<vigil.ErrorRetry
 						title={t('Financial health')}
 						message={t('Financial health is unavailable right now.')}
 					/>
@@ -78,7 +77,7 @@
 				{/if}
 				<div id="recent-spend-panel">
 					{#if overview.loadErrors.expenses}
-						<OverviewPanelError
+						<vigil.ErrorRetry
 							title={t('Recent spend')}
 							message={t('Recent expenses are unavailable right now.')}
 						/>

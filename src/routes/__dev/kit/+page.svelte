@@ -334,6 +334,47 @@
 		</div>
 	</section>
 
+	<!-- DS 2.0 · Structure and states (both themes via the Appearance toggle) -->
+	<section class="space-y-4">
+		<h2 class="text-lg font-semibold">DS 2.0 · Structure and states</h2>
+		<p class="text-sm text-muted-foreground">
+			vigil.Section is a hairline rule, not a card. The six states: loading, first-time empty,
+			filtered empty, error, stale, Pro-gated.
+		</p>
+		<vigil.Section title="Holdings">
+			{#snippet action()}<a href="#structure" class="text-sm">View all</a>{/snippet}
+			<p class="text-sm">Section content sits below the rule.</p>
+		</vigil.Section>
+		<div class="grid gap-4 sm:grid-cols-2">
+			<div class="space-y-2">
+				<p class="text-caption text-muted-foreground">Loading</p>
+				<SkeletonBlock heightClass="h-8 rounded-lg" />
+			</div>
+			<div class="space-y-2">
+				<p class="text-caption text-muted-foreground">First-time empty</p>
+				<EmptyState title="No holdings yet" description="Add a position to get started." />
+			</div>
+			<div class="space-y-2">
+				<p class="text-caption text-muted-foreground">Filtered empty</p>
+				<EmptyStateInline title="No matches" description="Try a different filter." />
+			</div>
+			<div class="space-y-2">
+				<p class="text-caption text-muted-foreground">Error</p>
+				<vigil.ErrorRetry message="Could not load activity" onRetry={() => {}} />
+			</div>
+			<div class="space-y-2">
+				<p class="text-caption text-muted-foreground">Stale</p>
+				<vigil.AsOf date="2026-11-18" now={kitNow} />
+			</div>
+			<div class="space-y-2">
+				<p class="text-caption text-muted-foreground">Pro-gated</p>
+				<ProGateWrap isPro={false} featureName="Tax strategy">
+					<div class="p-6">Locked preview content</div>
+				</ProGateWrap>
+			</div>
+		</div>
+	</section>
+
 	<!-- templUI -->
 	<section class="space-y-4">
 		<h2 class="text-lg font-semibold">templUI primitives</h2>

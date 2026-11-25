@@ -1211,5 +1211,6 @@
 	"up %@": "subiu %@",
 	"down %@": "desceu %@",
 	"unchanged": "inalterado",
-	"As of %@": "A %@"
+	"As of %@": "A %@",
+	"Try again": "Tentar novamente"
 }
