@@ -302,6 +302,47 @@ describe('serveExport', () => {
 	});
 });
 
+describe('X-Norviq-Edge-Cache', () => {
+	const H = 'X-Norviq-Edge-Cache';
+
+	it('says miss, then hit, and never stores the header', async () => {
+		mockFetch.mockResolvedValue(upstream());
+		const first = setup('og.png', '');
+		const miss = await run(first);
+		expect(miss.headers.get(H)).toBe('miss');
+		expect([...first.store.values()][0].headers.get(H)).toBeNull();
+		const again = setup('og.png', '');
+		for (const [k, v] of first.store) again.store.set(k, v);
+		const hit = await run(again);
+		expect(hit.headers.get(H)).toBe('hit');
+		expect([...again.store.values()][0].headers.get(H)).toBeNull();
+	});
+
+	it('says skip for a non-200 and off without an edge cache', async () => {
+		mockFetch.mockResolvedValue(upstream({}, 404));
+		expect((await run(setup('og.png', ''))).headers.get(H)).toBe('skip');
+		mockFetch.mockResolvedValue(upstream());
+		expect((await run(setup('og.png', '', { caches: false }))).headers.get(H)).toBe('off');
+	});
+
+	it('logs a failing put and still answers 200', async () => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		mockFetch.mockResolvedValue(upstream());
+		const s = setup('og.png', '');
+		const boom = new Error('quota');
+		s.put.mockRejectedValueOnce(boom);
+		const res = await run(s);
+		expect(res.status).toBe(200);
+		expect(res.headers.get(H)).toBe('miss');
+		expect(warn).toHaveBeenCalledWith(
+			'brief export cache put failed',
+			'https://www.norviq.org/brief/2026-11-20/evening/og.png?lang=en',
+			boom
+		);
+		warn.mockRestore();
+	});
+});
+
 const BACKEND_MANIFEST = {
 	editionId: 'MI-2026-11-20-C',
 	revision: 2,

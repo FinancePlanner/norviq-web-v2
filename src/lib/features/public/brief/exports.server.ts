@@ -95,6 +95,12 @@ function edgeCache(event: RequestEvent): Cache | null {
 		: null;
 }
 
+/** Reports how the edge cache answered; the Cache API sets no CF-Cache-Status. */
+function tagged(res: Response, state: 'hit' | 'miss' | 'skip' | 'off'): Response {
+	res.headers.set('X-Norviq-Edge-Cache', state);
+	return res;
+}
+
 /**
  * The shared edge-cache path. The lookup carries the client's conditional
  * headers so cache.match answers 304/206 itself. Only a 200 is stored.
@@ -105,7 +111,7 @@ export async function cached(
 	produce: () => Promise<Response>
 ): Promise<Response> {
 	const cache = edgeCache(event);
-	if (!cache || !event.platform) return produce();
+	if (!cache || !event.platform) return tagged(await produce(), 'off');
 	const lookup = new Headers();
 	for (const name of ['If-None-Match', 'Range']) {
 		const value = event.request.headers.get(name);
@@ -113,11 +119,16 @@ export async function cached(
 	}
 	const hit = await cache.match(new Request(key, { headers: lookup }));
 	// workerd returns immutable headers; hooks.server.ts sets one on every response.
-	if (hit) return new Response(hit.body, hit);
+	if (hit) return tagged(new Response(hit.body, hit), 'hit');
 	const response = await produce();
-	if (response.status === 200)
-		event.platform.ctx.waitUntil(cache.put(new Request(key), response.clone()));
-	return response;
+	if (response.status !== 200) return tagged(response, 'skip');
+	// Store the copy before tagging, so a later hit never reads "miss".
+	event.platform.ctx.waitUntil(
+		cache
+			.put(new Request(key), response.clone())
+			.catch((err: unknown) => console.warn('brief export cache put failed', key, err))
+	);
+	return tagged(response, 'miss');
 }
 
 export async function serveExport(event: RequestEvent, file: ExportFile): Promise<Response> {
