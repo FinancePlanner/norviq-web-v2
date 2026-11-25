@@ -327,7 +327,7 @@ The canonical set from spec § 6.1. A page uses the canonical component; a row m
 | Page                              | `vigil.DocumentPage`, `vigil.DeckPage`, `vigil.CanvasPage`      | canonical                                                                             |
 | Section (a rule, not a card)      | `vigil.Section` (hairline, title, action)                       | canonical                                                                             |
 | Card (actionable object only)     | `vigil.Panel`                                                   | canonical                                                                             |
-| MoneyText / DeltaText             | `vigil.MoneyText`, `vigil.DeltaText`, on `src/lib/money.ts`     | canonical                                                                             |
+| MoneyText / DeltaText             | `vigil.MoneyText`, `vigil.DeltaText`, on `src/lib/money.ts`     | canonical; `vigil.HeroDelta` is legacy, absorbed by `DeltaText` in P4                 |
 | MetricTile                        | `vigil.Metric`                                                  | canonical; `StatPill`, `HeroMetric` and `InsightKPIStrip` are legacy (P4/P5)          |
 | DataTable                         | `vigil.DataTable`                                               | canonical; `tui/table` is legacy (P4/P5)                                              |
 | RangeControl                      | `vigil.RangeControl`                                            | canonical                                                                             |
@@ -341,7 +341,7 @@ The canonical set from spec § 6.1. A page uses the canonical component; a row m
 
 ### Money, change and staleness
 
-- `vigil.MoneyText` and `vigil.DeltaText` format only through `money`, `signedMoney`, `compactMoney` and `signedPercent` in `src/lib/money.ts`. A delta carries its sign, its ▲/▼ and its basis label, and reads its amount aloud.
+- `vigil.MoneyText` and `vigil.DeltaText` format only through `money`, `signedMoney`, `compactMoney` and `signedPercent` in `src/lib/money.ts`. A delta carries its sign, its ▲/▼ and its basis label, and reads its amount aloud. `DeltaText` requires `basis`; the percent is spoken without a sign ("down 3.2%").
 - `vigil.AsOf` shows "Prices as of {date}" in place of a change. `src/lib/as-of.ts` decides: the last point is stale when it is more than 4 calendar days old, counted as UTC civil dates so SSR and the browser agree.
 - `vigil.Section` is the signature page division. `vigil.ErrorRetry` is the error state: a message and a retry button that reloads the page data (`invalidateAll`) unless the caller passes `onRetry`.
 
@@ -349,7 +349,7 @@ The canonical set from spec § 6.1. A page uses the canonical component; a row m
 
 - One vocabulary on every chart: `1D 1W 1M 3M YTD 1Y 5Y ALL`, always uppercase in the UI. `src/lib/ranges.ts` owns it: `RANGE_KEYS`, `PORTFOLIO_RANGES` (`1W 1M 3M 1Y ALL`; YTD stays hidden until API R4), `parseRange` and `rangeHref`.
 - The range lives in the URL query, so a chart never shows a range it did not fetch. `parseRange` reads it case-insensitively and falls back to the page default; a feature that talks to its backend in another spelling maps at its own boundary.
-- `vigil.RangeControl` takes `ranges`, `active`, `param`, `url` and `label`. It renders one link per range and `rangeHref` keeps every other query param. The default param is `range` (the coin page); Crypto Markets passes `param="tf"`. Segments are 44px tall on phones and at least 24px elsewhere.
+- `vigil.RangeControl` takes `ranges`, `active`, `param`, `url` and `label`. It renders one link per range and `rangeHref` keeps every other query param. The default param is `range` (the coin page and the portfolio hero); Crypto Markets passes `param="tf"`. Segments are 44px tall on phones and at least 24px elsewhere.
 
 ### The six states
 
@@ -375,7 +375,7 @@ Toasts own the top of the viewport and the Q button owns the bottom-right corner
 
 ### Motion
 
-The motion tokens (`--motion-fast` and the rest) are live. The global `prefers-reduced-motion: reduce` rule in `src/lib/styles/legacy/styles.css` cuts every transition and animation to 0.01ms and stays; a test guards it.
+The motion tokens (`--motion-fast` and the rest) are live. The global `prefers-reduced-motion: reduce` rule in `src/lib/styles/legacy/styles.css` kills transitions and animations, except short opacity fades on dialogs, popovers and toasts, where a hard cut would read as broken. It stays; a test guards it.
 
 ## Money and numbers
 
