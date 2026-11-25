@@ -33,6 +33,18 @@ describe('DesktopTopBar (SSR)', () => {
 		expect(html).not.toContain('href="/assistant"');
 	});
 
+	// The shortcut is announced once, through aria-keyshortcuts, not read out as "⌘K".
+	it('names the search button by its label alone', () => {
+		const button = /<button[^>]*>(?:(?!<\/button>)[\s\S])*Search holdings/.exec(
+			bar({ domainLabel: null, qMode: 'link' })
+		)?.[0];
+		expect(button).toMatch(/^<button[^>]*aria-keyshortcuts="Meta\+K Control\+K"/);
+		expect(button ?? '').not.toMatch(/<kbd(?![^>]*aria-hidden="true")[^>]*>/);
+		expect(bar({ domainLabel: null, qMode: 'link' })).toMatch(
+			/<kbd[^>]*aria-hidden="true"[^>]*>⌘K/
+		);
+	});
+
 	it('renders without a domain', () => {
 		const html = bar({ domainLabel: null, qMode: 'link' });
 		expect(html).toContain('Search holdings, pages, actions');

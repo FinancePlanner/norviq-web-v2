@@ -47,11 +47,12 @@
 		<button
 			type="button"
 			class="inline-flex h-9 w-72 items-center gap-2 rounded-md border border-border px-3 text-subhead text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+			aria-keyshortcuts="Meta+K Control+K"
 			onclick={openPalette}
 		>
 			<Search class="h-4 w-4 shrink-0" aria-hidden="true" />
 			<span class="truncate">{t('Search holdings, pages, actions')}</span>
-			<kbd class="ml-auto font-sans text-caption">⌘K</kbd>
+			<kbd class="ml-auto font-sans text-caption" aria-hidden="true">⌘K</kbd>
 		</button>
 		<a
 			href="/notifications"

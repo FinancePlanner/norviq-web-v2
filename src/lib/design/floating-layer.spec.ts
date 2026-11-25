@@ -12,6 +12,7 @@ import { describe, expect, it } from 'vitest';
 import SHELL from '../styles/legacy/css/shell.css?raw';
 import THEME from '../styles/legacy/theme.css?raw';
 import QUICK from '../features/dashboard/assistant/components/QuickAssistant.svelte?raw';
+import DESIGN from '../../../DESIGN.md?raw';
 
 const DESKTOP = '@media (min-width: 1024px)';
 
@@ -123,6 +124,26 @@ describe('floating layer: Quick Assistant card', () => {
 		expect(desktop).toHaveLength(1);
 		expect(valueOf(desktop[0], 'margin')).toBe(
 			'calc(var(--app-desktop-topbar-height) + 0.5rem) 1.5rem auto auto'
+		);
+	});
+
+	// Hung from the top, a card taller than the room below the bar runs off a
+	// short window (the wide card did below ~633px).
+	const room = 'calc(100dvh - var(--app-desktop-topbar-height) - 2rem)';
+	it('fits below the desktop top bar on a short window', () => {
+		expect(valueOf(desktop[0], 'max-height')).toBe(`min(40rem, ${room})`);
+		const wide = rulesFor(style, '.quick-q-card.quick-q-wide').desktop;
+		expect(wide).toHaveLength(1);
+		expect(valueOf(wide[0], 'max-height')).toBe(`min(52rem, ${room})`);
+	});
+
+	// Ruling (P3 Task 3 review): at 1024px and up the Q card and the unlock toast
+	// share the top-right slot on purpose. The open card is a user-opened modal in
+	// the top layer; the toast stays a role="status" announcement under it.
+	it('is documented in DESIGN.md as covering the toast on desktop by design', () => {
+		const section = DESIGN.slice(DESIGN.indexOf('### Floating layer'));
+		expect(section.slice(0, section.indexOf('\n### ', 4))).toMatch(
+			/open Q card covers the (unlock )?toast[^.]*by design/
 		);
 	});
 });

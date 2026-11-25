@@ -473,8 +473,13 @@
 		.quick-q-button {
 			display: none;
 		}
+		/* Hung from the top, it must stop short of the window's bottom edge. */
 		.quick-q-card {
 			margin: calc(var(--app-desktop-topbar-height) + 0.5rem) 1.5rem auto auto;
+			max-height: min(40rem, calc(100dvh - var(--app-desktop-topbar-height) - 2rem));
+		}
+		.quick-q-card.quick-q-wide {
+			max-height: min(52rem, calc(100dvh - var(--app-desktop-topbar-height) - 2rem));
 		}
 	}
 </style>

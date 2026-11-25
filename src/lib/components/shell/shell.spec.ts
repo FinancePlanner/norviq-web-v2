@@ -476,4 +476,11 @@ describe('pt-PT', () => {
 		];
 		expect(strings.filter((s) => !catalog.has(s))).toEqual([]);
 	});
+
+	// "ações" is stocks in this catalogue; commands are "comandos", as in "Pesquisa e comandos".
+	it('does not call commands stocks in the top-bar search', () => {
+		const label = (ptPT as Record<string, string>)['Search holdings, pages, actions'];
+		expect(label).toContain('comandos');
+		expect(label).not.toContain('ações');
+	});
 });

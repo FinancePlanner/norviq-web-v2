@@ -364,7 +364,7 @@ Every data view handles each of these, or says why it cannot occur:
 
 ### Floating layer
 
-Below 1024px, toasts own the top of the viewport and the Q button owns the bottom-right corner, so the two never overlap. At 1024px and up there is no floating Q: "Ask Q" sits in the desktop top bar (`DesktopTopBar.svelte`) and opens the Q card top-right, just below that bar.
+Below 1024px, toasts own the top of the viewport and the Q button owns the bottom-right corner, so the two never overlap. At 1024px and up there is no floating Q: "Ask Q" sits in the desktop top bar (`DesktopTopBar.svelte`) and opens the Q card top-right, just below that bar. The card and the toast share that slot: an open Q card covers the toast by design, because the card is a modal the user opened, in the top layer, and the toast is still announced as a status.
 
 | Viewport      | Rule                                                                                                                                                                                                              |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
