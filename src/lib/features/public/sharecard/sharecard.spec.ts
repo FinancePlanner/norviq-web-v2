@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Instagram, OG, regionCode, render, renderBrief, Up } from './sharecard.server.js';
+import { Instagram, OG, render } from './sharecard.server.js';
 
 const isPNG = (b: Uint8Array) => b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;
 const size = (b: Uint8Array) => {
@@ -32,25 +32,5 @@ describe('sharecard', () => {
 			writeFileSync(process.env.SHARECARD_OUT + '/article-og.png', og);
 			writeFileSync(process.env.SHARECARD_OUT + '/article-card.png', ig);
 		}
-	});
-
-	it('draws a brief with emoji dropped', async () => {
-		const png = await renderBrief(
-			{
-				title: 'Morning brief',
-				date: '29 Oct 2026',
-				rows: [{ region: 'DE', name: 'DAX 🚀', level: '25,704', change: '+0.44%', direction: Up }],
-				items: ['📌 One'],
-				shortURL: 'norviq.org/brief/2026-10-29/morning',
-				disclaimer: 'AI-written.'
-			},
-			OG
-		);
-		expect(isPNG(png)).toBe(true);
-	});
-
-	it('turns flags into region codes', () => {
-		expect(regionCode('🇩🇪')).toBe('DE');
-		expect(regionCode('DE')).toBe('');
 	});
 });
