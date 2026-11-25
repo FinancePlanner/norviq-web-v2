@@ -2617,10 +2617,6 @@ html.dark .overview-header-search .pines-search-input-wrap {
   font-size: 0.875rem;
 }
 
-.overview-panel-error {
-  padding: 1rem;
-}
-
 .chart-fade-in {
   opacity: 0;
   transform: scale(0.98);
