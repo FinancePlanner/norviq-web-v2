@@ -355,7 +355,7 @@
 		position: fixed;
 		z-index: 45;
 		right: calc(0.75rem + env(safe-area-inset-right, 0px));
-		bottom: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px) + 0.5rem);
+		bottom: calc(var(--app-tabbar-height) + env(safe-area-inset-bottom, 0px) + var(--float-offset));
 		width: 64px;
 		height: 64px;
 		padding: 0;

@@ -73,6 +73,8 @@ export default defineConfig({
 				test: {
 					name: 'server',
 					environment: 'node',
+					// Vitest blanks every CSS import; the guard specs import CSS with ?raw to read the real text.
+					css: { include: [/\.css\?raw/] },
 					include: ['src/**/*.{test,spec}.{js,ts}'],
 					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
 				}

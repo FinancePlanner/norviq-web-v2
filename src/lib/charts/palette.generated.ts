@@ -28,3 +28,28 @@ export const DARK = {
 	pointer: '#9da9b8',
 	emphasisBorder: '#111b2b'
 } as const;
+
+export type PillarKey = 'fundamentals' | 'futureYou' | 'fun';
+export const PILLAR: { light: Record<PillarKey, string>; dark: Record<PillarKey, string> } = {
+	light: {
+		fundamentals: '#80612A',
+		futureYou: '#6353C5',
+		fun: '#4A79A0'
+	},
+	dark: {
+		fundamentals: '#D8B477',
+		futureYou: '#9D99ED',
+		fun: '#83B4DE'
+	}
+};
+
+export const ACCENT_ACTION: { light: string; dark: string } = {
+	light: '#80612A',
+	dark: '#D8B477'
+};
+
+// color.data.flat: the neutral series colour (pillarColor, no --muted-foreground here).
+export const FLAT = {
+	light: '#57626e',
+	dark: '#a6afba'
+} as const;

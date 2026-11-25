@@ -9,6 +9,7 @@ import type {
 	HeatmapTile,
 	GrowthSparklinePoint
 } from '#lib/charts/index.js';
+import type { RangeKey } from '#lib/ranges.js';
 
 // ---------------------------------------------------------------------------
 // Backend
@@ -198,6 +199,10 @@ export interface MarketsVM {
 	view: string;
 	timeframeLabel: string;
 	timeframes: ToggleOption[];
+	/** The timeframe on screen, as a range key (the Timeframe RangeControl's active link). */
+	timeframeRange: RangeKey;
+	/** The timeframes the backend supports, plus the current one (the RangeControl's links). */
+	timeframeRanges: RangeKey[];
 	sizeOptions: ToggleOption[];
 	asOf: string;
 	isStale: boolean;
@@ -236,20 +241,16 @@ export interface CoinStat {
 	value: string;
 }
 
-export interface RangeLink {
-	label: string;
-	href: string;
-	active: boolean;
-}
-
 export interface CoinPageVM {
 	symbol: string;
 	name: string;
 	price: string;
 	change: string;
 	changeClass: string;
-	rangeLabel: string;
-	ranges: RangeLink[];
+	/** The range on screen, as shown (uppercase). */
+	range: RangeKey;
+	/** The ranges the coin chart offers. */
+	ranges: readonly RangeKey[];
 	/** charts.PriceLine inputs; null when there is no history. */
 	/** currency: the quote currency the FMP symbol names (BTCUSD → USD). */
 	chart: { id: string; labels: string[]; closes: number[]; currency: string | null } | null;

@@ -1,7 +1,8 @@
 <script lang="ts">
 	// dashboard.MarketBriefCard + marketBriefToggles (content in MarketBriefContent).
 	// `onnavigate(url)` replaces the toggles' hx-get swap into the shell.
-	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import Panel from '#lib/components/norviq/vigil/Panel.svelte';
+	import PanelHeader from '#lib/components/norviq/vigil/PanelHeader.svelte';
 	import GhostButton from '#lib/components/norviq/GhostButton.svelte';
 	import MarketBriefContent from './MarketBriefContent.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
@@ -102,8 +103,8 @@
 	</div>
 {/snippet}
 
-<vigil.Panel class="market-brief-card" titleID="market-brief-title">
-	<vigil.PanelHeader
+<Panel class="market-brief-card" titleID="market-brief-title">
+	<PanelHeader
 		id="market-brief-title"
 		title={t(marketBriefTitleKey(vm.slot))}
 		desc={subtitle}
@@ -134,4 +135,4 @@
 		aria-controls="market-brief-body"
 		onclick={toggle}>{open ? t('Hide brief') : t('Read brief')}</button
 	>
-</vigil.Panel>
+</Panel>

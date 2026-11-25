@@ -1,10 +1,10 @@
 <script lang="ts">
 	// dashboard.EconomyPulseShell / EconomyPulseCard. `vm` undefined = shell;
-	// vm.items null = OverviewPanelError (the headlines fetch failed).
+	// vm.items null = vigil.ErrorRetry (the headlines fetch failed).
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import SkeletonBlock from '#lib/components/norviq/SkeletonBlock.svelte';
 	import NewsHeadlineList from '#lib/components/norviq/NewsHeadlineList.svelte';
-	import OverviewPanelError from '../activity/OverviewPanelError.svelte';
+	import { t } from '#lib/i18n/context.svelte.js';
 	import type { EconomyPulseVM } from './types.js';
 
 	let { vm }: { vm?: EconomyPulseVM } = $props();
@@ -21,7 +21,10 @@
 			</div>
 		</vigil.Panel>
 	{:else if vm.items === null}
-		<OverviewPanelError title="Economy pulse" message="Market news is unavailable right now." />
+		<vigil.ErrorRetry
+			title={t('Economy pulse')}
+			message={t('Market news is unavailable right now.')}
+		/>
 	{:else}
 		<vigil.Panel class="economy-pulse-panel rounded-lg p-5" titleID="economy-pulse-title">
 			<div class="financial-health-panel-header">

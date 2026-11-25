@@ -7,6 +7,7 @@
 		CheckboxField,
 		EmptyState,
 		Field,
+		GhostButton,
 		SelectField,
 		SubmitButton
 	} from '#lib/components/norviq/index.js';
@@ -83,7 +84,7 @@
 				{/if}
 			</div>
 			{#if vm.editing}
-				<a class="btn" href="/forecast">Cancel editing</a>
+				<GhostButton href="/forecast">Cancel editing</GhostButton>
 			{/if}
 		</div>
 		<form class="mt-4 grid gap-4 md:grid-cols-4" method="post" action={forecastAction(vm)}>
@@ -213,7 +214,7 @@
 					<form method="post" action={'/forecast/' + forecast.id + '/run'}>
 						<SubmitButton class="btn-primary">Run now</SubmitButton>
 					</form>
-					<a class="btn" href={'/forecast?edit=' + forecast.id}>Edit</a>
+					<GhostButton href={'/forecast?edit=' + forecast.id}>Edit</GhostButton>
 					<form
 						method="post"
 						action={'/forecast/' + forecast.id + '/delete'}

@@ -165,11 +165,11 @@ describe('buildHoldingsHeroVM', () => {
 		expect(vm.subtotals).toEqual(['$46,316.05', '2,116.00\u00a0\u2014']);
 	});
 
-	it('keeps the selected portfolio on every range link', () => {
+	// The links themselves (and the portfolio param surviving a click) are
+	// vigil.RangeControl's, tested in RangeControl.spec.ts.
+	it('carries the range on screen', () => {
 		const vm = buildHoldingsHeroVM(input({ portfolioID: 'p2', range: '3M' }));
-		expect(vm.rangeLinks.map((l) => l.range)).toEqual(['1W', '1M', '3M', '1Y', 'ALL']);
-		for (const l of vm.rangeLinks) expect(l.href).toContain('portfolio=p2');
-		expect(vm.rangeLinks.filter((l) => l.current).map((l) => l.range)).toEqual(['3M']);
+		expect(vm.range).toBe('3M');
 	});
 
 	it('labels the change with the range it was measured over', () => {

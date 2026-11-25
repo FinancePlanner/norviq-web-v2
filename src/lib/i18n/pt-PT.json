@@ -1205,5 +1205,17 @@
 	"Portfolio flat over %@": "Portefólio estável em %@",
 	"Portfolio up %@ %@": "Portefólio subiu %@ %@",
 	"Portfolio down %@ %@": "Portefólio desceu %@ %@",
-	"Portfolio flat %@": "Portefólio estável %@"
+	"Portfolio flat %@": "Portefólio estável %@",
+	"Timeframe": "Período",
+	"Not available": "Indisponível",
+	"up %@": "subiu %@",
+	"down %@": "desceu %@",
+	"unchanged": "inalterado",
+	"As of %@": "A %@",
+	"Try again": "Tentar novamente",
+	"Financial health": "Saúde financeira",
+	"Financial health is unavailable right now.": "A saúde financeira não está disponível neste momento.",
+	"Recent expenses are unavailable right now.": "As despesas recentes não estão disponíveis neste momento.",
+	"Economy pulse": "Pulso da economia",
+	"Market news is unavailable right now.": "As notícias do mercado não estão disponíveis neste momento."
 }

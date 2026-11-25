@@ -6,7 +6,8 @@ import {
 	cryptoChangePercent,
 	formatCryptoPrice,
 	formatMultiple,
-	normalizeCryptoTimeframe
+	normalizeCryptoTimeframe,
+	unavailableMarketsVM
 } from './markets.js';
 import type { CryptoMarketsResponse } from './types.js';
 
@@ -140,6 +141,24 @@ describe('crypto markets view model', () => {
 			'/crypto/bubbles?size=cap&tf=1w',
 			'/crypto/bubbles?size=change&tf=1w'
 		]);
+	});
+
+	it('offers only the supported timeframes as uppercase range keys, keeping the current one', () => {
+		const vm = buildCryptoMarketsVM(
+			{ ...fixture, supportedTimeframes: ['1d', '1w', '1y'] },
+			'market',
+			'1m',
+			'cap'
+		);
+		expect(vm.timeframeRanges).toEqual(['1D', '1W', '1M', '1Y']);
+		expect(vm.timeframeRange).toBe('1M');
+	});
+
+	it('offers every timeframe when the backend is unavailable', () => {
+		const vm = unavailableMarketsVM('bubbles', 'all', 'cap');
+		expect(vm.timeframeRanges).toEqual(['1D', '1W', '1M', 'YTD', '1Y', 'ALL']);
+		expect(vm.timeframeRange).toBe('ALL');
+		expect(vm.timeframeLabel).toBe('ALL');
 	});
 
 	it('falls back to one day on a bad timeframe', () => {

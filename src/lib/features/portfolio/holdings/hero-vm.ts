@@ -6,6 +6,7 @@
 import type { components } from '#lib/api/schema.js';
 import type { T } from '#lib/i18n/index.js';
 import { money, signedMoney, signedPercent, type AppLocale } from '#lib/money.js';
+import { PORTFOLIO_RANGES } from '#lib/ranges.js';
 import type { AccountCurrency } from '../account-currency.js';
 import {
 	civilDateLabel,
@@ -20,8 +21,8 @@ import {
 
 type Schemas = components['schemas'];
 
-/** No "1D": history is recorded once a day. */
-export const PERF_RANGES: PerfRange[] = ['1W', '1M', '3M', '1Y', 'ALL'];
+/** No "1D": history is recorded once a day; no YTD until API R4. */
+export const PERF_RANGES: readonly PerfRange[] = PORTFOLIO_RANGES;
 
 /** portfolioRedirectURLForPortfolio (url.Values.Encode sorts keys). */
 export function portfolioRedirectURLForPortfolio(timeRange: string, portfolioID: string): string {
@@ -37,12 +38,6 @@ export interface HeroDeltaVM {
 	text: string;
 	basis: string;
 	direction: 'up' | 'down' | 'flat';
-}
-
-export interface RangeLinkVM {
-	range: PerfRange;
-	href: string;
-	current: boolean;
 }
 
 export interface HoldingsHeroVM {
@@ -63,7 +58,8 @@ export interface HoldingsHeroVM {
 	chart: { labels: string[]; values: number[] } | null;
 	/** The chart's accessible name: "Portfolio up 3.2% over 1 month". */
 	chartSummary: string | null;
-	rangeLinks: RangeLinkVM[];
+	/** The range on screen; the page's vigil.RangeControl links the others from the URL. */
+	range: PerfRange;
 }
 
 /** One holding's market value in its own (quote) currency; null when the quote names none. */
@@ -126,11 +122,7 @@ export function buildHoldingsHeroVM(input: HoldingsHeroInput): HoldingsHeroVM {
 		historyNote: null,
 		chart: null,
 		chartSummary: null,
-		rangeLinks: PERF_RANGES.map((r) => ({
-			range: r,
-			href: portfolioRedirectURLForPortfolio(r, portfolioID),
-			current: r === range
-		}))
+		range
 	};
 
 	// Scoped to one portfolio, its own baseCurrency is data. Unscoped, the API
