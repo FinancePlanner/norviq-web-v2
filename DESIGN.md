@@ -318,6 +318,65 @@ Restrained and exact: one filled gold action per view, everything else quiet.
 
 The digest pattern: a page title, a period line in the reader's locale, an optional narrative at a 65ch measure, a contents row of plain links, then sections separated by hairlines, each with a title and its figures as rows or a table. Arriving at a section from a deep link tints it with the soft gold wash for about two seconds; under reduced motion there is no tint.
 
+## Components (DS 2.0)
+
+The canonical set from spec § 6.1. A page uses the canonical component; a row marked legacy still ships and is absorbed in the phase named, so do not build new screens on it. Every canonical web component is shown in both themes at `/__dev/kit`.
+
+| Semantic component                | Web component                                                   | Status                                                                                |
+| --------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Page                              | `vigil.DocumentPage`, `vigil.DeckPage`, `vigil.CanvasPage`      | canonical                                                                             |
+| Section (a rule, not a card)      | `vigil.Section` (hairline, title, action)                       | canonical                                                                             |
+| Card (actionable object only)     | `vigil.Panel`                                                   | canonical                                                                             |
+| MoneyText / DeltaText             | `vigil.MoneyText`, `vigil.DeltaText`, on `src/lib/money.ts`     | canonical                                                                             |
+| MetricTile                        | `vigil.Metric`                                                  | canonical; `StatPill`, `HeroMetric` and `InsightKPIStrip` are legacy (P4/P5)          |
+| DataTable                         | `vigil.DataTable`                                               | canonical; `tui/table` is legacy (P4/P5)                                              |
+| RangeControl                      | `vigil.RangeControl`                                            | canonical                                                                             |
+| SegmentedControl                  | `SegmentedControl`                                              | canonical (the existing component, kept)                                              |
+| Chart                             | `EChart` + the builders in `src/lib/charts`                     | canonical                                                                             |
+| EmptyState                        | `EmptyState`                                                    | canonical                                                                             |
+| Skeleton / ErrorRetry / StaleData | `SkeletonBlock`, `vigil.ErrorRetry`, `vigil.AsOf`               | canonical                                                                             |
+| Buttons                           | `PrimaryButton`, `SecondaryButton`, `GhostButton`, `IconButton` | canonical; `NativeButton` and `SecondarySubmitButton` are legacy (P4/P5)              |
+| Toast                             | `UnlockToast` on the `.achievement-toast` layer                 | placement canonical; `ToastBanner` (inline) and the sonner wrapper are legacy (P4/P5) |
+| Floating action zone              | `QuickAssistant` on `--float-offset`                            | phone placement canonical; the desktop entry point is not yet (P3)                    |
+
+### Money, change and staleness
+
+- `vigil.MoneyText` and `vigil.DeltaText` format only through `money`, `signedMoney`, `compactMoney` and `signedPercent` in `src/lib/money.ts`. A delta carries its sign, its ▲/▼ and its basis label, and reads its amount aloud.
+- `vigil.AsOf` shows "Prices as of {date}" in place of a change. `src/lib/as-of.ts` decides: the last point is stale when it is more than 4 calendar days old, counted as UTC civil dates so SSR and the browser agree.
+- `vigil.Section` is the signature page division. `vigil.ErrorRetry` is the error state: a message and a retry button that reloads the page data (`invalidateAll`) unless the caller passes `onRetry`.
+
+### Range vocabulary
+
+- One vocabulary on every chart: `1D 1W 1M 3M YTD 1Y 5Y ALL`, always uppercase in the UI. `src/lib/ranges.ts` owns it: `RANGE_KEYS`, `PORTFOLIO_RANGES` (`1W 1M 3M 1Y ALL`; YTD stays hidden until API R4), `parseRange` and `rangeHref`.
+- The range lives in the URL query, so a chart never shows a range it did not fetch. `parseRange` reads it case-insensitively and falls back to the page default; a feature that talks to its backend in another spelling maps at its own boundary.
+- `vigil.RangeControl` takes `ranges`, `active`, `param`, `url` and `label`. It renders one link per range and `rangeHref` keeps every other query param. The default param is `range` (the coin page); Crypto Markets passes `param="tf"`. Segments are 44px tall on phones and at least 24px elsewhere.
+
+### The six states
+
+Every data view handles each of these, or says why it cannot occur:
+
+1. **Loading:** a skeleton at the final size.
+2. **Empty (first-time):** what the view is for and the one action that fills it.
+3. **Empty (filtered):** says the filter hid the rows, and offers to clear it.
+4. **Error with retry:** `vigil.ErrorRetry`.
+5. **Stale:** `vigil.AsOf`, when the as-of date is older than the data should be.
+6. **Pro-gated:** the `ProGate` family, with the benefit stated.
+
+### Floating layer
+
+Toasts own the top of the viewport and the Q button owns the bottom-right corner, so the two never overlap.
+
+| Viewport      | Rule                                                                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Below 1024px  | Toasts sit at the top, just below the top bar (`--app-topbar-height`, plus the notch inset). Q is bottom-right, above the tab bar by `--float-offset`. |
+| 1024px and up | No top bar. Toasts sit top-right, 1.5rem from each edge. Q stays bottom-right until P3 moves it to the sidebar and ⌘K.                                 |
+
+`--float-offset` (0.5rem) and `--app-topbar-height` are defined in `src/lib/styles/legacy/theme.css`; a new floating control uses them and does not invent its own offsets.
+
+### Motion
+
+The motion tokens (`--motion-fast` and the rest) are live. The global `prefers-reduced-motion: reduce` rule in `src/lib/styles/legacy/styles.css` cuts every transition and animation to 0.01ms and stays; a test guards it.
+
 ## Money and numbers
 
 One formatting contract on every platform (spec § 5.4), implemented on web by `src/lib/money.ts` and proven by the shared golden fixtures (`src/lib/__fixtures__/money.json`, a byte copy of `docs/design-system-fixtures/money.json`, also copied into the iOS and Android tests).

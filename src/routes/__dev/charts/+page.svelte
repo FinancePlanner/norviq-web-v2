@@ -5,6 +5,7 @@
 	Charts sit inside .app-page-content, where the Go web applied its theme.
 -->
 <script lang="ts">
+	import GhostButton from '#lib/components/norviq/GhostButton.svelte';
 	import EChart from '#lib/charts/EChart.svelte';
 	import DonutSVG from '#lib/charts/DonutSVG.svelte';
 	import GrowthSparkline from '#lib/charts/GrowthSparkline.svelte';
@@ -179,9 +180,7 @@
 >
 	<header style="display: flex; gap: 1rem; align-items: center">
 		<h1 style="font-size: 1.25rem; font-weight: 600">#lib/charts gallery</h1>
-		<button type="button" class="btn" onclick={toggle}
-			>Toggle dark (now {dark ? 'dark' : 'light'})</button
-		>
+		<GhostButton onclick={toggle}>Toggle dark (now {dark ? 'dark' : 'light'})</GhostButton>
 	</header>
 
 	{#each charts as [name, spec] (name)}

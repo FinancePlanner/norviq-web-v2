@@ -73,3 +73,19 @@ describe('custom properties in production CSS', () => {
 		expect(block).toMatch(/\*\s*,[\s\S]*?\{[\s\S]*?(transition-duration|animation-duration)\s*:/);
 	});
 });
+
+describe('buttons', () => {
+	it('no class="btn" without a rule', () => {
+		const offenders: string[] = [];
+		const walk = (dir: string) => {
+			for (const entry of readdirSync(dir)) {
+				const full = join(dir, entry);
+				if (statSync(full).isDirectory()) walk(full);
+				else if (entry.endsWith('.svelte') && readFileSync(full, 'utf8').includes('class="btn"'))
+					offenders.push(relative(ROOT, full));
+			}
+		};
+		walk(SRC);
+		expect(offenders, 'class="btn" has no CSS rule; use GhostButton/SecondaryButton').toEqual([]);
+	});
+});

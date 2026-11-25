@@ -1,7 +1,7 @@
 <script lang="ts">
 	// automation.InboxPage(vm) — norviq-web internal/pages/automation/page.templ.
 	// Both forms are plain posts in Go (no hx-*), so they stay native here.
-	import { EmptyState, SubmitButton } from '#lib/components/norviq/index.js';
+	import { EmptyState, SecondaryButton, SubmitButton } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import type { PageProps } from './$types';
 
@@ -57,6 +57,6 @@
 		{/if}
 	</div>
 	{#if vm.nextURL}
-		<div><a class="btn" href={vm.nextURL}>Load older notifications</a></div>
+		<div><SecondaryButton href={vm.nextURL}>Load older notifications</SecondaryButton></div>
 	{/if}
 </div>
