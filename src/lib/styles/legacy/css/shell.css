@@ -108,13 +108,14 @@ html[data-sidebar='collapsed'] .app-sidebar-group-panel {
    Toasts own the top, the Q button (QuickAssistant.svelte, z-index 45) the
    bottom-right corner, so the two never overlap. Phones: just below the top
    bar. The bar already absorbs the notch in its own padding-top
-   (max(0.75rem, safe-area-top)), so on a notched phone this gap is up to
-   0.75rem wider than on a flat one; it never overlaps the bar.
+   (max(0.75rem, safe-area-top)), and the top formula follows it, so the gap
+   below the bar is 0.75rem on every phone; it never overlaps the bar.
    1024px and up (no top bar): the top-right corner. */
 .achievement-toast {
 	position: fixed;
 	z-index: 50;
-	top: calc(var(--app-topbar-height) + env(safe-area-inset-top) + 0.75rem);
+	/* The token already holds the bar's 0.75rem top padding floor, so swap it for the notch inset instead of adding both. */
+	top: calc(var(--app-topbar-height) + max(0.75rem, env(safe-area-inset-top, 0px)));
 	left: calc(0.75rem + env(safe-area-inset-left, 0px));
 	right: calc(0.75rem + env(safe-area-inset-right, 0px));
 	max-width: 28rem;

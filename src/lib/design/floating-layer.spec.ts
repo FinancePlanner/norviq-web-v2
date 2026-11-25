@@ -65,7 +65,7 @@ describe('floating layer: unlock toast', () => {
 
 	it('sits at the top on phones, below the top bar, and never at the bottom', () => {
 		expect(valueOf(base[0], 'top')).toBe(
-			'calc(var(--app-topbar-height) + env(safe-area-inset-top) + 0.75rem)'
+			'calc(var(--app-topbar-height) + max(0.75rem, env(safe-area-inset-top, 0px)))'
 		);
 		expect(declares(base[0], 'bottom')).toBe(false);
 	});
