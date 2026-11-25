@@ -36,6 +36,8 @@ import {
 import { editionPageVM, type EditionPageVM } from './edition/map.js';
 import { editionStrings, type EditionStrings } from './edition/strings.js';
 import type { EditionDTO } from './edition/types.js';
+import type { ExportFormat } from './export/types.js';
+import type { ExportFile } from './exports.server.js';
 
 type BriefResponse = components['schemas']['MarketBriefResponse'] & { edition?: EditionDTO | null };
 
@@ -76,6 +78,27 @@ export class BriefUnavailable extends Error {}
 /** marketBriefPath: a brief's permalink path, without the language. */
 export function briefPath(date: string, slot: string): string {
 	return '/brief/' + date + '/' + slot;
+}
+
+/** The file each format is served as. */
+export const FORMAT_FILES: Record<ExportFormat, ExportFile> = {
+	og: 'og.png',
+	social: 'social.png',
+	story: 'story.png',
+	pdf: 'report.pdf'
+};
+
+/** A root-relative export URL; `query` follows the language with `?` or `&`. */
+export function exportPath(
+	date: string,
+	slot: string,
+	file: ExportFile,
+	lang: Locale,
+	query = ''
+): string {
+	const base = briefPath(date, slot) + '/' + file + langQuery(lang);
+	if (!query) return base;
+	return base + (base.includes('?') ? '&' : '?') + query;
 }
 
 /** marketBriefLangQuery: none for English, the canonical default. */
@@ -327,7 +350,10 @@ export interface BriefPageVM {
 	share: Links;
 	shareProps: string;
 	nativeShareURL: string;
-	cardImageURL: string;
+	/** The manifest of rendered exports, root-relative. */
+	exportsURL: string;
+	/** Unversioned export URLs, for when the manifest is unavailable. */
+	exportFallback: Record<ExportFormat, string>;
 	cardFileName: string;
 	signedIn: boolean;
 }
@@ -349,6 +375,8 @@ export function pageVM(
 	const ed = editionPageVM(brief, edition, lang, labels);
 	const title = ed.editionName + ' — ' + brief.tradingDate;
 	const pt = lang === LANGUAGE_PTPT;
+	const fallback = (f: ExportFormat) =>
+		exportPath(brief.tradingDateISO, brief.slot, FORMAT_FILES[f], lang);
 	const vm: BriefPageVM = {
 		lang,
 		brief,
@@ -361,7 +389,16 @@ export function pageVM(
 		canonicalURL: canonical,
 		englishURL,
 		portugueseURL,
-		ogImageURL: absolute(base, path + '/og.png' + langQuery(lang)),
+		ogImageURL: absolute(
+			base,
+			exportPath(
+				brief.tradingDateISO,
+				brief.slot,
+				'og.png',
+				lang,
+				edition && edition.revision >= 1 ? 'rev=' + edition.revision : ''
+			)
+		),
 		modifiedISO: edition?.publishedAt ?? brief.generatedAtISO,
 		ogLocale: pt ? 'pt_PT' : 'en_US',
 		ogLocaleAlternate: pt ? 'en_US' : 'pt_PT',
@@ -385,7 +422,13 @@ export function pageVM(
 		}),
 		shareProps: shareProps(brief, lang, 'page'),
 		nativeShareURL: tag(canonical, 'native'),
-		cardImageURL: path + '/card.png' + langQuery(lang),
+		exportsURL: path + '/exports.json' + langQuery(lang),
+		exportFallback: {
+			og: fallback('og'),
+			social: fallback('social'),
+			story: fallback('story'),
+			pdf: fallback('pdf')
+		},
 		cardFileName: 'norviq-brief-' + brief.tradingDateISO + '-' + brief.slot + '.png',
 		signedIn
 	};

@@ -9,8 +9,16 @@
 // answers 404 to any stale rev.
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiFetch } from '#lib/server/api.js';
-import { MISSING_CACHE_CONTROL, briefPath, parsePermalink, urlLang } from './brief.server.js';
-import type { ExportFormat } from './export/types.js';
+import type { Locale } from '#lib/i18n/index.js';
+import {
+	FORMAT_FILES,
+	MISSING_CACHE_CONTROL,
+	briefPath,
+	exportPath,
+	parsePermalink,
+	urlLang
+} from './brief.server.js';
+import type { ExportFormat, WebExportFormat, WebExportManifest } from './export/types.js';
 
 export const EXPORT_FILES = {
 	'og.png': 'og',
@@ -140,5 +148,88 @@ export async function serveExport(event: RequestEvent, file: ExportFile): Promis
 			return upstreamError(upstream.status);
 		}
 		return whitelisted(upstream);
+	});
+}
+
+const MANIFEST_CACHE_CONTROL = 'public, max-age=300';
+
+function isFormat(id: unknown): id is ExportFormat {
+	return typeof id === 'string' && Object.hasOwn(FORMAT_FILES, id);
+}
+
+/**
+ * The backend manifest as the page can use it: root-relative URLs (production
+ * serves apex and www), no content hash, unknown formats dropped. A query that
+ * is not exactly rev=N&v=N gives the unversioned URL.
+ */
+export function webManifest(
+	raw: unknown,
+	date: string,
+	slot: string,
+	lang: Locale
+): WebExportManifest | null {
+	if (!raw || typeof raw !== 'object') return null;
+	const m = raw as Record<string, unknown>;
+	if (typeof m.editionId !== 'string' || !m.editionId) return null;
+	if (typeof m.revision !== 'number' || !Number.isFinite(m.revision)) return null;
+	if (!Array.isArray(m.formats)) return null;
+	const formats: WebExportFormat[] = [];
+	for (const f of m.formats as Record<string, unknown>[]) {
+		if (!f || typeof f !== 'object' || !isFormat(f.id) || typeof f.mime !== 'string') continue;
+		const query = typeof f.query === 'string' && /^rev=\d+&v=\d+$/.test(f.query) ? f.query : '';
+		const out: WebExportFormat = {
+			id: f.id,
+			url: exportPath(date, slot, FORMAT_FILES[f.id], lang, query),
+			mime: f.mime
+		};
+		if (typeof f.width === 'number') out.width = f.width;
+		if (typeof f.height === 'number') out.height = f.height;
+		if (typeof f.pages === 'number') out.pages = f.pages;
+		formats.push(out);
+	}
+	return {
+		editionId: m.editionId,
+		revision: m.revision,
+		rendererVersion: typeof m.rendererVersion === 'number' ? m.rendererVersion : 0,
+		formats
+	};
+}
+
+export async function serveManifest(event: RequestEvent): Promise<Response> {
+	const permalink = parsePermalink(event.params.date ?? '', event.params.slot ?? '');
+	if (!permalink) return notFound();
+	const lang = urlLang(event.url);
+	const key =
+		event.url.origin + briefPath(permalink.date, permalink.slot) + '/exports.json?lang=' + lang;
+	return cached(event, key, async () => {
+		let upstream: Response;
+		try {
+			upstream = await apiFetch(event, 'GET', '/v1/market/brief/exports', null, {
+				auth: 'public',
+				query: { date: permalink.date, slot: permalink.slot, lang },
+				signal: AbortSignal.timeout(UPSTREAM_TIMEOUT)
+			});
+		} catch (err) {
+			console.warn('brief exports.json', err);
+			return upstreamError('network');
+		}
+		if (upstream.status !== 200) {
+			await upstream.body?.cancel().catch(() => {});
+			return upstreamError(upstream.status);
+		}
+		let manifest: WebExportManifest | null = null;
+		try {
+			manifest = webManifest(await upstream.json(), permalink.date, permalink.slot, lang);
+		} catch (err) {
+			console.warn('brief exports.json body', err);
+		}
+		if (!manifest) return upstreamError('network');
+		return new Response(JSON.stringify(manifest), {
+			headers: {
+				'Content-Type': 'application/json; charset=utf-8',
+				'Cache-Control': MANIFEST_CACHE_CONTROL,
+				'X-Content-Type-Options': 'nosniff'
+			}
+		});
 	});
 }

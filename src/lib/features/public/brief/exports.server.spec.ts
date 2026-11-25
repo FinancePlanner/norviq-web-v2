@@ -16,7 +16,7 @@ vi.mock('#lib/server/api.js', () => ({ apiFetch: vi.fn<typeof apiFetchType>() })
 import type { RequestEvent } from '@sveltejs/kit';
 import type { apiFetch as apiFetchType } from '#lib/server/api.js';
 import { apiFetch } from '#lib/server/api.js';
-import { serveExport, type ExportFile } from './exports.server.js';
+import { serveExport, serveManifest, webManifest, type ExportFile } from './exports.server.js';
 
 const mockFetch = vi.mocked(apiFetch);
 const BYTES = new Uint8Array([137, 80, 78, 71, 1, 2, 3]);
@@ -269,5 +269,112 @@ describe('serveExport', () => {
 		const res = await run(setup('og.png', '', { caches: false }));
 		expect(res.status).toBe(200);
 		expect(new Uint8Array(await res.arrayBuffer())).toEqual(BYTES);
+	});
+});
+
+const BACKEND_MANIFEST = {
+	editionId: 'MI-2026-11-20-C',
+	revision: 2,
+	contentHash: 'ab',
+	rendererVersion: 1,
+	formats: [
+		{ id: 'og', width: 1200, height: 630, mime: 'image/png', query: 'rev=2&v=1' },
+		{ id: 'social', width: 1080, height: 1350, mime: 'image/png', query: 'rev=2&v=1' },
+		{ id: 'story', width: 1080, height: 1920, mime: 'image/png', query: 'rev=2&v=1' },
+		{ id: 'pdf', pages: 4, mime: 'application/pdf', query: 'rev=2&v=1' }
+	]
+};
+
+function manifestResponse(body: unknown, status = 200): Response {
+	return new Response(typeof body === 'string' ? body : JSON.stringify(body), {
+		status,
+		headers: { 'Content-Type': 'application/json' }
+	});
+}
+
+describe('webManifest', () => {
+	it('builds root-relative URLs', () => {
+		const pt = webManifest(BACKEND_MANIFEST, '2026-11-20', 'evening', 'pt-PT');
+		expect(pt?.formats[1].url).toBe('/brief/2026-11-20/evening/social.png?lang=pt-PT&rev=2&v=1');
+		expect(pt?.formats[3]).toEqual({
+			id: 'pdf',
+			url: '/brief/2026-11-20/evening/report.pdf?lang=pt-PT&rev=2&v=1',
+			pages: 4,
+			mime: 'application/pdf'
+		});
+		const en = webManifest(BACKEND_MANIFEST, '2026-11-20', 'evening', 'en');
+		expect(en?.formats[0].url).toBe('/brief/2026-11-20/evening/og.png?rev=2&v=1');
+		expect(en).toMatchObject({ editionId: 'MI-2026-11-20-C', revision: 2, rendererVersion: 1 });
+		expect(JSON.stringify(en)).not.toContain('contentHash');
+	});
+
+	it('drops unknown formats and unversions a bad query', () => {
+		const m = webManifest(
+			{
+				...BACKEND_MANIFEST,
+				formats: [
+					{ id: 'gif', mime: 'image/gif', query: 'rev=2&v=1' },
+					{ id: 'story', mime: 'image/png', query: 'rev=2&v=1&x=<script>' }
+				]
+			},
+			'2026-11-20',
+			'evening',
+			'en'
+		);
+		expect(m?.formats).toEqual([
+			{ id: 'story', url: '/brief/2026-11-20/evening/story.png', mime: 'image/png' }
+		]);
+	});
+
+	it('rejects a malformed body', () => {
+		expect(webManifest({}, '2026-11-20', 'evening', 'en')).toBeNull();
+		expect(
+			webManifest({ ...BACKEND_MANIFEST, formats: 'x' }, '2026-11-20', 'evening', 'en')
+		).toBeNull();
+		expect(
+			webManifest({ ...BACKEND_MANIFEST, revision: '2' }, '2026-11-20', 'evening', 'en')
+		).toBeNull();
+		expect(webManifest(null, '2026-11-20', 'evening', 'en')).toBeNull();
+	});
+});
+
+describe('serveManifest', () => {
+	it('serves exports.json with a five-minute cache', async () => {
+		mockFetch.mockResolvedValue(manifestResponse(BACKEND_MANIFEST));
+		const s = setup('og.png', '?lang=pt-PT', { path: '/brief/2026-11-20/evening/exports.json' });
+		const res = await serveManifest(s.event);
+		await Promise.all(s.waits);
+		expect(mockFetch).toHaveBeenCalledWith(s.event, 'GET', '/v1/market/brief/exports', null, {
+			auth: 'public',
+			query: { date: '2026-11-20', slot: 'evening', lang: 'pt-PT' },
+			signal: expect.any(AbortSignal)
+		});
+		expect(res.status).toBe(200);
+		expect(res.headers.get('Content-Type')).toBe('application/json; charset=utf-8');
+		expect(res.headers.get('Cache-Control')).toBe('public, max-age=300');
+		expect(await res.json()).toEqual(
+			webManifest(BACKEND_MANIFEST, '2026-11-20', 'evening', 'pt-PT')
+		);
+		expect(
+			s.store.has('https://www.norviq.org/brief/2026-11-20/evening/exports.json?lang=pt-PT')
+		).toBe(true);
+	});
+
+	it('maps exports.json errors like the files', async () => {
+		const path = '/brief/2026-11-20/evening/exports.json';
+		mockFetch.mockResolvedValue(manifestResponse('no', 404));
+		let res = await serveManifest(setup('og.png', '', { path }).event);
+		expect(res.status).toBe(404);
+		expect(res.headers.get('Cache-Control')).toBe('public, max-age=60');
+		mockFetch.mockResolvedValue(manifestResponse('busy', 503));
+		res = await serveManifest(setup('og.png', '', { path }).event);
+		expect(res.status).toBe(503);
+		expect(res.headers.get('Retry-After')).toBe('60');
+		mockFetch.mockResolvedValue(manifestResponse({ nope: true }));
+		const s = setup('og.png', '', { path });
+		res = await serveManifest(s.event);
+		await Promise.all(s.waits);
+		expect(res.status).toBe(503);
+		expect(s.put).not.toHaveBeenCalled();
 	});
 });

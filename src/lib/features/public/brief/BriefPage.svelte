@@ -175,7 +175,7 @@
 		<h2 id="market-brief-share-heading" class="mi-section-title">{L.shareThisEdition}</h2>
 		<ShareBar
 			links={vm.share}
-			cardImageURL={vm.cardImageURL}
+			cardImageURL={vm.exportFallback.social}
 			cardFileName={vm.cardFileName}
 			native
 			nativeURL={vm.nativeShareURL}
