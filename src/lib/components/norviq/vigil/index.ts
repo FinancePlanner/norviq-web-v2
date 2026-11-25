@@ -25,3 +25,6 @@ export { default as AuthShell } from './AuthShell.svelte';
 export { default as AuthBrandColumn } from './AuthBrandColumn.svelte';
 export { default as AuthFormColumn } from './AuthFormColumn.svelte';
 export { default as RangeControl } from './RangeControl.svelte';
+export { default as MoneyText } from './MoneyText.svelte';
+export { default as DeltaText } from './DeltaText.svelte';
+export { default as AsOf } from './AsOf.svelte';

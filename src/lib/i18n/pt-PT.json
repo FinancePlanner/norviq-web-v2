@@ -1206,5 +1206,10 @@
 	"Portfolio up %@ %@": "Portefólio subiu %@ %@",
 	"Portfolio down %@ %@": "Portefólio desceu %@ %@",
 	"Portfolio flat %@": "Portefólio estável %@",
-	"Timeframe": "Período"
+	"Timeframe": "Período",
+	"Not available": "Indisponível",
+	"up %@": "subiu %@",
+	"down %@": "desceu %@",
+	"unchanged": "inalterado",
+	"As of %@": "A %@"
 }

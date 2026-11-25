@@ -91,6 +91,8 @@
 	const portfolioRange = $derived(
 		parseRange(page.url.searchParams.get('range'), PORTFOLIO_RANGES, '1M')
 	);
+	const kitNow = new Date('2026-11-25T12:00:00Z');
+	const asOfFresh = '2026-11-24';
 	const assetRange = $derived(parseRange(page.url.searchParams.get('tf'), ASSET_RANGES, '1Y'));
 
 	const options = [
@@ -300,6 +302,35 @@
 				url={page.url}
 				label="Timeframe"
 			/>
+		</div>
+	</section>
+
+	<!-- DS 2.0 · Money (both themes via the Appearance toggle; the locale follows the app locale,
+	     so pt-PT is seen by switching the language, not per block) -->
+	<section class="space-y-4">
+		<h2 class="text-lg font-semibold">DS 2.0 · Money</h2>
+		<p class="text-sm text-muted-foreground">
+			vigil.MoneyText, DeltaText and AsOf. The currency comes from the data; direction is sign plus
+			arrow, never colour alone. Shown in the active app locale (en here).
+		</p>
+		<div class="grid gap-2 text-sm">
+			<div><vigil.MoneyText value={124580.42} currency="EUR" /> · standard</div>
+			<div><vigil.MoneyText value={-168.78} currency="USD" signed /> · signed</div>
+			<div><vigil.MoneyText value={1240000} currency="EUR" compact /> · compact</div>
+			<div><vigil.MoneyText value={10} currency={null} /> · missing currency</div>
+			<div><vigil.MoneyText value={null} currency="EUR" /> · null</div>
+			<div><vigil.DeltaText fraction={0.0321} basis="1 month" /> · positive</div>
+			<div>
+				<vigil.DeltaText
+					fraction={-0.032}
+					basis="1 month"
+					amount={{ value: -1250.5, currency: 'EUR' }}
+				/> · negative with amount
+			</div>
+			<div><vigil.DeltaText fraction={0} basis="1 week" /> · flat</div>
+			<div><vigil.DeltaText fraction={null} /> · null (renders nothing)</div>
+			<div><vigil.AsOf date={asOfFresh} now={kitNow} /> · fresh</div>
+			<div><vigil.AsOf date="2026-11-18" now={kitNow} /> · stale</div>
 		</div>
 	</section>
 
