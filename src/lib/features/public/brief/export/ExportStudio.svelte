@@ -204,6 +204,7 @@
 	// WAI-ARIA tabs with automatic activation: arrows (wrapping), Home and End
 	// move focus and select.
 	function onTabKey(event: KeyboardEvent, i: number) {
+		if (event.altKey || event.metaKey || event.ctrlKey) return;
 		const n = tabs.length;
 		const keys: Record<string, number> = {
 			ArrowRight: (i + 1) % n,
@@ -275,9 +276,9 @@
 	<dialog.Content
 		hideCloseButton
 		aria-labelledby="{uid}-title"
-		class="studio max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto p-0 sm:max-w-lg"
+		class="studio gap-0 p-0 sm:max-w-lg"
 	>
-		<div bind:this={content}>
+		<div bind:this={content} class="studio-scroll max-h-[calc(100dvh-2rem)] overflow-y-auto">
 			<div class="studio-head">
 				<dialog.Title id="{uid}-title" class="studio-title">{text.exportTitle}</dialog.Title>
 				<button
@@ -292,6 +293,7 @@
 			<div class="studio-body">
 				<div
 					role="tablist"
+					aria-labelledby="{uid}-title"
 					class="grid w-full grid-cols-2 gap-1 rounded-lg bg-muted p-[3px] text-muted-foreground sm:grid-cols-4"
 				>
 					{#each tabs as [value, label], i (value)}
@@ -373,6 +375,14 @@
 	 * wherever it is mounted. */
 	:global(.studio) {
 		color: var(--foreground);
+	}
+	/* Scroll lock while the modal is open; the scrolling element is the inner
+	 * wrapper, so a scrollbar click is never a click on the <dialog> itself. */
+	:global(html:has(.studio[open])) {
+		overflow: hidden;
+	}
+	.studio-scroll {
+		overscroll-behavior: contain;
 	}
 	.studio-head {
 		display: flex;

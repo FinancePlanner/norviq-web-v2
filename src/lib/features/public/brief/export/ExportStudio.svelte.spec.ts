@@ -323,6 +323,14 @@ describe('ExportStudio', () => {
 			await expect.element(tab(name)).toHaveAttribute('aria-selected', 'true');
 			await expect.element(page.getByRole('tabpanel', { name })).toBeVisible();
 		}
+		// The tablist is named by the dialog title.
+		const title = page.getByRole('heading', { name: pt.exportTitle }).element();
+		expect(page.getByRole('tablist').element().getAttribute('aria-labelledby')).toBe(title.id);
+		// Modified arrows belong to the browser and assistive tech.
+		tab(pt.exportSocial).element().focus();
+		await userEvent.keyboard('{Alt>}{ArrowRight}{/Alt}');
+		await expect.element(tab(pt.exportSocial)).toHaveAttribute('aria-selected', 'true');
+		await expect.element(tab(pt.exportSocial)).toHaveFocus();
 		// Only the selected tab is in the tab order.
 		expect(
 			page
@@ -347,6 +355,18 @@ describe('ExportStudio', () => {
 		await userEvent.keyboard('{Escape}');
 		await expect.element(dialog).not.toBeInTheDocument();
 		await expect.element(trigger).toHaveFocus();
+	});
+
+	it('locks page scroll while open and releases it on close', async () => {
+		stubFetch();
+		render(ExportTrigger, { href: fallback.social, label: pt.exportOpen, studio });
+		const overflow = () => getComputedStyle(document.documentElement).overflow;
+		expect(overflow()).not.toBe('hidden');
+		await page.getByRole('link', { name: pt.exportOpen }).click();
+		await expect.element(page.getByRole('dialog', { name: pt.exportTitle })).toBeVisible();
+		await expect.poll(overflow).toBe('hidden');
+		await userEvent.keyboard('{Escape}');
+		await expect.poll(overflow).not.toBe('hidden');
 	});
 
 	it('fits a 320 px screen', async () => {

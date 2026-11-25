@@ -39,7 +39,7 @@
 	font-variant-numeric: tabular-nums;
 }
 
-.mi a:focus-visible,
+.mi a:not([data-nq-btn]):focus-visible,
 .mi summary:focus-visible {
 	outline: 2px solid var(--mi-focus);
 	outline-offset: 2px;
