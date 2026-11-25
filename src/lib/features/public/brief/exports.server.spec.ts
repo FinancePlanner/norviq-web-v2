@@ -53,7 +53,9 @@ function setup(
 	});
 	const match = vi.fn<(req: Request) => Promise<Response | undefined>>((req) => {
 		matchRequests.push(req);
-		return Promise.resolve(store.get(req.url)?.clone());
+		const hit = store.get(req.url);
+		// A stored response with its own headers property is the immutable-headers fake: hand it back as is.
+		return Promise.resolve(hit && Object.hasOwn(hit, 'headers') ? hit : hit?.clone());
 	});
 	const waits: Promise<unknown>[] = [];
 	const path = opts.path ?? `/brief/2026-11-20/evening/${file}`;
@@ -62,7 +64,7 @@ function setup(
 	const event = {
 		url,
 		request: new Request(url, { headers: opts.headers }),
-		params: { date: parts[2], slot: parts[3] },
+		params: { date: decodeURIComponent(parts[2]), slot: decodeURIComponent(parts[3]) },
 		locals: { session: { accessToken: opts.accessToken ?? '' } },
 		platform:
 			opts.caches === false
@@ -120,14 +122,38 @@ describe('serveExport', () => {
 		await run(s);
 		mockFetch.mockClear();
 		const again = setup('og.png', '');
-		again.store.set(
-			'https://www.norviq.org/brief/2026-11-20/evening/og.png?lang=en',
-			new Response(BYTES, { headers: { 'Content-Type': 'image/png' } })
-		);
+		for (const [k, v] of s.store) again.store.set(k, v);
 		const res = await run(again);
 		expect(res.status).toBe(200);
 		expect(mockFetch).not.toHaveBeenCalled();
 		expect(new Uint8Array(await res.arrayBuffer())).toEqual(BYTES);
+	});
+
+	it('returns a cache hit whose headers can be modified', async () => {
+		const s = setup('og.png', '');
+		const stored = new Response(BYTES, { status: 200, headers: { 'Content-Type': 'image/png' } });
+		// workerd hands back cache.match responses with immutable headers.
+		const frozen = new Headers(stored.headers);
+		frozen.set = () => {
+			throw new TypeError("Can't modify immutable headers.");
+		};
+		Object.defineProperty(stored, 'headers', { value: frozen });
+		s.store.set('https://www.norviq.org/brief/2026-11-20/evening/og.png?lang=en', stored);
+		const res = await run(s);
+		expect(mockFetch).not.toHaveBeenCalled();
+		expect(() => res.headers.set('X-Content-Type-Options', 'nosniff')).not.toThrow();
+		expect(res.status).toBe(200);
+		expect(res.headers.get('Content-Type')).toBe('image/png');
+		expect(new Uint8Array(await res.arrayBuffer())).toEqual(BYTES);
+	});
+
+	it('keys a percent-encoded or padded path on the canonical path', async () => {
+		mockFetch.mockImplementation(() => Promise.resolve(upstream()));
+		const s = setup('og.png', '', { path: '/brief/2026%2D11-20/%20evening/og.png' });
+		await run(s);
+		expect([...s.store.keys()]).toEqual([
+			'https://www.norviq.org/brief/2026-11-20/evening/og.png?lang=en'
+		]);
 	});
 
 	it('forwards rev and v only as a pair', async () => {

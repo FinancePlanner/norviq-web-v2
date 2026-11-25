@@ -9,7 +9,7 @@
 // answers 404 to any stale rev.
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiFetch } from '#lib/server/api.js';
-import { MISSING_CACHE_CONTROL, parsePermalink, urlLang } from './brief.server.js';
+import { MISSING_CACHE_CONTROL, briefPath, parsePermalink, urlLang } from './brief.server.js';
 import type { ExportFormat } from './export/types.js';
 
 export const EXPORT_FILES = {
@@ -101,7 +101,8 @@ export async function cached(
 		if (value !== null) lookup.set(name, value);
 	}
 	const hit = await cache.match(new Request(key, { headers: lookup }));
-	if (hit) return hit;
+	// workerd returns immutable headers; hooks.server.ts sets one on every response.
+	if (hit) return new Response(hit.body, hit);
 	const response = await produce();
 	if (response.status === 200)
 		event.platform.ctx.waitUntil(cache.put(new Request(key), response.clone()));
@@ -111,7 +112,10 @@ export async function cached(
 export async function serveExport(event: RequestEvent, file: ExportFile): Promise<Response> {
 	const permalink = parsePermalink(event.params.date ?? '', event.params.slot ?? '');
 	if (!permalink) return notFound();
-	const { key, pair } = exportKey(event.url, event.url.pathname);
+	const { key, pair } = exportKey(
+		event.url,
+		briefPath(permalink.date, permalink.slot) + '/' + file
+	);
 	return cached(event, key, async () => {
 		let upstream: Response;
 		try {
