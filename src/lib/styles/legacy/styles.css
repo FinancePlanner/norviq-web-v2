@@ -4024,13 +4024,6 @@ html.dark .health-gauge-arc {
    Keep respectful of prefers-reduced-motion
    ======================================== */
 
-/* Base motion tokens consumption + guards */
-:root {
-  --motion-fast: var(--motion-fast, 140ms);
-  --motion-med: var(--motion-med, 240ms);
-  --motion-slow: var(--motion-slow, 420ms);
-}
-
 /* Reduced motion = no movement, not no feedback. Kill animations and
    transform-based transitions, but keep short opacity fades on the surfaces
    where a hard cut would read as broken (dialogs, popovers, toasts). */
