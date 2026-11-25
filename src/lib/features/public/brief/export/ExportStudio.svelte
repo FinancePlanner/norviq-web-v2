@@ -23,8 +23,11 @@
 	// The brief's Export Studio: the Go-rendered social image, story, PDF report
 	// and link preview, each to preview, download or share. Loaded on demand by
 	// ExportTrigger, so bits-ui stays out of the brief route's static graph.
-	// Previews and downloads use the manifest's versioned URLs; a URL that fails
-	// (superseded revision, or no manifest) falls back to the unversioned one.
+	// Previews and the share sheet use the manifest's versioned URLs, and fall
+	// back to the unversioned one when that fails (superseded revision, or no
+	// manifest). Downloads and Open always use the unversioned URL: a link the
+	// browser follows on its own has no fallback, and the backend 404s a
+	// superseded revision.
 	import XIcon from '@lucide/svelte/icons/x';
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
 	import PrimaryButton from '#lib/components/norviq/PrimaryButton.svelte';
@@ -62,6 +65,8 @@
 	/** Prefetched export bytes by URL, so the share sheet keeps the user activation. */
 	let blobs = $state<Record<string, Blob>>({});
 	const pending = new Set<string>();
+	/** The image whose bytes could not be fetched for the share sheet. */
+	let shareFailed = $state<'social' | 'story' | ''>('');
 	let copied = $state(false);
 	let copyTimer: ReturnType<typeof setTimeout> | undefined;
 	let content = $state<HTMLElement | null>(null);
@@ -90,7 +95,6 @@
 	}
 
 	const pages = $derived(manifest?.formats.find((f) => f.id === 'pdf')?.pages ?? 0);
-	const pdfURL = $derived(urlFor('pdf'));
 
 	// Fetch the manifest on every open, so a regenerated edition shows its new
 	// revision, a failed export is tried again, and a page reused for another
@@ -100,6 +104,7 @@
 		const controller = new AbortController();
 		manifest = null;
 		failed = {};
+		shareFailed = '';
 		settled = false;
 		fetch(exportsURL, { signal: controller.signal, headers: { Accept: 'application/json' } })
 			.then((r) => (r.ok ? (r.json() as Promise<WebExportManifest>) : null))
@@ -119,8 +124,8 @@
 	$effect(() => {
 		if (!open || !settled || !canShareFiles || (tab !== 'social' && tab !== 'story')) return;
 		const id = tab;
-		const url = urlFor(id);
-		if (!url || blobs[url] || pending.has(url)) return;
+		const url = urlFor(id) || fallback[id];
+		if (blobs[url] || pending.has(url)) return;
 		pending.add(url);
 		fetchExport(url, fallback[id])
 			.then((blob) => (blobs[url] = blob))
@@ -131,17 +136,23 @@
 	$effect(() => () => clearTimeout(copyTimer));
 
 	async function shareImage(id: 'social' | 'story') {
-		trackExport(eventProps, id, 'share');
-		const url = urlFor(id);
+		// Never '' once both previews failed: fetch('') would fetch this page.
+		const url = urlFor(id) || fallback[id];
+		shareFailed = '';
+		let blob: Blob;
 		try {
-			const blob = blobs[url] ?? (await fetchExport(url, fallback[id]));
-			const file = new File([blob], exportFileName(fallback[id]), {
-				type: blob.type || 'image/png'
-			});
+			blob = blobs[url] ?? (await fetchExport(url, fallback[id]));
+		} catch {
+			shareFailed = id;
+			return;
+		}
+		const file = new File([blob], exportFileName(fallback[id]), { type: blob.type || 'image/png' });
+		try {
 			await navigator.share({ files: [file], title });
 		} catch {
-			/* dismissed, or the export is unavailable */
+			return; // dismissed (AbortError), or the share target failed
 		}
+		trackExport(eventProps, id, 'share');
 	}
 
 	async function copyLink() {
@@ -195,7 +206,7 @@
 			/>
 		{/if}
 	</div>
-	{#if settled && !url}
+	{#if settled && (!url || shareFailed === id)}
 		<p class="studio-note" role="status">{text.exportUnavailable}</p>
 	{/if}
 {/snippet}
@@ -204,7 +215,7 @@
 	{@render preview(id, alt)}
 	<div class="studio-actions">
 		<PrimaryButton
-			href={urlFor(id) || fallback[id]}
+			href={fallback[id]}
 			download={exportFileName(fallback[id])}
 			class={action}
 			onclick={() => trackExport(eventProps, id, 'download')}
@@ -260,7 +271,7 @@
 				</div>
 				<div class="studio-actions">
 					<PrimaryButton
-						href={pdfURL || fallback.pdf}
+						href={fallback.pdf}
 						download={exportFileName(fallback.pdf)}
 						class={action}
 						onclick={() => trackExport(eventProps, 'pdf', 'download')}
@@ -268,7 +279,7 @@
 						{text.exportDownload}
 					</PrimaryButton>
 					<SecondaryButton
-						href={pdfURL || fallback.pdf}
+						href={fallback.pdf}
 						target="_blank"
 						rel="noopener"
 						class={action}

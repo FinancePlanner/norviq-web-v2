@@ -40,8 +40,8 @@ const studio: Omit<StudioProps, 'open'> = {
 };
 const pageProps = { date: '2026-11-20', lang: 'pt-PT', slot: 'evening', surface: 'page' };
 
-/** Stubs fetch: the manifest answers `manifestStatus` with `body`, any export answers 200. */
-function stubFetch(manifestStatus = 200, body: WebExportManifest = manifest) {
+/** Stubs fetch: the manifest answers `manifestStatus` with `body`, any export `exportStatus`. */
+function stubFetch(manifestStatus = 200, body: WebExportManifest = manifest, exportStatus = 200) {
 	const f = vi.fn<typeof fetch>((input) => {
 		const url = input instanceof Request ? input.url : String(input);
 		if (url.includes('/exports.json')) {
@@ -51,11 +51,44 @@ function stubFetch(manifestStatus = 200, body: WebExportManifest = manifest) {
 					: new Response('renderer busy', { status: manifestStatus })
 			);
 		}
-		return Promise.resolve(new Response(new Blob(['png'], { type: 'image/png' })));
+		return Promise.resolve(
+			exportStatus === 200
+				? new Response(new Blob(['png'], { type: 'image/png' }))
+				: new Response('renderer busy', { status: exportStatus })
+		);
 	});
 	vi.stubGlobal('fetch', f);
 	return f;
 }
+
+/** The URLs fetched other than the manifest. */
+function exportFetches(f: ReturnType<typeof stubFetch>): string[] {
+	return f.mock.calls
+		.map(([input]) => (input instanceof Request ? input.url : String(input)))
+		.filter((url) => !url.includes('/exports.json'));
+}
+
+/** Makes the browser offer file sharing, with `share` as the share sheet. */
+function stubShare(share: (data?: ShareData) => Promise<void>) {
+	const spy = vi.fn<(data?: ShareData) => Promise<void>>(share);
+	const define = (key: 'canShare' | 'share', value: unknown) =>
+		Object.defineProperty(navigator, key, { configurable: true, writable: true, value });
+	define('canShare', () => true);
+	define('share', spy);
+	cleanups.push(() => {
+		Reflect.deleteProperty(navigator, 'canShare');
+		Reflect.deleteProperty(navigator, 'share');
+	});
+	return spy;
+}
+
+const PNG =
+	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+/** A manifest whose social image is a PNG the test browser can load. */
+const loadingManifest: WebExportManifest = {
+	...manifest,
+	formats: manifest.formats.map((f) => (f.id === 'social' ? { ...f, url: PNG } : f))
+};
 
 /** Every src an <img> tried to load, recorded before the studio reacts to it. */
 function recordImageSources(): string[] {
@@ -122,12 +155,8 @@ describe('ExportStudio', () => {
 	});
 
 	it('keeps a manifest preview that loads', async () => {
-		const png =
-			'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-		stubFetch(200, {
-			...manifest,
-			formats: manifest.formats.map((f) => (f.id === 'social' ? { ...f, url: png } : f))
-		});
+		const png = PNG;
+		stubFetch(200, loadingManifest);
 		render(ExportStudio, { ...studio, open: true });
 
 		const img = page.getByAltText(pt.exportSocialAlt);
@@ -140,9 +169,71 @@ describe('ExportStudio', () => {
 		await expect.element(img).toBeVisible();
 		await expect.element(img).toHaveAttribute('src', png);
 		expect(page.getByText(pt.exportUnavailable).elements()).toHaveLength(0);
+	});
+
+	it('downloads from the unversioned URLs, which a newer revision never supersedes', async () => {
+		stubFetch();
+		const seen = recordImageSources();
+		render(ExportStudio, { ...studio, open: true });
+
+		const download = page.getByRole('link', { name: pt.exportDownload });
+		await expect.element(download).toHaveAttribute('href', fallback.social);
+		// The preview still uses the manifest's versioned URL.
+		await expect.poll(() => seen).toContain(fallback.social + VERSION);
+
+		await page.getByRole('tab', { name: pt.exportStory }).click();
+		await expect.element(download).toHaveAttribute('href', fallback.story);
+
+		await page.getByRole('tab', { name: pt.exportPdf }).click();
+		await expect.element(page.getByText('4 páginas')).toBeVisible();
+		await expect.element(download).toHaveAttribute('href', fallback.pdf);
 		await expect
-			.element(page.getByRole('link', { name: pt.exportDownload }))
-			.toHaveAttribute('href', png);
+			.element(page.getByRole('link', { name: pt.exportOpenPdf }))
+			.toHaveAttribute('href', fallback.pdf);
+	});
+
+	it('shares the unversioned image when both previews failed, never the page', async () => {
+		const f = stubFetch();
+		const share = stubShare(() => Promise.resolve());
+		render(ExportStudio, { ...studio, open: true });
+
+		await expect.element(page.getByText(pt.exportUnavailable)).toBeVisible();
+		await page.getByRole('button', { name: pt.exportShare }).click();
+		await expect.poll(() => share.mock.calls.length).toBe(1);
+
+		const fetched = exportFetches(f);
+		expect(fetched).toContain(fallback.social);
+		expect(
+			fetched.every((url) => url === fallback.social || url === fallback.social + VERSION)
+		).toBe(true);
+		expect(share.mock.calls[0][0]?.files?.map((file) => file.name)).toEqual([
+			'norviq-brief-2026-11-20-evening-social.png'
+		]);
+		expect(window.__norviqAnalyticsQueue).toEqual([
+			['market_brief_shared', { ...pageProps, channel: 'social', method: 'share' }]
+		]);
+	});
+
+	it('says the export is unavailable when it cannot be fetched to share', async () => {
+		stubFetch(200, loadingManifest, 503);
+		const share = stubShare(() => Promise.resolve());
+		render(ExportStudio, { ...studio, open: true });
+
+		await page.getByRole('button', { name: pt.exportShare }).click();
+		await expect.element(page.getByText(pt.exportUnavailable)).toBeVisible();
+		expect(share).not.toHaveBeenCalled();
+		expect(window.__norviqAnalyticsQueue).toBeUndefined();
+	});
+
+	it('does not track a share the user cancels', async () => {
+		stubFetch(200, loadingManifest);
+		const share = stubShare(() => Promise.reject(new DOMException('Share canceled', 'AbortError')));
+		render(ExportStudio, { ...studio, open: true });
+
+		await page.getByRole('button', { name: pt.exportShare }).click();
+		await expect.poll(() => share.mock.calls.length).toBe(1);
+		expect(page.getByText(pt.exportUnavailable).elements()).toHaveLength(0);
+		expect(window.__norviqAnalyticsQueue).toBeUndefined();
 	});
 
 	it('shows the PDF page count', async () => {
@@ -151,9 +242,6 @@ describe('ExportStudio', () => {
 
 		await page.getByRole('tab', { name: pt.exportPdf }).click();
 		await expect.element(page.getByText('4 páginas')).toBeVisible();
-		await expect
-			.element(page.getByRole('link', { name: pt.exportDownload }))
-			.toHaveAttribute('href', fallback.pdf + VERSION);
 		const open = page.getByRole('link', { name: pt.exportOpenPdf });
 		await expect.element(open).toHaveAttribute('target', '_blank');
 		await expect.element(open).toHaveAttribute('rel', 'noopener');
