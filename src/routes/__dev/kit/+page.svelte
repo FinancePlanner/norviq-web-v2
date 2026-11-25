@@ -311,7 +311,7 @@
 		<h2 class="text-lg font-semibold">DS 2.0 · Money</h2>
 		<p class="text-sm text-muted-foreground">
 			vigil.MoneyText, DeltaText and AsOf. The currency comes from the data; direction is sign plus
-			arrow, never colour alone. Shown in the active app locale (en here).
+			arrow, never colour alone.
 		</p>
 		<div class="grid gap-2 text-sm">
 			<div><vigil.MoneyText value={124580.42} currency="EUR" /> · standard</div>
@@ -328,7 +328,7 @@
 				/> · negative with amount
 			</div>
 			<div><vigil.DeltaText fraction={0} basis="1 week" /> · flat</div>
-			<div><vigil.DeltaText fraction={null} /> · null (renders nothing)</div>
+			<div><vigil.DeltaText fraction={null} basis="1 month" /> · null (renders nothing)</div>
 			<div><vigil.AsOf date={asOfFresh} now={kitNow} /> · fresh</div>
 			<div><vigil.AsOf date="2026-11-18" now={kitNow} /> · stale</div>
 		</div>

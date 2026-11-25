@@ -23,9 +23,9 @@
 	});
 </script>
 
-{#if text === null}<span class="vigil-money" aria-label={t('Not available')}>—</span>{:else}<span
-		class="vigil-money">{text}</span
-	>{/if}
+{#if text === null}<span class="vigil-money"
+		><span aria-hidden="true">—</span><span class="sr-only">{t('Not available')}</span></span
+	>{:else}<span class="vigil-money">{text}</span>{/if}
 
 <style>
 	.vigil-money {

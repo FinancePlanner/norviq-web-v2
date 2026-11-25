@@ -12,7 +12,8 @@ import fixtures from '../../../__fixtures__/money.json';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- one helper for components with different props
 const html = (C: any, props: Record<string, unknown>) => render(C, { props }).body;
-const text = (body: string) => body.replace(/<[^>]*>/g, '').replace(/<!---->/g, '');
+const srText = (body: string) => /<span class="sr-only">([^<]*)<\/span>/.exec(body)?.[1];
+const text = (body: string) => body.replace(/<[^>]*>/g, '');
 
 beforeEach(() => {
 	state.page.data.locale = 'en';
@@ -31,7 +32,9 @@ describe('MoneyText', () => {
 	it('renders a dash and an accessible name for NaN', () => {
 		const body = html(MoneyText, { value: NaN, currency: 'EUR' });
 		expect(body).toContain('—');
-		expect(body).toContain('aria-label="Not available"');
+		expect(body).toContain('<span aria-hidden="true">—</span>');
+		expect(body).toContain('<span class="sr-only">Not available</span>');
+		expect(body).not.toContain('aria-label');
 		expect(body).not.toContain('NaN');
 	});
 
@@ -68,15 +71,17 @@ describe('DeltaText', () => {
 	});
 
 	it('is positive with an up sr text', () => {
-		const body = html(DeltaText, { fraction: 0.0321 });
+		const body = html(DeltaText, { fraction: 0.0321, basis: '1 month' });
 		expect(body).toContain('is-positive');
 		expect(body).toContain('▲');
-		expect(body).toContain('up +3.2%');
+		expect(body).toContain('+3.2%');
+		expect(srText(body)).toBe('up 3.2% 1 month');
 	});
 
 	it('appends a signed amount', () => {
 		const body = html(DeltaText, {
 			fraction: 0.05,
+			basis: '1 month',
 			amount: { value: 13480.1, currency: 'EUR' }
 		});
 		expect(body).toContain('+€13,480.10');
@@ -85,6 +90,7 @@ describe('DeltaText', () => {
 	it('drops a non-finite amount and keeps the percent', () => {
 		const body = html(DeltaText, {
 			fraction: -0.032,
+			basis: '1 month',
 			amount: { value: NaN, currency: 'EUR' }
 		});
 		expect(body).not.toContain('NaN');
@@ -94,6 +100,7 @@ describe('DeltaText', () => {
 	it('prints an amount without currency as NBSP + dash, never $', () => {
 		const body = html(DeltaText, {
 			fraction: -0.032,
+			basis: '1 month',
 			amount: { value: -1250.5, currency: null }
 		});
 		expect(body).toContain('−1,250.50\u00a0—');
@@ -106,13 +113,12 @@ describe('DeltaText', () => {
 			basis: '1 month',
 			amount: { value: -1250.5, currency: 'EUR' }
 		});
-		const sr = /<span class="sr-only">([^<]*)<\/span>/.exec(body)?.[1];
-		expect(sr).toBe('down −3.2%, −€1,250.50 1 month');
+		expect(srText(body)).toBe('down 3.2%, −€1,250.50 1 month');
 	});
 
 	it('is flat at zero and when it rounds to 0.0%', () => {
 		for (const fraction of [0, 0.00004]) {
-			const body = html(DeltaText, { fraction });
+			const body = html(DeltaText, { fraction, basis: '1 month' });
 			expect(body).toContain('is-flat');
 			expect(body).toContain('unchanged');
 			expect(body).not.toContain('is-positive');
@@ -120,8 +126,8 @@ describe('DeltaText', () => {
 	});
 
 	it('renders nothing for a null fraction', () => {
-		expect(text(html(DeltaText, { fraction: null })).trim()).toBe('');
-		expect(html(DeltaText, { fraction: null })).not.toContain('vigil-delta');
+		expect(text(html(DeltaText, { fraction: null, basis: '1 month' })).trim()).toBe('');
+		expect(html(DeltaText, { fraction: null, basis: '1 month' })).not.toContain('vigil-delta');
 	});
 });
 

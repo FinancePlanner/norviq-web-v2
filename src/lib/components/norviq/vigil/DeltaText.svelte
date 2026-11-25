@@ -9,7 +9,7 @@
 		amount
 	}: {
 		fraction: number | null | undefined;
-		basis?: string;
+		basis: string;
 		amount?: { value: number; currency: string | null };
 	} = $props();
 
@@ -18,6 +18,8 @@
 		const l = locale();
 		const pct = signedPercent(fraction, l);
 		// "0.0%", "+0.0%" and "−0.0%" all mean flat: judge by the printed figure.
+		// Spoken without a sign: "down 3.2%", never "down −3.2%".
+		const spoken = signedPercent(Math.abs(fraction), l).replace(/^\+/, '');
 		const flat = !/[1-9]/.test(pct);
 		const dir = flat ? 'flat' : fraction > 0 ? 'positive' : 'negative';
 		return {
@@ -30,9 +32,9 @@
 					: null,
 			sr:
 				dir === 'positive'
-					? t('up %@', pct)
+					? t('up %@', spoken)
 					: dir === 'negative'
-						? t('down %@', pct)
+						? t('down %@', spoken)
 						: t('unchanged')
 		};
 	});
