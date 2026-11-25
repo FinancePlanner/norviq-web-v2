@@ -82,6 +82,34 @@ describe('DeltaText', () => {
 		expect(body).toContain('+€13,480.10');
 	});
 
+	it('drops a non-finite amount and keeps the percent', () => {
+		const body = html(DeltaText, {
+			fraction: -0.032,
+			amount: { value: NaN, currency: 'EUR' }
+		});
+		expect(body).not.toContain('NaN');
+		expect(body).toContain('−3.2%');
+	});
+
+	it('prints an amount without currency as NBSP + dash, never $', () => {
+		const body = html(DeltaText, {
+			fraction: -0.032,
+			amount: { value: -1250.5, currency: null }
+		});
+		expect(body).toContain('−1,250.50\u00a0—');
+		expect(body).not.toContain('$');
+	});
+
+	it('puts the amount in the screen-reader text', () => {
+		const body = html(DeltaText, {
+			fraction: -0.032,
+			basis: '1 month',
+			amount: { value: -1250.5, currency: 'EUR' }
+		});
+		const sr = /<span class="sr-only">([^<]*)<\/span>/.exec(body)?.[1];
+		expect(sr).toBe('down −3.2%, −€1,250.50 1 month');
+	});
+
 	it('is flat at zero and when it rounds to 0.0%', () => {
 		for (const fraction of [0, 0.00004]) {
 			const body = html(DeltaText, { fraction });

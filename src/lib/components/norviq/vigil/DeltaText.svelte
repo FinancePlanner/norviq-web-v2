@@ -24,7 +24,10 @@
 			dir,
 			arrow: dir === 'positive' ? '▲' : dir === 'negative' ? '▼' : '–',
 			pct,
-			money: amount ? signedMoney(amount.value, amount.currency, l) : null,
+			money:
+				amount && Number.isFinite(amount.value)
+					? signedMoney(amount.value, amount.currency, l)
+					: null,
 			sr:
 				dir === 'positive'
 					? t('up %@', pct)
@@ -39,7 +42,9 @@
 		><span aria-hidden="true">{view.arrow}</span>
 		<span aria-hidden="true"
 			>{view.pct}{view.money ? ` · ${view.money}` : ''}{basis ? ` ${basis}` : ''}</span
-		><span class="sr-only">{view.sr}{basis ? ` ${basis}` : ''}</span></span
+		><span class="sr-only"
+			>{view.sr}{view.money ? `, ${view.money}` : ''}{basis ? ` ${basis}` : ''}</span
+		></span
 	>{/if}
 
 <style>
