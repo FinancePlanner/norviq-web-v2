@@ -5,6 +5,7 @@
 	import PrimaryButton from '#lib/components/norviq/PrimaryButton.svelte';
 	import ShareBar from '#lib/components/norviq/ShareBar.svelte';
 	import { translator } from '#lib/i18n/index.js';
+	import ExportTrigger from './export/ExportTrigger.svelte';
 	import CrossAsset from './edition/CrossAsset.svelte';
 	import IntradayChart from './edition/IntradayChart.svelte';
 	import Masthead from './edition/Masthead.svelte';
@@ -175,8 +176,6 @@
 		<h2 id="market-brief-share-heading" class="mi-section-title">{L.shareThisEdition}</h2>
 		<ShareBar
 			links={vm.share}
-			cardImageURL={vm.exportFallback.social}
-			cardFileName={vm.cardFileName}
 			native
 			nativeURL={vm.nativeShareURL}
 			nativeTitle={vm.title}
@@ -189,10 +188,22 @@
 				reddit: 'Reddit',
 				whatsApp: 'WhatsApp',
 				discord: t('Copy for Discord'),
-				instagram: t('Share image'),
 				copy: t('Copy link'),
 				copied: t('Copied'),
 				native: t('Share…')
+			}}
+		/>
+		<ExportTrigger
+			href={vm.exportFallback.social}
+			label={L.exportOpen}
+			studio={{
+				exportsURL: vm.exportsURL,
+				fallback: vm.exportFallback,
+				copyURL: vm.share.copy,
+				nativeURL: vm.nativeShareURL,
+				title: vm.title,
+				eventProps: vm.shareProps,
+				text: L
 			}}
 		/>
 	</section>

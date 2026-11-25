@@ -4,7 +4,29 @@
 // browser on every route, and these strings are only ever needed to render
 // /brief pages, which receive them already resolved in their page data.
 
-export interface EditionStrings {
+/** The Export Studio's strings (ExportTrigger + ExportStudio), part of EditionStrings. */
+export interface ExportStrings {
+	exportOpen: string;
+	exportTitle: string;
+	exportSocial: string;
+	exportStory: string;
+	exportPdf: string;
+	exportLink: string;
+	exportDownload: string;
+	exportShare: string;
+	exportOpenPdf: string;
+	/** "%d" is replaced by the page count. */
+	exportPages: string;
+	exportCopyLink: string;
+	exportCopied: string;
+	exportUnavailable: string;
+	exportClose: string;
+	exportSocialAlt: string;
+	exportStoryAlt: string;
+	exportLinkAlt: string;
+}
+
+export interface EditionStrings extends ExportStrings {
 	marketIntelligence: string;
 	theOpen: string;
 	theClose: string;
@@ -124,6 +146,23 @@ const en: EditionStrings = {
 	ctaButton: 'Create free account',
 	terms: 'Terms',
 	privacy: 'Privacy',
+	exportOpen: 'Export & share',
+	exportTitle: 'Export this edition',
+	exportSocial: 'Social',
+	exportStory: 'Story',
+	exportPdf: 'PDF report',
+	exportLink: 'Link',
+	exportDownload: 'Download',
+	exportShare: 'Share',
+	exportOpenPdf: 'Open PDF',
+	exportPages: '%d pages',
+	exportCopyLink: 'Copy link',
+	exportCopied: 'Copied',
+	exportUnavailable: 'This export is unavailable right now. Try again shortly.',
+	exportClose: 'Close',
+	exportSocialAlt: 'Social image of this edition, 1080 × 1350',
+	exportStoryAlt: 'Story image of this edition, 1080 × 1920',
+	exportLinkAlt: 'Link preview image, 1200 × 630',
 	names: {
 		'^GDAXI': 'DAX',
 		'^FCHI': 'CAC 40',
@@ -202,6 +241,24 @@ const pt: EditionStrings = {
 	ctaButton: 'Criar conta gratuita',
 	terms: 'Termos',
 	privacy: 'Privacidade',
+	exportOpen: 'Exportar e partilhar',
+	exportTitle: 'Exportar esta edição',
+	exportSocial: 'Redes sociais',
+	exportStory: 'Story',
+	exportPdf: 'Relatório PDF',
+	exportLink: 'Ligação',
+	exportDownload: 'Transferir',
+	exportShare: 'Partilhar',
+	exportOpenPdf: 'Abrir PDF',
+	exportPages: '%d páginas',
+	exportCopyLink: 'Copiar ligação',
+	exportCopied: 'Copiado',
+	exportUnavailable:
+		'Esta exportação não está disponível de momento. Tente novamente dentro de instantes.',
+	exportClose: 'Fechar',
+	exportSocialAlt: 'Imagem para redes sociais desta edição, 1080 × 1350',
+	exportStoryAlt: 'Imagem vertical (story) desta edição, 1080 × 1920',
+	exportLinkAlt: 'Imagem de pré-visualização da ligação, 1200 × 630',
 	names: {
 		...en.names,
 		'NQ=F': 'Futuros do Nasdaq 100',
