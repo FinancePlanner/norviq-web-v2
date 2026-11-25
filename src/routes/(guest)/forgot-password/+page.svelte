@@ -5,7 +5,9 @@
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { staggerOnMount } from '#lib/motion.js';
-	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import AuthShell from '#lib/components/norviq/vigil/AuthShell.svelte';
+	import AuthBrandColumn from '#lib/components/norviq/vigil/AuthBrandColumn.svelte';
+	import AuthFormColumn from '#lib/components/norviq/vigil/AuthFormColumn.svelte';
 	import AuthBrandPanel from '#lib/components/norviq/AuthBrandPanel.svelte';
 	import FormErrorBanner from '#lib/components/norviq/FormErrorBanner.svelte';
 	import SubmitButton from '#lib/components/norviq/SubmitButton.svelte';
@@ -42,11 +44,11 @@
 />
 
 <div class="auth-container auth-container-wide">
-	<vigil.AuthShell>
-		<vigil.AuthBrandColumn>
+	<AuthShell>
+		<AuthBrandColumn>
 			<AuthBrandPanel />
-		</vigil.AuthBrandColumn>
-		<vigil.AuthFormColumn>
+		</AuthBrandColumn>
+		<AuthFormColumn>
 			<a href="/login" class="vigil-settings-back">
 				<ChevronLeft class="h-4 w-4 shrink-0" />
 				<span>{t('Back to sign in')}</span>
@@ -86,6 +88,6 @@
 					</form>
 				{/key}
 			</div>
-		</vigil.AuthFormColumn>
-	</vigil.AuthShell>
+		</AuthFormColumn>
+	</AuthShell>
 </div>

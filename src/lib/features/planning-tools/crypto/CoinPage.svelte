@@ -2,7 +2,8 @@
 	// crypto.CoinPage(vm) — internal/pages/crypto/coin.templ.
 	import EChart from '#lib/charts/EChart.svelte';
 	import { priceLine } from '#lib/charts/index.js';
-	import { locale } from '#lib/i18n/context.svelte.js';
+	import { page } from '$app/state';
+	import { locale, t } from '#lib/i18n/context.svelte.js';
 	import { EmptyState } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import type { CoinPageVM } from './types.js';
@@ -38,15 +39,14 @@
 		</div>
 	{:else}
 		<vigil.Panel class="mt-6 p-4 md:p-5">
-			<nav class="segmented-control" aria-label="Chart range">
-				{#each vm.ranges as r (r.href)}
-					<a href={r.href} class={['segmented-link', r.active && 'segmented-link-active']}
-						>{r.label}</a
-					>
-				{/each}
-			</nav>
+			<vigil.RangeControl
+				ranges={vm.ranges}
+				active={vm.range}
+				url={page.url}
+				label={t('Chart range')}
+			/>
 			{#if !chart}
-				<p class="mt-4 text-sm text-muted-foreground">No price history for {vm.rangeLabel}.</p>
+				<p class="mt-4 text-sm text-muted-foreground">No price history for {vm.range}.</p>
 			{:else}
 				<div class="mt-4">
 					<EChart {...chart} />

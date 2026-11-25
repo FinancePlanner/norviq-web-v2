@@ -7,7 +7,9 @@
 	import { untrack } from 'svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { staggerOnMount } from '#lib/motion.js';
-	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import AuthShell from '#lib/components/norviq/vigil/AuthShell.svelte';
+	import AuthBrandColumn from '#lib/components/norviq/vigil/AuthBrandColumn.svelte';
+	import AuthFormColumn from '#lib/components/norviq/vigil/AuthFormColumn.svelte';
 	import AuthBrandPanel from '#lib/components/norviq/AuthBrandPanel.svelte';
 	import Field from '#lib/components/norviq/Field.svelte';
 	import FormErrorBanner from '#lib/components/norviq/FormErrorBanner.svelte';
@@ -41,11 +43,11 @@
 />
 
 <div class="auth-container auth-container-wide">
-	<vigil.AuthShell>
-		<vigil.AuthBrandColumn>
+	<AuthShell>
+		<AuthBrandColumn>
 			<AuthBrandPanel />
-		</vigil.AuthBrandColumn>
-		<vigil.AuthFormColumn>
+		</AuthBrandColumn>
+		<AuthFormColumn>
 			<div
 				class="auth-form-card glass-card"
 				{@attach staggerOnMount('header, .mt-8 > *, p.mt-6', 70)}
@@ -111,6 +113,6 @@
 					<a href="/login" class="link-tint font-semibold">{t('Back to sign in')}</a>
 				</p>
 			</div>
-		</vigil.AuthFormColumn>
-	</vigil.AuthShell>
+		</AuthFormColumn>
+	</AuthShell>
 </div>

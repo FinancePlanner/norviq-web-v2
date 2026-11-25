@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
 	activityRamp,
@@ -37,6 +39,32 @@ describe('chartKind', () => {
 	});
 });
 
+describe('token fallbacks', () => {
+	it('picks pillar fallbacks per appearance from tokens.json', () => {
+		expect(pillarColor({ name: 'future you' }, env(false))).toBe('#6353C5');
+		expect(pillarColor({ name: 'fun' }, env(true))).toBe('#83B4DE');
+		expect(pillarColor({ name: 'fundamentals' }, env(true))).toBe('#D8B477');
+		expect(pillarColor({ name: 'other' }, env(true))).toBe('#a6afba');
+	});
+	it('starts the light activity ramp at the accent action colour', () => {
+		expect(activityRamp(env(false, { '--color-tint': 'oklch(1 0 0)' }))[0]).toBe(
+			'rgba(128,97,42,0.14)'
+		);
+	});
+	it('pillarColor and activityRamp hold no colour literal', () => {
+		// The legacy server-colour match sets and the card border fallback elsewhere in
+		// theme.ts keep literals; the pillar and activity fallbacks must not.
+		const all = readFileSync(fileURLToPath(new URL('./theme.ts', import.meta.url)), 'utf8');
+		const src = all.slice(
+			all.indexOf('export function pillarColor'),
+			all.indexOf('/** The visualMap')
+		);
+		expect(src.length).toBeGreaterThan(200);
+		expect(src).not.toMatch(/#[0-9a-fA-F]{6}/);
+		expect(src).not.toContain('138, 106, 46');
+	});
+});
+
 describe('palette', () => {
 	it('falls back per appearance and reads overrides', () => {
 		// --chart-line is ink (--foreground); gold is never a data colour (DESIGN.md).
@@ -58,7 +86,7 @@ describe('palette', () => {
 		]);
 		// theme.css declares the tint in OKLCH, so the ramp falls back to the gold.
 		expect(activityRamp(env(false, { '--color-tint': 'oklch(1 0 0)' }))[3]).toBe(
-			'rgba(138,106,46,1)'
+			'rgba(128,97,42,1)'
 		);
 		expect(activityRamp(env(true, { '--color-tint': 'oklch(1 0 0)' }))[3]).toBe(
 			'rgba(216,180,119,1)'
@@ -66,7 +94,7 @@ describe('palette', () => {
 	});
 	it('resolves pillar colors from colorVar, then the name', () => {
 		expect(pillarColor({ colorVar: '--x' }, env(false, { '--x': '#111111' }))).toBe('#111111');
-		expect(pillarColor({ name: 'Fun' }, env(false))).toBe('#4f78a8');
+		expect(pillarColor({ name: 'Fun' }, env(false))).toBe('#4A79A0');
 		expect(pillarColor({ name: 'Other' }, env(false))).toBe('#57626e');
 	});
 });

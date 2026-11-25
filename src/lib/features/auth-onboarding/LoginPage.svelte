@@ -11,7 +11,9 @@
 	import { scale } from 'svelte/transition';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { staggerOnMount } from '#lib/motion.js';
-	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import AuthShell from '#lib/components/norviq/vigil/AuthShell.svelte';
+	import AuthBrandColumn from '#lib/components/norviq/vigil/AuthBrandColumn.svelte';
+	import AuthFormColumn from '#lib/components/norviq/vigil/AuthFormColumn.svelte';
 	import AuthBrandPanel from '#lib/components/norviq/AuthBrandPanel.svelte';
 	import AuthMobileBrand from '#lib/components/norviq/AuthMobileBrand.svelte';
 	import Field from '#lib/components/norviq/Field.svelte';
@@ -114,11 +116,11 @@
 <div class="auth-container auth-container-wide">
 	<div id="auth-panel">
 		{#if isSignup}
-			<vigil.AuthShell>
-				<vigil.AuthBrandColumn>
+			<AuthShell>
+				<AuthBrandColumn>
 					<AuthBrandPanel />
-				</vigil.AuthBrandColumn>
-				<vigil.AuthFormColumn>
+				</AuthBrandColumn>
+				<AuthFormColumn>
 					<div class="flex items-center justify-end">
 						<a
 							href="/login"
@@ -219,18 +221,18 @@
 						>
 					</p>
 					<ThemeToggleCompact />
-				</vigil.AuthFormColumn>
-			</vigil.AuthShell>
+				</AuthFormColumn>
+			</AuthShell>
 		{:else}
-			<vigil.AuthShell>
-				<vigil.AuthBrandColumn>
+			<AuthShell>
+				<AuthBrandColumn>
 					<AuthBrandPanel>
 						{#if Vig3D}
 							<Vig3D modelUrl={vig3DModelURL} />
 						{/if}
 					</AuthBrandPanel>
-				</vigil.AuthBrandColumn>
-				<vigil.AuthFormColumn>
+				</AuthBrandColumn>
+				<AuthFormColumn>
 					<AuthMobileBrand />
 					<header class="auth-modern-header space-y-4 text-center lg:text-left">
 						<div class="pt-2">
@@ -281,8 +283,8 @@
 						>
 					</p>
 					<ThemeToggleCompact />
-				</vigil.AuthFormColumn>
-			</vigil.AuthShell>
+				</AuthFormColumn>
+			</AuthShell>
 		{/if}
 	</div>
 	{#if showMfa}

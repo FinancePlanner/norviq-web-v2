@@ -86,6 +86,11 @@ function renderTs(byPath) {
 		Object.entries(CHART)
 			.map(([key, path]) => `\t${key}: '${token(path)[scope].toLowerCase()}'`)
 			.join(',\n');
+	/** @param {'light' | 'dark'} scope */
+	const pillars = (scope) =>
+		['fundamentals', 'futureYou', 'fun']
+			.map((key) => `\t\t${key}: '${token(`color.pillar.${key}`)[scope]}'`)
+			.join(',\n');
 	return [
 		`// ${NOTICE}.`,
 		'// Chart colours for when a --chart-* property is missing (charts/theme.ts).',
@@ -93,6 +98,14 @@ function renderTs(byPath) {
 		`export const LIGHT = {\n${record('light')}\n} as const;`,
 		'',
 		`export const DARK = {\n${record('dark')}\n} as const;`,
+		'',
+		"export type PillarKey = 'fundamentals' | 'futureYou' | 'fun';",
+		`export const PILLAR: { light: Record<PillarKey, string>; dark: Record<PillarKey, string> } = {\n\tlight: {\n${pillars('light')}\n\t},\n\tdark: {\n${pillars('dark')}\n\t}\n};`,
+		'',
+		`export const ACCENT_ACTION: { light: string; dark: string } = {\n\tlight: '${token('color.accent.action').light}',\n\tdark: '${token('color.accent.action').dark}'\n};`,
+		'',
+		'// color.data.flat: the neutral series colour (pillarColor, no --muted-foreground here).',
+		`export const FLAT = {\n\tlight: '${token('color.data.flat').light.toLowerCase()}',\n\tdark: '${token('color.data.flat').dark.toLowerCase()}'\n} as const;`,
 		''
 	].join('\n');
 }

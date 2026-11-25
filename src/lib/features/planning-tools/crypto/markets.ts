@@ -21,16 +21,20 @@ import type {
 	MarketsVM,
 	ToggleOption
 } from './types.js';
+import type { RangeKey } from '#lib/ranges.js';
 
-/** cryptoTimeframes: the selector order; values are the backend's `timeframe`. */
+/**
+ * cryptoTimeframes: the selector order. `value` is the backend's `timeframe`
+ * (also what ?tf= normalises to); `label` is the range key the UI shows.
+ */
 export const cryptoTimeframes = [
 	{ value: '1d', label: '1D' },
 	{ value: '1w', label: '1W' },
 	{ value: '1m', label: '1M' },
 	{ value: 'ytd', label: 'YTD' },
 	{ value: '1y', label: '1Y' },
-	{ value: 'all', label: 'All' }
-] as const;
+	{ value: 'all', label: 'ALL' }
+] as const satisfies readonly { value: string; label: RangeKey }[];
 
 /** cryptoBubbleLimit */
 export const cryptoBubbleLimit = 100;
@@ -40,8 +44,19 @@ export function normalizeCryptoTimeframe(raw: string | null | undefined): string
 	return cryptoTimeframes.some((tf) => tf.value === v) ? v : '1d';
 }
 
-export function cryptoTimeframeLabel(value: string): string {
+export function cryptoTimeframeLabel(value: string): RangeKey {
 	return cryptoTimeframes.find((tf) => tf.value === value)?.label ?? '1D';
+}
+
+/** Whether a timeframe is offered: `supported` null means "unknown", so all are; the current one always is. */
+const timeframeOffered = (value: string, current: string, supported: readonly string[] | null) =>
+	supported === null || supported.includes(value) || value === current;
+
+/** The Timeframe RangeControl's links: the supported timeframes, plus the current one. */
+export function timeframeRanges(current: string, supported: readonly string[] | null): RangeKey[] {
+	return cryptoTimeframes
+		.filter((tf) => timeframeOffered(tf.value, current, supported))
+		.map((tf) => tf.label);
 }
 
 export const normalizeCryptoMarketsView = (raw: string | null | undefined) =>
@@ -125,7 +140,7 @@ export function timeframeOptions(
 		label: tf.label,
 		pushURL: cryptoTabURL(view, tf.value, size),
 		active: tf.value === current,
-		disabled: supported !== null && !supported.includes(tf.value) && tf.value !== current
+		disabled: !timeframeOffered(tf.value, current, supported)
 	}));
 }
 
@@ -135,6 +150,8 @@ export function unavailableMarketsVM(view: string, timeframe: string, size: stri
 		view,
 		timeframeLabel: cryptoTimeframeLabel(timeframe),
 		timeframes: timeframeOptions(view, timeframe, size, null),
+		timeframeRange: cryptoTimeframeLabel(timeframe),
+		timeframeRanges: timeframeRanges(timeframe, null),
 		sizeOptions: [],
 		asOf: '',
 		isStale: false,
@@ -205,6 +222,7 @@ export function buildCryptoMarketsVM(
 	const vm: MarketsVM = {
 		...unavailableMarketsVM(view, timeframe, size),
 		timeframes: timeframeOptions(view, timeframe, size, resp.supportedTimeframes ?? null),
+		timeframeRanges: timeframeRanges(timeframe, resp.supportedTimeframes ?? null),
 		asOf: asOfLabel(resp.asOf),
 		isStale: resp.isStale,
 		advancers: resp.summary?.advancers ?? 0,

@@ -42,6 +42,7 @@ import type {
 	ShareLinkVM
 } from './types.js';
 import { formValue } from '#lib/form-value.js';
+import { parseRange } from '#lib/ranges.js';
 
 // Ports handlers/portfolio_data.go, quote_refresh.go (holdings half),
 // portfolio_position*.go helpers, portfolio_onepage.go and pilot_following.go.
@@ -50,13 +51,11 @@ type Schemas = components['schemas'];
 type ScenarioTargetResponse = Schemas['ScenarioTargetResponse'];
 
 /** No "1D": history is recorded once a day. */
-export const PORTFOLIO_TIME_RANGES: string[] = PERF_RANGES;
+export const PORTFOLIO_TIME_RANGES: readonly string[] = PERF_RANGES;
 
-const isPerfRange = (r: string | null | undefined): r is PerfRange =>
-	PORTFOLIO_TIME_RANGES.includes(r ?? '');
-
+/** The ?range= value, case-insensitively ('all' is 'ALL'); 1M when absent or unknown. */
 export function normalizePortfolioTimeRange(r: string | null | undefined): PerfRange {
-	return isPerfRange(r) ? r : '1M';
+	return parseRange(r, PERF_RANGES, '1M');
 }
 
 export function portfolioAssetFilters(): AssetFilterVM[] {

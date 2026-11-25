@@ -5,6 +5,7 @@
 	import Field from '#lib/components/norviq/Field.svelte';
 	import SelectField from '#lib/components/norviq/SelectField.svelte';
 	import CheckboxField from '#lib/components/norviq/CheckboxField.svelte';
+	import GhostButton from '#lib/components/norviq/GhostButton.svelte';
 	import SubmitButton from '#lib/components/norviq/SubmitButton.svelte';
 	import { withSpinner } from '#lib/components/norviq/form-loading.js';
 	import {
@@ -139,7 +140,7 @@
 					</p>
 				</div>
 				{#if editing}
-					<a class="btn" href="/portfolio/screens">Cancel editing</a>
+					<GhostButton href="/portfolio/screens">Cancel editing</GhostButton>
 				{/if}
 			</div>
 			<form class="mt-4 space-y-5" method="POST" action={editorAction} use:enhance={withSpinner()}>
@@ -230,10 +231,8 @@
 						>
 							<SubmitButton class="btn-primary">Evaluate</SubmitButton>
 						</form>
-						<a class="btn" href={'/portfolio/screens?edit=' + screen.id}>Edit</a><a
-							class="btn"
-							href={'/portfolio/screens?history=' + screen.id}>History</a
-						>
+						<GhostButton href={'/portfolio/screens?edit=' + screen.id}>Edit</GhostButton>
+						<GhostButton href={'/portfolio/screens?history=' + screen.id}>History</GhostButton>
 						<form
 							method="POST"
 							action={screenAct(screen.id, 'delete')}
@@ -266,7 +265,7 @@
 		<section class="glass-card p-5 md:p-6">
 			<div class="flex items-center justify-between gap-3">
 				<h2 class="font-semibold">Evaluation history</h2>
-				<a class="btn" href="/portfolio/screens">Close</a>
+				<GhostButton href="/portfolio/screens">Close</GhostButton>
 			</div>
 			<div class="mt-3 space-y-2">
 				{#each vm.history as evaluation, ei (ei)}

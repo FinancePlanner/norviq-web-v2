@@ -14,6 +14,7 @@ import {
 	formatSignedPercent
 } from '#lib/format.js';
 import { parseUUID } from '#lib/features/dashboard/goals/form.server.js';
+import { parseRange, type RangeKey } from '#lib/ranges.js';
 import { cryptoChangePercent, formatCryptoPrice, formatShares } from './markets.js';
 import type {
 	AssetOptionVM,
@@ -214,18 +215,31 @@ export async function loadCryptoViewModel(
 /** FMP crypto symbols are a ticker plus the quote currency (BTCUSD, PEPEUSD). */
 const cryptoCoinSymbolPattern = /^[A-Z0-9]{1,15}USD$/;
 
-const cryptoCoinRanges = [
-	{ value: '1w', label: '1W' },
-	{ value: '1m', label: '1M' },
-	{ value: '3m', label: '3M' },
-	{ value: 'ytd', label: 'YTD' },
-	{ value: '1y', label: '1Y' },
-	{ value: 'all', label: 'All' }
-];
+/** The coin chart's ranges, in display order (the ?range= values). */
+export const CRYPTO_COIN_RANGES = [
+	'1W',
+	'1M',
+	'3M',
+	'YTD',
+	'1Y',
+	'ALL'
+] as const satisfies readonly RangeKey[];
+type CryptoCoinRange = (typeof CRYPTO_COIN_RANGES)[number];
 
-function normalizeCryptoCoinRange(raw: string | null): string {
-	const v = (raw ?? '').trim().toLowerCase();
-	return cryptoCoinRanges.some((r) => r.value === v) ? v : '1y';
+/** Display key to the lowercase value cryptoCoinRangeStart switches on. */
+const cryptoCoinRangeWire: Record<CryptoCoinRange, string> = {
+	'1W': '1w',
+	'1M': '1m',
+	'3M': '3m',
+	YTD: 'ytd',
+	'1Y': '1y',
+	ALL: 'all'
+};
+
+/** The ?range= value as a display key and its wire value; old lowercase links (?range=1w) still parse. */
+export function parseCryptoCoinRange(raw: string | null): { range: CryptoCoinRange; wire: string } {
+	const range = parseRange(raw, CRYPTO_COIN_RANGES, '1Y');
+	return { range, wire: cryptoCoinRangeWire[range] };
 }
 
 /** Go's time.AddDate (normalising overflow, e.g. Mar 31 - 1 month = Mar 3), in UTC. */
@@ -288,7 +302,7 @@ function cryptoCoinStats(q: CryptoQuoteResponse): CoinStat[] {
 export async function loadCoinPage(event: RequestEvent, rawSymbol: string): Promise<CoinPageVM> {
 	const symbol = rawSymbol.trim().toUpperCase();
 	if (!cryptoCoinSymbolPattern.test(symbol)) error(404, 'Not Found');
-	const rangeValue = normalizeCryptoCoinRange(event.url.searchParams.get('range'));
+	const { range, wire: rangeValue } = parseCryptoCoinRange(event.url.searchParams.get('range'));
 
 	const vm: CoinPageVM = {
 		symbol,
@@ -296,20 +310,12 @@ export async function loadCoinPage(event: RequestEvent, rawSymbol: string): Prom
 		price: '',
 		change: '',
 		changeClass: '',
-		rangeLabel: '',
-		ranges: [],
+		range,
+		ranges: CRYPTO_COIN_RANGES,
 		chart: null,
 		stats: [],
 		errorMessage: ''
 	};
-	for (const cr of cryptoCoinRanges) {
-		if (cr.value === rangeValue) vm.rangeLabel = cr.label;
-		vm.ranges.push({
-			label: cr.label,
-			href: `/crypto/coin/${symbol}?range=${cr.value}`,
-			active: cr.value === rangeValue
-		});
-	}
 
 	const from = cryptoCoinRangeStart(rangeValue, new Date()).toISOString().slice(0, 10);
 	const path = encodeURIComponent(symbol);
