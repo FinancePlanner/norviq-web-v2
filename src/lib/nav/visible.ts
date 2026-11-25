@@ -171,6 +171,8 @@ export function bottomBar(t: Tr): { key: DomainKey | 'more'; label: string; path
 	];
 }
 
+const normalizePath = (path: string) => (path.length > 1 ? path.replace(/\/+$/, '') : path);
+
 // patternLength is how much of `path` a pattern covers: an exact path, or a
 // 'prefix/*' alias covering everything below prefix (never prefix itself, and
 // only at a segment boundary). -1 when it does not match.
@@ -196,7 +198,7 @@ function matchScore(path: string, d: Destination): number {
 
 /** The destination `path` belongs to: longest match over paths, aliases and children; ties go to the first declared. */
 export function activeDestination(path: string, list: readonly Destination[]): Destination | null {
-	const p = path.length > 1 ? path.replace(/\/+$/, '') : path;
+	const p = normalizePath(path);
 	let best: Destination | null = null;
 	let bestScore = -1;
 	for (const d of list) {
@@ -209,15 +211,30 @@ export function activeDestination(path: string, list: readonly Destination[]): D
 	return best;
 }
 
+/** The domain `path` belongs to: its own index page (`/today` … `/community`), else its destination's. */
 export function activeDomain(
 	path: string,
 	list: readonly Destination[]
 ): DomainKey | 'account' | null {
-	return activeDestination(path, list)?.domain ?? null;
+	const p = normalizePath(path);
+	const index = DOMAIN_ORDER.find((key) => DOMAIN_META[key].indexPath === p);
+	return index ?? activeDestination(p, list)?.domain ?? null;
 }
 
-/** Chips for the active destination's visible children; none when fewer than two. */
+/**
+ * Chips for the active destination's visible children; none when fewer than two.
+ * A page that is its own destination but also another's chip (Spending log in
+ * Budget, Articles in Boards) falls back to the first destination listing it,
+ * so the chip row the user came from stays in place.
+ */
 export function subNavLinks(t: Tr, ctx: NavContext, path: string): NavItemVM[] {
-	const children = activeDestination(path, visibleDestinations(ctx))?.children ?? [];
-	return children.length < 2 ? [] : children.map((c) => itemVM(t, ctx, c));
+	const p = normalizePath(path);
+	const list = visibleDestinations(ctx);
+	const chips = (d: Destination | null | undefined) =>
+		d?.children && d.children.length >= 2 ? d.children : null;
+	const links =
+		chips(activeDestination(p, list)) ??
+		chips(list.find((d) => chips(d)?.some((c) => c.path === p))) ??
+		[];
+	return links.map((c) => itemVM(t, ctx, c));
 }

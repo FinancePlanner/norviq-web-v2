@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import ptPT from '../i18n/pt-PT.json';
 import { Feature } from '../billing.js';
 import { socialOff, type SocialConfig } from '../nav.js';
-import { DESTINATIONS, DOMAIN_ORDER, type Destination } from './destinations.js';
+import { DESTINATIONS, DOMAIN_META, DOMAIN_ORDER, type Destination } from './destinations.js';
 import { OLD_NAV_PATHS } from './old-nav-paths.js';
 import {
 	activeDestination,
@@ -153,10 +153,96 @@ describe('destination model (DS 2.0 P3)', () => {
 		['/reports/deep-dive/abc', 'reports', 'intelligence'],
 		['/brief/2026-11-20/close', 'market-brief', 'intelligence'],
 		['/expenses/record', 'budget', 'money'],
-		['/xp', 'friends', 'community']
+		['/xp', 'friends', 'community'],
+		['/assistant/conversations', 'ask-q', 'today'],
+		['/planning/retire/preview', 'retirement', 'planning'],
+		['/planning/grow/preview', 'grow', 'planning'],
+		['/simulator/save', 'simulator', 'planning'],
+		['/admin/community', 'boards', 'community']
 	])('deep path %s resolves to %s in %s', (path, dest, domain) => {
 		expect(activeDestination(path, DESTINATIONS)?.id).toBe(dest);
 		expect(activeDomain(path, DESTINATIONS)).toBe(domain);
+	});
+
+	it.each(DOMAIN_ORDER.map((key) => [DOMAIN_META[key].indexPath, key]))(
+		'index page %s belongs to %s',
+		(path, key) => {
+			expect(activeDomain(path, DESTINATIONS)).toBe(key);
+			expect(activeDomain(path + '/', DESTINATIONS)).toBe(key);
+		}
+	);
+
+	it('/planning is the planning domain, /planning/x is not', () => {
+		expect(activeDomain('/planning', DESTINATIONS)).toBe('planning');
+		expect(activeDomain('/planningx', DESTINATIONS)).toBeNull();
+		expect(activeDomain('/community/x', DESTINATIONS)).toBeNull();
+	});
+
+	// Pages with no destination of their own. Keep this list short; each entry says why.
+	const UNROUTED_APP_PAGES: Record<string, string> = {
+		'/[domain=domain]':
+			'the domain index pages; activeDomain matches them by path (Task 2 adds the route)',
+		'/more': 'the mobile More page; the shell marks the More tab itself (Task 2)',
+		'/__dev/digest': 'developer preview, never linked from navigation',
+		'/ai-consent': 'one-time consent interstitial before Q, outside navigation',
+		'/digest/[id]': 'an emailed digest opened from its link, not a navigation place',
+		'/pilots': 'Pilots are not in the P3 destination table',
+		'/pilots/[slug]': 'Pilots are not in the P3 destination table',
+		'/pilots/[slug]/follow': 'Pilots are not in the P3 destination table',
+		'/pilot-follows/[id]': 'Pilots are not in the P3 destination table',
+		'/trading': 'not in the P3 destination table'
+	};
+
+	it('every (app) page resolves to a destination, except the listed ones', () => {
+		// `(app)` would be glob syntax, so glob every page and keep the (app) group.
+		const pages = Object.keys(import.meta.glob('/src/routes/**/+page.svelte'))
+			.filter((f) => f.startsWith('/src/routes/(app)/'))
+			.map((f) => f.replace(/^\/src\/routes\/\(app\)/, '').replace(/\/\+page\.svelte$/, ''));
+		expect(pages.length).toBeGreaterThan(80);
+		// A concrete path per route: [param] → x, [[optional]] dropped.
+		const concrete = (route: string) =>
+			route.replace(/\/\[\[[^\]]+\]\]/g, '').replace(/\[[^\]]+\]/g, 'x') || '/';
+		const unresolved = pages.filter(
+			(route) =>
+				!(route in UNROUTED_APP_PAGES) && activeDestination(concrete(route), DESTINATIONS) === null
+		);
+		expect(unresolved.sort()).toEqual([]);
+		// The allowlist only names real (or Task 2) pages that really are unresolved.
+		const stale = Object.keys(UNROUTED_APP_PAGES).filter(
+			(route) =>
+				!['/[domain=domain]', '/more'].includes(route) &&
+				(!pages.includes(route) || activeDestination(concrete(route), DESTINATIONS) !== null)
+		);
+		expect(stale).toEqual([]);
+	});
+
+	it('one label per path across rows and chips', () => {
+		// A destination's own first chip (Markets › Overview) names a view inside it,
+		// so a chip on its parent's own path is exempt; every other link to a path
+		// uses the one name that path has everywhere.
+		const named = new Map<string, Set<string>>();
+		const add = (path: string, label: string) =>
+			named.set(path, (named.get(path) ?? new Set()).add(label));
+		for (const d of DESTINATIONS) {
+			add(d.path, d.label);
+			for (const c of d.children ?? []) if (c.path !== d.path) add(c.path, c.label);
+		}
+		for (const c of subNavLinks(id, allOn, '/settings'))
+			if (c.path !== '/settings') add(c.path, c.label);
+		const clashes = [...named].filter(([, labels]) => labels.size > 1);
+		expect(clashes.map(([path, labels]) => `${path}: ${[...labels].join(' / ')}`)).toEqual([]);
+	});
+
+	it.each([
+		['/expenses/year', 'budget', ['/expenses', '/expenses/year']],
+		['/articles', 'boards', ['/boards', '/articles']],
+		['/settings/integrations', 'settings', null],
+		['/achievements', 'friends', null]
+	])('sub-nav on %s keeps the %s chips', (path, parentID, expected) => {
+		const parent = visibleDestinations(allOn).find((d) => d.id === parentID);
+		const chips = subNavLinks(id, allOn, path).map((l) => l.path);
+		expect(chips).toEqual(expected ?? parent?.children?.map((c) => c.path));
+		expect(chips).toContain(path);
 	});
 
 	// Equal-length ties between one destination's own path and another's child
@@ -185,7 +271,24 @@ describe('destination model (DS 2.0 P3)', () => {
 		expect(paths.filter((p) => !routes.some((re) => re.test(p)))).toEqual([]);
 	});
 
-	it('every label and description has a pt-PT entry', () => {
+	it('every declared label, description and domain string has a pt-PT entry', () => {
+		// Read straight from the data, so a string no builder sends through t
+		// (an Account description, a gated child) is still checked.
+		const strings = [
+			...DESTINATIONS.flatMap((d) => [
+				d.label,
+				d.description,
+				...(d.children ?? []).map((c) => c.label)
+			]),
+			...DOMAIN_ORDER.flatMap((key) => [DOMAIN_META[key].label, DOMAIN_META[key].question]),
+			...domainIndex(id, allOn, 'planning').sections.map((s) => s.title)
+		];
+		const catalog = new Set(Object.keys(ptPT));
+		expect(strings.length).toBeGreaterThan(140);
+		expect([...new Set(strings)].filter((key) => !catalog.has(key)).sort()).toEqual([]);
+	});
+
+	it('every label and description the builders emit has a pt-PT entry', () => {
 		const seen = new Set<string>();
 		const capture = (s: string) => {
 			seen.add(s);

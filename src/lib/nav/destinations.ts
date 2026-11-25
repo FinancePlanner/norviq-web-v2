@@ -96,6 +96,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 4,
 		label: 'Ask Q',
 		path: '/assistant',
+		aliases: ['/assistant/*'],
 		featureKey: Feature.AIInsights,
 		description: 'Ask Q about your money, holdings and plans.'
 	},
@@ -119,7 +120,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		description: "Plan this month's spending and see what is left.",
 		children: [
 			{ label: 'Budget planner', path: '/expenses' },
-			{ label: 'Year overview', path: '/expenses/year', featureKey: Feature.YearOverview }
+			{ label: 'Spending log', path: '/expenses/year', featureKey: Feature.YearOverview }
 		]
 	},
 	{
@@ -283,7 +284,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 3,
 		label: 'Retirement',
 		path: '/planning/retire',
-		aliases: ['/portfolio/retirement'],
+		aliases: ['/planning/retire/*', '/portfolio/retirement'],
 		description: 'When you could retire and what it takes to get there.'
 	},
 	{
@@ -302,6 +303,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 5,
 		label: 'Simulator',
 		path: '/simulator',
+		aliases: ['/simulator/*'],
 		description: 'Simulate how a portfolio could grow over time.'
 	},
 	{
@@ -319,6 +321,7 @@ export const DESTINATIONS: readonly Destination[] = [
 		domain: 'planning',
 		label: 'Grow',
 		path: '/planning/grow',
+		aliases: ['/planning/grow/*'],
 		description: 'How regular saving and investing can grow your wealth.'
 	},
 	{
@@ -475,7 +478,8 @@ export const DESTINATIONS: readonly Destination[] = [
 		pick: 3,
 		label: 'Boards',
 		path: '/boards',
-		aliases: ['/boards/*'],
+		// The community admin page belonged to Community in the old nav too.
+		aliases: ['/boards/*', '/admin/community'],
 		description: 'Public discussion boards on markets and money.',
 		children: [
 			{ label: 'All boards', path: '/boards' },
@@ -512,7 +516,7 @@ export const DESTINATIONS: readonly Destination[] = [
 			{ label: 'Notifications', path: '/settings/notifications' },
 			{ label: 'Language', path: '/settings/language' },
 			{ label: 'Feedback', path: '/settings/feedback' },
-			{ label: 'Integrations', path: '/settings/integrations' },
+			{ label: 'Brokers and imports', path: '/settings/integrations' },
 			{ label: 'Bank sync', path: '/settings/banks' },
 			{ label: 'API access', path: '/settings/api-access' },
 			{ label: 'AI providers', path: '/settings/ai-providers' },
