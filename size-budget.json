@@ -1,6 +1,6 @@
 {
 	"tolerance": 256,
-	"lazyTotalGzip": 1497479,
+	"lazyTotalGzip": 1501480,
 	"routes": {
 		"/__dev/charts": 98139,
 		"/__dev/kit": 215505,
@@ -155,7 +155,7 @@
 		"/(public)/articles/[slugcode]": 93251,
 		"/(public)/articles/ticker/[symbol]": 76900,
 		"/(public)/brief": 74043,
-		"/(public)/brief/[date]/[slot]": 117030,
+		"/(public)/brief/[date]/[slot]": 117798,
 		"/(public)/digest/unsubscribe": 89823,
 		"/(public)/facebook-data-deletion": 76081,
 		"/(public)/g/[code]": 89139,

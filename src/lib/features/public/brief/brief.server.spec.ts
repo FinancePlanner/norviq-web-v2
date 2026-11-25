@@ -68,6 +68,7 @@ interface LD {
 	identifier: string;
 	url: string;
 	dateModified: string;
+	image: string[];
 }
 
 const ldOf = (json: string): LD => JSON.parse(json) as LD;
@@ -111,6 +112,42 @@ describe('brief page VM', () => {
 		expect(vm.modifiedISO).toBe('2026-11-20T23:05:00Z');
 		expect(ldOf(vm.jsonLD).dateModified).toBe('2026-11-20T23:05:00Z');
 		expect(vm.edition.revision).toBe(2);
+	});
+});
+
+describe('brief page export URLs', () => {
+	const withRevision = (revision: number) =>
+		validEdition({
+			schemaVersion: 2,
+			id: 'MI-2026-11-20-C',
+			revision,
+			instruments: [],
+			series: []
+		});
+
+	it('puts the revision on og:image', () => {
+		const en = pageVM('en', brief, false, withRevision(2));
+		expect(en.ogImageURL).toBe('https://www.norviq.org/brief/2026-11-20/evening/og.png?rev=2');
+		expect(ldOf(en.jsonLD).image).toEqual([en.ogImageURL]);
+		const pt = pageVM('pt-PT', brief, false, withRevision(2));
+		expect(pt.ogImageURL).toBe(
+			'https://www.norviq.org/brief/2026-11-20/evening/og.png?lang=pt-PT&rev=2'
+		);
+		expect(ldOf(pt.jsonLD).image).toEqual([pt.ogImageURL]);
+	});
+
+	it('leaves og:image unversioned for a legacy brief', () => {
+		expect(pageVM('en', brief, false, null).ogImageURL).not.toContain('rev=');
+		expect(pageVM('en', brief, false, withRevision(0)).ogImageURL).not.toContain('rev=');
+	});
+
+	it('builds the export URLs', () => {
+		const vm = pageVM('en', brief, false);
+		expect(vm.exportsURL).toBe('/brief/2026-11-20/evening/exports.json');
+		expect(vm.exportFallback.pdf).toBe('/brief/2026-11-20/evening/report.pdf');
+		expect(pageVM('pt-PT', brief, false).exportFallback.social).toBe(
+			'/brief/2026-11-20/evening/social.png?lang=pt-PT'
+		);
 	});
 });
 

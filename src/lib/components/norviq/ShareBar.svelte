@@ -7,7 +7,8 @@
 		reddit?: string;
 		whatsApp?: string;
 		discord: string;
-		instagram: string;
+		/** The card button's label; required when cardImageURL is set. */
+		instagram?: string;
 		copy: string;
 		copied: string;
 		native?: string;
@@ -27,7 +28,8 @@
 		id?: string;
 		class?: string;
 		links: ShareLinks;
-		cardImageURL: string;
+		/** The share-card PNG; the card button is shown only when it is set. */
+		cardImageURL?: string;
 		cardFileName?: string;
 		native?: boolean;
 		nativeURL?: string;
@@ -42,7 +44,7 @@
 		id,
 		class: className,
 		links,
-		cardImageURL,
+		cardImageURL = '',
 		cardFileName = '',
 		native = false,
 		nativeURL = '',
@@ -144,8 +146,10 @@
 		rel="noopener noreferrer"
 		class={cls}
 		data-share-channel={channel}
-		onclick={() => track(channel)}>{label}</a
+		onclick={() => track(channel)}
 	>
+		{label}
+	</a>
 {/snippet}
 
 <div
@@ -189,21 +193,23 @@
 	>
 		{flashed.discord ? text.copied || 'Copied' : text.discord}
 	</NativeButton>
-	<NativeButton
-		class={cls}
-		data-share-card
-		data-share-channel="instagram"
-		data-card-url={cardImageURL}
-		data-card-filename={cardFileName}
-		data-caption={links.instagramCaption}
-		data-copied-label={text.copied}
-		onclick={() => {
-			track('instagram');
-			void shareCard();
-		}}
-	>
-		{flashed.instagram ? text.copied || 'Copied' : text.instagram}
-	</NativeButton>
+	{#if cardImageURL}
+		<NativeButton
+			class={cls}
+			data-share-card
+			data-share-channel="instagram"
+			data-card-url={cardImageURL}
+			data-card-filename={cardFileName}
+			data-caption={links.instagramCaption}
+			data-copied-label={text.copied}
+			onclick={() => {
+				track('instagram');
+				void shareCard();
+			}}
+		>
+			{flashed.instagram ? text.copied || 'Copied' : text.instagram}
+		</NativeButton>
+	{/if}
 	<NativeButton
 		class={cls}
 		data-share-copy={links.copy}

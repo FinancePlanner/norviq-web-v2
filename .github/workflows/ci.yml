@@ -52,14 +52,24 @@ jobs:
           # --changed needs the base branch to diff against.
           fetch-depth: 0
       - uses: ./.github/actions/setup
-      # Only the server project: the client and storybook projects need a
-      # browser.
+      # Only the server project here: the client project runs in test-client,
+      # and the storybook project is not run in CI.
       # On a PR, run only the tests whose import graph reaches a changed file.
       # A change to package.json or the vite config reruns everything.
       - if: github.event_name == 'pull_request'
         run: bunx vitest run --project server --changed "origin/${{ github.base_ref }}" --passWithNoTests
       - if: github.event_name != 'pull_request'
         run: bunx vitest run --project server
+
+  # The client project: *.svelte.spec.ts in headless Chromium (vitest browser
+  # mode). The storybook project stays out of CI.
+  test-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - run: bunx playwright install --with-deps chromium
+      - run: bunx vitest run --project client
 
   build:
     runs-on: ubuntu-latest
@@ -74,7 +84,7 @@ jobs:
       - run: bun run types:check
 
   deploy-staging:
-    needs: [lint, typecheck, test, build]
+    needs: [lint, typecheck, test, test-client, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yml
     with:
