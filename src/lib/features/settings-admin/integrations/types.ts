@@ -34,8 +34,6 @@ export interface IBKRConnectionVM {
 	statusLabel: string;
 	statusDetail: string;
 	displayName: string;
-	lastSyncedLabel: string;
-	canSync: boolean;
 }
 
 export interface BrokerRow {
@@ -138,8 +136,6 @@ export function emptyIBKRVM(): IBKRConnectionVM {
 		status: '',
 		statusLabel: '',
 		statusDetail: '',
-		displayName: '',
-		lastSyncedLabel: '',
-		canSync: false
+		displayName: ''
 	};
 }

@@ -1,7 +1,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
 import { config } from '#lib/server/env.js';
-import { formatGoDateTime, formatRelativeTime, parseTime } from './go-time.js';
+import { formatRelativeTime, parseTime } from './go-time.js';
 import {
 	emptyIBKRVM,
 	emptyTelegramVM,
@@ -127,19 +127,10 @@ function applyIntegrationsFlash(vm: IntegrationsViewModel, query: URLSearchParam
 	}
 	switch ((query.get('ibkr') ?? '').trim().toLowerCase()) {
 		case 'connected':
-			// Not "your holdings were imported": the page itself says that import is
-			// not live yet, and the banner must not contradict the note under it.
-			vm.successMessage = 'IBKR connected. Sync fetches your daily statement.';
+			vm.successMessage = 'IBKR connected.';
 			break;
 		case 'disconnected':
 			vm.successMessage = 'IBKR disconnected.';
-			break;
-		case 'synced':
-			vm.successMessage = formatIBKRSyncMessage(
-				atoi(query.get('inserted')),
-				atoi(query.get('updated')),
-				atoi(query.get('removed'))
-			);
 			break;
 		case 'error':
 			vm.errorMessage = msg || 'IBKR action failed.';
@@ -147,42 +138,16 @@ function applyIntegrationsFlash(vm: IntegrationsViewModel, query: URLSearchParam
 	}
 }
 
-// strconv.Atoi with the error ignored: anything but a plain integer is 0.
-function atoi(raw: string | null): number {
-	return raw && /^[+-]?\d+$/.test(raw) ? Number.parseInt(raw, 10) : 0;
-}
-
-export function formatIBKRSyncMessage(inserted: number, updated: number, removed: number): string {
-	if (inserted === 0 && updated === 0 && removed === 0)
-		return 'IBKR sync completed. Holdings are up to date.';
-	return [
-		'IBKR sync completed.',
-		formatSyncCount('added', inserted),
-		formatSyncCount('updated', updated),
-		formatSyncCount('removed', removed)
-	]
-		.filter((part) => part !== '')
-		.join(' ');
-}
-
-// "3 added", never "3 addeds": the label is a participle, not a noun.
-function formatSyncCount(label: string, count: number): string {
-	return count <= 0 ? '' : `${count} ${label}.`;
-}
-
 function mapIBKRConnection(broker: BrokerConnectionResponse): IBKRConnectionVM {
 	const status = (broker.status ?? '').trim();
 	const connected = status.toLowerCase() === 'connected';
-	const lastSynced = parseTime(broker.lastSyncedAt);
 	return {
 		hasConnection: true,
 		status,
 		statusLabel: brokerStatusLabel(status),
 		isConnected: connected,
-		canSync: connected,
 		displayName: (broker.displayName ?? '').trim(),
-		statusDetail: (broker.statusDetail ?? '').trim(),
-		lastSyncedLabel: lastSynced ? formatGoDateTime(lastSynced) : ''
+		statusDetail: (broker.statusDetail ?? '').trim()
 	};
 }
 

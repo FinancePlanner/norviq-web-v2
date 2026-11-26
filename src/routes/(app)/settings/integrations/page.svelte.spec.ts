@@ -41,8 +41,7 @@ function ibkrRow(status: string): IBKRConnectionVM {
 		hasConnection: true,
 		status,
 		statusLabel: status,
-		isConnected: status === 'connected',
-		canSync: status === 'connected'
+		isConnected: status === 'connected'
 	};
 }
 
