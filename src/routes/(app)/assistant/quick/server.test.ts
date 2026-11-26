@@ -52,14 +52,14 @@ test('a failed create answers 502', async () => {
 });
 
 test('reports images on when the backend has them on', async () => {
-	apiJSON.mockResolvedValue({ imagesEnabled: true });
-	expect(await (await ask()).json()).toEqual({ imagesEnabled: true });
+	apiJSON.mockResolvedValue({ imagesEnabled: true, documentsEnabled: true });
+	expect(await (await ask()).json()).toEqual({ imagesEnabled: true, documentsEnabled: true });
 	expect(apiJSON.mock.calls[0].slice(1)).toEqual(['GET', '/v1/ai/assistant/preferences']);
 });
 
 test('a preferences outage leaves images off', async () => {
 	apiJSON.mockRejectedValue(new Error('down'));
-	expect(await (await ask()).json()).toEqual({ imagesEnabled: false });
+	expect(await (await ask()).json()).toEqual({ imagesEnabled: false, documentsEnabled: false });
 });
 
 test('the images check sits behind the plan gate too', async () => {

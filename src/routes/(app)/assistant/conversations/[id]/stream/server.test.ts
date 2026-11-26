@@ -59,9 +59,19 @@ test('attached images go upstream as multipart with content and image parts', as
 	const [, , , body, opts] = apiFetch.mock.calls[0];
 	expect(body).toBeInstanceOf(FormData);
 	expect((body as FormData).get('content')).toBe('what is this');
-	expect((body as FormData).getAll('image')).toHaveLength(1);
+	expect((body as FormData).getAll('file')).toHaveLength(1);
 	assert(opts?.headers);
 	expect(opts.headers['Content-Type']).toBeUndefined();
+});
+
+test('a PDF and a CSV go upstream as file parts', async () => {
+	const form = new FormData();
+	form.set('content', 'update my holdings');
+	form.append('file', new File([new Uint8Array([1])], 'a.csv', { type: 'text/csv' }));
+	form.append('file', new File([new Uint8Array([2])], 'b.pdf', { type: 'application/pdf' }));
+	await call(form);
+	const body = apiFetch.mock.calls[0][3] as FormData;
+	expect(body.getAll('file').map((f) => (f as File).name)).toEqual(['a.csv', 'b.pdf']);
 });
 
 test('images alone are allowed, empty text alone is not', async () => {

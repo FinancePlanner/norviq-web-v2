@@ -4,17 +4,20 @@ import { requireFeature } from '#lib/server/guards.js';
 import { apiJSON } from '#lib/server/api.js';
 import { aiConsentRefusal } from '#lib/features/dashboard/assistant/assistant.server.js';
 
-// GET /assistant/quick: whether the card offers image attachments, as full Q
-// decides it. A preferences outage leaves images off rather than failing.
+// GET /assistant/quick: whether the card offers image and document attachments,
+// as full Q decides it. A preferences outage leaves them off rather than failing.
 export const GET: RequestHandler = async (event) => {
 	await requireFeature(event, Feature.AIInsights, 'AI insights');
-	const preferences = await apiJSON<{ imagesEnabled?: boolean }>(
+	const preferences = await apiJSON<{ imagesEnabled?: boolean; documentsEnabled?: boolean }>(
 		event,
 		'GET',
 		'/v1/ai/assistant/preferences'
 	).catch(() => null);
 	return Response.json(
-		{ imagesEnabled: preferences?.imagesEnabled === true },
+		{
+			imagesEnabled: preferences?.imagesEnabled === true,
+			documentsEnabled: preferences?.documentsEnabled === true
+		},
 		{ headers: { 'cache-control': 'private, no-store' } }
 	);
 };

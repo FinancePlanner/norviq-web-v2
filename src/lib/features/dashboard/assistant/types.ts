@@ -13,6 +13,8 @@ export interface PageViewModel {
 	errorMessage: string;
 	/** The backend accepts image attachments on a turn. False when it cannot be told. */
 	imagesEnabled: boolean;
+	/** The backend accepts a PDF or CSV on a turn. False when it cannot be told. */
+	documentsEnabled: boolean;
 }
 
 export interface ConversationRow {

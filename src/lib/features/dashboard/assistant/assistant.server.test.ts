@@ -359,6 +359,19 @@ describe('loadAssistantPage', () => {
 		});
 		const vm = await loadAssistantPage(event);
 		expect(vm.imagesEnabled).toBe(false);
+		expect(vm.documentsEnabled).toBe(false);
 		expect(vm.errorMessage).toBe('');
+	});
+
+	test('reports documents when the backend preferences say so', async () => {
+		apiJSON.mockImplementation((_e: unknown, _m: string, path: string) => {
+			if (path === '/v1/ai/assistant/conversations') return Promise.resolve([]);
+			if (path === '/v1/ai/assistant/preferences')
+				return Promise.resolve({ imagesEnabled: true, documentsEnabled: true });
+			return Promise.resolve(null);
+		});
+		const vm = await loadAssistantPage(event);
+		expect(vm.imagesEnabled).toBe(true);
+		expect(vm.documentsEnabled).toBe(true);
 	});
 });

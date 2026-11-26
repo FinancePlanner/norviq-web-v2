@@ -48,8 +48,11 @@ type AIConfirmedAction = Schemas['AIConfirmedActionResponse'];
 type AIUsage = Schemas['AIAssistantUsageResponse'];
 type AITip = Schemas['AITipResponse'];
 type AITurn = Schemas['AIAssistantTurnResponse'];
-// schema.d.ts is generated and does not know imagesEnabled yet, so the field is typed here.
-type AIPreferences = Schemas['AIAssistantPreferencesResponse'] & { imagesEnabled?: boolean };
+// schema.d.ts is generated and does not know imagesEnabled or documentsEnabled yet, so they are typed here.
+type AIPreferences = Schemas['AIAssistantPreferencesResponse'] & {
+	imagesEnabled?: boolean;
+	documentsEnabled?: boolean;
+};
 type PortfolioList = Schemas['PortfolioListResponse'];
 
 /** api.PositionMemoListItem (internal/api/position_memos.go). */
@@ -134,7 +137,8 @@ export async function loadAssistantPage(event: RequestEvent): Promise<PageViewMo
 		tips: [],
 		usage: { label: 'AI preview', remaining: 'Usage unavailable', isPro: false },
 		errorMessage: '',
-		imagesEnabled: false
+		imagesEnabled: false,
+		documentsEnabled: false
 	};
 	let conversations: AIConversationSummary[];
 	try {
@@ -167,6 +171,7 @@ export async function loadAssistantPage(event: RequestEvent): Promise<PageViewMo
 		apiJSON<AIPreferences>(event, 'GET', '/v1/ai/assistant/preferences').catch(() => null)
 	]);
 	vm.imagesEnabled = preferences?.imagesEnabled === true;
+	vm.documentsEnabled = preferences?.documentsEnabled === true;
 	if (active) {
 		active.seed = (event.url.searchParams.get('seed') ?? '').trim();
 		vm.active = active;

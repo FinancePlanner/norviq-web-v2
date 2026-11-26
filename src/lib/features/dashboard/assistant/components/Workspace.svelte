@@ -5,11 +5,22 @@
 	// which is Go's htmx outerHTML swap of #assistant-workspace.
 	import { onDestroy } from 'svelte';
 	import Paperclip from '@lucide/svelte/icons/paperclip';
+	import FileText from '@lucide/svelte/icons/file-text';
 	import X from '@lucide/svelte/icons/x';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import TextareaField from '#lib/components/norviq/TextareaField.svelte';
 	import { mergeRestored, settleComposer } from '../composer.js';
-	import { MAX_CHAT_IMAGES, ImageUnreadable, prepareChatImage } from '../images.js';
+	import {
+		acceptTypes,
+		appendChatFiles,
+		checkDocument,
+		documentKind,
+		MAX_CHAT_IMAGES,
+		ImageUnreadable,
+		prepareChatImage,
+		UNSUPPORTED_FILE,
+		type AttachmentKind
+	} from '../images.js';
 	import type { MuseChat } from '../muse.svelte.js';
 	import { streamAssistantTurn } from '../stream.js';
 	import type { ConversationViewModel, MessageRow } from '../types.js';
@@ -20,6 +31,7 @@
 		vm,
 		muse,
 		imagesEnabled = false,
+		documentsEnabled = false,
 		reload,
 		onConsentRequired
 	}: {
@@ -27,6 +39,8 @@
 		muse: MuseChat;
 		/** The backend accepts images on a turn: shows the attach controls. */
 		imagesEnabled?: boolean;
+		/** The backend also accepts a PDF or CSV on a turn. */
+		documentsEnabled?: boolean;
 		/** Swaps the workspace for a fresh render of this conversation. */
 		reload: (id: string) => Promise<void>;
 		/** The stream refused for want of AI consent: the page shows the consent card. */
@@ -43,10 +57,11 @@
 	let accepted = $state(false);
 	let errorText = $state('');
 
-	/** Downscaled files waiting to go with the next message, each with a thumbnail URL. */
+	/** Files waiting to go with the next message: an image has a thumbnail URL, a document a chip. */
 	interface Attachment {
 		key: number;
 		file: File;
+		kind: AttachmentKind;
 		url: string;
 	}
 	let attachments = $state<Attachment[]>([]);
@@ -58,9 +73,12 @@
 	let inFlight: Attachment[] = [];
 
 	const isImage = (file: File) => file.type.startsWith('image/');
+	const attachable = (file: File) =>
+		(imagesEnabled && isImage(file)) || (documentsEnabled && documentKind(file) !== null);
+	const canAttach = $derived(imagesEnabled || documentsEnabled);
 
 	function revoke(list: Attachment[]) {
-		for (const a of list) URL.revokeObjectURL(a.url);
+		for (const a of list) if (a.url) URL.revokeObjectURL(a.url);
 	}
 
 	onDestroy(() => {
@@ -70,24 +88,46 @@
 
 	function removeAttachment(key: number) {
 		const gone = attachments.find((a) => a.key === key);
-		if (gone) URL.revokeObjectURL(gone.url);
+		if (gone?.url) URL.revokeObjectURL(gone.url);
 		attachments = attachments.filter((a) => a.key !== key);
 	}
 
 	async function addFiles(picked: File[]) {
-		const images = picked.filter(isImage);
+		const wanted = picked.filter(attachable);
 		// Nothing is attached mid-turn: it would be dropped when the box is restored or cleared.
-		if (!imagesEnabled || sending || images.length === 0) return;
+		if (!canAttach || sending) return;
 		errorText = '';
+		if (documentsEnabled && wanted.length < picked.length) errorText = UNSUPPORTED_FILE;
+		if (wanted.length === 0) return;
 		const room = Math.max(MAX_CHAT_IMAGES - attachments.length - preparing, 0);
-		if (images.length > room) errorText = `Attach up to ${MAX_CHAT_IMAGES} images.`;
-		const take = images.slice(0, room);
+		if (wanted.length > room) {
+			errorText = documentsEnabled
+				? `Attach up to ${MAX_CHAT_IMAGES} files.`
+				: `Attach up to ${MAX_CHAT_IMAGES} images.`;
+		}
+		const take = wanted.slice(0, room);
 		// Reserve every slot now, so a second drop while these decode cannot overshoot.
 		preparing += take.length;
 		for (const file of take) {
 			try {
+				const kind = documentKind(file);
+				if (kind) {
+					const refusal = checkDocument(
+						file,
+						kind,
+						attachments.map((a) => a.kind)
+					);
+					if (refusal) errorText = refusal;
+					else attachments.push({ key: nextKey++, file, kind, url: '' });
+					continue;
+				}
 				const prepared = await prepareChatImage(file);
-				attachments.push({ key: nextKey++, file: prepared, url: URL.createObjectURL(prepared) });
+				attachments.push({
+					key: nextKey++,
+					file: prepared,
+					kind: 'image',
+					url: URL.createObjectURL(prepared)
+				});
 			} catch (error) {
 				errorText =
 					error instanceof ImageUnreadable
@@ -107,8 +147,8 @@
 	}
 
 	function onPaste(event: ClipboardEvent) {
-		const files = Array.from(event.clipboardData?.files ?? []).filter(isImage);
-		if (!imagesEnabled || sending || files.length === 0) return;
+		const files = Array.from(event.clipboardData?.files ?? []).filter(attachable);
+		if (!canAttach || sending || files.length === 0) return;
 		event.preventDefault();
 		void addFiles(files);
 	}
@@ -116,11 +156,11 @@
 	const hasFiles = (event: DragEvent) => event.dataTransfer?.types.includes('Files') ?? false;
 
 	function onDragOver(event: DragEvent) {
-		if (imagesEnabled && hasFiles(event)) event.preventDefault();
+		if (canAttach && hasFiles(event)) event.preventDefault();
 	}
 
 	function onDrop(event: DragEvent) {
-		if (!imagesEnabled || !hasFiles(event)) return;
+		if (!canAttach || !hasFiles(event)) return;
 		event.preventDefault();
 		if (sending) return;
 		void addFiles(Array.from(event.dataTransfer?.files ?? []));
@@ -133,7 +173,10 @@
 		errorText = '';
 		sending = true;
 		const body = new FormData(form);
-		for (const a of attachments) body.append('image', a.file, a.file.name);
+		appendChatFiles(
+			body,
+			attachments.map((a) => a.file)
+		);
 		const snapshot = { content, attachments };
 		inFlight = attachments;
 		let answered = false;
@@ -196,14 +239,23 @@
 			{errorText}
 		</p>
 		{#if attachments.length > 0 || preparing > 0}
-			<ul class="muse-attachments" aria-label="Attached images">
+			<ul
+				class="muse-attachments"
+				aria-label={documentsEnabled ? 'Attached files' : 'Attached images'}
+			>
 				{#each attachments as attachment (attachment.key)}
 					<li class="muse-attachment">
-						<img src={attachment.url} alt="Attached screenshot" />
+						{#if attachment.kind === 'image'}
+							<img src={attachment.url} alt="Attached screenshot" />
+						{:else}
+							<span class="muse-attachment-file"
+								><FileText class="size-4" /><span>{attachment.file.name}</span></span
+							>
+						{/if}
 						<button
 							type="button"
 							class="muse-attachment-remove"
-							aria-label="Remove image"
+							aria-label={attachment.kind === 'image' ? 'Remove image' : 'Remove file'}
 							disabled={sending}
 							onclick={() => removeAttachment(attachment.key)}
 						>
@@ -232,15 +284,19 @@
 				autofocus={vm.seed !== ''}
 				aria-label="Message Q"
 			/>
-			{#if imagesEnabled}
-				<label class="muse-attach" class:muse-attach-disabled={attachFull} title="Attach images">
+			{#if canAttach}
+				<label
+					class="muse-attach"
+					class:muse-attach-disabled={attachFull}
+					title={documentsEnabled ? 'Attach files' : 'Attach images'}
+				>
 					<input
 						type="file"
 						class="sr-only"
-						accept="image/png,image/jpeg,image/webp,image/gif"
+						accept={acceptTypes(imagesEnabled, documentsEnabled)}
 						multiple
 						disabled={attachFull}
-						aria-label="Attach images"
+						aria-label={documentsEnabled ? 'Attach files' : 'Attach images'}
 						onchange={onPick}
 					/>
 					<Paperclip class="size-5" />
