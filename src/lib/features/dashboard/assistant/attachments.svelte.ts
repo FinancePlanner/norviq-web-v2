@@ -45,6 +45,14 @@ export class ImageAttachments {
 		this.#tooManyFiles = opts.tooManyFiles ?? opts.tooMany;
 	}
 
+	/** Whether a picked, pasted or dropped file would be kept. */
+	accepts(file: File): boolean {
+		return (
+			(this.imagesEnabled && file.type.startsWith('image/')) ||
+			(this.documentsEnabled && documentKind(file) !== null)
+		);
+	}
+
 	get accept(): string {
 		return acceptTypes(this.imagesEnabled, this.documentsEnabled);
 	}
@@ -55,11 +63,7 @@ export class ImageAttachments {
 
 	/** Keeps the files among `picked` the backend takes, up to the limit; images are downscaled for the turn. */
 	async add(picked: File[]) {
-		const wanted = picked.filter(
-			(file) =>
-				(this.imagesEnabled && file.type.startsWith('image/')) ||
-				(this.documentsEnabled && documentKind(file) !== null)
-		);
+		const wanted = picked.filter((file) => this.accepts(file));
 		this.error = '';
 		if (this.documentsEnabled && wanted.length < picked.length) this.error = UNSUPPORTED_FILE;
 		if (wanted.length === 0) return;

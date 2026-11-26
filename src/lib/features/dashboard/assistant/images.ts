@@ -92,14 +92,16 @@ export function documentKind(file: File): DocumentKind | null {
 	return null;
 }
 
-/** The refusal copy for a document that cannot join `held`, or null. Same words as the backend and iOS. */
+/** The refusal copy for a document that cannot join `held`, or null. Same words as the backend (attachment.go). */
 export function checkDocument(
 	file: File,
 	kind: DocumentKind,
 	held: AttachmentKind[]
 ): string | null {
 	if (file.size > (kind === 'pdf' ? MAX_CHAT_PDF_BYTES : MAX_CHAT_CSV_BYTES)) {
-		return `${file.name || 'This file'} is too large.`;
+		return kind === 'pdf'
+			? 'Each PDF must be 8 MB or smaller.'
+			: 'Each CSV must be 1 MB or smaller.';
 	}
 	if (held.includes(kind))
 		return kind === 'pdf' ? 'Attach one PDF at a time.' : 'Attach one CSV at a time.';

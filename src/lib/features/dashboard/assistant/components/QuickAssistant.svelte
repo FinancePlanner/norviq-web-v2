@@ -124,10 +124,10 @@
 	}
 
 	function onPaste(event: ClipboardEvent) {
-		const files = Array.from(event.clipboardData?.files ?? []);
-		if (!attachEnabled || files.length === 0) return;
+		const files = Array.from(event.clipboardData?.files ?? []).filter((f) => images.accepts(f));
+		if (!attachEnabled || sending || files.length === 0) return;
 		event.preventDefault();
-		if (!sending) void images.add(files);
+		void images.add(files);
 	}
 
 	const hasFiles = (event: DragEvent) => event.dataTransfer?.types.includes('Files') ?? false;

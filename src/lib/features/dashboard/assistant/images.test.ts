@@ -25,10 +25,12 @@ test('documentKind reads a PDF by type or extension and a CSV by extension', () 
 test('checkDocument enforces the backend size limits and one of each kind', () => {
 	expect(checkDocument(file('a.pdf', 'application/pdf', 8 << 20), 'pdf', [])).toBeNull();
 	expect(checkDocument(file('a.pdf', 'application/pdf', (8 << 20) + 1), 'pdf', [])).toBe(
-		'a.pdf is too large.'
+		'Each PDF must be 8 MB or smaller.'
 	);
 	expect(checkDocument(file('a.csv', '', 1 << 20), 'csv', [])).toBeNull();
-	expect(checkDocument(file('a.csv', '', (1 << 20) + 1), 'csv', [])).toBe('a.csv is too large.');
+	expect(checkDocument(file('a.csv', '', (1 << 20) + 1), 'csv', [])).toBe(
+		'Each CSV must be 1 MB or smaller.'
+	);
 	expect(checkDocument(file('b.pdf'), 'pdf', ['image', 'pdf'])).toBe('Attach one PDF at a time.');
 	expect(checkDocument(file('b.csv'), 'csv', ['csv'])).toBe('Attach one CSV at a time.');
 	expect(checkDocument(file('b.csv'), 'csv', ['pdf', 'image'])).toBeNull();

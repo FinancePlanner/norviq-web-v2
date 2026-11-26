@@ -109,7 +109,7 @@ test('a second PDF, an oversized CSV and an unsupported file are refused inline'
 	await a.add([doc('b.pdf', 'application/pdf')]);
 	expect(a.error).toBe('Attach one PDF at a time.');
 	await a.add([doc('big.csv', 'text/csv', (1 << 20) + 1)]);
-	expect(a.error).toBe('big.csv is too large.');
+	expect(a.error).toBe('Each CSV must be 1 MB or smaller.');
 	await a.add([doc('n.txt', 'text/plain')]);
 	expect(a.error).toBe('Only images, PDFs and CSV files are supported.');
 	expect(a.items.map((i) => i.file.name)).toEqual(['a.pdf']);
@@ -121,6 +121,15 @@ test('documents without images: images are ignored, only PDF and CSV are offered
 	await a.add([image('a.png'), doc('c.csv', 'text/csv')]);
 	expect(a.items.map((i) => i.file.name)).toEqual(['c.csv']);
 	expect(a.accept).toBe('application/pdf,text/csv,.csv');
+});
+
+test('accepts says whether a pasted or dropped file would be taken', () => {
+	const a = withDocs();
+	expect(a.accepts(image('a.png'))).toBe(true);
+	expect(a.accepts(doc('c.csv', 'text/csv'))).toBe(true);
+	expect(a.accepts(doc('n.txt', 'text/plain'))).toBe(false);
+	a.documentsEnabled = false;
+	expect(a.accepts(doc('c.csv', 'text/csv'))).toBe(false);
 });
 
 test('documents leave no thumbnail to revoke', async () => {
