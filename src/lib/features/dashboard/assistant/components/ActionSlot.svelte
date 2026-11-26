@@ -13,7 +13,16 @@
 	import TradesCard from './TradesCard.svelte';
 	import WatchCard from './WatchCard.svelte';
 
-	let { action, onreply }: { action: ActionRow; onreply: (message: MessageRow) => void } = $props();
+	let {
+		action,
+		onreply,
+		loadCard
+	}: {
+		action: ActionRow;
+		onreply: (message: MessageRow) => void;
+		/** Test seam: how the holdings card and its helpers are fetched. */
+		loadCard?: () => ReturnType<typeof loadHoldings>;
+	} = $props();
 
 	// The holdings card and its helpers load only when a holdings action renders,
 	// so they stay out of the always-mounted Quick Q chunk.
@@ -173,7 +182,7 @@
 	/>
 {:else if action.holdings}
 	{@const holdings = action.holdings}
-	{#await loadHoldings() then [card, h]}
+	{#await (loadCard ?? loadHoldings)() then [card, h]}
 		{@const copy = {
 			expired: h.HOLDINGS_EXPIRED,
 			maybeSaved: h.HOLDINGS_MAYBE_SAVED,
@@ -190,6 +199,13 @@
 			onsave={(body: unknown) => answerTrades('confirm', body, copy)}
 			oncancel={() => answerTrades('cancel', undefined, copy)}
 		/>
+	{:catch}
+		<div id={'assistant-action-' + action.id} class="assistant-action">
+			<p class="assistant-kicker"><span>Not loaded</span></p>
+			<p class="mt-2 text-sm font-semibold">
+				Couldn't load this card. Reload the page to review it.
+			</p>
+		</div>
 	{/await}
 {:else if action.watch}
 	{@const watch = action.watch}
