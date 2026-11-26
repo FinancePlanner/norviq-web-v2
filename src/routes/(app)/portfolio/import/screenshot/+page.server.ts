@@ -1,5 +1,7 @@
+import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { requireFeature } from '#lib/server/guards.js';
+import { portfolioListIdOrEmpty } from '#lib/features/portfolio/import/brokers.js';
 import { Feature } from '#lib/billing.js';
 import {
 	aiConsentGranted,
@@ -46,6 +48,13 @@ export const actions: Actions = {
 	},
 	commit: async (event) => {
 		await requireFeature(event, Feature.ScreenshotImport, FEATURE_NAME);
-		return { screenshot: await processScreenshotCommit(event) };
+		const vm = await processScreenshotCommit(event);
+		// A clean import lands on the portfolio it went into; failures and
+		// skipped rows stay here so they can be read.
+		if (vm.committed && vm.errors.length === 0 && vm.inserted + vm.updated > 0) {
+			const id = portfolioListIdOrEmpty(vm.portfolioListID);
+			redirect(303, id ? '/portfolio?portfolio=' + encodeURIComponent(id) : '/portfolio');
+		}
+		return { screenshot: vm };
 	}
 };

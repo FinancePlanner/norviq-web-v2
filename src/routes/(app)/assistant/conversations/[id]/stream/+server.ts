@@ -21,9 +21,10 @@ import { formValue, scalarText } from '#lib/form-value.js';
 // refusal goes back as JSON with a consentUrl so the reader can navigate, and
 // an upgrade refusal as JSON with code upgrade_required.
 //
-// A turn with attached images goes upstream as multipart (content + image
-// parts); a text turn stays JSON, because a multipart request spends the
-// user's image rate budget even when it carries no image.
+// A turn with attached files (images, a PDF or a CSV) goes upstream as multipart
+// (content + file parts); a text turn stays JSON, because a multipart request
+// spends the user's image rate budget even when it carries no file. The
+// composer names its parts "file", as iOS does; "image" is still read.
 /** The backend's turn body cap (turnBodyLimit): three images plus the form. */
 const MAX_BODY_BYTES = 16 << 20;
 const RELAYED = ['content-type', 'cache-control', 'x-accel-buffering'];
@@ -36,18 +37,20 @@ export const POST: RequestHandler = async (event) => {
 	if (!id) return new Response('Invalid conversation', { status: 400 });
 	// Refuse before buffering a body the backend would refuse anyway.
 	if (Number(event.request.headers.get('content-length')) > MAX_BODY_BYTES)
-		return new Response('That image is too large.', { status: 413 });
+		return new Response('That file is too large.', { status: 413 });
 	const form = await formOf(event);
 	const content = formValue(form, 'content').trim();
-	const images = form.getAll('image').filter((f): f is File => f instanceof File && f.size > 0);
-	if (!content && images.length === 0) return new Response('Message is required', { status: 400 });
+	const files = [...form.getAll('file'), ...form.getAll('image')].filter(
+		(f): f is File => f instanceof File && f.size > 0
+	);
+	if (!content && files.length === 0) return new Response('Message is required', { status: 400 });
 	let body: BodyInit;
 	let contentType: Record<string, string> = {};
-	if (images.length > 0) {
+	if (files.length > 0) {
 		// No Content-Type: fetch adds the multipart one with its boundary.
 		const multipart = new FormData();
 		multipart.set('content', content);
-		for (const image of images) multipart.append('image', image, image.name);
+		for (const file of files) multipart.append('file', file, file.name);
 		body = multipart;
 	} else {
 		body = JSON.stringify({ content });

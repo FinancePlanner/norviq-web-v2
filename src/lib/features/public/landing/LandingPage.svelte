@@ -388,32 +388,22 @@
 				<p class="landing-eyebrow">Brokers</p>
 				<h2 class="landing-section-title mt-3">Interactive Brokers, read only.</h2>
 				<p class="landing-section-lead">
-					Norviq reads your IBKR statement. It cannot place a trade, transfer money, or change the
+					Norviq imports what you hold. It cannot place a trade, transfer money, or change the
 					account.
 				</p>
 				<ol class="landing-ibkr-steps">
 					<li>
-						From your IBKR account, email
-						<a href="mailto:reportingintegration@interactivebrokers.com"
-							>reportingintegration@<wbr />interactivebrokers.com</a
-						>
-						and ask them to enable the Norviq Web Service feed.
+						In the IBKR app or Client Portal, open your positions and take screenshots that show
+						every holding.
 					</li>
 					<li>
-						After IBKR enables it, open IBKR Portal → Reporting → Third-party Reports and copy the
-						token and the query ID.
+						In Norviq, open your portfolio and choose Import from broker, then IBKR, then
+						Screenshots.
 					</li>
-					<li>
-						In Norviq, open Settings → Integrations, paste both, and connect. Broker sync is part of
-						Pro.
-					</li>
-					<li>
-						Sync reads the previous business day's statement. The token and query ID stay on your
-						account.
-					</li>
+					<li>Check every row before anything is saved. Screenshot import is part of Pro.</li>
 				</ol>
 				<p class="landing-section-lead landing-ibkr-note">
-					Sync fetches the statement. It does not add those positions to the portfolio yet.
+					Statement import with full trade history is coming next.
 				</p>
 			</div>
 			<a href="/signup" class="instrument-action">Create a free account</a>

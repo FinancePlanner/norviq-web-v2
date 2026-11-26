@@ -867,6 +867,31 @@ html .muse-composer textarea:focus-visible {
   object-fit: cover;
 }
 
+.muse-attachment:has(.muse-attachment-file) {
+  width: auto;
+  max-width: 10rem;
+}
+
+.muse-attachment-file {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  gap: 0.25rem;
+  overflow: hidden;
+  padding: 0 0.5rem;
+  border-radius: 12px;
+  background: var(--muse-user-bubble);
+  color: var(--muse-user-text);
+  font-size: 0.75rem;
+}
+
+.muse-attachment-file span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .muse-attachment-remove {
   position: absolute;
   top: -0.35rem;

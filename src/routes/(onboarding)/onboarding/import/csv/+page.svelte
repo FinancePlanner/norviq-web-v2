@@ -18,6 +18,24 @@
 		data.providers.map((p) => ({ value: p, label: p, selected: p === data.provider }))
 	);
 	const vm = $derived(form?.preview ?? null);
+	// Symbols the commit would replace although this import did not create them.
+	const conflicts = $derived(
+		vm ? vm.rows.filter((r) => r.foreignHolding).map((r) => r.symbol) : []
+	);
+	// After a 409 re-preview no row is flagged foreign (the backend also flags
+	// rows this import account does not own), so fall back to the rows that
+	// replace an existing holding and keep the toggle whenever a confirm is due.
+	const replaceSymbols = $derived(
+		conflicts.length > 0
+			? conflicts
+			: vm
+				? vm.rows.filter((r) => r.replacesExisting).map((r) => r.symbol)
+				: []
+	);
+	const replaceCopy = $derived(
+		`Replace positions you already hold in ${replaceSymbols.join(', ')}. Without this, the import stops rather than leaving two rows for the same symbol.`
+	);
+	const showMergeToggle = $derived(conflicts.length > 0 || (vm?.needsMergeConfirm ?? false));
 	const importSummary = (inserted: number, updated: number) =>
 		inserted === 0 && updated === 0
 			? 'No positions were changed.'
@@ -46,6 +64,7 @@
 		enctype="multipart/form-data"
 		use:enhance={submit}
 	>
+		<input type="hidden" name="portfolio_list_id" value={data.portfolioListId} />
 		<SelectField
 			id="provider"
 			name="provider"
@@ -71,7 +90,8 @@
 			<div class="csv-preview onboarding-step-card glass-card p-6">
 				{#if vm.error}
 					<FormErrorBanner message={vm.error} />
-				{:else if vm.committed}
+				{/if}
+				{#if vm.committed}
 					<p class="font-semibold text-[var(--color-success)]">Import complete</p>
 					<p class="mt-2 text-sm text-muted-foreground">{importSummary(vm.inserted, vm.updated)}</p>
 					{#if vm.errors.length > 0}
@@ -84,7 +104,7 @@
 							{/each}
 						</ul>
 					{/if}
-				{:else}
+				{:else if !vm.error || vm.rows.length > 0}
 					{#if vm.errors.length > 0}
 						<ul class="mt-2 space-y-1 text-sm text-[var(--color-warning)]">
 							{#each vm.errors as msg, i (i)}
@@ -109,7 +129,14 @@
 									{#each vm.rows as row, i (i)}
 										<tr>
 											<td class="opacity-50">{row.line}</td>
-											<td class="font-semibold">{row.symbol}</td>
+											<td class="font-semibold">
+												{row.symbol}
+												{#if row.replacesExisting}
+													<span class="block text-xs font-normal text-muted-foreground"
+														>Replaces your existing {row.symbol}</span
+													>
+												{/if}
+											</td>
 											<td class="text-right">{row.shares}</td>
 											<td class="text-right">{row.buyPrice}</td>
 										</tr>
@@ -117,6 +144,21 @@
 								</tbody>
 							</table.Table>
 						</div>
+						{#if showMergeToggle}
+							<label
+								class="mt-4 flex items-start gap-2 rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/5 p-3 text-sm"
+							>
+								<input
+									type="checkbox"
+									name="confirm_merge_existing"
+									value="1"
+									form="csv-form"
+									class="mt-0.5"
+									checked={vm.needsMergeConfirm}
+								/>
+								<span>{replaceCopy}</span>
+							</label>
+						{/if}
 						<div class="mt-6 flex flex-wrap items-center gap-3">
 							<!-- form + formaction retarget this button at the commit action. -->
 							<SubmitButton class="w-auto px-6" form="csv-form" formaction="?/commit"

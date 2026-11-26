@@ -94,6 +94,7 @@
 					vm={slot.vm}
 					{muse}
 					imagesEnabled={vm.imagesEnabled}
+					documentsEnabled={vm.documentsEnabled}
 					reload={loadWorkspace}
 					onConsentRequired={() => {
 						slot = {

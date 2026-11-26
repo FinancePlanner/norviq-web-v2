@@ -2,6 +2,7 @@
 // recording, session marks) and internal/session/onboarding.go.
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import { apiJSON } from '#lib/server/api.js';
+import { portfolioListIdOrEmpty } from '#lib/features/portfolio/import/brokers.js';
 import {
 	OnboardingKey,
 	requiresPaywall,
@@ -151,9 +152,14 @@ export async function guardInProgress(event: RequestEvent): Promise<string> {
 	return step;
 }
 
-/** redirectAfterImport target: the budget step, or back to Settings → Integrations once onboarded. */
-export function afterImportPath(event: RequestEvent, source: 'csv' | 'manual'): string {
-	return isOnboardingComplete(event)
-		? '/settings/integrations?import=' + source
-		: '/onboarding/budget';
+/** redirectAfterImport target: the budget step; once onboarded, a CSV import returns to the portfolio, a manual one to Settings → Integrations. */
+export function afterImportPath(
+	event: RequestEvent,
+	source: 'csv' | 'manual',
+	portfolioListId?: string
+): string {
+	if (!isOnboardingComplete(event)) return '/onboarding/budget';
+	if (source === 'manual') return '/settings/integrations?import=manual';
+	const id = portfolioListIdOrEmpty(portfolioListId);
+	return id ? '/portfolio?portfolio=' + encodeURIComponent(id) : '/portfolio';
 }

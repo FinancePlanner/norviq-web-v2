@@ -13,15 +13,36 @@
 	import TradesCard from './TradesCard.svelte';
 	import WatchCard from './WatchCard.svelte';
 
-	let { action, onreply }: { action: ActionRow; onreply: (message: MessageRow) => void } = $props();
+	let {
+		action,
+		onreply,
+		loadCard
+	}: {
+		action: ActionRow;
+		onreply: (message: MessageRow) => void;
+		/** Test seam: how the holdings card and its helpers are fetched. */
+		loadCard?: () => ReturnType<typeof loadHoldings>;
+	} = $props();
+
+	// The holdings card and its helpers load only when a holdings action renders,
+	// so they stay out of the always-mounted Quick Q chunk.
+	const loadHoldings = () =>
+		Promise.all([import('./HoldingsCard.svelte'), import('../holdings.js')]);
 
 	let outcome = $state<ActionOutcome | null>(null);
 	let busy = $state(false);
 	/** A confirm was sent from this card: a later 409 may mean that save went through. */
 	let attempted = false;
 
-	/** The trades card posts its reviewed rows as JSON; cancel carries nothing. */
-	async function answerTrades(verb: 'confirm' | 'cancel', rows?: unknown) {
+	/**
+	 * The trades and holdings cards post their reviewed rows as JSON; cancel
+	 * carries nothing. `copy` is the card's own wording for a failed answer.
+	 */
+	async function answerTrades(
+		verb: 'confirm' | 'cancel',
+		rows?: unknown,
+		copy?: { expired: string; maybeSaved: string; retry: string }
+	) {
 		busy = true;
 		const hadEarlierAttempt = verb === 'confirm' && attempted;
 		if (verb === 'confirm') attempted = true;
@@ -49,7 +70,9 @@
 			outcome = settleConfirmOutcome(
 				(await res.json()) as ActionOutcome,
 				hadEarlierAttempt,
-				action.expiresAt
+				action.expiresAt,
+				Date.now(),
+				copy
 			);
 		} catch (err) {
 			// Keep the card, and say so: a silent failure reads as a dead button. A
@@ -59,7 +82,11 @@
 			outcome = {
 				kind: 'tradesError',
 				id: action.id,
-				message: refused ? 'That did not go through. Try again.' : TRADES_UNCONFIRMED,
+				message: refused
+					? verb === 'confirm' && copy
+						? copy.retry
+						: 'That did not go through. Try again.'
+					: TRADES_UNCONFIRMED,
 				rowErrors: []
 			};
 		} finally {
@@ -153,6 +180,33 @@
 		onsave={(body) => answerTrades('confirm', body)}
 		oncancel={() => answerTrades('cancel')}
 	/>
+{:else if action.holdings}
+	{@const holdings = action.holdings}
+	{#await (loadCard ?? loadHoldings)() then [card, h]}
+		{@const copy = {
+			expired: h.HOLDINGS_EXPIRED,
+			maybeSaved: h.HOLDINGS_MAYBE_SAVED,
+			retry: h.HOLDINGS_FALLBACK
+		}}
+		<card.default
+			actionID={action.id}
+			summary={action.summary}
+			expiresAt={action.expiresAt}
+			{holdings}
+			lists={action.portfolioLists}
+			{busy}
+			error={outcome?.kind === 'tradesError' ? outcome : null}
+			onsave={(body: unknown) => answerTrades('confirm', body, copy)}
+			oncancel={() => answerTrades('cancel', undefined, copy)}
+		/>
+	{:catch}
+		<div id={'assistant-action-' + action.id} class="assistant-action">
+			<p class="assistant-kicker"><span>Not loaded</span></p>
+			<p class="mt-2 text-sm font-semibold">
+				Couldn't load this card. Reload the page to review it.
+			</p>
+		</div>
+	{/await}
 {:else if action.watch}
 	{@const watch = action.watch}
 	<WatchCard actionID={action.id} {watch} {busy} onanswer={(verb) => answer(verb, watch)} />

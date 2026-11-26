@@ -19,6 +19,9 @@
 
 	let { vm }: { vm: ScreenshotImportVM } = $props();
 	const conflicts = $derived(conflictSymbols(vm));
+	const replaceCopy = $derived(
+		`Replace positions you already hold in ${conflicts.join(', ')}. Without this, the import stops rather than leaving two rows for the same symbol.`
+	);
 </script>
 
 {#if vm.error}
@@ -147,11 +150,7 @@
 						class="mt-0.5"
 						checked={vm.needsMergeConfirm}
 					/>
-					<span>
-						Replace positions you already hold in
-						{conflicts.join(', ')}
-						. Without this, the import stops rather than leaving two rows for the same symbol.
-					</span>
+					<span>{replaceCopy}</span>
 				</label>
 			{/if}
 			<SubmitButton class="portfolio-form-save" formaction="?/commit" formnovalidate

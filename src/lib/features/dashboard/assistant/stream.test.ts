@@ -31,6 +31,10 @@ describe('streamAssistantTurn errors', () => {
 	test('413 shows the image-too-large copy', async () => {
 		expect(await run(new Response('', { status: 413 }))).toBe(IMAGE_TOO_LARGE);
 	});
+	test('the upsell and size copy say files, not images (PDF/CSV attach too)', () => {
+		expect(UPGRADE_REQUIRED).toBe('Attaching files is part of Pro. Upgrade to use it.');
+		expect(IMAGE_TOO_LARGE).toBe('That file is too large.');
+	});
 	test('402 is neutral: it fires for text turns and failed plan lookups too', async () => {
 		expect(await run(new Response('', { status: 402 }))).toBe(PLAN_NOT_CONFIRMED);
 	});

@@ -1,9 +1,9 @@
 import { redirect, type RequestEvent } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { apiJSON, isAPIError } from '#lib/server/api.js';
+import { apiJSON } from '#lib/server/api.js';
 import { requireFeature } from '#lib/server/guards.js';
 import { Feature } from '#lib/billing.js';
-import { apiErrorMessage, errorMessage } from '#lib/features/settings-admin/api-errors.js';
+import { errorMessage } from '#lib/features/settings-admin/api-errors.js';
 import {
 	formatCodeLifetime,
 	integrationsErrorURL,
@@ -103,49 +103,6 @@ export const actions: Actions = {
 			redirect(303, telegramStatusURL('error', 'Could not update that alert.'));
 		}
 		redirect(303, telegramStatusURL(enabled ? 'alert-on' : 'alert-off', telegramAlertLabel(kind)));
-	},
-
-	ibkrConnect: async (event) => {
-		await requireFeature(event, Feature.BrokerSync, 'Broker sync');
-		let form: FormData;
-		try {
-			form = await event.request.formData();
-		} catch {
-			redirect(303, integrationsErrorURL('Invalid form submission.'));
-		}
-		const token = formValue(form, 'token').trim();
-		const queryId = formValue(form, 'queryId').trim();
-		if (token === '' || queryId === '')
-			redirect(303, integrationsErrorURL('Token and query ID are required.'));
-		try {
-			await apiJSON(event, 'POST', '/v1/brokers/ibkr/connect/credentials', { token, queryId });
-		} catch (err) {
-			if (!isAPIError(err)) {
-				console.warn('ibkr credentials connect failed', err);
-				redirect(303, integrationsErrorURL('Could not reach broker service.'));
-			}
-			console.warn('ibkr credentials connect rejected', err.status);
-			redirect(
-				303,
-				integrationsErrorURL(apiErrorMessage(err.body, 'Could not save IBKR credentials.'))
-			);
-		}
-		redirect(303, '/settings/integrations?ibkr=connected');
-	},
-
-	ibkrSync: async (event) => {
-		await requireFeature(event, Feature.BrokerSync, 'Broker sync');
-		let sync: { inserted?: number | null; updated?: number | null; removed?: number | null };
-		try {
-			sync = await apiJSON(event, 'POST', '/v1/brokers/ibkr/sync');
-		} catch (err) {
-			console.warn('ibkr sync failed', err);
-			redirect(303, integrationsErrorURL(errorMessage(err, 'Could not sync IBKR holdings.')));
-		}
-		redirect(
-			303,
-			`/settings/integrations?ibkr=synced&inserted=${sync?.inserted ?? 0}&updated=${sync?.updated ?? 0}&removed=${sync?.removed ?? 0}`
-		);
 	},
 
 	ibkrDisconnect: async (event) => {

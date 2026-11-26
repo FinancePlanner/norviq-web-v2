@@ -63,3 +63,78 @@ test('release and clear revoke thumbnails', async () => {
 	expect(a.items).toHaveLength(0);
 	expect(revokeObjectURL).toHaveBeenCalledTimes(3);
 });
+
+const doc = (name: string, type = '', size = 10) =>
+	new File([new Uint8Array(size)], name, { type });
+const withDocs = () => {
+	const a = new ImageAttachments({
+		prepare: (f) => Promise.resolve(f),
+		tooMany: 'Attach up to 3 images.',
+		tooManyFiles: 'Attach up to 3 files.'
+	});
+	a.documentsEnabled = true;
+	return a;
+};
+
+test('documents on: accepts a PDF and a CSV as chips beside images', async () => {
+	const a = withDocs();
+	await a.add([image('a.png'), doc('b.pdf', 'application/pdf'), doc('c.csv', 'text/csv')]);
+	expect(a.items.map((i) => [i.file.name, i.kind])).toEqual([
+		['a.png', 'image'],
+		['b.pdf', 'pdf'],
+		['c.csv', 'csv']
+	]);
+	expect(a.items[1].url).toBe('');
+	expect(a.error).toBe('');
+});
+
+test('documents off: a PDF or CSV is ignored', async () => {
+	const a = make();
+	await a.add([doc('b.pdf', 'application/pdf'), doc('c.csv', 'text/csv')]);
+	expect(a.items).toHaveLength(0);
+	expect(a.error).toBe('');
+});
+
+test('images and documents share the three-file cap', async () => {
+	const a = withDocs();
+	await a.add([image('1'), image('2'), doc('b.pdf', 'application/pdf'), doc('c.csv', 'text/csv')]);
+	expect(a.items).toHaveLength(3);
+	expect(a.full).toBe(true);
+	expect(a.error).toBe('Attach up to 3 files.');
+});
+
+test('a second PDF, an oversized CSV and an unsupported file are refused inline', async () => {
+	const a = withDocs();
+	await a.add([doc('a.pdf', 'application/pdf')]);
+	await a.add([doc('b.pdf', 'application/pdf')]);
+	expect(a.error).toBe('Attach one PDF at a time.');
+	await a.add([doc('big.csv', 'text/csv', (1 << 20) + 1)]);
+	expect(a.error).toBe('Each CSV must be 1 MB or smaller.');
+	await a.add([doc('n.txt', 'text/plain')]);
+	expect(a.error).toBe('Only images, PDFs and CSV files are supported.');
+	expect(a.items.map((i) => i.file.name)).toEqual(['a.pdf']);
+});
+
+test('documents without images: images are ignored, only PDF and CSV are offered', async () => {
+	const a = withDocs();
+	a.imagesEnabled = false;
+	await a.add([image('a.png'), doc('c.csv', 'text/csv')]);
+	expect(a.items.map((i) => i.file.name)).toEqual(['c.csv']);
+	expect(a.accept).toBe('application/pdf,text/csv,.csv');
+});
+
+test('accepts says whether a pasted or dropped file would be taken', () => {
+	const a = withDocs();
+	expect(a.accepts(image('a.png'))).toBe(true);
+	expect(a.accepts(doc('c.csv', 'text/csv'))).toBe(true);
+	expect(a.accepts(doc('n.txt', 'text/plain'))).toBe(false);
+	a.documentsEnabled = false;
+	expect(a.accepts(doc('c.csv', 'text/csv'))).toBe(false);
+});
+
+test('documents leave no thumbnail to revoke', async () => {
+	const a = withDocs();
+	await a.add([doc('c.csv', 'text/csv')]);
+	a.clear();
+	expect(revokeObjectURL).not.toHaveBeenCalled();
+});

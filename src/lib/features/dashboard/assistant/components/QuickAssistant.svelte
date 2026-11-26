@@ -6,18 +6,20 @@
 	import { onDestroy } from 'svelte';
 	import { page } from '$app/state';
 	import Paperclip from '@lucide/svelte/icons/paperclip';
+	import FileText from '@lucide/svelte/icons/file-text';
 	import X from '@lucide/svelte/icons/x';
 	import NativeButton from '#lib/components/norviq/NativeButton.svelte';
 	import TextareaField from '#lib/components/norviq/TextareaField.svelte';
 	import VigIcon from '#lib/components/norviq/VigIcon.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { ImageAttachments, type Attachment } from '../attachments.svelte.js';
-	import { MAX_CHAT_IMAGES } from '../images.js';
+	import { appendChatFiles, MAX_CHAT_IMAGES } from '../images.js';
 	import { MuseChat } from '../muse.svelte.js';
 	import {
 		createQuickConversation,
 		forgetConversation,
 		latestExchange,
+		needsWideCard,
 		quickQAllowedOn,
 		storeConversation,
 		storedConversation
@@ -29,7 +31,10 @@
 	import QuickAssistantStar from './QuickAssistantStar.svelte';
 
 	const muse = new MuseChat();
-	const images = new ImageAttachments({ tooMany: t('Attach up to %d images.', MAX_CHAT_IMAGES) });
+	const images = new ImageAttachments({
+		tooMany: t('Attach up to %d images.', MAX_CHAT_IMAGES),
+		tooManyFiles: t('Attach up to %d files.', MAX_CHAT_IMAGES)
+	});
 	onDestroy(() => {
 		muse.destroy();
 		images.clear();
@@ -46,15 +51,17 @@
 	let replyMissing = $state(false);
 	/** The backend takes images on a turn, as full Q decides it. Asked on first opening. */
 	let imagesEnabled = $state(false);
+	let documentsEnabled = $state(false);
+	/** Anything can be attached: the controls show. */
+	const attachEnabled = $derived(imagesEnabled || documentsEnabled);
 	let imagesAsked = false;
 	/** Images on the question in flight, shown under it until the turn settles. */
 	let sentImages = $state<Attachment[]>([]);
-	const canAttach = $derived(imagesEnabled && !sending && !images.full);
+	const canAttach = $derived(attachEnabled && !sending && !images.full);
 	const hasExchange = $derived(
 		question !== '' || exchange.length > 0 || errorText !== '' || images.error !== ''
 	);
-	/** The trades review card needs a table's width. */
-	const wide = $derived(exchange.some((message) => message.action?.trades));
+	const wide = $derived(needsWideCard(exchange));
 
 	const showsButton = $derived(quickQAllowedOn(page.url.pathname));
 	const canOpenInQ = $derived(conversationId !== '' && (exchange.length > 0 || replyMissing));
@@ -92,9 +99,16 @@
 		if (imagesAsked) return;
 		imagesAsked = true;
 		fetch('/assistant/quick', { headers: { Accept: 'application/json' } })
-			.then((res) => (res.ok ? (res.json() as Promise<{ imagesEnabled?: boolean }>) : null))
+			.then((res) =>
+				res.ok
+					? (res.json() as Promise<{ imagesEnabled?: boolean; documentsEnabled?: boolean }>)
+					: null
+			)
 			.then((body) => {
 				imagesEnabled = body?.imagesEnabled === true;
+				documentsEnabled = body?.documentsEnabled === true;
+				images.imagesEnabled = imagesEnabled;
+				images.documentsEnabled = documentsEnabled;
 			})
 			.catch(() => {
 				// Asked again on the next opening.
@@ -110,22 +124,20 @@
 	}
 
 	function onPaste(event: ClipboardEvent) {
-		const files = Array.from(event.clipboardData?.files ?? []).filter((f) =>
-			f.type.startsWith('image/')
-		);
-		if (!imagesEnabled || files.length === 0) return;
+		const files = Array.from(event.clipboardData?.files ?? []).filter((f) => images.accepts(f));
+		if (!attachEnabled || sending || files.length === 0) return;
 		event.preventDefault();
-		if (!sending) void images.add(files);
+		void images.add(files);
 	}
 
 	const hasFiles = (event: DragEvent) => event.dataTransfer?.types.includes('Files') ?? false;
 
 	function onDragOver(event: DragEvent) {
-		if (imagesEnabled && hasFiles(event)) event.preventDefault();
+		if (attachEnabled && hasFiles(event)) event.preventDefault();
 	}
 
 	function onDrop(event: DragEvent) {
-		if (!imagesEnabled || !hasFiles(event)) return;
+		if (!attachEnabled || !hasFiles(event)) return;
 		event.preventDefault();
 		if (!sending) void images.add(Array.from(event.dataTransfer?.files ?? []));
 	}
@@ -162,7 +174,7 @@
 		}
 		const body = new FormData();
 		body.set('content', content);
-		for (const file of files) body.append('image', file, file.name);
+		appendChatFiles(body, files);
 		const conversation = id;
 		let gone = false;
 		const failure = await streamAssistantTurn({
@@ -265,10 +277,19 @@
 						<div class="muse-bubble"><div class="muse-text">{question}</div></div>
 					</div>
 					{#if sentImages.length > 0}
-						<ul class="muse-attachments quick-q-sent" aria-label={t('Attached images')}>
+						<ul
+							class="muse-attachments quick-q-sent"
+							aria-label={documentsEnabled ? t('Attached files') : t('Attached images')}
+						>
 							{#each sentImages as attachment (attachment.key)}
 								<li class="muse-attachment">
-									<img src={attachment.url} alt={t('Attached screenshot')} />
+									{#if attachment.kind === 'image'}
+										<img src={attachment.url} alt={t('Attached screenshot')} />
+									{:else}
+										<span class="muse-attachment-file"
+											><FileText class="size-4" /><span>{attachment.file.name}</span></span
+										>
+									{/if}
 								</li>
 							{/each}
 						</ul>
@@ -290,14 +311,23 @@
 		</p>
 
 		{#if images.items.length > 0 || images.preparing > 0}
-			<ul class="muse-attachments" aria-label={t('Attached images')}>
+			<ul
+				class="muse-attachments"
+				aria-label={documentsEnabled ? t('Attached files') : t('Attached images')}
+			>
 				{#each images.items as attachment (attachment.key)}
 					<li class="muse-attachment">
-						<img src={attachment.url} alt={t('Attached screenshot')} />
+						{#if attachment.kind === 'image'}
+							<img src={attachment.url} alt={t('Attached screenshot')} />
+						{:else}
+							<span class="muse-attachment-file"
+								><FileText class="size-4" /><span>{attachment.file.name}</span></span
+							>
+						{/if}
 						<button
 							type="button"
 							class="muse-attachment-remove"
-							aria-label={t('Remove image')}
+							aria-label={attachment.kind === 'image' ? t('Remove image') : t('Remove file')}
 							disabled={sending}
 							onclick={() => images.remove(attachment.key)}
 						>
@@ -330,19 +360,19 @@
 				aria-label={t('Ask Q')}
 				wrapperClass="min-w-0 flex-1"
 			/>
-			{#if imagesEnabled}
+			{#if attachEnabled}
 				<label
 					class="muse-attach"
 					class:muse-attach-disabled={!canAttach}
-					title={t('Attach images')}
+					title={documentsEnabled ? t('Attach files') : t('Attach images')}
 				>
 					<input
 						type="file"
 						class="sr-only"
-						accept="image/png,image/jpeg,image/webp,image/gif"
+						accept={images.accept}
 						multiple
 						disabled={!canAttach}
-						aria-label={t('Attach images')}
+						aria-label={documentsEnabled ? t('Attach files') : t('Attach images')}
 						onchange={onPick}
 					/>
 					<Paperclip class="size-5" />

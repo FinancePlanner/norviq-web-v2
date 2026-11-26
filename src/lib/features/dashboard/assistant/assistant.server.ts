@@ -14,6 +14,17 @@ import {
 	TRADES_UPGRADE,
 	type RowError
 } from './trades.js';
+import {
+	HOLDINGS_CLOSED,
+	HOLDINGS_COLLISION,
+	HOLDINGS_EXPIRED,
+	HOLDINGS_FALLBACK,
+	HOLDINGS_MAYBE_SAVED,
+	HOLDINGS_TOOL,
+	HOLDINGS_UPGRADE,
+	parseHoldingsAction,
+	refusalReason
+} from './holdings.js';
 import type {
 	ActionOutcome,
 	ActionRow,
@@ -38,8 +49,11 @@ type AIConfirmedAction = Schemas['AIConfirmedActionResponse'];
 type AIUsage = Schemas['AIAssistantUsageResponse'];
 type AITip = Schemas['AITipResponse'];
 type AITurn = Schemas['AIAssistantTurnResponse'];
-// schema.d.ts is generated and does not know imagesEnabled yet, so the field is typed here.
-type AIPreferences = Schemas['AIAssistantPreferencesResponse'] & { imagesEnabled?: boolean };
+// schema.d.ts is generated and does not know imagesEnabled or documentsEnabled yet, so they are typed here.
+type AIPreferences = Schemas['AIAssistantPreferencesResponse'] & {
+	imagesEnabled?: boolean;
+	documentsEnabled?: boolean;
+};
 type PortfolioList = Schemas['PortfolioListResponse'];
 
 /** api.PositionMemoListItem (internal/api/position_memos.go). */
@@ -124,7 +138,8 @@ export async function loadAssistantPage(event: RequestEvent): Promise<PageViewMo
 		tips: [],
 		usage: { label: 'AI preview', remaining: 'Usage unavailable', isPro: false },
 		errorMessage: '',
-		imagesEnabled: false
+		imagesEnabled: false,
+		documentsEnabled: false
 	};
 	let conversations: AIConversationSummary[];
 	try {
@@ -157,6 +172,7 @@ export async function loadAssistantPage(event: RequestEvent): Promise<PageViewMo
 		apiJSON<AIPreferences>(event, 'GET', '/v1/ai/assistant/preferences').catch(() => null)
 	]);
 	vm.imagesEnabled = preferences?.imagesEnabled === true;
+	vm.documentsEnabled = preferences?.documentsEnabled === true;
 	if (active) {
 		active.seed = (event.url.searchParams.get('seed') ?? '').trim();
 		vm.active = active;
@@ -246,12 +262,12 @@ async function attachPendingActions(
 }
 
 /**
- * attachPortfolioLists gives each trades card the lists its picker offers. One
+ * attachPortfolioLists gives each trades or holdings card the lists its picker offers. One
  * request, and only when a card needs it; a failure leaves the card without a
  * picker, saving to the list it was proposed for.
  */
 export async function attachPortfolioLists(event: RequestEvent, messages: MessageRow[]) {
-	const cards = messages.flatMap((m) => (m.action?.trades ? [m.action] : []));
+	const cards = messages.flatMap((m) => (m.action?.trades || m.action?.holdings ? [m.action] : []));
 	if (cards.length === 0) return;
 	let lists: PortfolioListOption[];
 	try {
@@ -396,6 +412,7 @@ export function mapAssistantAction(action: AIPendingAction): ActionRow {
 	if (action.toolName === CREATE_WATCH_TOOL)
 		row.watch = watchProposalFromArguments(action.arguments, action.summary);
 	if (action.toolName === RECORD_TRADES_TOOL) row.trades = parseTradesProposal(action.arguments);
+	if (action.toolName === HOLDINGS_TOOL) row.holdings = parseHoldingsAction(action);
 	return row;
 }
 
@@ -522,8 +539,8 @@ export function readTradesConfirmInput(raw: unknown): TradesConfirmInput | null 
 	};
 }
 
-function rowErrorsOf(body: unknown): RowError[] {
-	const raw = (body as { rowErrors?: unknown } | null)?.rowErrors;
+function rowErrorsOf(body: unknown, key: 'rowErrors' | 'rows' = 'rowErrors'): RowError[] {
+	const raw = (body as Record<string, unknown> | null)?.[key];
 	if (!Array.isArray(raw)) return [];
 	return raw.flatMap((e): RowError[] => {
 		if (typeof e !== 'object' || e === null) return [];
@@ -560,10 +577,93 @@ async function stillPending(event: RequestEvent, id: string): Promise<boolean | 
  * not a 4xx settles the same way when the action is gone, and says the save is
  * unconfirmed when the action is still pending or its state can't be read.
  */
-export async function confirmTrades(
+export function confirmTrades(
 	event: RequestEvent,
 	id: string,
 	input: TradesConfirmInput
+): Promise<ActionOutcome> {
+	return confirmReviewed(event, id, input, {
+		expired: TRADES_EXPIRED,
+		closed: TRADES_CLOSED,
+		maybeSaved: TRADES_MAYBE_SAVED,
+		upgrade: TRADES_UPGRADE,
+		refusal: (_body, reason) => reason || TRADES_RETRY,
+		retry: TRADES_RETRY,
+		rowErrors: (body) => rowErrorsOf(body),
+		extras: () => ({})
+	});
+}
+
+/** The reviewed holdings a card posts: the confirm body holdings.go decodes. */
+export interface HoldingsConfirmInput {
+	portfolioListId?: string;
+	replaceExisting: boolean;
+	rows: unknown[];
+}
+
+/** Null unless the body has a rows array, which is what tells a holdings card from a trades card. */
+export function readHoldingsConfirmInput(raw: unknown): HoldingsConfirmInput | null {
+	if (typeof raw !== 'object' || raw === null) return null;
+	const { portfolioListId, replaceExisting, rows } = raw as Record<string, unknown>;
+	if (!Array.isArray(rows)) return null;
+	return {
+		rows,
+		replaceExisting: replaceExisting === true,
+		portfolioListId: typeof portfolioListId === 'string' ? portfolioListId : undefined
+	};
+}
+
+/**
+ * AssistantConfirmAction for a holdings card. The same answers as a trades
+ * card, with the backend's `reason` (or a fixed fallback) as the message, its
+ * `rows` placed on the sent rows, and the symbols of a collision so the card
+ * can offer "Replace existing".
+ */
+export function confirmHoldings(
+	event: RequestEvent,
+	id: string,
+	input: HoldingsConfirmInput
+): Promise<ActionOutcome> {
+	return confirmReviewed(event, id, input, {
+		expired: HOLDINGS_EXPIRED,
+		closed: HOLDINGS_CLOSED,
+		maybeSaved: HOLDINGS_MAYBE_SAVED,
+		upgrade: HOLDINGS_UPGRADE,
+		refusal: (body) => refusalReason(body),
+		clientRefusal: refusalReason,
+		retry: HOLDINGS_FALLBACK,
+		rowErrors: (body) => rowErrorsOf(body, 'rows'),
+		extras: (body) => {
+			const { code, symbols } = (body ?? {}) as { code?: unknown; symbols?: unknown };
+			if (code !== HOLDINGS_COLLISION || !Array.isArray(symbols)) return {};
+			return { collisionSymbols: symbols.filter((x): x is string => typeof x === 'string') };
+		}
+	});
+}
+
+/** What differs between the trades and the holdings card's answers. */
+interface ConfirmCopy {
+	expired: string;
+	closed: string;
+	maybeSaved: string;
+	upgrade: string;
+	/**
+	 * The message of any other 4xx (a 404 included), which keeps the card open.
+	 * Unset: a 404 closes the card as expired and another 4xx says `retry`.
+	 */
+	clientRefusal?: (body: unknown) => string;
+	/** The message of a 422: the backend's reason, or a fixed fallback. */
+	refusal: (body: unknown, reason: string) => string;
+	retry: string;
+	rowErrors: (body: unknown) => RowError[];
+	extras: (body: unknown) => { collisionSymbols?: string[] };
+}
+
+async function confirmReviewed(
+	event: RequestEvent,
+	id: string,
+	input: unknown,
+	copy: ConfirmCopy
 ): Promise<ActionOutcome> {
 	try {
 		const confirmed = await apiJSON<AIConfirmedAction>(
@@ -575,20 +675,22 @@ export async function confirmTrades(
 		return { kind: 'result', vm: { id, success: true, message: confirmed.message } };
 	} catch (err) {
 		const status = statusOf(err);
-		if (status === 409 || status === 404)
-			return { kind: 'tradesExpired', id, message: TRADES_EXPIRED };
+		if (status === 409 || (status === 404 && !copy.clientRefusal))
+			return { kind: 'tradesExpired', id, message: copy.expired };
 		if (status === 422 && isAPIError(err)) {
+			const message = copy.refusal(err.body, err.reason);
 			if ((await stillPending(event, id)) === false)
 				return {
 					kind: 'tradesExpired',
 					id,
-					message: err.reason ? `${err.reason} ${TRADES_CLOSED}` : TRADES_CLOSED
+					message: err.reason ? `${message} ${copy.closed}` : copy.closed
 				};
 			return {
 				kind: 'tradesError',
 				id,
-				message: err.reason || TRADES_RETRY,
-				rowErrors: rowErrorsOf(err.body)
+				message,
+				rowErrors: copy.rowErrors(err.body),
+				...copy.extras(err.body)
 			};
 		}
 		// A timeout, a dropped connection or a 5xx: the backend may have finished the
@@ -596,11 +698,15 @@ export async function confirmTrades(
 		const clientError = status >= 400 && status < 500;
 		if (!clientError) {
 			if ((await stillPending(event, id)) === false)
-				return { kind: 'tradesExpired', id, message: TRADES_MAYBE_SAVED };
+				return { kind: 'tradesExpired', id, message: copy.maybeSaved };
 			return { kind: 'tradesError', id, message: TRADES_UNCONFIRMED, rowErrors: [] };
 		}
 		const upgrade = status === 403 && isAPIError(err) && err.code === 'upgrade_required';
-		const message = upgrade ? TRADES_UPGRADE : TRADES_RETRY;
+		const message = upgrade
+			? copy.upgrade
+			: copy.clientRefusal && isAPIError(err)
+				? copy.clientRefusal(err.body)
+				: copy.retry;
 		return { kind: 'tradesError', id, message, rowErrors: [] };
 	}
 }

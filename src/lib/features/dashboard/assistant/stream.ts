@@ -37,12 +37,12 @@ export interface StreamTurnOptions {
 }
 
 const UNAVAILABLE = 'Assistant unavailable';
-export const IMAGE_TOO_LARGE = 'That image is too large.';
+export const IMAGE_TOO_LARGE = 'That file is too large.';
 export const TOO_MANY_REQUESTS = 'Too many requests. Wait a minute and try again.';
 /** The BFF's 402 also fires for text turns, and for a Pro user when the plan lookup fails. */
 export const PLAN_NOT_CONFIRMED = 'Your plan could not be confirmed. Try again in a moment.';
 export const IMAGES_BUSY = 'Too many large images right now. Try again in a moment.';
-export const UPGRADE_REQUIRED = 'Attaching images is part of Pro. Upgrade to use it.';
+export const UPGRADE_REQUIRED = 'Attaching files is part of Pro. Upgrade to use it.';
 
 /** The `/stream` error-frame code (lowercase, as iOS reads it). The 403 JSON refusals keep reason AI_CONSENT_REQUIRED. */
 export const CONSENT_REQUIRED_CODE = 'ai_consent_required';

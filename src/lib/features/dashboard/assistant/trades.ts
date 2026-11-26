@@ -60,18 +60,23 @@ export const TRADES_UNCONFIRMED =
 /**
  * The outcome to show for a confirm answer. A 409 ("expired") is not that when
  * this card already sent a save, or when the review has not expired yet: the
- * earlier save, from this card or another tab, may have gone through.
+ * earlier save, from this card or another tab, may have gone through. `copy`
+ * is the card's own wording, for the holdings card.
  */
 export function settleConfirmOutcome<T extends { kind: string; message?: string }>(
 	outcome: T,
 	hadEarlierAttempt: boolean,
 	expiresAt?: string,
-	now: number = Date.now()
+	now: number = Date.now(),
+	copy: { expired: string; maybeSaved: string } = {
+		expired: TRADES_EXPIRED,
+		maybeSaved: TRADES_MAYBE_SAVED
+	}
 ): T {
-	if (outcome.kind !== 'tradesExpired' || outcome.message !== TRADES_EXPIRED) return outcome;
+	if (outcome.kind !== 'tradesExpired' || outcome.message !== copy.expired) return outcome;
 	const expiry = expiresAt ? Date.parse(expiresAt) : NaN;
 	const unexpired = Number.isFinite(expiry) && expiry > now;
-	if (hadEarlierAttempt || unexpired) return { ...outcome, message: TRADES_MAYBE_SAVED };
+	if (hadEarlierAttempt || unexpired) return { ...outcome, message: copy.maybeSaved };
 	return outcome;
 }
 
@@ -284,7 +289,7 @@ export function listNameFromSummary(summary: string): string {
 }
 
 /** True for a YYYY-MM-DD that exists on the calendar. */
-function isRealDate(raw: string): boolean {
+export function isRealDate(raw: string): boolean {
 	const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
 	if (!m) return false;
 	const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];

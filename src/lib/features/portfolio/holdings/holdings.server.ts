@@ -409,12 +409,15 @@ export async function loadPortfolioOptions(
 	event: RequestEvent
 ): Promise<PortfolioOptionVM[] | null> {
 	try {
-		const page = await apiJSON<{ items?: { id: string; name: string; mode: string }[] }>(
-			event,
-			'GET',
-			'/v1/portfolios'
-		);
-		return (page?.items ?? []).map((i) => ({ id: i.id, name: i.name, mode: i.mode }));
+		const page = await apiJSON<{
+			items?: { id: string; name: string; mode: string; isDefault?: boolean }[];
+		}>(event, 'GET', '/v1/portfolios');
+		return (page?.items ?? []).map((i) => ({
+			id: i.id,
+			name: i.name,
+			mode: i.mode,
+			...(i.isDefault ? { isDefault: true } : {})
+		}));
 	} catch {
 		return null;
 	}

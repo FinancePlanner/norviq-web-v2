@@ -1,7 +1,6 @@
 <script lang="ts">
 	// Port of settings.IntegrationsPage (integrations.templ).
 	import { enhance } from '$app/forms';
-	import { page } from '$app/state';
 	import {
 		CardHeader,
 		CollapsibleSection,
@@ -28,14 +27,10 @@
 		form?.telegramCode ? { ...vm.telegram, ...form.telegramCode } : vm.telegram
 	);
 
-	// Every IBKR action redirects back here with ?ibkr=…; on a full page load
-	// the section must not come back collapsed over the result it just produced.
-	const ibkrOpen = $derived(vm.ibkr.hasConnection || page.url.searchParams.has('ibkr'));
-
 	function confirmIBKRDisconnect(e: MouseEvent) {
 		if (
 			!confirm(
-				'Disconnect IBKR from Norviq? Synced IBKR holdings will be removed from your portfolio.'
+				'Disconnect IBKR from Norviq? IBKR holdings will be removed, including CSV imports labelled IBKR.'
 			)
 		)
 			e.preventDefault();
@@ -179,7 +174,7 @@
 		</section>
 		<CollapsibleSection
 			title="Broker connections"
-			desc="Sync holdings from supported brokers or import a CSV export."
+			desc="Import holdings from your broker with screenshots, a CSV export, or Q."
 		>
 			<div class="mt-4">
 				<CSVImportFormatHint />
@@ -188,7 +183,7 @@
 				<div class="mt-4">
 					<EmptyState
 						title="No broker connections yet"
-						description="Connect a broker above to import holdings and activity automatically."
+						description="Use Import from broker to add your holdings."
 					/>
 				</div>
 			{:else}
@@ -213,104 +208,38 @@
 				<a href="/onboarding/import/manual" class="btn-secondary px-5">Add manually</a>
 			</div>
 		</CollapsibleSection>
-		<CollapsibleSection
-			title="Interactive Brokers (IBKR)"
-			desc="Connect your IBKR account with the Norviq Web Service token and query ID from IBKR Reporting. Each user connects their own credentials; Norviq never places trades."
-			open={ibkrOpen}
-		>
+		<CollapsibleSection title="Interactive Brokers (IBKR)" open>
 			<div
 				class="mt-4 rounded-lg border border-[var(--color-border)] bg-[color-mix(in_srgb,var(--foreground)_6%,transparent)] px-4 py-3 text-sm text-muted-foreground"
 				role="note"
 			>
-				<p class="font-medium">Holdings import is coming soon</p>
+				<p class="font-medium">Import IBKR holdings</p>
 				<p class="mt-1 opacity-90">
-					Your credentials are saved and Sync fetches your daily IBKR statement. Importing those
-					holdings into your portfolio is not live yet — for now Sync reports what IBKR delivered.
+					Screenshot your positions in the IBKR app or Client Portal and import them from your
+					portfolio. Statement import with full trade history is coming next.
 				</p>
+				<PrimaryButton href="/portfolio/import" class="mt-3 inline-block px-5">
+					Import from broker
+				</PrimaryButton>
 			</div>
-			{#if vm.ibkr.hasConnection}
+			{#if vm.ibkr.status === 'connected' || vm.ibkr.status === 'error'}
 				<div class="mt-4 flex flex-wrap items-center gap-3">
 					<span class="settings-status-pill">{vm.ibkr.statusLabel}</span>
 					{#if vm.ibkr.displayName !== ''}
 						<span class="text-sm text-muted-foreground">{vm.ibkr.displayName}</span>
 					{/if}
 				</div>
-				{#if vm.ibkr.lastSyncedLabel !== ''}
-					<p class="mt-2 text-sm text-muted-foreground">Last synced {vm.ibkr.lastSyncedLabel}</p>
-				{/if}
 				{#if vm.ibkr.statusDetail !== ''}
 					<p class="mt-2 text-sm text-muted-foreground">{vm.ibkr.statusDetail}</p>
 				{/if}
-				<div class="mt-6 flex flex-wrap gap-3">
-					<form method="POST" action="?/ibkrSync" use:enhance={withSpinner()}>
-						<NativeButton type="submit" class="btn-primary px-5">Sync now</NativeButton>
-					</form>
-					<form method="POST" action="?/ibkrDisconnect" use:enhance={withSpinner()}>
-						<NativeButton
-							type="submit"
-							class="btn-secondary px-5 text-[var(--color-danger)]"
-							onclick={confirmIBKRDisconnect}
-						>
-							Disconnect
-						</NativeButton>
-					</form>
-				</div>
-			{:else}
-				<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
-					<li>
-						From your IBKR account, email
-						<a
-							class="[overflow-wrap:anywhere] text-foreground underline underline-offset-2"
-							href="mailto:reportingintegration@interactivebrokers.com"
-							>reportingintegration@<wbr />interactivebrokers.com</a
-						>
-						and ask them to enable the Norviq Web Service feed.
-					</li>
-					<li>
-						After IBKR enables it, open IBKR Portal → Reporting → Third-party Reports and copy the
-						token and the query ID.
-					</li>
-					<li>Paste both below and connect. Broker sync is part of Pro.</li>
-					<li>
-						Sync reads the previous business day's statement. The token and query ID stay on your
-						account.
-					</li>
-				</ol>
-				<form
-					method="POST"
-					action="?/ibkrConnect"
-					class="mt-6 space-y-4"
-					use:enhance={withSpinner()}
-				>
-					<div class="space-y-2">
-						<label class="field-label" for="ibkr-token">Token</label>
-						<input
-							id="ibkr-token"
-							name="token"
-							type="password"
-							autocomplete="off"
-							autocapitalize="off"
-							spellcheck="false"
-							required
-							class="field-input"
-							placeholder="IBKR Web Service token"
-						/>
-					</div>
-					<div class="space-y-2">
-						<label class="field-label" for="ibkr-query-id">Query ID</label>
-						<input
-							id="ibkr-query-id"
-							name="queryId"
-							type="text"
-							autocomplete="off"
-							autocapitalize="off"
-							spellcheck="false"
-							required
-							class="field-input"
-							placeholder="IBKR query ID"
-						/>
-					</div>
-					<NativeButton type="submit" class="btn-primary px-5">Connect IBKR</NativeButton>
+				<form method="POST" action="?/ibkrDisconnect" class="mt-6" use:enhance={withSpinner()}>
+					<NativeButton
+						type="submit"
+						class="btn-secondary px-5 text-[var(--color-danger)]"
+						onclick={confirmIBKRDisconnect}
+					>
+						Disconnect
+					</NativeButton>
 				</form>
 			{/if}
 		</CollapsibleSection>

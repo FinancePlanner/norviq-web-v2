@@ -29,6 +29,8 @@ const {
 	TRADES_CLOSED,
 	TRADES_EXPIRED,
 	confirmTrades,
+	confirmHoldings,
+	readHoldingsConfirmInput,
 	loadAssistantPage,
 	mapAssistantAction,
 	attachPortfolioLists
@@ -163,6 +165,134 @@ describe('confirmTrades', () => {
 	});
 });
 
+describe('confirmHoldings', () => {
+	const holdingsInput = {
+		portfolioListId: 'L1',
+		replaceExisting: false,
+		rows: [{ symbol: 'AAPL', shares: 1, avgPrice: 2 }]
+	};
+	const collision = new FakeAPIError(
+		422,
+		'These holdings already exist: AAPL. Turn on \u201cReplace existing\u201d to update them.',
+		'holdings_collision',
+		{
+			reason:
+				'These holdings already exist: AAPL. Turn on \u201cReplace existing\u201d to update them.',
+			code: 'holdings_collision',
+			symbols: ['AAPL'],
+			rows: [{ index: 0, message: 'Already held.' }]
+		}
+	);
+
+	test('forwards the reviewed body as is and reports success', async () => {
+		apiJSON.mockResolvedValueOnce({ message: 'Saved AAPL.' });
+		const out = await confirmHoldings(event, 'a1', holdingsInput);
+		expect(apiJSON).toHaveBeenCalledWith(
+			event,
+			'POST',
+			'/v1/ai/assistant/actions/a1/confirm',
+			holdingsInput
+		);
+		expect(out).toEqual({
+			kind: 'result',
+			vm: { id: 'a1', success: true, message: 'Saved AAPL.' }
+		});
+	});
+
+	test('a 422 keeps the card with the backend reason, its rows and the colliding symbols', async () => {
+		apiJSON
+			.mockRejectedValueOnce(collision)
+			.mockResolvedValueOnce([{ id: 'a1', status: 'pending' }]);
+		expect(await confirmHoldings(event, 'a1', holdingsInput)).toEqual({
+			kind: 'tradesError',
+			id: 'a1',
+			message: collision.reason,
+			rowErrors: [{ index: 0, code: '', message: 'Already held.' }],
+			collisionSymbols: ['AAPL']
+		});
+	});
+
+	test('a 422 without a reason shows the fixed fallback, not undefined', async () => {
+		apiJSON
+			.mockRejectedValueOnce(new FakeAPIError(422, '', undefined, { message: 'nope' }))
+			.mockResolvedValueOnce([{ id: 'a1', status: 'pending' }]);
+		expect(await confirmHoldings(event, 'a1', holdingsInput)).toMatchObject({
+			kind: 'tradesError',
+			message: "Couldn't save these holdings. Try again."
+		});
+	});
+
+	test('a 422 for a settled action closes the card', async () => {
+		apiJSON.mockRejectedValueOnce(collision).mockResolvedValueOnce([]);
+		expect(await confirmHoldings(event, 'a1', holdingsInput)).toEqual({
+			kind: 'tradesExpired',
+			id: 'a1',
+			message: `${collision.reason} Those holdings were not saved and this card is closed. Send the file again.`
+		});
+	});
+
+	test('a 409 is an expired card that names holdings, not trades', async () => {
+		apiJSON.mockRejectedValueOnce(new FakeAPIError(409, 'Action is no longer available'));
+		expect(await confirmHoldings(event, 'a1', holdingsInput)).toEqual({
+			kind: 'tradesExpired',
+			id: 'a1',
+			message: 'This card expired. Send the file again.'
+		});
+	});
+
+	test('a 403 upgrade_required says Pro for holdings', async () => {
+		apiJSON.mockRejectedValueOnce(new FakeAPIError(403, 'Upgrade required.', 'upgrade_required'));
+		expect(await confirmHoldings(event, 'a1', holdingsInput)).toMatchObject({
+			kind: 'tradesError',
+			message: 'Importing holdings from a file is part of Pro.'
+		});
+	});
+
+	test('a lost answer with the action gone closes the card as maybe saved', async () => {
+		apiJSON.mockRejectedValueOnce(new FakeAPIError(500, '')).mockResolvedValueOnce([]);
+		expect(await confirmHoldings(event, 'a1', holdingsInput)).toEqual({
+			kind: 'tradesExpired',
+			id: 'a1',
+			message: 'This may have been saved. Check your portfolio before sending the file again.'
+		});
+	});
+
+	test('a 404 or 400 keeps the card open with the backend reason', async () => {
+		for (const [status, reason] of [
+			[404, 'Portfolio list not found.'],
+			[400, 'Invalid portfolioListId.']
+		] as const) {
+			apiJSON.mockReset();
+			apiJSON.mockRejectedValueOnce(new FakeAPIError(status, reason, undefined, { reason }));
+			expect(await confirmHoldings(event, 'a1', holdingsInput)).toEqual({
+				kind: 'tradesError',
+				id: 'a1',
+				message: reason,
+				rowErrors: []
+			});
+			expect(apiJSON).toHaveBeenCalledTimes(1);
+		}
+	});
+
+	test('a 4xx without a reason shows the exact fallback', async () => {
+		apiJSON.mockRejectedValueOnce(new FakeAPIError(404, '', undefined, { message: 'x' }));
+		expect(await confirmHoldings(event, 'a1', holdingsInput)).toMatchObject({
+			kind: 'tradesError',
+			message: "Couldn't save these holdings. Try again."
+		});
+	});
+
+	test('readHoldingsConfirmInput needs a rows array and leaves a trades body alone', () => {
+		expect(readHoldingsConfirmInput({ trades: [] })).toBeNull();
+		expect(readHoldingsConfirmInput(null)).toBeNull();
+		expect(readHoldingsConfirmInput({ rows: [{ symbol: 'A' }], replaceExisting: true })).toEqual({
+			rows: [{ symbol: 'A' }],
+			replaceExisting: true,
+			portfolioListId: undefined
+		});
+	});
+});
+
 describe('mapAssistantAction', () => {
 	const action = (toolName: string, args: string) =>
 		({
@@ -187,12 +317,33 @@ describe('mapAssistantAction', () => {
 		expect(mapAssistantAction(action('record_trades', args)).trades?.rows).toHaveLength(1);
 	});
 
+	test('update_holdings gets its parsed card, or the plain one when unreadable', () => {
+		const args = JSON.stringify({
+			portfolioListId: 'L1',
+			fromCsv: false,
+			rows: [{ symbol: 'AAPL', shares: 1, avgPrice: 2, existing: 'none' }]
+		});
+		expect(mapAssistantAction(action('update_holdings', args)).holdings?.rows).toHaveLength(1);
+		expect(mapAssistantAction(action('update_holdings', '???')).holdings).toBeNull();
+		expect(mapAssistantAction(action('record_trades', args)).holdings).toBeUndefined();
+	});
+
 	test('unreadable record_trades arguments fall back to the plain card', () => {
 		expect(mapAssistantAction(action('record_trades', '???')).trades).toBeNull();
 	});
 });
 
 describe('attachPortfolioLists', () => {
+	test('gives a holdings card the lists for its picker', async () => {
+		apiJSON.mockResolvedValueOnce([{ id: 'L1', name: 'Main' }]);
+		const card = { holdings: { rows: [] } } as never;
+		const messages = [{ id: 'm', role: 'assistant', action: card }] as never[];
+		await attachPortfolioLists(event, messages);
+		expect((card as { portfolioLists: unknown }).portfolioLists).toEqual([
+			{ id: 'L1', name: 'Main' }
+		]);
+	});
+
 	test('asks only when a trades card exists', async () => {
 		await attachPortfolioLists(event, [{ id: 'm', role: 'assistant' } as never]);
 		expect(apiJSON).not.toHaveBeenCalled();
@@ -208,6 +359,19 @@ describe('loadAssistantPage', () => {
 		});
 		const vm = await loadAssistantPage(event);
 		expect(vm.imagesEnabled).toBe(false);
+		expect(vm.documentsEnabled).toBe(false);
 		expect(vm.errorMessage).toBe('');
+	});
+
+	test('reports documents when the backend preferences say so', async () => {
+		apiJSON.mockImplementation((_e: unknown, _m: string, path: string) => {
+			if (path === '/v1/ai/assistant/conversations') return Promise.resolve([]);
+			if (path === '/v1/ai/assistant/preferences')
+				return Promise.resolve({ imagesEnabled: true, documentsEnabled: true });
+			return Promise.resolve(null);
+		});
+		const vm = await loadAssistantPage(event);
+		expect(vm.imagesEnabled).toBe(true);
+		expect(vm.documentsEnabled).toBe(true);
 	});
 });

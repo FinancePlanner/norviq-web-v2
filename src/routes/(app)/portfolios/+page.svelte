@@ -187,6 +187,11 @@
 				</div>
 				<div class="flex flex-wrap gap-2">
 					<a class="btn-secondary" href={'/portfolio?portfolio=' + selected.id}>Open holdings</a>
+					<a
+						class="btn-secondary"
+						href={'/portfolio/import?portfolio_list_id=' + encodeURIComponent(selected.id)}
+						>Import from broker</a
+					>
 					<a class="btn-secondary" href={'/portfolio/rebalancing?portfolio=' + selected.id}
 						>Rebalancing</a
 					>

@@ -3,6 +3,7 @@ import {
 	createQuickConversation,
 	forgetConversation,
 	latestExchange,
+	needsWideCard,
 	quickQAllowedOn,
 	storeConversation,
 	storedConversation
@@ -114,5 +115,16 @@ describe('createQuickConversation', () => {
 	test('an answer without an id is a failure', async () => {
 		const request = answering(Response.json({}));
 		await expect(createQuickConversation(request, assign)).rejects.toThrow('Assistant unavailable');
+	});
+});
+
+describe('needsWideCard', () => {
+	const withAction = (action: object): MessageRow =>
+		({ ...row('a', 'assistant'), action: { id: 'x', ...action } }) as MessageRow;
+	test('trades and holdings review cards are wide; plain messages are not', () => {
+		expect(needsWideCard([row('a', 'assistant')])).toBe(false);
+		expect(needsWideCard([withAction({ trades: {} })])).toBe(true);
+		expect(needsWideCard([withAction({ holdings: { rows: [] } })])).toBe(true);
+		expect(needsWideCard([withAction({ holdings: null })])).toBe(false);
 	});
 });

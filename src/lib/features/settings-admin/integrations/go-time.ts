@@ -8,14 +8,6 @@ export function formatGoDate(d: Date): string {
 	return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
 }
 
-/** "Jan 2, 2006 3:04 PM" */
-export function formatGoDateTime(d: Date): string {
-	const h24 = d.getUTCHours();
-	const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
-	const mm = String(d.getUTCMinutes()).padStart(2, '0');
-	return `${formatGoDate(d)} ${h12}:${mm} ${h24 < 12 ? 'AM' : 'PM'}`;
-}
-
 /** handlers.formatRelativeTime (dashboard_mcp_status.go). */
 export function formatRelativeTime(t: Date, now: Date = new Date()): string {
 	let d = now.getTime() - t.getTime();

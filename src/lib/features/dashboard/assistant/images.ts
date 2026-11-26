@@ -3,6 +3,12 @@
 
 export const MAX_CHAT_IMAGES = 3;
 export const MAX_CHAT_IMAGE_BYTES = 5 << 20;
+// PDF and CSV limits are the backend's (internal/platform/attachment): the
+// 3-file cap covers images and documents together, with at most one PDF and
+// one CSV. Page count, encryption and UTF-8 are left to the backend's reasons.
+export const MAX_CHAT_PDF_BYTES = 8 << 20;
+export const MAX_CHAT_CSV_BYTES = 1 << 20;
+export const UNSUPPORTED_FILE = 'Only images, PDFs and CSV files are supported.';
 const MAX_EDGE = 1568;
 const QUALITIES = [0.8, 0.7, 0.6, 0.5];
 
@@ -65,4 +71,44 @@ export async function prepareChatImage(file: File): Promise<File> {
 	} finally {
 		bitmap.close();
 	}
+}
+
+export type DocumentKind = 'pdf' | 'csv';
+export type AttachmentKind = 'image' | DocumentKind;
+
+/** `accept` for the picker. */
+export function acceptTypes(images: boolean, documents: boolean): string {
+	const parts: string[] = [];
+	if (images) parts.push('image/png,image/jpeg,image/webp,image/gif');
+	if (documents) parts.push('application/pdf,text/csv,.csv');
+	return parts.join(',');
+}
+
+/** A CSV is told by its .csv name, as the backend does; browsers disagree on its type. */
+export function documentKind(file: File): DocumentKind | null {
+	const name = file.name.toLowerCase();
+	if (name.endsWith('.csv')) return 'csv';
+	if (file.type === 'application/pdf' || name.endsWith('.pdf')) return 'pdf';
+	return null;
+}
+
+/** The refusal copy for a document that cannot join `held`, or null. Same words as the backend (attachment.go). */
+export function checkDocument(
+	file: File,
+	kind: DocumentKind,
+	held: AttachmentKind[]
+): string | null {
+	if (file.size > (kind === 'pdf' ? MAX_CHAT_PDF_BYTES : MAX_CHAT_CSV_BYTES)) {
+		return kind === 'pdf'
+			? 'Each PDF must be 8 MB or smaller.'
+			: 'Each CSV must be 1 MB or smaller.';
+	}
+	if (held.includes(kind))
+		return kind === 'pdf' ? 'Attach one PDF at a time.' : 'Attach one CSV at a time.';
+	return null;
+}
+
+/** The multipart field every attachment goes under: iOS's "file" (the backend also takes "image"). */
+export function appendChatFiles(body: FormData, files: File[]) {
+	for (const file of files) body.append('file', file, file.name);
 }
