@@ -626,6 +626,7 @@ export function confirmHoldings(
 		maybeSaved: HOLDINGS_MAYBE_SAVED,
 		upgrade: HOLDINGS_UPGRADE,
 		refusal: (body) => refusalReason(body),
+		clientRefusal: refusalReason,
 		retry: HOLDINGS_FALLBACK,
 		rowErrors: (body) => rowErrorsOf(body, 'rows'),
 		extras: (body) => {
@@ -642,6 +643,11 @@ interface ConfirmCopy {
 	closed: string;
 	maybeSaved: string;
 	upgrade: string;
+	/**
+	 * The message of any other 4xx (a 404 included), which keeps the card open.
+	 * Unset: a 404 closes the card as expired and another 4xx says `retry`.
+	 */
+	clientRefusal?: (body: unknown) => string;
 	/** The message of a 422: the backend's reason, or a fixed fallback. */
 	refusal: (body: unknown, reason: string) => string;
 	retry: string;
@@ -665,7 +671,7 @@ async function confirmReviewed(
 		return { kind: 'result', vm: { id, success: true, message: confirmed.message } };
 	} catch (err) {
 		const status = statusOf(err);
-		if (status === 409 || status === 404)
+		if (status === 409 || (status === 404 && !copy.clientRefusal))
 			return { kind: 'tradesExpired', id, message: copy.expired };
 		if (status === 422 && isAPIError(err)) {
 			const message = copy.refusal(err.body, err.reason);
@@ -692,7 +698,12 @@ async function confirmReviewed(
 			return { kind: 'tradesError', id, message: TRADES_UNCONFIRMED, rowErrors: [] };
 		}
 		const upgrade = status === 403 && isAPIError(err) && err.code === 'upgrade_required';
-		return { kind: 'tradesError', id, message: upgrade ? copy.upgrade : copy.retry, rowErrors: [] };
+		const message = upgrade
+			? copy.upgrade
+			: copy.clientRefusal && isAPIError(err)
+				? copy.clientRefusal(err.body)
+				: copy.retry;
+		return { kind: 'tradesError', id, message, rowErrors: [] };
 	}
 }
 

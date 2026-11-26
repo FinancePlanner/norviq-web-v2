@@ -88,7 +88,7 @@ describe('HoldingsCard', () => {
 			.toBeVisible();
 	});
 
-	it('offers the fixed label when a collision names no symbols', async () => {
+	it('always offers the replace switch, with the fixed label when no symbols are known', async () => {
 		const noHeld = parseHoldingsAction({
 			toolName: 'update_holdings',
 			arguments:
@@ -96,7 +96,10 @@ describe('HoldingsCard', () => {
 		})!;
 		const p = props({ holdings: noHeld });
 		render(HoldingsCard, p as never);
-		expect(page.getByRole('checkbox', { name: /Replace/ }).elements()).toHaveLength(0);
+		await expect.element(page.getByRole('checkbox', { name: 'Replace existing' })).toBeVisible();
+		await page.getByRole('checkbox', { name: 'Replace existing' }).click();
+		await page.getByRole('button', { name: 'Save 1 holding' }).click();
+		expect(p.onsave).toHaveBeenCalledWith(expect.objectContaining({ replaceExisting: true }));
 		await expect
 			.element(page.getByText('Check each row against your CSV. Only ticked rows are saved.'))
 			.toBeVisible();

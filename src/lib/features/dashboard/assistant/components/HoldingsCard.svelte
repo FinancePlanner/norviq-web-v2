@@ -91,7 +91,6 @@
 	const symbols = $derived(
 		collidingSymbols(onStoredList ? rows : [], error?.collisionSymbols ?? [])
 	);
-	const showReplace = $derived(symbols.length > 0 || replaceExisting);
 
 	function save() {
 		if (canSave) onsave(holdingsConfirmBody(holdings, rows, replaceExisting, listId));
@@ -221,14 +220,12 @@
 		</div>
 	</fieldset>
 
-	{#if showReplace}
-		<label
-			class="mt-3 flex items-start gap-2 rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/5 p-3 text-sm"
-		>
-			<input type="checkbox" class="mt-0.5" bind:checked={replaceExisting} disabled={busy} />
-			<span>{replaceLabel(symbols)}</span>
-		</label>
-	{/if}
+	<label
+		class="mt-3 flex items-start gap-2 rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/5 p-3 text-sm"
+	>
+		<input type="checkbox" class="mt-0.5" bind:checked={replaceExisting} disabled={busy} />
+		<span>{replaceLabel(symbols)}</span>
+	</label>
 
 	{#if error}
 		<div class="mt-3 text-sm text-[var(--color-danger)]" role="alert">

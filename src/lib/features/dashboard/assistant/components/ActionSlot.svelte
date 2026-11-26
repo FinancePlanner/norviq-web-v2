@@ -77,7 +77,9 @@
 				kind: 'tradesError',
 				id: action.id,
 				message: refused
-					? (copy?.retry ?? 'That did not go through. Try again.')
+					? verb === 'confirm' && copy
+						? copy.retry
+						: 'That did not go through. Try again.'
 					: TRADES_UNCONFIRMED,
 				rowErrors: []
 			};

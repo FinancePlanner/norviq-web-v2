@@ -257,6 +257,31 @@ describe('confirmHoldings', () => {
 		});
 	});
 
+	test('a 404 or 400 keeps the card open with the backend reason', async () => {
+		for (const [status, reason] of [
+			[404, 'Portfolio list not found.'],
+			[400, 'Invalid portfolioListId.']
+		] as const) {
+			apiJSON.mockReset();
+			apiJSON.mockRejectedValueOnce(new FakeAPIError(status, reason, undefined, { reason }));
+			expect(await confirmHoldings(event, 'a1', holdingsInput)).toEqual({
+				kind: 'tradesError',
+				id: 'a1',
+				message: reason,
+				rowErrors: []
+			});
+			expect(apiJSON).toHaveBeenCalledTimes(1);
+		}
+	});
+
+	test('a 4xx without a reason shows the exact fallback', async () => {
+		apiJSON.mockRejectedValueOnce(new FakeAPIError(404, '', undefined, { message: 'x' }));
+		expect(await confirmHoldings(event, 'a1', holdingsInput)).toMatchObject({
+			kind: 'tradesError',
+			message: "Couldn't save these holdings. Try again."
+		});
+	});
+
 	test('readHoldingsConfirmInput needs a rows array and leaves a trades body alone', () => {
 		expect(readHoldingsConfirmInput({ trades: [] })).toBeNull();
 		expect(readHoldingsConfirmInput(null)).toBeNull();
