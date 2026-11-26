@@ -11,6 +11,7 @@ export interface PortfolioOptionVM {
 	id: string;
 	name: string;
 	mode: string;
+	isDefault?: boolean;
 }
 
 export interface AddPositionFormVM {

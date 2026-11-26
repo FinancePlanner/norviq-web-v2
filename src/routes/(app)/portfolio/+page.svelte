@@ -152,6 +152,10 @@
 			selected: item.id.toLowerCase() === vm.selectedPortfolio.toLowerCase()
 		}))
 	);
+	const importHref = $derived(
+		'/portfolio/import' +
+			(vm.selectedPortfolio ? '?portfolio_list_id=' + encodeURIComponent(vm.selectedPortfolio) : '')
+	);
 </script>
 
 <svelte:head>
@@ -177,6 +181,7 @@
 		>One page</SecondaryButton
 	>
 	<SecondaryButton href="/portfolios">Manage</SecondaryButton>
+	<SecondaryButton href={importHref}>Import from broker</SecondaryButton>
 	<PrimaryButton
 		class="portfolio-add-btn"
 		data-guide="holding-add"
@@ -242,10 +247,13 @@
 					<div class="portfolio-empty empty-state-inline">
 						<p class="empty-state-inline-title">No positions</p>
 						<p class="empty-state-inline-desc">Add your first holding or change your filter.</p>
-						<NativeButton
-							class="btn-primary mt-4"
-							onclick={() => dialog.openDialog('add-position-dialog')}>Add position</NativeButton
-						>
+						<div class="mt-4 flex flex-wrap gap-2">
+							<NativeButton
+								class="btn-primary"
+								onclick={() => dialog.openDialog('add-position-dialog')}>Add position</NativeButton
+							>
+							<a class="btn-secondary" href={importHref}>Import from broker</a>
+						</div>
 					</div>
 				{:else}
 					{#each visibleRows as row (row.id)}
