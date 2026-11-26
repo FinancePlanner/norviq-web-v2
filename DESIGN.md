@@ -311,8 +311,8 @@ Restrained and exact: one filled gold action per view, everything else quiet.
 
 ### Navigation
 
-- **Sidebar:** grouped, collapsible sections, 15px rows. Active item: gold text, a 6% gold wash and a 2px gold inset rule on the leading edge.
-- **Mobile:** a top bar with logo and two icon buttons, a section sub-nav of chips under the banner, and a five-tab bottom bar whose active tab is gold.
+- **Rows:** 15px. Active item: gold text, a 6% gold wash and a 2px gold inset rule on the leading edge.
+- **Structure:** groups, bottom bar, top bar and palette are in Navigation (DS 2.0) below.
 
 ### Document Section (signature)
 
@@ -391,7 +391,7 @@ Norviq has six domains, in this order, and each answers one question. `src/lib/n
 | Community    | What are others doing?              |
 
 - **Sidebar:** one group per domain. A group lists its picks (★): at most 7, in table order, chosen by editors, not by usage. Each group ends with "All in {domain} →", a link to the `/{domain}` index page, which lists every destination in the domain with a one-line description. The foot holds "Search and commands ⌘K", Settings and the account row. Settings is not a group.
-- **Mobile (under 1024px):** a five-tab bottom bar: Today `/dashboard`, Money `/expenses`, Wealth `/portfolio`, Plan `/planning`, More `/more`. The active tab is gold. More is the index of everything else.
+- **Mobile (under 1024px):** a five-tab bottom bar: Today `/dashboard`, Money `/expenses`, Wealth `/portfolio`, Plan `/planning`, More `/more`. The active tab is gold. More is the index of everything else. Above it, a top bar holds the logo and icon buttons, and a section sub-nav of chips sits under the banner.
 - **Desktop top bar (1024px and up):** on the left "{Domain} · {weekday day month}". On the right a search button, "Search holdings, pages, actions" with ⌘K, then notifications, then "Ask Q".
 - **⌘K palette:** loaded on demand, not in the first bundle. It searches actions, destinations and symbols. A row locked behind Pro shows the Pro badge.
 - **Gated destinations:** when a feature gate is off, its destinations are absent from every surface: sidebar, index pages, bottom bar and palette. Nothing is greyed out.
