@@ -10,18 +10,15 @@
 	import type { ActionOutcome, ActionRow, MessageRow } from '../types.js';
 	import { PLAN_NOT_CONFIRMED } from '../stream.js';
 	import { settleConfirmOutcome, TRADES_UNCONFIRMED } from '../trades.js';
-	import { HOLDINGS_EXPIRED, HOLDINGS_FALLBACK, HOLDINGS_MAYBE_SAVED } from '../holdings.js';
-	import HoldingsCard from './HoldingsCard.svelte';
 	import TradesCard from './TradesCard.svelte';
 	import WatchCard from './WatchCard.svelte';
 
 	let { action, onreply }: { action: ActionRow; onreply: (message: MessageRow) => void } = $props();
 
-	const HOLDINGS_COPY = {
-		expired: HOLDINGS_EXPIRED,
-		maybeSaved: HOLDINGS_MAYBE_SAVED,
-		retry: HOLDINGS_FALLBACK
-	};
+	// The holdings card and its helpers load only when a holdings action renders,
+	// so they stay out of the always-mounted Quick Q chunk.
+	const loadHoldings = () =>
+		Promise.all([import('./HoldingsCard.svelte'), import('../holdings.js')]);
 
 	let outcome = $state<ActionOutcome | null>(null);
 	let busy = $state(false);
@@ -175,17 +172,25 @@
 		oncancel={() => answerTrades('cancel')}
 	/>
 {:else if action.holdings}
-	<HoldingsCard
-		actionID={action.id}
-		summary={action.summary}
-		expiresAt={action.expiresAt}
-		holdings={action.holdings}
-		lists={action.portfolioLists}
-		{busy}
-		error={outcome?.kind === 'tradesError' ? outcome : null}
-		onsave={(body) => answerTrades('confirm', body, HOLDINGS_COPY)}
-		oncancel={() => answerTrades('cancel', undefined, HOLDINGS_COPY)}
-	/>
+	{@const holdings = action.holdings}
+	{#await loadHoldings() then [card, h]}
+		{@const copy = {
+			expired: h.HOLDINGS_EXPIRED,
+			maybeSaved: h.HOLDINGS_MAYBE_SAVED,
+			retry: h.HOLDINGS_FALLBACK
+		}}
+		<card.default
+			actionID={action.id}
+			summary={action.summary}
+			expiresAt={action.expiresAt}
+			{holdings}
+			lists={action.portfolioLists}
+			{busy}
+			error={outcome?.kind === 'tradesError' ? outcome : null}
+			onsave={(body: unknown) => answerTrades('confirm', body, copy)}
+			oncancel={() => answerTrades('cancel', undefined, copy)}
+		/>
+	{/await}
 {:else if action.watch}
 	{@const watch = action.watch}
 	<WatchCard actionID={action.id} {watch} {busy} onanswer={(verb) => answer(verb, watch)} />
