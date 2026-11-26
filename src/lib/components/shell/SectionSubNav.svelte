@@ -4,7 +4,9 @@
 	import type { NavItemVM } from '#lib/nav/visible.js';
 
 	// The chips come from subNavLinks. No NavBadge here: the sidebar pick is the
-	// one place that polls a badge URL (Groups unread).
+	// one place that polls a badge URL (Groups unread). Domain chips say which
+	// one is active (a deep /portfolio/… page marks Holdings); child chips match
+	// the path exactly.
 	let { links, activePath }: { links: NavItemVM[]; activePath?: string } = $props();
 </script>
 
@@ -12,7 +14,7 @@
 	{#each links as item (item.path)}
 		<a
 			href={item.path}
-			class={isActivePath(activePath ?? page.url.pathname, item.path)
+			class={(item.active ?? isActivePath(activePath ?? page.url.pathname, item.path))
 				? 'section-subnav-link section-subnav-link-active'
 				: 'section-subnav-link'}
 		>

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import dashboardPage from '../../routes/(app)/dashboard/+page.svelte?raw';
 import periodPage from '../../routes/(app)/dashboard/pulse/+page.svelte?raw';
 import ptPT from '../i18n/pt-PT.json';
+import DESIGN from '../../../DESIGN.md?raw';
 import { Feature } from '../billing.js';
 import { socialOff, type SocialConfig } from '../nav.js';
 import { DESCRIPTIONS } from './descriptions.js';
@@ -16,7 +17,8 @@ import {
 	sidebarDomains,
 	subNavLinks,
 	visibleDestinations,
-	type NavContext
+	type NavContext,
+	type NavItemVM
 } from './visible.js';
 
 const id = (s: string) => s;
@@ -283,6 +285,14 @@ describe('destination model (DS 2.0 P3)', () => {
 		expect(routes.filter((re) => re.test('/nowhere'))).toEqual([]);
 	});
 
+	it('DESIGN.md quotes each domain’s question verbatim', () => {
+		const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		for (const key of DOMAIN_ORDER) {
+			const { label, question } = DOMAIN_META[key];
+			expect(DESIGN).toMatch(new RegExp(`\\| ${escape(label)} +\\| ${escape(question)} +\\|`));
+		}
+	});
+
 	it('every destination has one description, and every description a destination', () => {
 		const ids = DESTINATIONS.map((d) => d.id);
 		expect(ids.filter((key) => !DESCRIPTIONS[key]?.trim())).toEqual([]);
@@ -388,9 +398,8 @@ describe('destination model (DS 2.0 P3)', () => {
 			'Congress',
 			'Earnings'
 		]);
-		expect(subNavLinks(id, allOn, '/portfolio/allocation')).toEqual([]);
-		expect(subNavLinks(id, socialOffCtx, '/boards')).toEqual([]);
 		expect(subNavLinks(id, allOn, '/nowhere')).toEqual([]);
+		expect(subNavLinks(id, allOn, '/more')).toEqual([]);
 		const groups = subNavLinks(id, allOn, '/groups/12');
 		expect(groups[0]).toEqual({
 			label: 'Your groups',
@@ -398,6 +407,76 @@ describe('destination model (DS 2.0 P3)', () => {
 			showProBadge: false,
 			badgeURL: '/groups/unread-badge'
 		});
+	});
+});
+
+// Phones have no sidebar: a destination without a chip row of its own shows its
+// domain's picks, then "All in {domain} →", so every pick stays one tap away.
+describe('phone sub-nav: the domain picks where a destination has no chips', () => {
+	const paths = (links: NavItemVM[]) => links.map((l) => l.path);
+	const activeOf = (links: NavItemVM[]) => links.filter((l) => l.active).map((l) => l.path);
+	const WEALTH = [
+		'/portfolio',
+		'/portfolios',
+		'/portfolio/allocation',
+		'/portfolio/dividends',
+		'/portfolio/watchlist',
+		'/portfolio/earnings',
+		'/portfolio/rebalancing'
+	];
+
+	it('/portfolio shows the Wealth picks, then All in Wealth →', () => {
+		const links = subNavLinks(id, allOn, '/portfolio');
+		expect(paths(links)).toEqual([...WEALTH, '/wealth']);
+		expect(links.at(-1)?.label).toBe('All in Wealth →');
+		expect(activeOf(links)).toEqual(['/portfolio']);
+	});
+
+	it('marks the pick a deeper page belongs to', () => {
+		expect(activeOf(subNavLinks(id, allOn, '/portfolio/AAPL/chart'))).toEqual(['/portfolio']);
+		expect(activeOf(subNavLinks(id, allOn, '/portfolio/allocation'))).toEqual([
+			'/portfolio/allocation'
+		]);
+		// A destination that is not a pick (Crypto) shows its domain with none marked.
+		const crypto = subNavLinks(id, allOn, '/crypto');
+		expect(paths(crypto)).toEqual([...WEALTH, '/wealth']);
+		expect(activeOf(crypto)).toEqual([]);
+	});
+
+	it('/dashboard shows the Today picks', () => {
+		const links = subNavLinks(id, allOn, '/dashboard');
+		expect(paths(links)).toEqual([
+			'/dashboard',
+			'/dashboard/pulse',
+			'/dashboard/activity',
+			'/assistant',
+			'/notifications',
+			'/today'
+		]);
+		expect(activeOf(links)).toEqual(['/dashboard']);
+	});
+
+	it('the index page marks its own chip', () => {
+		expect(activeOf(subNavLinks(id, allOn, '/wealth'))).toEqual(['/wealth']);
+	});
+
+	it('leaves gated picks out and badges Pro-locked ones', () => {
+		const community = paths(subNavLinks(id, socialOffCtx, '/boards'));
+		expect(community).toEqual(['/boards', '/community']);
+		const locked: NavContext = { ...allOn, locked: (f) => f === Feature.NetWorthForecasting };
+		const planning = subNavLinks(id, locked, '/goals');
+		expect(planning.find((l) => l.path === '/forecast')?.showProBadge).toBe(true);
+		expect(planning.find((l) => l.path === '/goals')?.showProBadge).toBe(false);
+	});
+
+	it('keeps a destination’s own chips where it has them', () => {
+		expect(subNavLinks(id, allOn, '/markets').every((l) => l.active === undefined)).toBe(true);
+		expect(paths(subNavLinks(id, allOn, '/expenses'))).toEqual(['/expenses', '/expenses/year']);
+	});
+
+	it('shows nothing outside the six domains', () => {
+		expect(subNavLinks(id, allOn, '/today/nowhere')).toEqual([]);
+		expect(subNavLinks(id, allOn, '/oauth/consent')).toEqual([]);
 	});
 });
 

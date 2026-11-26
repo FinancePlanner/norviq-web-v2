@@ -1,11 +1,24 @@
 // The rules behind the Quick Q card (components/QuickAssistant.svelte): where
 // its button shows, which conversation it uses, and what it displays.
 
+import { Feature } from '#lib/billing.js';
 import { PLAN_NOT_CONFIRMED, TOO_MANY_REQUESTS } from './stream.js';
 import type { AIConsentRefusal, MessageRow } from './types.js';
 
 const STORAGE_KEY = 'norviq.quickQ.conversation';
 const UNAVAILABLE = 'Assistant unavailable';
+
+/**
+ * Whether (app)/+layout.svelte mounts the Quick Q card: AI insights on, and no
+ * guided step covering the page. AppShell's "Ask Q" opens the card only then;
+ * a layout that never mounts it (/oauth/consent) links to full Q instead.
+ */
+export function quickQMounted(data: {
+	features?: Record<string, boolean>;
+	guidedStep?: unknown;
+}): boolean {
+	return !!data.features?.[Feature.AIInsights] && !data.guidedStep;
+}
 
 /**
  * Full Q needs no shortcut to itself, the consent page must not be covered, and

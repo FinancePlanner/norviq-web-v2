@@ -11,7 +11,6 @@
 		Settings
 	} from '@lucide/svelte';
 	import NorviqLogo from '#lib/components/brand/NorviqLogo.svelte';
-	import { Feature } from '#lib/billing.js';
 	import { quickQAllowedOn } from '#lib/features/dashboard/assistant/quick.js';
 	import { t } from '#lib/i18n/context.svelte.js';
 	import { achievementsOn, type SocialConfig } from '#lib/nav.js';
@@ -46,10 +45,20 @@
 		sidebar: SidebarDomainVM[];
 		social: SocialConfig;
 		trialExpired: boolean;
+		/** The layout mounts the Quick Q card (quickQMounted); default: it does not. */
+		quickQ?: boolean;
 		children: Snippet;
 	}
 
-	let { username, email, sidebar, social, trialExpired, children }: Props = $props();
+	let {
+		username,
+		email,
+		sidebar,
+		social,
+		trialExpired,
+		quickQ = false,
+		children
+	}: Props = $props();
 
 	// Go renderShell's activePath: a page may render under another section's nav
 	// (pilots under /markets) by returning `activePath` from its load.
@@ -88,13 +97,10 @@
 					? t(DOMAIN_META[domain].label)
 					: null
 	);
-	// Ask Q opens the Quick Q card wherever (app)/+layout.svelte mounts it.
+	// Ask Q opens the Quick Q card only where the layout mounts it (quickQ) and
+	// the card may show on this page; everywhere else it links to full Q.
 	const qMode = $derived<'card' | 'link'>(
-		page.data.features?.[Feature.AIInsights] &&
-			!page.data.guidedStep &&
-			quickQAllowedOn(page.url.pathname)
-			? 'card'
-			: 'link'
+		quickQ && quickQAllowedOn(page.url.pathname) ? 'card' : 'link'
 	);
 
 	const linkBase =

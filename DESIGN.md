@@ -381,17 +381,17 @@ The motion tokens (`--motion-fast` and the rest) are live. The global `prefers-r
 
 Norviq has six domains, in this order, and each answers one question. `src/lib/nav/destinations.ts` is the source of names: a destination has one name on every surface. The design record is `docs/superpowers/plans/2026-11-25-ds2-p3-destinations.md`.
 
-| Domain       | Question                            |
-| ------------ | ----------------------------------- |
-| Today        | What needs me now?                  |
-| Money        | Where does my money go?             |
-| Wealth       | What do I own, and how is it doing? |
-| Planning     | Where am I heading?                 |
-| Intelligence | What should I know or ask?          |
-| Community    | What are others doing?              |
+| Domain       | Question                                       |
+| ------------ | ---------------------------------------------- |
+| Today        | Where do I stand, what changed, what needs me? |
+| Money        | Where does my money go?                        |
+| Wealth       | What do I own and how is it doing?             |
+| Planning     | Where am I heading?                            |
+| Intelligence | What's happening in markets and why?           |
+| Community    | What are others doing?                         |
 
 - **Sidebar:** one group per domain. A group lists its picks (★): at most 7, in table order, chosen by editors, not by usage. Each group ends with "All in {domain} →", a link to the `/{domain}` index page, which lists every destination in the domain with a one-line description. The foot holds "Search and commands ⌘K", Settings and the account row. Settings is not a group.
-- **Mobile (under 1024px):** a five-tab bottom bar: Today `/dashboard`, Money `/expenses`, Wealth `/portfolio`, Plan `/planning`, More `/more`. The active tab is gold. More is the index of everything else. Above it, a top bar holds the logo and icon buttons, and a section sub-nav of chips sits under the banner.
+- **Mobile (under 1024px):** a five-tab bottom bar: Today `/dashboard`, Money `/expenses`, Wealth `/portfolio`, Plan `/planning`, More `/more`. The active tab is gold. More is the index of everything else. Above it, a top bar holds the logo and icon buttons, and a section sub-nav of chips sits under the banner. The chips are the active destination's own sub-pages; where it has none (Overview, Holdings), they are its domain's picks, the active one marked, then "All in {domain} →", so a phone reaches every pick without search.
 - **Desktop top bar (1024px and up):** on the left "{Domain} · {weekday day month}". On the right a search button, "Search holdings, pages, actions" with ⌘K, then notifications, then "Ask Q".
 - **⌘K palette:** loaded on demand, not in the first bundle. It searches actions, destinations and symbols. A row locked behind Pro shows the Pro badge.
 - **Gated destinations:** when a feature gate is off, its destinations are absent from every surface: sidebar, index pages, bottom bar and palette. Nothing is greyed out.

@@ -23,6 +23,7 @@ vi.mock('@tanstack/svelte-query', () => ({
 }));
 
 import { Feature } from '#lib/billing.js';
+import { quickQMounted } from '#lib/features/dashboard/assistant/quick.js';
 import ptPT from '#lib/i18n/pt-PT.json';
 import { socialOff, type SocialConfig } from '#lib/nav.js';
 import { DESTINATIONS, DOMAIN_ORDER } from '#lib/nav/destinations.js';
@@ -36,7 +37,12 @@ import { load as yearLoad } from '../../../routes/(app)/expenses/year/+page.serv
 import YearPage from '../../../routes/(app)/expenses/year/+page.svelte';
 import IntegrationsPage from '../../../routes/(app)/settings/integrations/+page.svelte';
 import SettingsPage from '../../../routes/(app)/settings/+page.svelte';
+import ExpensesPage from '../../../routes/(app)/expenses/+page.svelte';
+import RetirePage from '../../../routes/(app)/planning/retire/+page.svelte';
+import type { PlannerViewModel } from '#lib/features/money/expenses/vm.js';
+import { defaultRetireDraft } from '#lib/features/planning-tools/planning/vm.js';
 import { emptyIBKRVM, emptyTelegramVM } from '#lib/features/settings-admin/integrations/types.js';
+import OAuthLayout from '../../../routes/(onboarding)/oauth/+layout.svelte';
 import AppShell from './AppShell.svelte';
 import { parseGroups } from './shell-state.svelte.js';
 import { openPalette, palette } from './palette-state.svelte.js';
@@ -195,7 +201,55 @@ describe('AppShell sidebar (DS 2.0 P3)', () => {
 			'/markets/congress',
 			'/markets/earnings'
 		]);
-		expect(shellAt('/dashboard')).not.toContain('mobile-section-subnav');
+	});
+
+	// Phones have no sidebar: where a destination has no chips, its domain's picks
+	// stand in, then "All in {domain} →". The row stays phone-only (lg:hidden).
+	const subNavOf = (html: string) => between(html, 'mobile-section-subnav', '</nav>');
+	const activeChips = (html: string) =>
+		[
+			...html.matchAll(/<a href="([^"]+)" class="section-subnav-link section-subnav-link-active"/g)
+		].map((m) => m[1]);
+
+	it('shows the Wealth picks and All in Wealth on /portfolio', () => {
+		const html = shellAt('/portfolio');
+		expect(html).toMatch(/<div class="mobile-section-subnav lg:hidden">/);
+		const sub = subNavOf(html);
+		expect(hrefs(sub)).toEqual([
+			'/portfolio',
+			'/portfolios',
+			'/portfolio/allocation',
+			'/portfolio/dividends',
+			'/portfolio/watchlist',
+			'/portfolio/earnings',
+			'/portfolio/rebalancing',
+			'/wealth'
+		]);
+		expect(sub).toContain('All in Wealth →');
+		expect(activeChips(sub)).toEqual(['/portfolio']);
+	});
+
+	it('shows the Today picks on /dashboard', () => {
+		const sub = subNavOf(shellAt('/dashboard'));
+		expect(hrefs(sub)).toEqual([
+			'/dashboard',
+			'/dashboard/pulse',
+			'/dashboard/activity',
+			'/assistant',
+			'/notifications',
+			'/today'
+		]);
+		expect(activeChips(sub)).toEqual(['/dashboard']);
+	});
+
+	it('leaves a gated pick out of the domain chips', () => {
+		// Social and articles off: Friends, Groups and Articles are gone from
+		// Community, and Boards has one chip left, so the domain row stands in.
+		const off = hrefs(subNavOf(shellAt('/boards')));
+		expect(off).toEqual(['/boards', '/community']);
+		// With articles on, Boards has its own two chips again.
+		const on = hrefs(subNavOf(shellAt('/boards', allSocial, true)));
+		expect(on).toEqual(['/boards', '/articles']);
 	});
 });
 
@@ -229,10 +283,11 @@ describe('AppShell desktop top bar', () => {
 		expect(html.indexOf('app-desktop-topbar')).toBeLessThan(html.indexOf('id="main-content"'));
 	});
 
-	// The same condition that mounts QuickAssistant in (app)/+layout.svelte.
+	// (app)/+layout.svelte passes quickQMounted(data), the condition that mounts QuickAssistant.
 	const askQ = (path: string, data: Record<string, unknown>) => {
 		state.page.url = new URL('https://norviq.test' + path);
-		state.page.data = { ...layoutData(socialOff, false), ...data };
+		const layout = { ...layoutData(socialOff, false), ...data };
+		state.page.data = layout;
 		const html = render(AppShell, {
 			props: {
 				username: 'ana',
@@ -240,6 +295,7 @@ describe('AppShell desktop top bar', () => {
 				sidebar: [],
 				social: socialOff,
 				trialExpired: false,
+				quickQ: quickQMounted(layout),
 				children: body
 			}
 		}).body;
@@ -261,6 +317,33 @@ describe('AppShell desktop top bar', () => {
 		['in group chat', '/groups/7', ai]
 	])('links to full Q %s', (_, path, data) => {
 		expect(askQ(path, data)).toBe('link');
+	});
+
+	// /oauth/consent wears the shell with AI features in its data but never mounts
+	// QuickAssistant: a card button there would do nothing.
+	it('links to full Q in a layout that does not mount the card', () => {
+		state.page.url = new URL('https://norviq.test/oauth/consent');
+		state.page.data = { ...layoutData(socialOff, false), ...ai };
+		const html = render(OAuthLayout, {
+			props: {
+				data: {
+					...layoutData(socialOff, false),
+					...ai,
+					locale: 'en' as const,
+					user: null,
+					runtime: {},
+					username: 'ana',
+					email: '',
+					sidebar: [],
+					trialExpired: false
+				},
+				params: {},
+				children: body
+			}
+		}).body;
+		const bar = topBarOf(html);
+		expect(bar).toMatch(/<a[^>]*href="\/assistant"[^>]*>(?:(?!<\/a>)[\s\S])*Ask Q/);
+		expect(bar).not.toMatch(/<button[^>]*>(?:(?!<\/button>)[\s\S])*Ask Q/);
 	});
 });
 
@@ -433,6 +516,68 @@ describe('one name per destination (§4.4)', () => {
 		await expect(
 			Promise.resolve(yearLoad({} as Parameters<typeof yearLoad>[0]))
 		).rejects.toMatchObject({ status: 402, body: { proGate: 'Spending log' } });
+	});
+
+	it('/expenses is "Budget" in its header and title', () => {
+		const vm: PlannerViewModel = {
+			hasLoadError: false,
+			errorMessage: '',
+			monthLabel: 'November 2026',
+			monthQuery: '2026-11',
+			prevMonthURL: '/expenses?month=2026-10',
+			nextMonthURL: '/expenses?month=2026-12',
+			hasSnapshot: false,
+			snapshotID: '',
+			salary: '',
+			plannedTotal: '',
+			spentTotal: '',
+			spentPct: 0,
+			donut: null,
+			pillars: [],
+			activity: [],
+			suggestions: [],
+			suggestionsError: '',
+			planItems: [],
+			categories: [],
+			recurring: [],
+			partnerName: '',
+			hasPartner: false,
+			isPro: false,
+			drift: null,
+			capacity: null,
+			alertPolicy: null,
+			discipline: null,
+			reallocations: [],
+			templates: [],
+			financialGoals: [],
+			portfolioLists: []
+		};
+		const page = named(ExpensesPage, {
+			vm,
+			features: {},
+			taxTeaser: new Promise(() => {})
+		});
+		expect(h1(page.body)).toBe('Budget');
+		expect(page.head).toContain('<title>Budget - Norviq</title>');
+	});
+
+	it('/planning/retire is "Retirement" in its header and title', () => {
+		const page = named(RetirePage, {
+			vm: {
+				draft: defaultRetireDraft(),
+				currency: 'EUR',
+				prefilledCost: false,
+				prefilledValue: false,
+				prefilledHousing: false,
+				noBudget: false,
+				result: null,
+				chart: null,
+				error: '',
+				notice: ''
+			}
+		});
+		expect(h1(page.body)).toBe('Retirement');
+		expect(page.head).toContain('<title>Retirement - Norviq</title>');
 	});
 
 	it('/settings/integrations is "Brokers and imports" in its header and title', () => {

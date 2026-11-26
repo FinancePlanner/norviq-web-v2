@@ -1,4 +1,10 @@
-import { DOMAIN_META, DOMAIN_ORDER, type Destination, type Tr } from '#lib/nav/destinations.js';
+import {
+	DOMAIN_META,
+	DOMAIN_ORDER,
+	type Destination,
+	type NavLink,
+	type Tr
+} from '#lib/nav/destinations.js';
 import { visibleDestinations, type NavContext } from '#lib/nav/visible.js';
 
 // The ⌘K palette's rows and ranking (DS 2.0 spec §4.2), kept apart from the
@@ -31,6 +37,7 @@ const domainRank = (d: Destination) =>
 /**
  * Every visible destination and child, hinted with its domain: the sidebar picks
  * first (domain order, then pick order), then the other destinations, then the
+ * domain index pages and More (named as their page headers name them), then the
  * children. A path is listed once, under its destination's name (§4.4): a chip
  * on its parent's own path ("Budget planner" on /expenses) is not a second name.
  */
@@ -41,9 +48,18 @@ export function paletteDestinations(t: Tr, ctx: NavContext): PaletteItem[] {
 	const picks = list
 		.filter((d) => d.pick !== undefined)
 		.sort((a, b) => domainRank(a) - domainRank(b) || (a.pick ?? 0) - (b.pick ?? 0));
-	const rows = [
+	// An index page is listed while its domain shows anything, as in the sidebar.
+	const indexes: NavLink[] = [
+		...DOMAIN_ORDER.filter((key) => list.some((d) => d.domain === key)).map((key) => ({
+			label: DOMAIN_META[key].label,
+			path: DOMAIN_META[key].indexPath
+		})),
+		{ label: 'More', path: '/more' }
+	];
+	const rows: { link: NavLink; d?: Destination }[] = [
 		...picks.map((d) => ({ link: d, d })),
 		...list.filter((d) => d.pick === undefined).map((d) => ({ link: d, d })),
+		...indexes.map((link) => ({ link })),
 		...list.flatMap((d) => (d.children ?? []).map((link) => ({ link, d })))
 	];
 	const seen = new Set<string>();
@@ -51,12 +67,8 @@ export function paletteDestinations(t: Tr, ctx: NavContext): PaletteItem[] {
 	for (const { link, d } of rows) {
 		if (seen.has(link.path)) continue;
 		seen.add(link.path);
-		const item: PaletteItem = {
-			kind: 'destination',
-			label: t(link.label),
-			hint: hint(d),
-			href: link.path
-		};
+		const item: PaletteItem = { kind: 'destination', label: t(link.label), href: link.path };
+		if (d) item.hint = hint(d);
 		// The sidebar's rule (visible.ts itemVM): no badge while entitlement is unknown.
 		if (link.featureKey && ctx.locked?.(link.featureKey)) item.pro = true;
 		out.push(item);

@@ -32,6 +32,8 @@ export interface NavItemVM {
 	path: string;
 	showProBadge: boolean;
 	badgeURL?: string;
+	/** Set on the phone sub-nav's domain chips, where the active one is not an exact path match. */
+	active?: boolean;
 }
 
 export interface SidebarDomainVM {
@@ -226,19 +228,35 @@ export function activeDomain(
 }
 
 /**
- * Chips for the active destination's visible children; none when fewer than two.
- * A page that is its own destination but also another's chip (Spending log in
- * Budget, Articles in Boards) falls back to the first destination listing it,
- * so the chip row the user came from stays in place.
+ * The phone sub-nav (phones have no sidebar). Chips for the active destination's
+ * visible children, when it has at least two. A page that is its own destination
+ * but also another's chip (Spending log in Budget, Articles in Boards) falls back
+ * to the first destination listing it, so the chip row the user came from stays
+ * in place. Anything else in a domain (Holdings, Overview, a domain index page)
+ * gets the domain's picks, then "All in {domain} →", with the active one marked.
  */
 export function subNavLinks(t: Tr, ctx: NavContext, path: string): NavItemVM[] {
 	const p = normalizePath(path);
 	const list = visibleDestinations(ctx);
 	const chips = (d: Destination | null | undefined) =>
 		d?.children && d.children.length >= 2 ? d.children : null;
-	const links =
-		chips(activeDestination(p, list)) ??
-		chips(list.find((d) => chips(d)?.some((c) => c.path === p))) ??
-		[];
-	return links.map((c) => itemVM(t, ctx, c));
+	const current = activeDestination(p, list);
+	const links = chips(current) ?? chips(list.find((d) => chips(d)?.some((c) => c.path === p)));
+	if (links) return links.map((c) => itemVM(t, ctx, c));
+
+	const domain = activeDomain(p, list);
+	if (!domain || domain === 'account') return [];
+	const picks = picksOf(list, domain);
+	if (picks.length === 0) return [];
+	const { label, indexPath } = DOMAIN_META[domain];
+	return [
+		...picks.map((d) => ({ ...itemVM(t, ctx, d), active: d.id === current?.id })),
+		{
+			// Tr takes the id alone; the sidebar's "All in …" link fills the same template.
+			label: t('All in %s →').replace('%s', t(label)),
+			path: indexPath,
+			showProBadge: false,
+			active: p === indexPath
+		}
+	];
 }

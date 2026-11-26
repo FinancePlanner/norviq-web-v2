@@ -103,6 +103,18 @@ describe('paletteDestinations', () => {
 		expect(label('/settings/language')).toBe('Language');
 	});
 
+	it('lists the six domain index pages and More, by their page names', () => {
+		const list = paletteDestinations(id, allOff);
+		const row = (href: string) => list.find((i) => i.href === href);
+		expect(row('/today')?.label).toBe('Today');
+		expect(row('/wealth')?.label).toBe('Wealth');
+		expect(row('/planning')?.label).toBe('Planning');
+		expect(row('/community')?.label).toBe('Community');
+		expect(row('/more')?.label).toBe('More');
+		expect(row('/wealth')).not.toHaveProperty('hint');
+		expect(rankPalette('wealth', itemsOf(id, allOff))[0]?.href).toBe('/wealth');
+	});
+
 	it('hints each row with its domain, and Account for account pages', () => {
 		const list = paletteDestinations(id, allOn);
 		const hint = (href: string) => list.find((i) => i.href === href)?.hint;
@@ -172,7 +184,9 @@ describe('rankPalette', () => {
 		const ranked = rankPalette('previsao', itemsOf(pt, allOn));
 		expect(ranked[0]?.label).toBe('Previsão do património');
 		expect(ranked[0]?.href).toBe('/forecast');
-		expect(rankPalette('PATRIMÓNIO', itemsOf(pt, allOn))[0]?.href).toBe('/forecast');
+		expect(rankPalette('DO PATRIMÓNIO', itemsOf(pt, allOn))[0]?.href).toBe('/forecast');
+		// "Património" is Wealth's own name, so the label prefix wins there.
+		expect(rankPalette('PATRIMONIO', itemsOf(pt, allOn))[0]?.href).toBe('/wealth');
 	});
 
 	it('ranks a label prefix, then a word prefix, then a substring; ties keep input order', () => {
