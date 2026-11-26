@@ -41,6 +41,24 @@ describe('/portfolio/import', () => {
 			.toHaveAttribute('href', '/onboarding/import/csv?portfolio_list_id=p2');
 	});
 
+	it('marks the chosen broker with the DS2 active chip and aria-pressed', async () => {
+		render(Page, { data } as never);
+		await page.getByRole('button', { name: 'IBKR' }).click();
+		const ibkr = page.getByRole('button', { name: 'IBKR' });
+		await expect.element(ibkr).toHaveAttribute('aria-pressed', 'true');
+		await expect.element(ibkr).toHaveClass('filter-chip-active');
+		await expect
+			.element(page.getByRole('button', { name: 'DEGIRO' }))
+			.not.toHaveClass('filter-chip-active');
+	});
+
+	it('shows the generic screenshot guide for other brokers', async () => {
+		render(Page, { data } as never);
+		await page.getByRole('button', { name: 'Other broker (CSV)' }).click();
+		await page.getByRole('button', { name: 'Screenshots' }).click();
+		await expect.element(page.getByText("in your broker's app or website")).toBeVisible();
+	});
+
 	it('shows the Ask Q guide', async () => {
 		render(Page, { data } as never);
 		await page.getByRole('button', { name: 'IBKR' }).click();

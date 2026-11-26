@@ -2,7 +2,7 @@
 	// Broker picker: choose a broker and portfolio, read a short guide, then go
 	// to the import flow (screenshots, Ask Q or CSV) that already exists.
 	import { untrack } from 'svelte';
-	import { SecondaryButton, SelectField } from '#lib/components/norviq/index.js';
+	import { SelectField } from '#lib/components/norviq/index.js';
 	import CSVImportFormatHint from '#lib/components/norviq/CSVImportFormatHint.svelte';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import {
@@ -28,6 +28,8 @@
 		data.portfolios.map((p) => ({ value: p.id, label: p.name + ' (' + p.mode + ')' }))
 	);
 
+	const chipClass = (on: boolean) => (on ? 'filter-chip filter-chip-active' : 'filter-chip');
+
 	function pickBroker(id: string) {
 		brokerId = id;
 		method = BROKERS.find((b) => b.id === id)?.methods[0] ?? '';
@@ -45,10 +47,11 @@
 		<h2 id="import-broker-title" class="text-lg font-semibold">Broker</h2>
 		<div class="mt-3 flex flex-wrap gap-2">
 			{#each BROKERS as b (b.id)}
-				<SecondaryButton
+				<button
+					type="button"
 					aria-pressed={brokerId === b.id}
-					class={brokerId === b.id ? 'ring-2 ring-primary' : ''}
-					onclick={() => pickBroker(b.id)}>{b.name}</SecondaryButton
+					class={chipClass(brokerId === b.id)}
+					onclick={() => pickBroker(b.id)}>{b.name}</button
 				>
 			{/each}
 		</div>
@@ -69,10 +72,11 @@
 			<h2 id="import-guide-title" class="text-lg font-semibold">{broker.name}</h2>
 			<div class="mt-3 flex flex-wrap gap-2">
 				{#each broker.methods as m (m)}
-					<SecondaryButton
+					<button
+						type="button"
 						aria-pressed={active === m}
-						class={active === m ? 'ring-2 ring-primary' : ''}
-						onclick={() => (method = m)}>{METHOD_LABELS[m]}</SecondaryButton
+						class={chipClass(active === m)}
+						onclick={() => (method = m)}>{METHOD_LABELS[m]}</button
 					>
 				{/each}
 			</div>
@@ -82,7 +86,7 @@
 				{:else if active === 'ask-q'}
 					<p class="text-sm">{ASK_Q_GUIDE}</p>
 				{:else}
-					<p class="text-sm">{screenshotGuide(broker.id === 'other' ? 'broker' : broker.name)}</p>
+					<p class="text-sm">{screenshotGuide(broker)}</p>
 				{/if}
 			</div>
 			<div class="mt-5 flex flex-wrap gap-2">

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BROKERS, methodHref } from './brokers.js';
+import { BROKERS, methodHref, screenshotGuide } from './brokers.js';
 
 describe('BROKERS', () => {
 	it('lists the named brokers and the generic CSV entry', () => {
@@ -36,5 +36,21 @@ describe('methodHref', () => {
 		expect(methodHref('screenshot', null)).toBe('/portfolio/import/screenshot');
 		expect(methodHref('csv', null)).toBe('/onboarding/import/csv');
 		expect(methodHref('ask-q', null)).toBe('/assistant');
+	});
+});
+
+describe('screenshotGuide', () => {
+	const by = (id: string) => BROKERS.find((b) => b.id === id)!;
+
+	it('names a named broker', () => {
+		expect(screenshotGuide(by('ibkr'))).toBe(
+			'Open your positions list in the IBKR app or website and take screenshots that show every holding. You can import up to 3 at a time.'
+		);
+	});
+
+	it('stays generic for other', () => {
+		expect(screenshotGuide(by('other'))).toBe(
+			"Open your positions list in your broker's app or website and take screenshots that show every holding. You can import up to 3 at a time."
+		);
 	});
 });

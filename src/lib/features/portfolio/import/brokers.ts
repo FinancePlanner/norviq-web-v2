@@ -25,8 +25,10 @@ export const METHOD_LABELS: Record<ImportMethod, string> = {
 export const ASK_Q_GUIDE =
 	'Attach your screenshots to Q and ask it to update your holdings. You review every row before anything is saved.';
 
-export const screenshotGuide = (broker: string) =>
-	`Open your positions list in the ${broker} app or website and take screenshots that show every holding. You can import up to 3 at a time.`;
+export function screenshotGuide(broker: BrokerGuide): string {
+	const who = broker.id === 'other' ? "your broker's" : `the ${broker.name}`;
+	return `Open your positions list in ${who} app or website and take screenshots that show every holding. You can import up to 3 at a time.`;
+}
 
 export function methodHref(method: ImportMethod, portfolioListId: string | null): string {
 	if (method === 'ask-q') return '/assistant';
