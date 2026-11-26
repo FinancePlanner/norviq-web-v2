@@ -12,6 +12,8 @@ export interface PaletteItem {
 	label: string;
 	hint?: string;
 	href: string;
+	/** Pro-locked for this member: the row shows the sidebar's Pro badge. */
+	pro?: boolean;
 }
 
 /** The common actions, in the order the empty palette lists them. */
@@ -49,7 +51,15 @@ export function paletteDestinations(t: Tr, ctx: NavContext): PaletteItem[] {
 	for (const { link, d } of rows) {
 		if (seen.has(link.path)) continue;
 		seen.add(link.path);
-		out.push({ kind: 'destination', label: t(link.label), hint: hint(d), href: link.path });
+		const item: PaletteItem = {
+			kind: 'destination',
+			label: t(link.label),
+			hint: hint(d),
+			href: link.path
+		};
+		// The sidebar's rule (visible.ts itemVM): no badge while entitlement is unknown.
+		if (link.featureKey && ctx.locked?.(link.featureKey)) item.pro = true;
+		out.push(item);
 	}
 	return out;
 }
@@ -88,12 +98,18 @@ export function rankPalette(
 		.map((item, index) => ({ item, index, rank: matchRank(fold(item.label), q) }))
 		.filter((r) => r.rank >= 0)
 		.sort((a, b) => a.rank - b.rank || a.index - b.index);
-	const seen = new Set<string>();
+	// One row per href. A later row for the same href (the Ask Q destination
+	// behind the Ask Q action) still hands on its Pro lock.
+	const at = new Map<string, number>();
 	const out: PaletteItem[] = [];
 	for (const { item } of ranked) {
-		if (out.length >= limit) break;
-		if (seen.has(item.href)) continue;
-		seen.add(item.href);
+		const i = at.get(item.href);
+		if (i !== undefined) {
+			if (item.pro && !out[i].pro) out[i] = { ...out[i], pro: true };
+			continue;
+		}
+		if (out.length >= limit) continue;
+		at.set(item.href, out.length);
 		out.push(item);
 	}
 	return out;

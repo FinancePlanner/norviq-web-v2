@@ -238,7 +238,9 @@
 							onmousedown={(e) => e.preventDefault()}
 							onpointermove={() => (active = index)}
 						>
-							<span class="min-w-0 flex-1 truncate">{item.label}</span>
+							<span class="min-w-0 truncate">{item.label}</span>
+							{#if item.pro}<span class="pro-badge pro-badge-sm">Pro</span>{/if}
+							<span class="flex-1"></span>
 							{#if item.hint}
 								<span class="shrink-0 text-caption text-muted-foreground">{item.hint}</span>
 							{/if}

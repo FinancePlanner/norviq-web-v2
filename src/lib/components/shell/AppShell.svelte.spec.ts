@@ -6,7 +6,7 @@ import { socialOff } from '#lib/nav.js';
 import { sidebarDomains } from '#lib/nav/visible.js';
 import type { SearchResultVM } from '#lib/features/dashboard/panels/types.js';
 import AppShellTestHost from './AppShellTestHost.svelte';
-import { palette } from './palette-state.svelte.js';
+import { palette, paletteChunk } from './palette-state.svelte.js';
 
 // The ⌘K palette in a real browser: the three buttons and the shortcut open it,
 // Escape hands focus back, and a failing symbol search leaves the rest listed.
@@ -19,12 +19,12 @@ const nav = vi.hoisted(() => ({
 	afterNavigate: () => {}
 }));
 vi.mock('$app/navigation', () => nav);
-vi.mock('$app/state', () => ({
-	page: {
-		url: new URL('http://localhost/dashboard'),
-		data: { locale: 'en', social: socialOff, articles: false, features: {}, billingUnknown: true }
-	}
-}));
+// page.data is the layout data navContextFrom reads; tests change entitlement.
+const app = vi.hoisted(() => {
+	const data: Record<string, unknown> = { locale: 'en', articles: false };
+	return { page: { url: new URL('http://localhost/dashboard'), data } };
+});
+vi.mock('$app/state', () => app);
 
 // A page with a text field, as the Overview has its asset search.
 const body = createRawSnippet(() => ({
@@ -86,10 +86,14 @@ async function paletteOpen() {
 	await expect.poll(() => document.activeElement).toBe(combobox());
 }
 
+// Unknown entitlement, as the mock starts: no Pro badges.
+const signedIn = { features: {}, billingUnknown: true };
+
 beforeEach(() => {
 	palette.open = false;
 	palette.everOpened = false;
 	nav.goto.mockClear();
+	Object.assign(app.page.data, signedIn, { social: socialOff });
 });
 
 afterEach(() => {
@@ -220,6 +224,63 @@ describe('⌘K palette (client)', () => {
 		await userEvent.keyboard('net');
 		await expect.poll(statusText).toBe('Searching…');
 		expect(options()[0]).toContain('Net worth forecast');
+	});
+
+	it('retries the palette chunk when its first load fails', async () => {
+		const load = paletteChunk.load;
+		const flaky = vi
+			.fn<typeof load>()
+			.mockRejectedValueOnce(new TypeError('Failed to fetch dynamically imported module'))
+			.mockImplementation(load);
+		paletteChunk.load = flaky;
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		try {
+			mount();
+			const field = document.querySelector<HTMLInputElement>('input[aria-label="Asset search"]');
+			field?.focus();
+			await userEvent.keyboard('{Meta>}k{/Meta}');
+			await expect.poll(() => flaky.mock.calls.length).toBe(1);
+			// The failed load leaves the palette closed, not stuck open with no dialog.
+			await expect.poll(() => palette.everOpened).toBe(false);
+			expect(palette.open).toBe(false);
+			expect(dialog()).toBeNull();
+			expect(warn).toHaveBeenCalledOnce();
+
+			await userEvent.keyboard('{Meta>}k{/Meta}');
+			await paletteOpen();
+			expect(flaky).toHaveBeenCalledTimes(2);
+			await userEvent.keyboard('{Escape}');
+			await expect.poll(() => document.activeElement).toBe(field);
+		} finally {
+			paletteChunk.load = load;
+			warn.mockRestore();
+		}
+	});
+
+	it('badges a Pro-locked destination with the sidebar’s Pro badge', async () => {
+		// Entitlement known, no features: every Pro destination is locked.
+		Object.assign(app.page.data, { features: {}, billingUnknown: false });
+		stubSearch(() => new Promise<Response>(() => {}));
+		mount();
+		openFromPhoneBar();
+		await paletteOpen();
+		await userEvent.keyboard('net');
+		const forecast = () =>
+			[...document.querySelectorAll('[role="option"]')].find((o) =>
+				o.textContent?.includes('Net worth forecast')
+			);
+		await expect.poll(() => forecast()?.querySelector('.pro-badge')?.textContent).toBe('Pro');
+		expect(forecast()?.querySelector('.pro-badge')?.className).toBe('pro-badge pro-badge-sm');
+	});
+
+	it('shows no Pro badge while entitlement is unknown', async () => {
+		stubSearch(() => new Promise<Response>(() => {}));
+		mount();
+		openFromPhoneBar();
+		await paletteOpen();
+		await userEvent.keyboard('net');
+		await expect.poll(() => options()[0]).toContain('Net worth forecast');
+		expect(document.querySelector('dialog.command-palette .pro-badge')).toBeNull();
 	});
 
 	it('moves the active option with the arrow keys', async () => {

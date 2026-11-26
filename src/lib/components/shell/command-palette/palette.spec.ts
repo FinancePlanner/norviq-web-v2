@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { Feature } from '#lib/billing.js';
 import ptPT from '#lib/i18n/pt-PT.json';
 import { translator } from '#lib/i18n/index.js';
 import { socialOff, type SocialConfig } from '#lib/nav.js';
@@ -71,6 +72,22 @@ describe('paletteDestinations', () => {
 		expect(hrefs(paletteDestinations(id, locked))).toContain('/forecast');
 	});
 
+	it('marks Pro-locked rows, children included, as the sidebar badges them', () => {
+		const free: NavContext = { ...allOn, locked: () => true };
+		const row = (ctx: NavContext, href: string) =>
+			paletteDestinations(id, ctx).find((i) => i.href === href);
+		expect(row(free, '/forecast')?.pro).toBe(true);
+		expect(row(free, '/reports/advanced')?.pro).toBe(true);
+		expect(row(free, '/goals')).not.toHaveProperty('pro');
+		// A Pro member, and unknown entitlement (no badges, as in the sidebar).
+		for (const ctx of [
+			{ ...allOn, locked: () => false },
+			{ ...allOn, locked: null }
+		]) {
+			expect(paletteDestinations(id, ctx).filter((i) => 'pro' in i)).toEqual([]);
+		}
+	});
+
 	it('names each path once, by its destination (§4.4)', () => {
 		const list = paletteDestinations(id, allOn);
 		expect(new Set(hrefs(list)).size).toBe(list.length);
@@ -137,6 +154,14 @@ describe('rankPalette', () => {
 			'/notifications',
 			'/expenses'
 		]);
+	});
+
+	it('keeps the Pro mark of a row it folds into an earlier one', () => {
+		// Ask Q is an action and a Pro destination: its one row carries the badge.
+		const aiLocked: NavContext = { ...allOn, locked: (f) => f === Feature.AIInsights };
+		const askQ = rankPalette('ask', itemsOf(id, aiLocked)).filter((i) => i.href === '/assistant');
+		expect(askQ).toEqual([{ kind: 'action', label: 'Ask Q', href: '/assistant', pro: true }]);
+		expect(rankPalette('ask', itemsOf(id, allOn))[0]).not.toHaveProperty('pro');
 	});
 
 	it('puts "Net worth forecast" first for "net"', () => {

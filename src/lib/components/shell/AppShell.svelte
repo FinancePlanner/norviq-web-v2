@@ -30,7 +30,7 @@
 	import NavBadge from './NavBadge.svelte';
 	import { domainIcon, sidebarIcon } from './nav-icons.js';
 	import { shell } from './shell-state.svelte.js';
-	import { openPalette, palette } from './palette-state.svelte.js';
+	import { loadPalette, openPalette, palette } from './palette-state.svelte.js';
 	import { pageMotion } from '#lib/motion.js';
 	import UnlockToast from '#lib/features/achievements/UnlockToast.svelte';
 
@@ -356,10 +356,11 @@
 			</div>
 		</div>
 
-		<!-- Loaded on the first opening, so the shell chunk does not carry it. -->
+		<!-- Loaded on the first opening, so the shell chunk does not carry it; a
+		     failed load resets everOpened, and the next opening loads it again. -->
 		{#if palette.everOpened}
-			{#await import('./command-palette/CommandPalette.svelte') then m}
-				<m.default />
+			{#await loadPalette() then CommandPalette}
+				{#if CommandPalette}<CommandPalette />{/if}
 			{/await}
 		{/if}
 
