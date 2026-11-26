@@ -17,6 +17,8 @@ export interface CSVPreviewRow {
 	buyDate: string;
 	/** The symbol is already held; committing replaces or merges it. */
 	replacesExisting: boolean;
+	/** Held from somewhere other than this import: the commit needs the merge confirmation. */
+	foreignHolding: boolean;
 }
 
 export interface CSVPreviewVM {
@@ -29,6 +31,8 @@ export interface CSVPreviewVM {
 	committed: boolean;
 	inserted: number;
 	updated: number;
+	/** A commit refused (409) because it would replace holdings it does not own. */
+	needsMergeConfirm: boolean;
 }
 
 const emptyPreview = (): CSVPreviewVM => ({
@@ -39,7 +43,8 @@ const emptyPreview = (): CSVPreviewVM => ({
 	error: '',
 	committed: false,
 	inserted: 0,
-	updated: 0
+	updated: 0,
+	needsMergeConfirm: false
 });
 
 /** portfolio_data.go formatShares */
@@ -81,6 +86,33 @@ type CommitResponse = {
 	errors: Array<{ line: number; message: string }>;
 };
 
+const isForeign = (item: PreviewResponse['items'][number]) =>
+	item.willReplaceExistingImport !== true &&
+	item.existingPositionKind != null &&
+	item.existingPositionKind !== 'none';
+
+function previewRows(p: PreviewResponse): CSVPreviewRow[] {
+	return (p.items ?? []).map((item) => ({
+		line: Math.trunc(item.line),
+		symbol: item.symbol,
+		shares: item.shares != null ? formatShares(item.shares) : '',
+		buyPrice: item.buyPrice != null ? formatCurrency(item.buyPrice) : '',
+		buyDate: item.buyDate ?? '',
+		replacesExisting:
+			item.willReplaceExistingImport === true ||
+			(item.existingPositionKind != null && item.existingPositionKind !== 'none'),
+		foreignHolding: isForeign(item)
+	}));
+}
+
+/** The backend's `reason` (or message) from a JSON error body, else ''. */
+async function errorReason(res: Response): Promise<string> {
+	const json: unknown = await res.json().catch(() => null);
+	if (!json || typeof json !== 'object') return '';
+	const p = json as { reason?: unknown };
+	return typeof p.reason === 'string' ? p.reason : '';
+}
+
 /** processCSVUpload(commit) */
 export async function processCSVUpload(
 	event: RequestEvent,
@@ -121,23 +153,35 @@ export async function processCSVUpload(
 		vm.error = 'Could not read the CSV file.';
 		return vm;
 	}
-	const body = new FormData();
-	body.append('file', new Blob([bytes], { type: 'application/octet-stream' }), file.name);
+	const confirmMerge = formValue(form, 'confirm_merge_existing') !== '';
+	const send = async (path: string, query: Record<string, string | undefined>) => {
+		const body = new FormData();
+		body.append('file', new Blob([bytes], { type: 'application/octet-stream' }), file.name);
+		try {
+			return await apiFetch(event, 'POST', path, body, { query });
+		} catch {
+			return new Response(null, { status: 599 });
+		}
+	};
+	const query = { provider, portfolioListId: portfolioListId || undefined };
 
-	const path = commit ? '/v1/brokers/import/csv/commit' : '/v1/brokers/import/csv';
-	let res: Response;
-	try {
-		res = await apiFetch(event, 'POST', path, body, {
-			query: { provider, portfolioListId: portfolioListId || undefined }
-		});
-	} catch {
-		res = new Response(null, { status: 599 });
-	}
+	const res = await send(
+		commit ? '/v1/brokers/import/csv/commit' : '/v1/brokers/import/csv',
+		commit && confirmMerge ? { ...query, confirmMergeExisting: 'true' } : query
+	);
 	const data = res.status === 200 ? await res.json().catch(() => null) : null;
 
 	if (commit) {
 		if (!data) {
-			vm.error = 'Import failed. Check the file format and try again.';
+			const reason = res.status >= 400 && res.status < 500 ? await errorReason(res) : '';
+			vm.error = reason || 'Import failed. Check the file format and try again.';
+			if (res.status === 409) {
+				// Show the rows again so the replace toggle can be ticked.
+				vm.needsMergeConfirm = true;
+				const again = await send('/v1/brokers/import/csv', query);
+				const preview = again.status === 200 ? await again.json().catch(() => null) : null;
+				if (preview) vm.rows = previewRows(preview as PreviewResponse);
+			}
 			return vm;
 		}
 		const c = data as CommitResponse;
@@ -152,16 +196,7 @@ export async function processCSVUpload(
 		return vm;
 	}
 	const p = data as PreviewResponse;
-	vm.rows = (p.items ?? []).map((item) => ({
-		line: Math.trunc(item.line),
-		symbol: item.symbol,
-		shares: item.shares != null ? formatShares(item.shares) : '',
-		buyPrice: item.buyPrice != null ? formatCurrency(item.buyPrice) : '',
-		buyDate: item.buyDate ?? '',
-		replacesExisting:
-			item.willReplaceExistingImport === true ||
-			(item.existingPositionKind != null && item.existingPositionKind !== 'none')
-	}));
+	vm.rows = previewRows(p);
 	vm.errors = (p.errors ?? []).map((e) => e.message);
 	return vm;
 }

@@ -61,6 +61,51 @@ test('preview rows carry the replace note fields', async () => {
 	);
 	const vm = await processCSVUpload(csvEvent(), false);
 	expect(vm.rows.map((r) => r.replacesExisting)).toEqual([true, true, false]);
+	// Only holdings this import does not own need the merge confirmation.
+	expect(vm.rows.map((r) => r.foreignHolding)).toEqual([false, true, false]);
+});
+
+test('commit sends confirmMergeExisting only when ticked', async () => {
+	apiFetch.mockResolvedValue(json({ inserted: [], updated: [], errors: [] }));
+	await processCSVUpload(csvEvent(), true);
+	await processCSVUpload(csvEvent({ confirm_merge_existing: '1' }), true);
+	expect(apiFetch.mock.calls[0][4]).toEqual({ query: { provider: 'generic' } });
+	expect(apiFetch.mock.calls[1][4]).toEqual({
+		query: { provider: 'generic', confirmMergeExisting: 'true' }
+	});
+	apiFetch.mockClear();
+	apiFetch.mockResolvedValue(json({ items: [], errors: [] }));
+	await processCSVUpload(csvEvent({ confirm_merge_existing: '1' }), false);
+	expect(apiFetch.mock.calls[0][4]).toEqual({ query: { provider: 'generic' } });
+});
+
+test('a 409 shows the backend reason and keeps the rows to confirm', async () => {
+	const reason = 'These holdings already exist and were not created by this import: MSFT.';
+	apiFetch
+		.mockResolvedValueOnce(new Response(JSON.stringify({ reason }), { status: 409 }))
+		.mockResolvedValueOnce(
+			json({
+				items: [{ line: 2, symbol: 'MSFT', shares: 1, existingPositionKind: 'manual' }],
+				errors: []
+			})
+		);
+	const vm = await processCSVUpload(csvEvent(), true);
+	expect(vm.error).toBe(reason);
+	expect(vm.needsMergeConfirm).toBe(true);
+	expect(vm.committed).toBe(false);
+	expect(vm.rows.map((r) => r.symbol)).toEqual(['MSFT']);
+	expect(apiFetch.mock.calls[1][2]).toBe('/v1/brokers/import/csv');
+});
+
+test('another 4xx with a reason shows it; without one the generic error stays', async () => {
+	apiFetch.mockResolvedValueOnce(
+		new Response(JSON.stringify({ reason: 'Bad CSV.' }), { status: 400 })
+	);
+	expect((await processCSVUpload(csvEvent(), true)).error).toBe('Bad CSV.');
+	apiFetch.mockResolvedValueOnce(new Response('nope', { status: 500 }));
+	expect((await processCSVUpload(csvEvent(), true)).error).toBe(
+		'Import failed. Check the file format and try again.'
+	);
 });
 
 const ev = (complete: boolean) => ({ locals: { session: { get: () => complete } } }) as never;

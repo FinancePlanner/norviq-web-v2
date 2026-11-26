@@ -5,13 +5,14 @@ import '../../../../layout.css';
 import Page from './+page.svelte';
 
 const LIST = '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a5b';
-const row = (line: number, symbol: string, replacesExisting: boolean) => ({
+const row = (line: number, symbol: string, replacesExisting: boolean, foreignHolding = false) => ({
 	line,
 	symbol,
 	shares: '1',
 	buyPrice: '',
 	buyDate: '',
-	replacesExisting
+	replacesExisting,
+	foreignHolding
 });
 
 describe('csv import page', () => {
@@ -21,6 +22,8 @@ describe('csv import page', () => {
 			preview: {
 				provider: 'generic',
 				rows: [row(2, 'AAPL', true), row(3, 'MSFT', false)],
+				needsMergeConfirm: false,
+				portfolioListId: '',
 				errors: [],
 				error: '',
 				committed: false,
@@ -33,10 +36,35 @@ describe('csv import page', () => {
 		expect(page.getByText('Replaces your existing MSFT').elements()).toHaveLength(0);
 	});
 
-	it('carries the portfolio id through the form posts', async () => {
+	it('carries the portfolio id through the form posts', () => {
 		const data = { step: 2, providers: ['generic'], provider: 'generic', portfolioListId: LIST };
 		render(Page, { data, form: null } as never);
 		const input = document.querySelector('#csv-form input[name="portfolio_list_id"]');
 		expect((input as HTMLInputElement).value).toBe(LIST);
+	});
+
+	it('offers the replace toggle only for a holding the import does not own', async () => {
+		const data = { step: 2, providers: ['generic'], provider: 'generic', portfolioListId: '' };
+		const preview = (rows: ReturnType<typeof row>[], needsMergeConfirm = false) => ({
+			preview: {
+				provider: 'generic',
+				portfolioListId: '',
+				rows,
+				errors: [],
+				error: '',
+				committed: false,
+				inserted: 0,
+				updated: 0,
+				needsMergeConfirm
+			}
+		});
+		const own = render(Page, { data, form: preview([row(2, 'AAPL', true)]) } as never);
+		expect(document.querySelector('input[name="confirm_merge_existing"]')).toBeNull();
+		await own.unmount();
+		render(Page, { data, form: preview([row(3, 'MSFT', true, true)], true) } as never);
+		const box = document.querySelector('input[name="confirm_merge_existing"]') as HTMLInputElement;
+		expect(box.getAttribute('form')).toBe('csv-form');
+		expect(box.checked).toBe(true);
+		await expect.element(page.getByText(/Replace positions you already hold in/)).toBeVisible();
 	});
 });
