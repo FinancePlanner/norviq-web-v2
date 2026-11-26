@@ -46,6 +46,7 @@
 		enctype="multipart/form-data"
 		use:enhance={submit}
 	>
+		<input type="hidden" name="portfolio_list_id" value={data.portfolioListId} />
 		<SelectField
 			id="provider"
 			name="provider"
@@ -109,7 +110,14 @@
 									{#each vm.rows as row, i (i)}
 										<tr>
 											<td class="opacity-50">{row.line}</td>
-											<td class="font-semibold">{row.symbol}</td>
+											<td class="font-semibold">
+												{row.symbol}
+												{#if row.replacesExisting}
+													<span class="block text-xs font-normal text-muted-foreground"
+														>Replaces your existing {row.symbol}</span
+													>
+												{/if}
+											</td>
 											<td class="text-right">{row.shares}</td>
 											<td class="text-right">{row.buyPrice}</td>
 										</tr>

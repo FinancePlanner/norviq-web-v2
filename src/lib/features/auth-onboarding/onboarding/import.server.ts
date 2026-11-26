@@ -3,6 +3,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { api, apiFetch, isAPIError } from '#lib/server/api.js';
 import { formatCurrency, formatFloat } from '#lib/format.js';
 import { formValue } from '#lib/form-value.js';
+import { portfolioListIdOrEmpty } from '#lib/features/portfolio/import/brokers.js';
 
 export const DEFAULT_CSV_PROVIDERS = ['generic', 'ibkr', 'trading212', 'degiro', 'revolut'];
 const MAX_CSV_UPLOAD_BYTES = 12 << 20;
@@ -14,10 +15,14 @@ export interface CSVPreviewRow {
 	shares: string;
 	buyPrice: string;
 	buyDate: string;
+	/** The symbol is already held; committing replaces or merges it. */
+	replacesExisting: boolean;
 }
 
 export interface CSVPreviewVM {
 	provider: string;
+	/** The validated portfolio the import targets; '' means the default list. */
+	portfolioListId: string;
 	rows: CSVPreviewRow[];
 	errors: string[];
 	error: string;
@@ -28,6 +33,7 @@ export interface CSVPreviewVM {
 
 const emptyPreview = (): CSVPreviewVM => ({
 	provider: '',
+	portfolioListId: '',
 	rows: [],
 	errors: [],
 	error: '',
@@ -64,6 +70,8 @@ type PreviewResponse = {
 		shares?: number | null;
 		buyPrice?: number | null;
 		buyDate?: string | null;
+		existingPositionKind?: 'none' | 'manual' | 'imported' | 'mixed' | null;
+		willReplaceExistingImport?: boolean;
 	}>;
 	errors: Array<{ line: number; message: string }>;
 };
@@ -95,6 +103,8 @@ export async function processCSVUpload(
 		return vm;
 	}
 	vm.provider = provider;
+	const portfolioListId = portfolioListIdOrEmpty(formValue(form, 'portfolio_list_id'));
+	vm.portfolioListId = portfolioListId;
 	const file = form.get('file');
 	if (!(file instanceof File) || (file.size === 0 && file.name === '')) {
 		vm.error = 'Select a CSV file to upload.';
@@ -117,7 +127,9 @@ export async function processCSVUpload(
 	const path = commit ? '/v1/brokers/import/csv/commit' : '/v1/brokers/import/csv';
 	let res: Response;
 	try {
-		res = await apiFetch(event, 'POST', path, body, { query: { provider } });
+		res = await apiFetch(event, 'POST', path, body, {
+			query: { provider, portfolioListId: portfolioListId || undefined }
+		});
 	} catch {
 		res = new Response(null, { status: 599 });
 	}
@@ -145,7 +157,10 @@ export async function processCSVUpload(
 		symbol: item.symbol,
 		shares: item.shares != null ? formatShares(item.shares) : '',
 		buyPrice: item.buyPrice != null ? formatCurrency(item.buyPrice) : '',
-		buyDate: item.buyDate ?? ''
+		buyDate: item.buyDate ?? '',
+		replacesExisting:
+			item.willReplaceExistingImport === true ||
+			(item.existingPositionKind != null && item.existingPositionKind !== 'none')
 	}));
 	vm.errors = (p.errors ?? []).map((e) => e.message);
 	return vm;

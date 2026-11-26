@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { afterImportPath } from '#lib/features/auth-onboarding/onboarding/onboarding.server.js';
+import { portfolioListIdOrEmpty } from '#lib/features/portfolio/import/brokers.js';
 import {
 	loadCSVProviders,
 	processCSVUpload
@@ -12,7 +13,8 @@ export const load: PageServerLoad = async (event) => {
 	const providers = await loadCSVProviders(event);
 	let provider = (event.url.searchParams.get('provider') ?? '').trim();
 	if (!provider && providers.length > 0) provider = providers[0];
-	return { step: 2, providers, provider };
+	const portfolioListId = portfolioListIdOrEmpty(event.url.searchParams.get('portfolio_list_id'));
+	return { step: 2, providers, provider, portfolioListId };
 };
 
 export const actions: Actions = {
@@ -29,6 +31,6 @@ export const actions: Actions = {
 			}
 			return { preview: vm };
 		}
-		redirect(303, afterImportPath(event, 'csv'));
+		redirect(303, afterImportPath(event, 'csv', vm.portfolioListId));
 	}
 };
