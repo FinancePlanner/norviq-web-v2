@@ -3,9 +3,11 @@ import { Feature } from '#lib/billing.js';
 import { requireFeature } from '#lib/server/guards.js';
 import {
 	confirmAction,
+	confirmHoldings,
 	confirmTrades,
 	formOf,
 	parseUUID,
+	readHoldingsConfirmInput,
 	readTradesConfirmInput
 } from '#lib/features/dashboard/assistant/assistant.server.js';
 
@@ -13,7 +15,7 @@ import {
 // Go swapped the answered card into #assistant-action-{id}; this answers the
 // same choice as an ActionOutcome for ActionSlot.svelte. kind=watch (with
 // title/schedule/spec) marks a standing-task card. A JSON body is the trades
-// card's reviewed rows, forwarded as the backend's confirm body.
+// card's reviewed rows, or the holdings card's, forwarded as the backend's confirm body.
 /** 25 rows of reviewed trades are a few KB; this only stops a runaway body. */
 const MAX_TRADES_BODY_BYTES = 256 << 10;
 
@@ -25,7 +27,11 @@ export const POST: RequestHandler = async (event) => {
 	if (Number(event.request.headers.get('content-length')) > MAX_TRADES_BODY_BYTES)
 		return new Response('Too many trades', { status: 413 });
 	if (event.request.headers.get('content-type')?.includes('application/json')) {
-		const input = readTradesConfirmInput(await event.request.json().catch(() => null));
+		const raw = await event.request.json().catch(() => null);
+		// A body with rows is the holdings card's; trades carry `trades`.
+		const holdings = readHoldingsConfirmInput(raw);
+		if (holdings) return Response.json(await confirmHoldings(event, id, holdings));
+		const input = readTradesConfirmInput(raw);
 		if (!input) return new Response('Invalid trades', { status: 400 });
 		return Response.json(await confirmTrades(event, id, input));
 	}

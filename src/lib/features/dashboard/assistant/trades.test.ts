@@ -507,6 +507,15 @@ describe('settleConfirmOutcome', () => {
 	test('an unreadable expiry counts as expired', () => {
 		expect(settleConfirmOutcome(expired, false, 'not a date', 0)).toEqual(expired);
 	});
+	test("uses the holdings card's own wording when given", () => {
+		const copy = { expired: 'gone', maybeSaved: 'maybe' };
+		const gone = { kind: 'tradesExpired', id: 'a1', message: 'gone' };
+		expect(settleConfirmOutcome(gone, true, undefined, Date.now(), copy)).toEqual({
+			...gone,
+			message: 'maybe'
+		});
+		expect(settleConfirmOutcome(expired, true, undefined, Date.now(), copy)).toEqual(expired);
+	});
 	test('other outcomes pass through', () => {
 		const closed = { kind: 'tradesExpired', id: 'a1', message: 'x' };
 		expect(settleConfirmOutcome(closed, true)).toEqual(closed);

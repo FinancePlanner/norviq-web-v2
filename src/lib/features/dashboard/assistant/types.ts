@@ -2,6 +2,7 @@
 // the server loaders (assistant.server.ts) and the Svelte components, and
 // sent as JSON by the fragment endpoints that replace the Go HTML fragments.
 
+import type { HoldingsReview } from './holdings.js';
 import type { RowError, TradesProposal } from './trades.js';
 
 export interface PageViewModel {
@@ -57,7 +58,9 @@ export interface ActionRow {
 	watch?: WatchProposalRow | null;
 	/** Set for a record_trades action: rendered as the trades card. */
 	trades?: TradesProposal | null;
-	/** The user's portfolio lists, for the trades card's picker. Empty when they could not be loaded. */
+	/** Set for an update_holdings action: rendered as the holdings card. */
+	holdings?: HoldingsReview | null;
+	/** The user's portfolio lists, for the trades and holdings cards' picker. Empty when they could not be loaded. */
 	portfolioLists?: PortfolioListOption[];
 }
 
@@ -115,7 +118,14 @@ export type ActionOutcome =
 	| { kind: 'watchResult'; vm: WatchResultViewModel }
 	| { kind: 'watchCard'; id: string; watch: WatchProposalRow; error: string }
 	/** The trades save was refused and the card is still open. rowErrors index the submitted trades. */
-	| { kind: 'tradesError'; id: string; message: string; rowErrors: RowError[] }
+	| {
+			kind: 'tradesError';
+			id: string;
+			message: string;
+			rowErrors: RowError[];
+			/** A holdings refusal that asks for "Replace existing": the symbols already held. */
+			collisionSymbols?: string[];
+	  }
 	/** The trades card can no longer be saved (answered, expired, or settled by a failed save). */
 	| { kind: 'tradesExpired'; id: string; message: string };
 

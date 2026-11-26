@@ -10,18 +10,33 @@
 	import type { ActionOutcome, ActionRow, MessageRow } from '../types.js';
 	import { PLAN_NOT_CONFIRMED } from '../stream.js';
 	import { settleConfirmOutcome, TRADES_UNCONFIRMED } from '../trades.js';
+	import { HOLDINGS_EXPIRED, HOLDINGS_FALLBACK, HOLDINGS_MAYBE_SAVED } from '../holdings.js';
+	import HoldingsCard from './HoldingsCard.svelte';
 	import TradesCard from './TradesCard.svelte';
 	import WatchCard from './WatchCard.svelte';
 
 	let { action, onreply }: { action: ActionRow; onreply: (message: MessageRow) => void } = $props();
+
+	const HOLDINGS_COPY = {
+		expired: HOLDINGS_EXPIRED,
+		maybeSaved: HOLDINGS_MAYBE_SAVED,
+		retry: HOLDINGS_FALLBACK
+	};
 
 	let outcome = $state<ActionOutcome | null>(null);
 	let busy = $state(false);
 	/** A confirm was sent from this card: a later 409 may mean that save went through. */
 	let attempted = false;
 
-	/** The trades card posts its reviewed rows as JSON; cancel carries nothing. */
-	async function answerTrades(verb: 'confirm' | 'cancel', rows?: unknown) {
+	/**
+	 * The trades and holdings cards post their reviewed rows as JSON; cancel
+	 * carries nothing. `copy` is the card's own wording for a failed answer.
+	 */
+	async function answerTrades(
+		verb: 'confirm' | 'cancel',
+		rows?: unknown,
+		copy?: { expired: string; maybeSaved: string; retry: string }
+	) {
 		busy = true;
 		const hadEarlierAttempt = verb === 'confirm' && attempted;
 		if (verb === 'confirm') attempted = true;
@@ -49,7 +64,9 @@
 			outcome = settleConfirmOutcome(
 				(await res.json()) as ActionOutcome,
 				hadEarlierAttempt,
-				action.expiresAt
+				action.expiresAt,
+				Date.now(),
+				copy
 			);
 		} catch (err) {
 			// Keep the card, and say so: a silent failure reads as a dead button. A
@@ -59,7 +76,9 @@
 			outcome = {
 				kind: 'tradesError',
 				id: action.id,
-				message: refused ? 'That did not go through. Try again.' : TRADES_UNCONFIRMED,
+				message: refused
+					? (copy?.retry ?? 'That did not go through. Try again.')
+					: TRADES_UNCONFIRMED,
 				rowErrors: []
 			};
 		} finally {
@@ -152,6 +171,18 @@
 		error={outcome?.kind === 'tradesError' ? outcome : null}
 		onsave={(body) => answerTrades('confirm', body)}
 		oncancel={() => answerTrades('cancel')}
+	/>
+{:else if action.holdings}
+	<HoldingsCard
+		actionID={action.id}
+		summary={action.summary}
+		expiresAt={action.expiresAt}
+		holdings={action.holdings}
+		lists={action.portfolioLists}
+		{busy}
+		error={outcome?.kind === 'tradesError' ? outcome : null}
+		onsave={(body) => answerTrades('confirm', body, HOLDINGS_COPY)}
+		oncancel={() => answerTrades('cancel', undefined, HOLDINGS_COPY)}
 	/>
 {:else if action.watch}
 	{@const watch = action.watch}
