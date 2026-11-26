@@ -32,6 +32,9 @@
 				? vm.rows.filter((r) => r.replacesExisting).map((r) => r.symbol)
 				: []
 	);
+	const replaceCopy = $derived(
+		`Replace positions you already hold in ${replaceSymbols.join(', ')}. Without this, the import stops rather than leaving two rows for the same symbol.`
+	);
 	const showMergeToggle = $derived(conflicts.length > 0 || (vm?.needsMergeConfirm ?? false));
 	const importSummary = (inserted: number, updated: number) =>
 		inserted === 0 && updated === 0
@@ -153,10 +156,7 @@
 									class="mt-0.5"
 									checked={vm.needsMergeConfirm}
 								/>
-								<span>
-									Replace positions you already hold in
-									{replaceSymbols.join(', ')}. Without this, the import stops rather than leaving two rows for the same symbol.
-								</span>
+								<span>{replaceCopy}</span>
 							</label>
 						{/if}
 						<div class="mt-6 flex flex-wrap items-center gap-3">
