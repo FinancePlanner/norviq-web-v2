@@ -30,7 +30,7 @@ test('a clean commit redirects to the chosen portfolio', async () => {
 	processScreenshotCommit.mockResolvedValue(vm({}));
 	await expect(run()).rejects.toMatchObject({
 		status: 303,
-		location: '/portfolio?portfolio_list_id=' + LIST
+		location: '/portfolio?portfolio=' + LIST
 	});
 });
 

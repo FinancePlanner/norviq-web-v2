@@ -36,3 +36,23 @@ test('falls back to the first list, and to none when the load fails', async () =
 	expect(data.portfolios).toEqual([]);
 	expect(data.selectedId).toBe('');
 });
+
+const UP = '3F1C2A4E-5B6D-4E7F-8A9B-0C1D2E3F4A5B';
+
+test('matches the id case-insensitively against upper-case list ids', async () => {
+	apiJSON.mockResolvedValue({
+		items: [
+			{ id: 'AAAAAAAA-5B6D-4E7F-8A9B-0C1D2E3F4A5B', name: 'Main', mode: 'actual', isDefault: true },
+			{ id: UP, name: 'Retire', mode: 'actual' }
+		]
+	});
+	const data = (await run('?portfolio_list_id=' + UP.toLowerCase())) as { selectedId: string };
+	expect(data.selectedId).toBe(UP);
+});
+
+test('keeps a valid UUID when the list fetch fails', async () => {
+	apiJSON.mockRejectedValueOnce(new Error('boom'));
+	expect(((await run('?portfolio_list_id=' + UP)) as { selectedId: string }).selectedId).toBe(UP);
+	apiJSON.mockRejectedValueOnce(new Error('boom'));
+	expect(((await run('?portfolio_list_id=zzz')) as { selectedId: string }).selectedId).toBe('');
+});

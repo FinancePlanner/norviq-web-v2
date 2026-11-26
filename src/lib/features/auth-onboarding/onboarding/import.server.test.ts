@@ -111,7 +111,7 @@ test('another 4xx with a reason shows it; without one the generic error stays', 
 const ev = (complete: boolean) => ({ locals: { session: { get: () => complete } } }) as never;
 
 test('afterImportPath lands an onboarded csv import on the chosen portfolio', () => {
-	expect(afterImportPath(ev(true), 'csv', LIST)).toBe('/portfolio?portfolio_list_id=' + LIST);
+	expect(afterImportPath(ev(true), 'csv', LIST)).toBe('/portfolio?portfolio=' + LIST);
 	expect(afterImportPath(ev(true), 'csv')).toBe('/portfolio');
 	expect(afterImportPath(ev(true), 'csv', 'junk')).toBe('/portfolio');
 	expect(afterImportPath(ev(false), 'csv', LIST)).toBe('/onboarding/budget');

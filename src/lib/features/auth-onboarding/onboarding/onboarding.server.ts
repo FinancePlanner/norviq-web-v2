@@ -161,5 +161,5 @@ export function afterImportPath(
 	if (!isOnboardingComplete(event)) return '/onboarding/budget';
 	if (source === 'manual') return '/settings/integrations?import=manual';
 	const id = portfolioListIdOrEmpty(portfolioListId);
-	return id ? '/portfolio?portfolio_list_id=' + encodeURIComponent(id) : '/portfolio';
+	return id ? '/portfolio?portfolio=' + encodeURIComponent(id) : '/portfolio';
 }

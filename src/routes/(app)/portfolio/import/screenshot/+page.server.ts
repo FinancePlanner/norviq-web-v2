@@ -53,7 +53,7 @@ export const actions: Actions = {
 		// skipped rows stay here so they can be read.
 		if (vm.committed && vm.errors.length === 0 && vm.inserted + vm.updated > 0) {
 			const id = portfolioListIdOrEmpty(vm.portfolioListID);
-			redirect(303, id ? '/portfolio?portfolio_list_id=' + encodeURIComponent(id) : '/portfolio');
+			redirect(303, id ? '/portfolio?portfolio=' + encodeURIComponent(id) : '/portfolio');
 		}
 		return { screenshot: vm };
 	}
