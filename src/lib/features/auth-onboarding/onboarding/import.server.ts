@@ -105,7 +105,7 @@ function previewRows(p: PreviewResponse): CSVPreviewRow[] {
 	}));
 }
 
-/** The backend's `reason` (or message) from a JSON error body, else ''. */
+/** The backend's `reason` from a JSON error body, else ''. */
 async function errorReason(res: Response): Promise<string> {
 	const json: unknown = await res.json().catch(() => null);
 	if (!json || typeof json !== 'object') return '';

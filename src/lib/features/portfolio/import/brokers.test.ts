@@ -28,13 +28,15 @@ describe('methodHref', () => {
 		expect(methodHref('screenshot', 'a b&c')).toBe(
 			'/portfolio/import/screenshot?portfolio_list_id=a%20b%26c'
 		);
-		expect(methodHref('csv', 'L1')).toBe('/onboarding/import/csv?portfolio_list_id=L1');
+		expect(methodHref('csv', 'L1')).toBe(
+			'/onboarding/import/csv?provider=generic&portfolio_list_id=L1'
+		);
 		expect(methodHref('ask-q', 'L1')).toBe('/assistant');
 	});
 
 	it('omits the param without a list id', () => {
 		expect(methodHref('screenshot', null)).toBe('/portfolio/import/screenshot');
-		expect(methodHref('csv', null)).toBe('/onboarding/import/csv');
+		expect(methodHref('csv', null)).toBe('/onboarding/import/csv?provider=generic');
 		expect(methodHref('ask-q', null)).toBe('/assistant');
 	});
 });

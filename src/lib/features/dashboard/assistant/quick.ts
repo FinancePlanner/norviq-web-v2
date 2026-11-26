@@ -88,3 +88,8 @@ export async function createQuickConversation(
 	if (typeof created?.id !== 'string' || created.id === '') throw new Error(UNAVAILABLE);
 	return created.id;
 }
+
+/** The trades and holdings review cards need a table's width. */
+export function needsWideCard(exchange: MessageRow[]): boolean {
+	return exchange.some((message) => (message.action?.trades ?? message.action?.holdings) != null);
+}

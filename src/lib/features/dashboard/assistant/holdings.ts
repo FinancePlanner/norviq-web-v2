@@ -45,7 +45,8 @@ export interface HoldingsConfirmBody {
 	rows: ConfirmHolding[];
 }
 
-export const TOOL_NAME = 'update_holdings';
+/** The pending-action tool name of holdings read from a screenshot or CSV. */
+export const HOLDINGS_TOOL = 'update_holdings';
 /** The backend's code for a 422 that asks for "Replace existing". */
 export const HOLDINGS_COLLISION = 'holdings_collision';
 export const HOLDINGS_FALLBACK = "Couldn't save these holdings. Try again.";
@@ -83,7 +84,7 @@ export function parseHoldingsAction(action: {
 	toolName: string;
 	arguments: string;
 }): HoldingsReview | null {
-	if (action.toolName !== TOOL_NAME) return null;
+	if (action.toolName !== HOLDINGS_TOOL) return null;
 	let stored: unknown;
 	try {
 		stored = JSON.parse(action.arguments);

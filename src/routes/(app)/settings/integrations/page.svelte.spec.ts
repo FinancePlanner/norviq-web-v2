@@ -98,7 +98,7 @@ describe('Settings > Integrations IBKR section', () => {
 		expect(document.body.textContent).not.toContain('Sync holdings from supported brokers');
 	});
 
-	it('Disconnect confirm mentions CSV imports labelled IBKR', async () => {
+	it('Disconnect confirm mentions CSV imports labelled IBKR', () => {
 		const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
 		render(Page, {
 			props: { data: { vm: vmWith(ibkrRow('connected')) }, form: null, params: {} } as never

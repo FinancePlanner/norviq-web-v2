@@ -32,10 +32,11 @@ export function screenshotGuide(broker: BrokerGuide): string {
 
 export function methodHref(method: ImportMethod, portfolioListId: string | null): string {
 	if (method === 'ask-q') return '/assistant';
+	// provider=generic keeps a CSV import from being labelled ibkr (IBKR Disconnect deletes those).
+	const params = method === 'csv' ? ['provider=generic'] : [];
+	if (portfolioListId) params.push(`portfolio_list_id=${encodeURIComponent(portfolioListId)}`);
 	const base = method === 'csv' ? '/onboarding/import/csv' : '/portfolio/import/screenshot';
-	return portfolioListId
-		? `${base}?portfolio_list_id=${encodeURIComponent(portfolioListId)}`
-		: base;
+	return params.length ? `${base}?${params.join('&')}` : base;
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

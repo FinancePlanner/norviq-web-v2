@@ -3,16 +3,16 @@ import { beforeEach, expect, test, vi } from 'vitest';
 const loadHoldingsViewModel = vi.fn<(...args: unknown[]) => Promise<Record<string, unknown>>>();
 vi.mock('#lib/features/portfolio/holdings/holdings.server.js', () => ({
 	loadHoldingsViewModel: (...a: unknown[]) => loadHoldingsViewModel(...a),
-	loadPortfolioOptions: vi.fn<() => unknown>(async () => [
+	loadPortfolioOptions: vi.fn<() => unknown>().mockResolvedValue([
 		{ id: 'p1', name: 'Main' },
 		{ id: 'p2', name: 'Retire' }
 	])
 }));
 vi.mock('#lib/features/portfolio/workspace/pilots.server.js', () => ({
-	pilotFollowingByPortfolio: vi.fn<() => unknown>(async () => ({}))
+	pilotFollowingByPortfolio: vi.fn<() => unknown>().mockResolvedValue({})
 }));
 vi.mock('#lib/server/app-context.js', () => ({
-	loadBillingContext: vi.fn<() => unknown>(async () => ({}))
+	loadBillingContext: vi.fn<() => unknown>().mockResolvedValue({})
 }));
 
 const { load } = await import('./+page.server.js');

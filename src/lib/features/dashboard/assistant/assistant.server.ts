@@ -20,6 +20,7 @@ import {
 	HOLDINGS_EXPIRED,
 	HOLDINGS_FALLBACK,
 	HOLDINGS_MAYBE_SAVED,
+	HOLDINGS_TOOL,
 	HOLDINGS_UPGRADE,
 	parseHoldingsAction,
 	refusalReason
@@ -400,8 +401,6 @@ function assistantCaption(message: AIMessage): string {
 const CREATE_WATCH_TOOL = 'create_watch';
 /** The pending-action tool name of a batch of screenshot trades. */
 const RECORD_TRADES_TOOL = 'record_trades';
-/** The pending-action tool name of holdings read from a screenshot or CSV. */
-const UPDATE_HOLDINGS_TOOL = 'update_holdings';
 
 export function mapAssistantAction(action: AIPendingAction): ActionRow {
 	const row: ActionRow = {
@@ -413,7 +412,7 @@ export function mapAssistantAction(action: AIPendingAction): ActionRow {
 	if (action.toolName === CREATE_WATCH_TOOL)
 		row.watch = watchProposalFromArguments(action.arguments, action.summary);
 	if (action.toolName === RECORD_TRADES_TOOL) row.trades = parseTradesProposal(action.arguments);
-	if (action.toolName === UPDATE_HOLDINGS_TOOL) row.holdings = parseHoldingsAction(action);
+	if (action.toolName === HOLDINGS_TOOL) row.holdings = parseHoldingsAction(action);
 	return row;
 }
 

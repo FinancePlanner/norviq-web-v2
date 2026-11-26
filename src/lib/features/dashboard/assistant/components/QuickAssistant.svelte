@@ -19,6 +19,7 @@
 		createQuickConversation,
 		forgetConversation,
 		latestExchange,
+		needsWideCard,
 		quickQAllowedOn,
 		storeConversation,
 		storedConversation
@@ -60,8 +61,7 @@
 	const hasExchange = $derived(
 		question !== '' || exchange.length > 0 || errorText !== '' || images.error !== ''
 	);
-	/** The trades review card needs a table's width. */
-	const wide = $derived(exchange.some((message) => message.action?.trades));
+	const wide = $derived(needsWideCard(exchange));
 
 	const showsButton = $derived(quickQAllowedOn(page.url.pathname));
 	const canOpenInQ = $derived(conversationId !== '' && (exchange.length > 0 || replyMissing));

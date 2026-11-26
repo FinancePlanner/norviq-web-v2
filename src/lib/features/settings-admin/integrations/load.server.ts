@@ -103,9 +103,6 @@ export async function loadIntegrationsVM(
 function applyIntegrationsFlash(vm: IntegrationsViewModel, query: URLSearchParams | null) {
 	if (!query) return;
 	switch ((query.get('import') ?? '').trim().toLowerCase()) {
-		case 'csv':
-			vm.successMessage = 'CSV imported. Your holdings were added to your portfolio.';
-			break;
 		case 'manual':
 			vm.successMessage = 'Holdings added to your portfolio.';
 			break;

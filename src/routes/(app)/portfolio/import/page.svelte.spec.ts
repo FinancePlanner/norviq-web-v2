@@ -38,7 +38,7 @@ describe('/portfolio/import', () => {
 		await expect.element(page.getByText('symbol,shares,buy_price,buy_date,notes')).toBeVisible();
 		await expect
 			.element(page.getByRole('link', { name: 'CSV file' }))
-			.toHaveAttribute('href', '/onboarding/import/csv?portfolio_list_id=p2');
+			.toHaveAttribute('href', '/onboarding/import/csv?provider=generic&portfolio_list_id=p2');
 	});
 
 	it('marks the chosen broker with the DS2 active chip and aria-pressed', async () => {
