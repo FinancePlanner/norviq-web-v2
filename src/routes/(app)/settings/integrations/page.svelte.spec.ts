@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import { page } from 'vitest/browser';
 import '../../../layout.css';
@@ -84,5 +84,29 @@ describe('Settings > Integrations IBKR section', () => {
 		render(Page, { props: { data: { vm: vmWith(ibkr) }, form: null, params: {} } as never });
 		await expect.element(page.getByText('Import IBKR holdings')).toBeInTheDocument();
 		expect(document.querySelector('form[action="?/ibkrDisconnect"]') !== null).toBe(shown);
+	});
+
+	it('describes importing holdings, not syncing', async () => {
+		render(Page, {
+			props: { data: { vm: vmWith(emptyIBKRVM()) }, form: null, params: {} } as never
+		});
+		await expect
+			.element(
+				page.getByText('Import holdings from your broker with screenshots, a CSV export, or Q.')
+			)
+			.toBeInTheDocument();
+		expect(document.body.textContent).not.toContain('Sync holdings from supported brokers');
+	});
+
+	it('Disconnect confirm mentions CSV imports labelled IBKR', async () => {
+		const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+		render(Page, {
+			props: { data: { vm: vmWith(ibkrRow('connected')) }, form: null, params: {} } as never
+		});
+		(document.querySelector('form[action="?/ibkrDisconnect"] button') as HTMLButtonElement).click();
+		expect(confirm).toHaveBeenCalledWith(
+			expect.stringContaining('IBKR holdings will be removed, including CSV imports labelled IBKR.')
+		);
+		confirm.mockRestore();
 	});
 });

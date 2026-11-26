@@ -30,7 +30,7 @@
 	function confirmIBKRDisconnect(e: MouseEvent) {
 		if (
 			!confirm(
-				'Disconnect IBKR from Norviq? Synced IBKR holdings will be removed from your portfolio.'
+				'Disconnect IBKR from Norviq? IBKR holdings will be removed, including CSV imports labelled IBKR.'
 			)
 		)
 			e.preventDefault();
@@ -174,7 +174,7 @@
 		</section>
 		<CollapsibleSection
 			title="Broker connections"
-			desc="Sync holdings from supported brokers or import a CSV export."
+			desc="Import holdings from your broker with screenshots, a CSV export, or Q."
 		>
 			<div class="mt-4">
 				<CSVImportFormatHint />
