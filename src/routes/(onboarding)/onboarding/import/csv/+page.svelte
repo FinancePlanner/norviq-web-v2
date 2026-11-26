@@ -22,6 +22,17 @@
 	const conflicts = $derived(
 		vm ? vm.rows.filter((r) => r.foreignHolding).map((r) => r.symbol) : []
 	);
+	// After a 409 re-preview no row is flagged foreign (the backend also flags
+	// rows this import account does not own), so fall back to the rows that
+	// replace an existing holding and keep the toggle whenever a confirm is due.
+	const replaceSymbols = $derived(
+		conflicts.length > 0
+			? conflicts
+			: vm
+				? vm.rows.filter((r) => r.replacesExisting).map((r) => r.symbol)
+				: []
+	);
+	const showMergeToggle = $derived(conflicts.length > 0 || (vm?.needsMergeConfirm ?? false));
 	const importSummary = (inserted: number, updated: number) =>
 		inserted === 0 && updated === 0
 			? 'No positions were changed.'
@@ -130,7 +141,7 @@
 								</tbody>
 							</table.Table>
 						</div>
-						{#if conflicts.length > 0}
+						{#if showMergeToggle}
 							<label
 								class="mt-4 flex items-start gap-2 rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/5 p-3 text-sm"
 							>
@@ -144,8 +155,7 @@
 								/>
 								<span>
 									Replace positions you already hold in
-									{conflicts.join(', ')}
-									. Without this, the import stops rather than leaving two rows for the same symbol.
+									{replaceSymbols.join(', ')}. Without this, the import stops rather than leaving two rows for the same symbol.
 								</span>
 							</label>
 						{/if}

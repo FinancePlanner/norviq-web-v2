@@ -149,8 +149,7 @@
 					/>
 					<span>
 						Replace positions you already hold in
-						{conflicts.join(', ')}
-						. Without this, the import stops rather than leaving two rows for the same symbol.
+						{conflicts.join(', ')}. Without this, the import stops rather than leaving two rows for the same symbol.
 					</span>
 				</label>
 			{/if}

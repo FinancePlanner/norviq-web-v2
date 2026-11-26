@@ -67,4 +67,27 @@ describe('csv import page', () => {
 		expect(box.checked).toBe(true);
 		await expect.element(page.getByText(/Replace positions you already hold in/)).toBeVisible();
 	});
+
+	it('keeps the toggle after a mixed 409 re-preview, when no row is flagged foreign', async () => {
+		const data = { step: 2, providers: ['generic'], provider: 'generic', portfolioListId: '' };
+		render(Page, {
+			data,
+			form: {
+				preview: {
+					provider: 'generic',
+					portfolioListId: '',
+					rows: [row(2, 'MSFT', true)],
+					errors: [],
+					error: 'Some holdings were not created by this import.',
+					committed: false,
+					inserted: 0,
+					updated: 0,
+					needsMergeConfirm: true
+				}
+			}
+		} as never);
+		const box = document.querySelector('input[name="confirm_merge_existing"]') as HTMLInputElement;
+		expect(box.checked).toBe(true);
+		await expect.element(page.getByText(/hold in\s+MSFT\. Without this/)).toBeVisible();
+	});
 });
