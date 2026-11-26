@@ -53,27 +53,30 @@
 		},
 		enabled: searched !== '',
 		retry: false,
-		staleTime: 60_000,
-		// The last results stay while the next keystroke's load.
-		placeholderData: (previous: SearchResultVM[] | undefined) => previous
+		staleTime: 60_000
 	}));
 
-	const symbolRows = $derived<PaletteItem[]>(
-		typed === ''
-			? []
-			: (symbols.data ?? []).map((row) => ({
-					kind: 'symbol',
-					label: row.name ? row.symbol + ' · ' + row.name : row.symbol,
-					href: row.href
-				}))
-	);
+	// Rows only ever answer what is typed now: while the next search is pending,
+	// Enter must not land on the last query's symbol.
+	const current = $derived(typed !== '' && searched === typed);
+	const symbolRows = $derived.by(() => {
+		if (!current) return [];
+		const rows: PaletteItem[] = [];
+		// One row per symbol page, however many exchanges list the symbol.
+		for (const row of symbols.data ?? []) {
+			if (rows.some((r) => r.href === row.href)) continue;
+			rows.push({
+				kind: 'symbol',
+				label: row.name ? row.symbol + ' · ' + row.name : row.symbol,
+				href: row.href
+			});
+		}
+		return rows;
+	});
+	const symbolsFailed = $derived(current && symbols.isError);
 	const symbolsPending = $derived(
-		typed !== '' &&
-			symbolRows.length === 0 &&
-			!symbols.isError &&
-			(searched !== typed || symbols.isFetching)
+		typed !== '' && !symbolsFailed && symbolRows.length === 0 && (!current || symbols.isFetching)
 	);
-	const symbolsFailed = $derived(typed !== '' && searched === typed && symbols.isError);
 
 	const TITLES: Record<PaletteKind, string> = {
 		destination: 'Go to',
