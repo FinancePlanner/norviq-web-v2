@@ -67,7 +67,7 @@
 			icon: 'message-square-text'
 		},
 		{
-			title: t('Integrations'),
+			title: t('Brokers and imports'),
 			href: '/settings/integrations',
 			description: t('Brokers, CSV import, and IBKR'),
 			icon: 'blocks'

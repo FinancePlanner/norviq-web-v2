@@ -2,6 +2,7 @@ import type { Component } from 'svelte';
 import {
 	Activity,
 	BadgeDollarSign,
+	Bell,
 	Bitcoin,
 	BookOpenText,
 	CalendarDays,
@@ -10,10 +11,13 @@ import {
 	ChartLine,
 	ChartNoAxesCombined,
 	ChartPie,
+	ChartSpline,
 	Circle,
 	CircleGauge,
+	Coins,
 	Compass,
 	Crosshair,
+	Flag,
 	Folder,
 	Globe,
 	Grid2x2,
@@ -25,6 +29,7 @@ import {
 	MessagesSquare,
 	Newspaper,
 	Percent,
+	Plug,
 	Plus,
 	Receipt,
 	ReceiptText,
@@ -33,6 +38,7 @@ import {
 	SlidersHorizontal,
 	Sparkles,
 	Star,
+	Sunrise,
 	Target,
 	TreePalm,
 	TrendingUp,
@@ -43,16 +49,20 @@ import {
 	Wallet,
 	Wrench
 } from '@lucide/svelte';
-import type { Tab } from '#lib/nav.js';
+import type { DomainKey } from '#lib/nav/destinations.js';
 
-// shell.templ sidebarItemIcon / bottomTabIcon.
+// shell.templ sidebarItemIcon, plus one icon per DS 2.0 P3 domain.
 
 const byPath: Record<string, Component> = {
 	'/dashboard': House,
+	'/dashboard/pulse': CalendarDays,
 	'/dashboard/activity': Activity,
+	'/notifications': Bell,
 	'/dashboard/insights': CircleGauge,
 	'/assistant': CircleGauge,
+	'/brief': Sunrise,
 	'/markets': Grid2x2,
+	'/economy': Globe,
 	'/boards': MessagesSquare,
 	'/articles': Newspaper,
 	'/tools': Wrench,
@@ -61,9 +71,12 @@ const byPath: Record<string, Component> = {
 	'/terminal': Crosshair,
 	'/simulator': SlidersHorizontal,
 	'/portfolio': LayoutGrid,
+	'/portfolios': Folder,
+	'/portfolio/dividends': Coins,
 	'/scenarios': CircleGauge,
 	'/forecast': ChartNoAxesCombined,
 	'/portfolio/screens': ListFilter,
+	'/chart-builder': ChartSpline,
 	'/portfolio/rebalancing': Scale,
 	'/portfolio/allocation': ChartPie,
 	'/portfolio/sector-gains': TrendingUp,
@@ -75,12 +88,16 @@ const byPath: Record<string, Component> = {
 	'/research': BookOpenText,
 	'/expenses': ReceiptText,
 	'/expenses/year': CalendarDays,
+	'/expenses/receipt/import': Receipt,
+	'/goals': Flag,
+	'/tax': Percent,
 	'/reports': ChartColumn,
 	'/reports/portfolio': Folder,
 	'/reports/spending': Wallet,
 	'/reports/trends': TrendingUp,
 	'/reports/deep-dive': Search,
 	'/settings': UserRound,
+	'/settings/integrations': Plug,
 	'/friends': Users,
 	'/groups': MessageCircle,
 	'/groups/discover': Compass,
@@ -93,19 +110,13 @@ const byPath: Record<string, Component> = {
 
 export const sidebarIcon = (path: string): Component => byPath[path] ?? Circle;
 
-const byTab: Record<Tab, Component> = {
-	dashboard: LayoutDashboard,
-	portfolio: ChartCandlestick,
-	expenses: Receipt,
-	reports: TrendingUp,
-	markets: Grid2x2,
-	economy: Globe,
-	tax: Percent,
-	friends: Users,
-	groups: MessageCircle,
-	community: MessagesSquare,
-	settings: UserRound,
-	tools: Wrench
+const byDomain: Record<DomainKey, Component> = {
+	today: LayoutDashboard,
+	money: Receipt,
+	wealth: ChartCandlestick,
+	planning: Compass,
+	intelligence: Globe,
+	community: MessagesSquare
 };
 
-export const tabIcon = (tab: Tab): Component => byTab[tab] ?? Circle;
+export const domainIcon = (key: DomainKey): Component => byDomain[key] ?? Circle;

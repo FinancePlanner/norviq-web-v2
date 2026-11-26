@@ -1,6 +1,7 @@
 <script lang="ts">
 	// dashboard.CommandCenterPage (command_center.templ).
 	import ConnectAgentPill from '#lib/components/norviq/ConnectAgentPill.svelte';
+	import { t } from '#lib/i18n/context.svelte.js';
 	import MarketBriefShell from '#lib/features/dashboard/market-brief/MarketBriefShell.svelte';
 	import OverviewAttentionPanel from '#lib/features/dashboard/command-center/OverviewAttentionPanel.svelte';
 	import InvestableCapacityHero from '#lib/features/dashboard/command-center/InvestableCapacityHero.svelte';
@@ -52,7 +53,7 @@
 	</section>
 	<ToolsPanel mcp={data.mcpStatus} terminal={data.terminalSummary} tax={data.taxPanel} />
 	<nav class="cc-more-links" aria-label="More dashboard views">
-		<a href="/dashboard/pulse" class="link-tint text-subhead font-semibold">Open pulse</a>
+		<a href="/dashboard/pulse" class="link-tint text-subhead font-semibold">{t('Open period')}</a>
 		<a href="/dashboard/activity" class="link-tint text-subhead font-semibold">Full activity</a>
 	</nav>
 	<QuickExpenseModal />

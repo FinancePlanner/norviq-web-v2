@@ -1,6 +1,6 @@
 import type { LayoutServerLoad } from './$types';
 import { loadAppContext } from '#lib/server/app-context.js';
-import { sidebarItemsFor } from '#lib/nav.js';
+import { sidebarDomains } from '#lib/nav/visible.js';
 import { availableFeatures } from '#lib/billing.js';
 import { guidedStepLayer } from '#lib/features/auth-onboarding/guided-start/guided.server.js';
 
@@ -19,7 +19,7 @@ export const load: LayoutServerLoad = async (event) => {
 		features: availableFeatures(ctx.billing),
 		social: ctx.social,
 		articles: ctx.articles,
-		sidebarItems: sidebarItemsFor(event.locals.t, {
+		sidebar: sidebarDomains(event.locals.t, {
 			social: ctx.social,
 			articles: ctx.articles,
 			locked: ctx.locked

@@ -26,7 +26,7 @@ import type {
 	LedgerFilterVM,
 	LedgerVM,
 	OverviewViewModel,
-	RangeOptionVM
+	PeriodOptionVM
 } from './types.js';
 import { buildOverviewFigures, perfRangeForKey } from './overview-vm.js';
 import { loadBudgetCurrency } from '../budget-currency.server.js';
@@ -258,7 +258,7 @@ function filterActivitiesByDomain(activities: Activity[], domain: string): Activ
 	return activities.filter((a) => activityDomain(a.type) === d);
 }
 
-function buildRangeOptions(active: timerange.Key, domain: string): RangeOptionVM[] {
+function buildRangeOptions(active: timerange.Key, domain: string): PeriodOptionVM[] {
 	return timerange.all().map((k) => {
 		let href = `${Path.Dashboard}/pulse?range=${k}`;
 		const d = parseLedgerDomain(domain);

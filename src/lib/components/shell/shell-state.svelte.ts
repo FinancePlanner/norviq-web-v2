@@ -1,24 +1,30 @@
 import { browser } from '$app/env';
+import { DOMAIN_ORDER } from '#lib/nav/destinations.js';
 
 // Sidebar rail + group open state. In the Go web this lived on <html> because
 // hx-boost replaced <body> on every navigation; here the shell persists across
 // navigations, so plain state works. The storage keys and value formats are
-// unchanged so a reader's saved preferences carry over.
+// unchanged so a reader's saved rail preference carries over.
 
 const SIDEBAR_KEY = 'app_sidebar';
 const GROUPS_KEY = 'app_nav_groups';
 
+/**
+ * A saved "key:1,key:0" group list, keyed by domain (DS 2.0 P3). A save from the
+ * old tab sidebar always holds a key that is not a domain, so it is dropped whole:
+ * filtering key by key would keep its "community:0" (once the Boards group).
+ */
+export function parseGroups(raw: string | null): Map<string, boolean> | null {
+	if (!raw) return null;
+	const pairs = raw.split(',').map((pair) => pair.split(':'));
+	if (!pairs.every(([k]) => (DOMAIN_ORDER as readonly string[]).includes(k))) return null;
+	return new Map(pairs.map(([k, v]) => [k, v === '1']));
+}
+
 function readGroups(): Map<string, boolean> | null {
 	if (!browser) return null;
 	try {
-		const raw = localStorage.getItem(GROUPS_KEY);
-		if (!raw) return null;
-		return new Map(
-			raw.split(',').map((pair) => {
-				const [k, v] = pair.split(':');
-				return [k, v === '1'] as [string, boolean];
-			})
-		);
+		return parseGroups(localStorage.getItem(GROUPS_KEY));
 	} catch {
 		return null;
 	}
@@ -47,15 +53,15 @@ class ShellState {
 		);
 	}
 
-	/** Explicit preference, else the server default: the active tab's group is open. */
-	isOpen(key: string, activeTab: string): boolean {
-		return this.groups?.get(key) ?? key === activeTab;
+	/** Explicit preference, else the default: the active domain's group is open. */
+	isOpen(key: string, activeDomain: string | null): boolean {
+		return this.groups?.get(key) ?? key === activeDomain;
 	}
 
-	toggleGroup(key: string, allKeys: string[], activeTab: string) {
+	toggleGroup(key: string, allKeys: string[], activeDomain: string | null) {
 		// Persist every group, not only the toggled one, so the "active group is
 		// open" fallback cannot re-open a group the reader closed (theme.js).
-		const next = new Map(allKeys.map((k) => [k, this.isOpen(k, activeTab)]));
+		const next = new Map(allKeys.map((k) => [k, this.isOpen(k, activeDomain)]));
 		next.set(key, !next.get(key));
 		this.groups = next;
 		try {

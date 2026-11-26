@@ -89,6 +89,9 @@
 	 * child) + padding-bottom 0.625rem (styles.css:1420, py-2.5) + 1px border
 	 * (styles.css:1420 border-b; surface.css:1929) = 63px. */
 	--app-topbar-height: calc(3.875rem + 1px);
+	/* Desktop top bar (DesktopTopBar.svelte, 1024px and up). The bar takes its
+	 * height from this token; the desktop toast and Q card sit below it. */
+	--app-desktop-topbar-height: 4.25rem;
 	/* Gap between a floating control (the Q button) and the bar it floats above. */
 	--float-offset: 0.5rem;
 	/* iOS AppTheme.Radius: control 12, card 16, hero 20. --radius is the card. */

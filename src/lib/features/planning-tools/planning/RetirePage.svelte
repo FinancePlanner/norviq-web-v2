@@ -4,6 +4,7 @@
 	import { enhance } from '$app/forms';
 	import { Field, SubmitButton } from '#lib/components/norviq/index.js';
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
+	import { t } from '#lib/i18n/context.svelte.js';
 	import RetireResultPanel from './RetireResultPanel.svelte';
 	import { previewEnhance } from './preview-enhance.js';
 	import { retireCostHint, retireValueHint, type RetireViewModel } from './vm.js';
@@ -18,7 +19,7 @@
 
 <vigil.CanvasPage
 	pageClass="planning-retire-page"
-	title="Retire"
+	title={t('Retirement')}
 	subtitle="What your life costs, what that means you need, and the shortest way to close the difference."
 >
 	{#if vm.error}

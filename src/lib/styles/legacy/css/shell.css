@@ -65,8 +65,14 @@ html[data-sidebar='collapsed'] .app-sidebar-group-panel {
 	}
 }
 
+/* The main column: the desktop top bar (DesktopTopBar.svelte) over the
+ * scrolling page. min-h-0 lets .app-main scroll inside it. */
+.app-column {
+	@apply flex min-h-0 min-w-0 flex-1 flex-col;
+}
+
 .app-main {
-	@apply min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-5;
+	@apply min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-5;
 	padding-bottom: calc(var(--app-tabbar-height) + 1rem + env(safe-area-inset-bottom, 0px));
 	scroll-padding-bottom: calc(var(--app-tabbar-height) + 1rem + env(safe-area-inset-bottom, 0px));
 	-webkit-overflow-scrolling: touch;
@@ -105,12 +111,13 @@ html[data-sidebar='collapsed'] .app-sidebar-group-panel {
 }
 
 /* Unlock toast: pinned to the viewport so it never lands below the fold.
-   Toasts own the top, the Q button (QuickAssistant.svelte, z-index 45) the
-   bottom-right corner, so the two never overlap. Phones: just below the top
+   Toasts own the top, the phone Q button (QuickAssistant.svelte, z-index 45)
+   the bottom-right corner, so the two never overlap. Phones: just below the top
    bar. The bar already absorbs the notch in its own padding-top
    (max(0.75rem, safe-area-top)), and the top formula follows it, so the gap
    below the bar is 0.75rem on every phone; it never overlaps the bar.
-   1024px and up (no top bar): the top-right corner. */
+   1024px and up: top-right, below the desktop top bar (DesktopTopBar.svelte),
+   which holds Q instead of a floating button. */
 .achievement-toast {
 	position: fixed;
 	z-index: 50;
@@ -130,26 +137,10 @@ html[data-sidebar='collapsed'] .app-sidebar-group-panel {
 
 @media (min-width: 1024px) {
 	.achievement-toast {
-		top: 1.5rem;
+		top: calc(var(--app-desktop-topbar-height) + 0.75rem);
 		right: 1.5rem;
 		left: auto;
 	}
-}
-
-.app-bottom-tabs-more {
-	@apply absolute right-3 bottom-full z-50 mb-2 flex min-w-44 flex-col gap-1 rounded-2xl border p-2 shadow-lg;
-	background: var(--color-card-bg);
-	border-color: var(--border);
-}
-
-.app-bottom-more-link {
-	@apply flex items-center gap-3 rounded-md px-3 py-2.5 text-subhead font-semibold;
-	color: var(--muted-foreground);
-}
-
-.app-bottom-more-link-active {
-	color: var(--color-tint);
-	background: color-mix(in srgb, var(--color-tint) 12%, transparent);
 }
 
 .app-bottom-tab {

@@ -6,6 +6,7 @@
 	import { enhance } from '$app/forms';
 	import { goto, preloadData } from '$app/navigation';
 	import type { Component } from 'svelte';
+	import { t } from '#lib/i18n/context.svelte.js';
 	import EChart from '#lib/charts/EChart.svelte';
 	import { allocationPie } from '#lib/charts/index.js';
 	import {
@@ -153,7 +154,7 @@
 </script>
 
 <svelte:head>
-	<title>Budget planner - Norviq</title>
+	<title>{t('Budget')} - Norviq</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -224,7 +225,7 @@
 {/snippet}
 
 <div class="app-page-content vigil-deck-page expenses-planner-page expenses-modern-page">
-	<vigil.ModernPageHeader title="Budget planner" meta={monthStepper} actions={headerActions} />
+	<vigil.ModernPageHeader title={t('Budget')} meta={monthStepper} actions={headerActions} />
 	{#if vm.hasLoadError}
 		<div class="glass-card p-6" role="alert">
 			<p class="font-semibold">Could not load budget data</p>
