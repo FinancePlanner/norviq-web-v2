@@ -91,6 +91,7 @@ test('a body over the cap is refused with 413 before it is read', async () => {
 		typeof POST
 	>[0]);
 	expect(res.status).toBe(413);
+	expect(await res.text()).toBe('That file is too large.');
 	expect(apiFetch).not.toHaveBeenCalled();
 });
 

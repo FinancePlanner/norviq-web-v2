@@ -37,7 +37,7 @@ export const POST: RequestHandler = async (event) => {
 	if (!id) return new Response('Invalid conversation', { status: 400 });
 	// Refuse before buffering a body the backend would refuse anyway.
 	if (Number(event.request.headers.get('content-length')) > MAX_BODY_BYTES)
-		return new Response('That image is too large.', { status: 413 });
+		return new Response('That file is too large.', { status: 413 });
 	const form = await formOf(event);
 	const content = formValue(form, 'content').trim();
 	const files = [...form.getAll('file'), ...form.getAll('image')].filter(
