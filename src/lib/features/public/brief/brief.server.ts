@@ -47,7 +47,6 @@ const CACHE_MAX = 256;
 const FETCH_TIMEOUT = 10_000;
 
 export const PAGE_CACHE_CONTROL = 'public, max-age=0, s-maxage=300';
-export const IMAGE_CACHE_CONTROL = 'public, max-age=3600';
 export const REDIRECT_CACHE_CONTROL = 'public, max-age=60';
 export const MISSING_CACHE_CONTROL = 'public, max-age=60';
 
@@ -251,7 +250,7 @@ function items(vm: MarketBriefVM) {
 	return [...vm.notes, ...vm.stories];
 }
 
-export function itemTexts(vm: MarketBriefVM, limit: number): string[] {
+function itemTexts(vm: MarketBriefVM, limit: number): string[] {
 	return items(vm)
 		.slice(0, limit)
 		.map((it) => it.text);
@@ -486,13 +485,4 @@ export async function briefSitemapPaths(event: RequestEvent): Promise<string[]> 
 		}
 	}
 	return paths;
-}
-
-/** marketBriefShortHost: the base URL as people type it, "norviq.org". */
-export function shortHost(base: string): string {
-	const host = base
-		.replace(/^https:\/\//, '')
-		.replace(/^http:\/\//, '')
-		.replace(/^www\./, '');
-	return host || 'norviq.org';
 }
