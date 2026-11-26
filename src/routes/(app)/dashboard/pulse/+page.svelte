@@ -3,7 +3,7 @@
 	import * as vigil from '#lib/components/norviq/vigil/index.js';
 	import ConnectAgentPill from '#lib/components/norviq/ConnectAgentPill.svelte';
 	import { t } from '#lib/i18n/context.svelte.js';
-	import RangeControl from '#lib/features/dashboard/command-center/RangeControl.svelte';
+	import PeriodControl from '#lib/features/dashboard/command-center/PeriodControl.svelte';
 	import PulseCharts from '#lib/features/dashboard/command-center/PulseCharts.svelte';
 	import PortfolioChartPanel from '#lib/features/dashboard/command-center/PortfolioChartPanel.svelte';
 	import OverviewSetupPanel from '#lib/features/dashboard/command-center/OverviewSetupPanel.svelte';
@@ -23,21 +23,21 @@
 </script>
 
 <svelte:head>
-	<title>Pulse - Norviq</title>
+	<title>{t('Period')} - Norviq</title>
 	<meta name="keywords" content="Norviq dashboard" />
 	<meta name="description" content="Your Norviq financial dashboard." />
 </svelte:head>
 
 {#snippet headerActions()}
-	<RangeControl options={vm.rangeOptions} />
+	<PeriodControl options={vm.rangeOptions} />
 	<ConnectAgentPill />
 {/snippet}
 
 <div
 	class="app-page-content vigil-deck-page overview-page overview-modern-page command-center-page"
 >
-	<vigil.ModernPageHeader title="Pulse" actions={headerActions} />
-	<section class="cc-rail cc-rail-pulse" aria-label="Pulse">
+	<vigil.ModernPageHeader title={t('Period')} actions={headerActions} />
+	<section class="cc-rail cc-rail-pulse" aria-label={t('Period')}>
 		<PulseCharts {vm} />
 		{#await data.whyMoved}
 			<WhyMovedStrip />

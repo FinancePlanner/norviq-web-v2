@@ -60,7 +60,7 @@ export interface OverviewViewModel {
 	loadErrors: Record<string, boolean>;
 }
 
-export interface RangeOptionVM {
+export interface PeriodOptionVM {
 	key: string;
 	label: string;
 	href: string;
@@ -127,7 +127,7 @@ export interface CommandCenterViewModel {
 	overview: OverviewViewModel;
 	range: string;
 	rangeLabel: string;
-	rangeOptions: RangeOptionVM[];
+	rangeOptions: PeriodOptionVM[];
 	queue: ActionQueueVM;
 	ledger: LedgerVM;
 	/** Go PillarChartHTML: null where Go had "". */

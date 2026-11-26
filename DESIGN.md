@@ -377,6 +377,25 @@ Below 1024px, toasts own the top of the viewport and the Q button owns the botto
 
 The motion tokens (`--motion-fast` and the rest) are live. The global `prefers-reduced-motion: reduce` rule in `src/lib/styles/legacy/styles.css` kills transitions and animations, except short opacity fades on dialogs, popovers and toasts, where a hard cut would read as broken. It stays; a test guards it.
 
+## Navigation (DS 2.0)
+
+Norviq has six domains, in this order, and each answers one question. `src/lib/nav/destinations.ts` is the source of names: a destination has one name on every surface. The design record is `docs/superpowers/plans/2026-11-25-ds2-p3-destinations.md`.
+
+| Domain       | Question                            |
+| ------------ | ----------------------------------- |
+| Today        | What needs me now?                  |
+| Money        | Where does my money go?             |
+| Wealth       | What do I own, and how is it doing? |
+| Planning     | Where am I heading?                 |
+| Intelligence | What should I know or ask?          |
+| Community    | What are others doing?              |
+
+- **Sidebar:** one group per domain. A group lists its picks (★): at most 7, in table order, chosen by editors, not by usage. Each group ends with "All in {domain} →", a link to the `/{domain}` index page, which lists every destination in the domain with a one-line description. The foot holds "Search and commands ⌘K", Settings and the account row. Settings is not a group.
+- **Mobile (under 1024px):** a five-tab bottom bar: Today `/dashboard`, Money `/expenses`, Wealth `/portfolio`, Plan `/planning`, More `/more`. The active tab is gold. More is the index of everything else.
+- **Desktop top bar (1024px and up):** on the left "{Domain} · {weekday day month}". On the right a search button, "Search holdings, pages, actions" with ⌘K, then notifications, then "Ask Q".
+- **⌘K palette:** loaded on demand, not in the first bundle. It searches actions, destinations and symbols. A row locked behind Pro shows the Pro badge.
+- **Gated destinations:** when a feature gate is off, its destinations are absent from every surface: sidebar, index pages, bottom bar and palette. Nothing is greyed out.
+
 ## Money and numbers
 
 One formatting contract on every platform (spec § 5.4), implemented on web by `src/lib/money.ts` and proven by the shared golden fixtures (`src/lib/__fixtures__/money.json`, a byte copy of `docs/design-system-fixtures/money.json`, also copied into the iOS and Android tests).

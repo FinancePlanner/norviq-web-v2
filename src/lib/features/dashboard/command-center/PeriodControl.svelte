@@ -1,8 +1,8 @@
 <script lang="ts">
-	// dashboard.RangeControl: plain links, the range lives in the URL.
-	import type { RangeOptionVM } from './types.js';
+	// dashboard.PeriodControl: plain links, the range lives in the URL.
+	import type { PeriodOptionVM } from './types.js';
 
-	let { options }: { options: RangeOptionVM[] } = $props();
+	let { options }: { options: PeriodOptionVM[] } = $props();
 </script>
 
 <nav class="cc-range-control" aria-label="Time range">

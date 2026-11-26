@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import dashboardPage from '../../routes/(app)/dashboard/+page.svelte?raw';
+import periodPage from '../../routes/(app)/dashboard/pulse/+page.svelte?raw';
 import ptPT from '../i18n/pt-PT.json';
 import { Feature } from '../billing.js';
 import { socialOff, type SocialConfig } from '../nav.js';
@@ -426,3 +428,17 @@ function routeRegex(file: string): RegExp {
 		.join('');
 	return new RegExp(`^${body || '/'}$`);
 }
+
+describe('the period page', () => {
+	it('the period page is called Period everywhere', () => {
+		for (const source of [periodPage, dashboardPage]) {
+			expect(source).not.toContain("'Pulse'");
+			expect(source).not.toContain('>Pulse<');
+			expect(source).not.toMatch(/(?:title|label)="Pulse"/);
+			expect(source).not.toContain('<title>Pulse');
+			expect(source).not.toContain('Open pulse');
+		}
+		expect(periodPage).toContain("{t('Period')} - Norviq");
+		expect(dashboardPage).toContain("t('Open period')");
+	});
+});
